@@ -34,7 +34,9 @@ const DEFAULT_COLORS = [
 ];
 
 function CustomContent(props: any) {
-  const { x, y, width, height, name, value, index } = props;
+  const { x, y, width, height, name, value, index, depth } = props;
+  // Skip root node (depth 0) to avoid the double-layer background box
+  if (depth === 0) return null;
   if (width < 40 || height < 30) return null;
 
   const color = SECTOR_COLORS[name] || DEFAULT_COLORS[index % DEFAULT_COLORS.length];

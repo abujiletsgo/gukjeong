@@ -9,6 +9,12 @@ import type { President, FiscalYearly, FiscalBySector, SubSectorData, AuditFlag,
 // ========================================
 
 const PRESIDENTS_DATA: President[] = [
+  { id: "lsm", name: "이승만", name_en: "Syngman Rhee", term_start: "1948-07-24", term_end: "1960-04-26", party: "자유당", era: "제1공화국", gdp_growth_avg: 3.8, note: "4.19 혁명으로 하야" },
+  { id: "ypg", name: "윤보선", name_en: "Yun Bo-seon", term_start: "1960-08-13", term_end: "1962-03-24", party: "민주당", era: "제2공화국", gdp_growth_avg: 2.1, note: "5.16 군사정변" },
+  { id: "pjh", name: "박정희", name_en: "Park Chung-hee", term_start: "1963-12-17", term_end: "1979-10-26", party: "민주공화당", era: "제3·4공화국", gdp_growth_avg: 9.3, note: "10.26 피살" },
+  { id: "cgy", name: "최규하", name_en: "Choi Kyu-hah", term_start: "1979-12-06", term_end: "1980-08-16", party: "무소속", era: "과도기", gdp_growth_avg: -1.7, note: "12.12 사태 후 사임" },
+  { id: "jdh", name: "전두환", name_en: "Chun Doo-hwan", term_start: "1980-09-01", term_end: "1988-02-24", party: "민주정의당", era: "제5공화국", gdp_growth_avg: 9.2, note: "5.18 민주화운동 진압" },
+  { id: "nth", name: "노태우", name_en: "Roh Tae-woo", term_start: "1988-02-25", term_end: "1993-02-24", party: "민주정의당→민주자유당", era: "제6공화국", gdp_growth_avg: 8.8, note: "6.29 민주화 선언" },
   { id: "ysk", name: "김영삼", name_en: "Kim Young-sam", term_start: "1993-02-25", term_end: "1998-02-24", party: "민주자유당→신한국당", era: "문민정부", gdp_growth_avg: 5.7 },
   { id: "kdj", name: "김대중", name_en: "Kim Dae-jung", term_start: "1998-02-25", term_end: "2003-02-24", party: "새정치국민회의→새천년민주당", era: "국민의 정부", gdp_growth_avg: 5.2 },
   { id: "nmh", name: "노무현", name_en: "Roh Moo-hyun", term_start: "2003-02-25", term_end: "2008-02-24", party: "새천년민주당→열린우리당", era: "참여정부", gdp_growth_avg: 4.3 },
@@ -24,6 +30,16 @@ const PRESIDENTS_DATA: President[] = [
 // ========================================
 
 const FISCAL_DATA: FiscalYearly[] = [
+  { year: 1988, total_spending: 26, national_debt: 11, president_id: "nth" },
+  { year: 1989, total_spending: 30, national_debt: 13, president_id: "nth" },
+  { year: 1990, total_spending: 35, national_debt: 16, president_id: "nth" },
+  { year: 1991, total_spending: 40, national_debt: 19, president_id: "nth" },
+  { year: 1992, total_spending: 46, national_debt: 22, president_id: "nth" },
+  { year: 1993, total_spending: 55, national_debt: 26, president_id: "ysk" },
+  { year: 1994, total_spending: 63, national_debt: 30, president_id: "ysk" },
+  { year: 1995, total_spending: 73, national_debt: 37, president_id: "ysk" },
+  { year: 1996, total_spending: 82, national_debt: 48, president_id: "ysk" },
+  { year: 1997, total_spending: 91, national_debt: 60, president_id: "ysk" },
   { year: 1998, total_spending: 104, national_debt: 80, president_id: "kdj" },
   { year: 1999, total_spending: 107, national_debt: 95, president_id: "kdj" },
   { year: 2000, total_spending: 111, national_debt: 111, debt_to_gdp: 19.2, president_id: "kdj" },
@@ -115,6 +131,17 @@ export function getSectorData(year: number = 2026): FiscalBySector[] {
 // ========================================
 
 export function getSubSectorData(sector: string, year: number = 2026): SubSectorData[] {
+  // For 2024/2025, scale down the 2026 amounts proportionally
+  if (year === 2024 || year === 2025) {
+    const base = getSubSectorData(sector, 2026);
+    if (base.length === 0) return [];
+    const scale = year === 2025 ? 0.94 : 0.88; // ~6% lower for 2025, ~12% lower for 2024
+    return base.map(item => ({
+      ...item,
+      amount: Math.round(item.amount * scale * 10) / 10,
+    }));
+  }
+
   if (year !== 2026) return [];
 
   const data: Record<string, SubSectorData[]> = {
@@ -1757,6 +1784,36 @@ export function getKeyEventsByPresident(presidentId: string): KeyEvent[] {
         what_happened_after: '예산안 통과 후 각 부처의 집행이 시작되면서 경기 부양 효과가 본격화될 것으로 전망됩니다. 다만 국가채무 증가에 대한 우려와 재정 건전성 논란은 계속되고 있습니다.',
         related_numbers: '총예산 728조원 (전년 대비 약 8% 증가) · 복지 예산 약 230조원 · R&D 예산 약 35조원 · 국가채무 GDP 대비 약 55%',
       },
+    ],
+    lsm: [
+      { id: 'lsm-e1', event_date: '1948-08-15', title: '대한민국 정부 수립', description: '해방 3년 만에 대한민국 초대 정부 출범', impact_type: 'positive', significance_score: 100 },
+      { id: 'lsm-e2', event_date: '1950-06-25', title: '6.25 전쟁 발발', description: '북한의 남침으로 한국전쟁 시작, 3년간 전쟁', impact_type: 'negative', significance_score: 100 },
+      { id: 'lsm-e3', event_date: '1960-04-19', title: '4.19 혁명', description: '학생과 시민의 민주화 시위로 이승만 대통령 하야', impact_type: 'positive', significance_score: 95 },
+    ],
+    ypg: [
+      { id: 'ypg-e1', event_date: '1960-08-13', title: '제2공화국 출범', description: '내각책임제 정부 출범, 민주당 정권', impact_type: 'positive', significance_score: 70 },
+      { id: 'ypg-e2', event_date: '1961-05-16', title: '5.16 군사정변', description: '박정희 소장의 군사 쿠데타로 제2공화국 붕괴', impact_type: 'negative', significance_score: 95 },
+    ],
+    pjh: [
+      { id: 'pjh-e1', event_date: '1961-05-16', title: '5.16 군사정변', description: '박정희 소장이 군사 쿠데타로 정권 장악', impact_type: 'negative', significance_score: 98 },
+      { id: 'pjh-e2', event_date: '1965-06-22', title: '한일 국교 정상화', description: '한일기본조약 체결, 경제개발 자금 확보', impact_type: 'neutral', significance_score: 85 },
+      { id: 'pjh-e3', event_date: '1970-04-22', title: '경부고속도로 개통', description: '서울-부산 428km 고속도로 완공, 경제 발전의 대동맥', impact_type: 'positive', significance_score: 90 },
+      { id: 'pjh-e4', event_date: '1972-10-17', title: '유신 헌법 선포', description: '영구 집권을 위한 유신체제 출범, 민주주의 후퇴', impact_type: 'negative', significance_score: 95 },
+      { id: 'pjh-e5', event_date: '1979-10-26', title: '10.26 사태', description: '김재규 중앙정보부장에 의해 피살', impact_type: 'negative', significance_score: 98 },
+    ],
+    cgy: [
+      { id: 'cgy-e1', event_date: '1979-12-06', title: '대통령 취임', description: '박정희 대통령 서거 후 과도 정부 수반으로 취임', impact_type: 'neutral', significance_score: 60 },
+      { id: 'cgy-e2', event_date: '1979-12-12', title: '12.12 군사반란', description: '전두환·노태우 등 신군부 세력의 군사반란으로 실권 상실', impact_type: 'negative', significance_score: 95 },
+    ],
+    jdh: [
+      { id: 'jdh-e1', event_date: '1980-05-18', title: '5.18 광주 민주화운동', description: '계엄군의 무력 진압으로 시민 수백명 사망', impact_type: 'negative', significance_score: 100 },
+      { id: 'jdh-e2', event_date: '1981-09-30', title: '88 서울올림픽 유치', description: '아시아 2번째 하계올림픽 유치 확정', impact_type: 'positive', significance_score: 85 },
+      { id: 'jdh-e3', event_date: '1987-06-10', title: '6월 민주항쟁', description: '전국적 민주화 시위로 직선제 개헌 쟁취', impact_type: 'positive', significance_score: 98 },
+    ],
+    nth: [
+      { id: 'nth-e1', event_date: '1988-09-17', title: '88 서울올림픽 개최', description: '대한민국의 국제적 위상을 높인 올림픽', impact_type: 'positive', significance_score: 95 },
+      { id: 'nth-e2', event_date: '1990-09-30', title: '한소 수교', description: '소련과 국교 수립, 북방외교 성과', impact_type: 'positive', significance_score: 85 },
+      { id: 'nth-e3', event_date: '1992-08-24', title: '한중 수교', description: '중국과 국교 수립', impact_type: 'positive', significance_score: 88 },
     ],
   };
   return events[presidentId] || [];
@@ -3716,12 +3773,12 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '728조 예산 중 복지(37%)가 최대 비중. R&D 대폭 증가는 미래 산업에 긍정적이나, 국가채무 증가 속도 모니터링이 필요합니다.',
     article_count: 342,
     coverage: [
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '나랏빚 1,222조... 역대 최대 빚잔치 예산', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '728조 슈퍼 예산, 건전재정은 뒷전', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: 'R&D 정상화·민생 회복에 방점... 728조 예산안 통과', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '삭감된 R&D 복원하고 복지 확대... 민생 중심 예산', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '728조 예산 국회 통과... R&D 대폭 증가·복지 확대', spectrum_score: 2.8, category: 'center' },
-      { outlet_id: 'donga', outlet_name: '동아일보', headline: '국채 의존 심화... 재정 건전성 경고등', spectrum_score: 4.0, category: 'conservative' },
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '나랏빚 1,222조... 역대 최대 빚잔치 예산', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=2026%EB%85%84%20%EC%98%88%EC%82%B0%EC%95%88%20728%EC%A1%B0%20%EA%B5%AD%ED%9A%8C%20%ED%86%B5%EA%B3%BC'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '728조 슈퍼 예산, 건전재정은 뒷전', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=2026%EB%85%84%20%EC%98%88%EC%82%B0%EC%95%88%20728%EC%A1%B0%20%EA%B5%AD%ED%9A%8C%20%ED%86%B5%EA%B3%BC'},
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: 'R&D 정상화·민생 회복에 방점... 728조 예산안 통과', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=2026%EB%85%84%20%EC%98%88%EC%82%B0%EC%95%88%20728%EC%A1%B0%20%EA%B5%AD%ED%9A%8C%20%ED%86%B5%EA%B3%BC'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '삭감된 R&D 복원하고 복지 확대... 민생 중심 예산', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=2026%EB%85%84%20%EC%98%88%EC%82%B0%EC%95%88%20728%EC%A1%B0%20%EA%B5%AD%ED%9A%8C%20%ED%86%B5%EA%B3%BC'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '728조 예산 국회 통과... R&D 대폭 증가·복지 확대', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=2026%EB%85%84%20%EC%98%88%EC%82%B0%EC%95%88%20728%EC%A1%B0%20%EA%B5%AD%ED%9A%8C%20%ED%86%B5%EA%B3%BC'},
+      { outlet_id: 'donga', outlet_name: '동아일보', headline: '국채 의존 심화... 재정 건전성 경고등', spectrum_score: 4.0, category: 'conservative' , url: 'https://www.donga.com/news/search?query=2026%EB%85%84%20%EC%98%88%EC%82%B0%EC%95%88%20728%EC%A1%B0%20%EA%B5%AD%ED%9A%8C%20%ED%86%B5%EA%B3%BC'},
     ],
   },
   {
@@ -3748,11 +3805,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '비상계엄 사태는 헌법재판소의 탄핵 인용으로 헌정질서가 회복되었습니다. 시민의 저항이 민주주의를 지켰으나, 향후 재발 방지를 위한 제도적 보완이 필요합니다.',
     article_count: 1205,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '촛불이 다시 한번... 계엄 쿠데타 좌절시킨 시민의 힘', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '헌재 만장일치 파면... 대한민국 민주주의 승리의 날', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '4개월 정치 혼란 마무리... 조기 대선으로 안정 회복해야', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '탄핵 인용, 이제 경제·민생에 집중할 때', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '윤석열 파면... 헌정질서 회복, 과제는 통합', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '촛불이 다시 한번... 계엄 쿠데타 좌절시킨 시민의 힘', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EB%B9%84%EC%83%81%EA%B3%84%EC%97%84%20%EC%82%AC%ED%83%9C%20%EC%9D%B4%ED%9B%84%20%ED%97%8C%EC%A0%95%EC%A7%88%EC%84%9C%20%ED%9A%8C%EB%B3%B5'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '헌재 만장일치 파면... 대한민국 민주주의 승리의 날', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EB%B9%84%EC%83%81%EA%B3%84%EC%97%84%20%EC%82%AC%ED%83%9C%20%EC%9D%B4%ED%9B%84%20%ED%97%8C%EC%A0%95%EC%A7%88%EC%84%9C%20%ED%9A%8C%EB%B3%B5'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '4개월 정치 혼란 마무리... 조기 대선으로 안정 회복해야', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EB%B9%84%EC%83%81%EA%B3%84%EC%97%84%20%EC%82%AC%ED%83%9C%20%EC%9D%B4%ED%9B%84%20%ED%97%8C%EC%A0%95%EC%A7%88%EC%84%9C%20%ED%9A%8C%EB%B3%B5'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '탄핵 인용, 이제 경제·민생에 집중할 때', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=%EB%B9%84%EC%83%81%EA%B3%84%EC%97%84%20%EC%82%AC%ED%83%9C%20%EC%9D%B4%ED%9B%84%20%ED%97%8C%EC%A0%95%EC%A7%88%EC%84%9C%20%ED%9A%8C%EB%B3%B5'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '윤석열 파면... 헌정질서 회복, 과제는 통합', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EB%B9%84%EC%83%81%EA%B3%84%EC%97%84%20%EC%82%AC%ED%83%9C%20%EC%9D%B4%ED%9B%84%20%ED%97%8C%EC%A0%95%EC%A7%88%EC%84%9C%20%ED%9A%8C%EB%B3%B5'},
     ],
   },
   {
@@ -3779,9 +3836,9 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: 'R&D 예산 대폭 증가는 AI·반도체 경쟁에서 뒤처지지 않기 위한 조치입니다. 다만 예산이 실질적 연구 성과로 이어지려면 투명한 집행과 성과 평가가 필요합니다.',
     article_count: 156,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '"잃어버린 2년" 끝... R&D 예산 33.8조 시대', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: 'R&D 예산 급증, 성과 없으면 세금 낭비', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: 'R&D 19% 증가... AI·반도체에 집중투자', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '"잃어버린 2년" 끝... R&D 예산 33.8조 시대', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=R%26D%20%EC%98%88%EC%82%B0%20%EB%8C%80%ED%8F%AD%20%EC%A6%9D%EA%B0%80%EC%99%80%20%EA%B3%BC%ED%95%99%EA%B8%B0%EC%88%A0%EA%B3%84%20%EB%B0%98%EC%9D%91'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: 'R&D 예산 급증, 성과 없으면 세금 낭비', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=R%26D%20%EC%98%88%EC%82%B0%20%EB%8C%80%ED%8F%AD%20%EC%A6%9D%EA%B0%80%EC%99%80%20%EA%B3%BC%ED%95%99%EA%B8%B0%EC%88%A0%EA%B3%84%20%EB%B0%98%EC%9D%91'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: 'R&D 19% 증가... AI·반도체에 집중투자', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=R%26D%20%EC%98%88%EC%82%B0%20%EB%8C%80%ED%8F%AD%20%EC%A6%9D%EA%B0%80%EC%99%80%20%EA%B3%BC%ED%95%99%EA%B8%B0%EC%88%A0%EA%B3%84%20%EB%B0%98%EC%9D%91'},
     ],
   },
   {
@@ -3808,12 +3865,12 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '출산율 0.68명은 인구 유지에 필요한 2.1명의 1/3 수준입니다. 현금 지원과 함께 주거·고용·양육 부담 감소라는 구조적 개혁이 동시에 필요합니다.',
     article_count: 428,
     coverage: [
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"돈 준다고 아이 낳나"... 구조 개혁 외면한 저출산 대책의 한계', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '0.68명, 또 최저... 집값·교육비가 출산율 잡아먹는다', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '출산율 0.68명 충격... 이대로면 2100년 인구 2,000만명대', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'donga', outlet_name: '동아일보', headline: '"인구절벽" 현실화... 이민·출산 동시 추진해야', spectrum_score: 4.0, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '사상 최저 0.68명... 인구위기 해법, 구조와 지원 동시에', spectrum_score: 2.8, category: 'center' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '0.68명 쇼크, 국가소멸 카운트다운', spectrum_score: 3.8, category: 'conservative' },
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"돈 준다고 아이 낳나"... 구조 개혁 외면한 저출산 대책의 한계', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%ED%95%A9%EA%B3%84%EC%B6%9C%EC%82%B0%EC%9C%A8%200.68%EB%AA%85%2C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EC%A0%80%20%EA%B8%B0%EB%A1%9D%20%EA%B0%B1%EC%8B%A0'},
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '0.68명, 또 최저... 집값·교육비가 출산율 잡아먹는다', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%ED%95%A9%EA%B3%84%EC%B6%9C%EC%82%B0%EC%9C%A8%200.68%EB%AA%85%2C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EC%A0%80%20%EA%B8%B0%EB%A1%9D%20%EA%B0%B1%EC%8B%A0'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '출산율 0.68명 충격... 이대로면 2100년 인구 2,000만명대', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%ED%95%A9%EA%B3%84%EC%B6%9C%EC%82%B0%EC%9C%A8%200.68%EB%AA%85%2C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EC%A0%80%20%EA%B8%B0%EB%A1%9D%20%EA%B0%B1%EC%8B%A0'},
+      { outlet_id: 'donga', outlet_name: '동아일보', headline: '"인구절벽" 현실화... 이민·출산 동시 추진해야', spectrum_score: 4.0, category: 'conservative' , url: 'https://www.donga.com/news/search?query=%ED%95%A9%EA%B3%84%EC%B6%9C%EC%82%B0%EC%9C%A8%200.68%EB%AA%85%2C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EC%A0%80%20%EA%B8%B0%EB%A1%9D%20%EA%B0%B1%EC%8B%A0'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '사상 최저 0.68명... 인구위기 해법, 구조와 지원 동시에', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%ED%95%A9%EA%B3%84%EC%B6%9C%EC%82%B0%EC%9C%A8%200.68%EB%AA%85%2C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EC%A0%80%20%EA%B8%B0%EB%A1%9D%20%EA%B0%B1%EC%8B%A0'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '0.68명 쇼크, 국가소멸 카운트다운', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=%ED%95%A9%EA%B3%84%EC%B6%9C%EC%82%B0%EC%9C%A8%200.68%EB%AA%85%2C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EC%A0%80%20%EA%B8%B0%EB%A1%9D%20%EA%B0%B1%EC%8B%A0'},
     ],
   },
   {
@@ -3840,9 +3897,9 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '100조원 투자는 일자리와 수출에 긍정적이지만, 세액공제(국민 세금)와의 균형이 중요합니다. 투자가 고용 창출과 지역경제 활성화로 이어지는지 모니터링이 필요합니다.',
     article_count: 267,
     coverage: [
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '삼성 100조 베팅... AI 반도체 패권 전쟁 선전포고', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '100조 투자에 세금 혜택은 얼마?... 기업 책임도 함께 논의해야', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '삼성전자 AI 반도체 100조 투자... 5만 일자리 기대', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '삼성 100조 베팅... AI 반도체 패권 전쟁 선전포고', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%20AI%20%EB%B0%98%EB%8F%84%EC%B2%B4%20%ED%88%AC%EC%9E%90%20100%EC%A1%B0%EC%9B%90%20%EA%B3%84%ED%9A%8D%20%EB%B0%9C%ED%91%9C'},
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '100조 투자에 세금 혜택은 얼마?... 기업 책임도 함께 논의해야', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%20AI%20%EB%B0%98%EB%8F%84%EC%B2%B4%20%ED%88%AC%EC%9E%90%20100%EC%A1%B0%EC%9B%90%20%EA%B3%84%ED%9A%8D%20%EB%B0%9C%ED%91%9C'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '삼성전자 AI 반도체 100조 투자... 5만 일자리 기대', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EC%82%BC%EC%84%B1%EC%A0%84%EC%9E%90%20AI%20%EB%B0%98%EB%8F%84%EC%B2%B4%20%ED%88%AC%EC%9E%90%20100%EC%A1%B0%EC%9B%90%20%EA%B3%84%ED%9A%8D%20%EB%B0%9C%ED%91%9C'},
     ],
   },
   {
@@ -3869,12 +3926,12 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '보험료율 인상(월급 대비 4% 추가 부담)은 직장인에게 체감이 큰 변화입니다. 청년 세대의 연금 수급 가능성과 노인 세대의 빈곤 방지 사이의 세대 간 균형이 핵심입니다.',
     article_count: 389,
     coverage: [
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"더 내고 같이 받자"... 연금 개혁의 핵심은 소득대체율 사수', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '보험료 13%로 올려도 2072년 고갈... 이게 개혁인가', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '연금 개혁 첫발... 2072년까지 17년 더 버틴다', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '연금 개혁안, 최저보장연금 도입은 긍정... 보험료 인상 속도는 논란', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '국민연금 보험료 13%... 월급쟁이 부담은 얼마나 늘어나나', spectrum_score: 2.8, category: 'center' },
-      { outlet_id: 'donga', outlet_name: '동아일보', headline: '연금 기금 고갈 17년 연기... 미래세대 부담은 여전', spectrum_score: 4.0, category: 'conservative' },
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"더 내고 같이 받자"... 연금 개혁의 핵심은 소득대체율 사수', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EA%B5%AD%EB%AF%BC%EC%97%B0%EA%B8%88%20%EA%B0%9C%ED%98%81%EC%95%88%20%EA%B5%AD%ED%9A%8C%20%EB%85%BC%EC%9D%98%20%EC%8B%9C%EC%9E%91'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '보험료 13%로 올려도 2072년 고갈... 이게 개혁인가', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EA%B5%AD%EB%AF%BC%EC%97%B0%EA%B8%88%20%EA%B0%9C%ED%98%81%EC%95%88%20%EA%B5%AD%ED%9A%8C%20%EB%85%BC%EC%9D%98%20%EC%8B%9C%EC%9E%91'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '연금 개혁 첫발... 2072년까지 17년 더 버틴다', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=%EA%B5%AD%EB%AF%BC%EC%97%B0%EA%B8%88%20%EA%B0%9C%ED%98%81%EC%95%88%20%EA%B5%AD%ED%9A%8C%20%EB%85%BC%EC%9D%98%20%EC%8B%9C%EC%9E%91'},
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '연금 개혁안, 최저보장연금 도입은 긍정... 보험료 인상 속도는 논란', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EA%B5%AD%EB%AF%BC%EC%97%B0%EA%B8%88%20%EA%B0%9C%ED%98%81%EC%95%88%20%EA%B5%AD%ED%9A%8C%20%EB%85%BC%EC%9D%98%20%EC%8B%9C%EC%9E%91'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '국민연금 보험료 13%... 월급쟁이 부담은 얼마나 늘어나나', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EA%B5%AD%EB%AF%BC%EC%97%B0%EA%B8%88%20%EA%B0%9C%ED%98%81%EC%95%88%20%EA%B5%AD%ED%9A%8C%20%EB%85%BC%EC%9D%98%20%EC%8B%9C%EC%9E%91'},
+      { outlet_id: 'donga', outlet_name: '동아일보', headline: '연금 기금 고갈 17년 연기... 미래세대 부담은 여전', spectrum_score: 4.0, category: 'conservative' , url: 'https://www.donga.com/news/search?query=%EA%B5%AD%EB%AF%BC%EC%97%B0%EA%B8%88%20%EA%B0%9C%ED%98%81%EC%95%88%20%EA%B5%AD%ED%9A%8C%20%EB%85%BC%EC%9D%98%20%EC%8B%9C%EC%9E%91'},
     ],
   },
   {
@@ -3902,11 +3959,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '의대 정원 확대는 장기적으로 의료 접근성을 개선할 수 있지만, 단기적으로 전공의 이탈로 인한 의료 공백이 현실적 위협입니다. 시민은 필수의료와 지역의료 인프라에 대한 지속적 관심이 필요합니다.',
     article_count: 487,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '환자 볼모로 잡은 집단 휴진... 의료 공공성이 해법이다', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"생명 앞에 파업은 없다"... 국민 분노 폭발', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '졸속 증원이 부른 의료 대란... 정부도 책임 피할 수 없다', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '의대 정원 갈등 장기화... 환자만 피해', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '의사 파업 한 달... 수술 대기 2배, 응급실 8시간', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '환자 볼모로 잡은 집단 휴진... 의료 공공성이 해법이다', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EC%9D%98%EB%A3%8C%EA%B3%84%20%EC%A7%91%EB%8B%A8%20%ED%9C%B4%EC%A7%84%20%EC%82%AC%ED%83%9C'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"생명 앞에 파업은 없다"... 국민 분노 폭발', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EC%9D%98%EB%A3%8C%EA%B3%84%20%EC%A7%91%EB%8B%A8%20%ED%9C%B4%EC%A7%84%20%EC%82%AC%ED%83%9C'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '졸속 증원이 부른 의료 대란... 정부도 책임 피할 수 없다', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EC%9D%98%EB%A3%8C%EA%B3%84%20%EC%A7%91%EB%8B%A8%20%ED%9C%B4%EC%A7%84%20%EC%82%AC%ED%83%9C'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '의대 정원 갈등 장기화... 환자만 피해', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=%EC%9D%98%EB%A3%8C%EA%B3%84%20%EC%A7%91%EB%8B%A8%20%ED%9C%B4%EC%A7%84%20%EC%82%AC%ED%83%9C'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '의사 파업 한 달... 수술 대기 2배, 응급실 8시간', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EC%9D%98%EB%A3%8C%EA%B3%84%20%EC%A7%91%EB%8B%A8%20%ED%9C%B4%EC%A7%84%20%EC%82%AC%ED%83%9C'},
       { outlet_id: 'kbs', outlet_name: 'KBS', headline: '전공의 72% 이탈, 수련병원 절반 마비', spectrum_score: 2.5, category: 'center' },
     ],
   },
@@ -3935,11 +3992,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '반도체 수출 호조는 한국 경제에 매우 긍정적 신호이나, 반도체 의존도가 높아질수록 글로벌 경기 변동에 취약해질 수 있습니다. 산업 다각화와 수출 과실의 균형 있는 분배가 중요합니다.',
     article_count: 312,
     coverage: [
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '반도체 수출 178억弗 역대 최대... HBM이 이끈 K-반도체 전성시대', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: 'AI 시대의 최대 수혜국... 반도체 수출 사상 최고치', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '반도체 초호황에도 하청 노동자는 여전히 저임금... 낙수효과 어디에', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '수출 최대인데 체감 경기는 왜 안 좋나... 반도체 착시효과', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '반도체 수출 사상 최대 178억弗... 무역흑자 41개월 연속', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '반도체 수출 178억弗 역대 최대... HBM이 이끈 K-반도체 전성시대', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EB%B0%98%EB%8F%84%EC%B2%B4%20%EC%88%98%EC%B6%9C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EB%8C%80%20%EA%B8%B0%EB%A1%9D'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: 'AI 시대의 최대 수혜국... 반도체 수출 사상 최고치', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=%EB%B0%98%EB%8F%84%EC%B2%B4%20%EC%88%98%EC%B6%9C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EB%8C%80%20%EA%B8%B0%EB%A1%9D'},
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '반도체 초호황에도 하청 노동자는 여전히 저임금... 낙수효과 어디에', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EB%B0%98%EB%8F%84%EC%B2%B4%20%EC%88%98%EC%B6%9C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EB%8C%80%20%EA%B8%B0%EB%A1%9D'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '수출 최대인데 체감 경기는 왜 안 좋나... 반도체 착시효과', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EB%B0%98%EB%8F%84%EC%B2%B4%20%EC%88%98%EC%B6%9C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EB%8C%80%20%EA%B8%B0%EB%A1%9D'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '반도체 수출 사상 최대 178억弗... 무역흑자 41개월 연속', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EB%B0%98%EB%8F%84%EC%B2%B4%20%EC%88%98%EC%B6%9C%20%EC%82%AC%EC%83%81%20%EC%B5%9C%EB%8C%80%20%EA%B8%B0%EB%A1%9D'},
       { outlet_id: 'sbs', outlet_name: 'SBS', headline: 'HBM 호황 속 반도체 수출 신기록... 경제 회복 신호탄', spectrum_score: 2.8, category: 'center' },
     ],
   },
@@ -3968,11 +4025,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '전세 계약 시 보증금반환보증 가입 여부를 반드시 확인해야 합니다. 전세가율(매매가 대비 전세가 비율)이 80%를 넘는 매물은 사기 위험이 높으므로 주의가 필요합니다.',
     article_count: 378,
     coverage: [
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"평생 모은 돈 날렸다"... 전세 사기 피해자들의 절규', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '전세 사기 5만건 돌파... 구조적 개혁 없인 피해 반복된다', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '전세 사기 구제법, 선의의 임대인 재산권은 누가 지키나', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'donga', outlet_name: '동아일보', headline: '피해 구제 필요하지만... 시장 왜곡·도덕적 해이 우려', spectrum_score: 4.0, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '전세 사기 피해 7.8조... 피해자 구제와 시장 안정 사이 균형 필요', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"평생 모은 돈 날렸다"... 전세 사기 피해자들의 절규', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EC%A0%84%EC%84%B8%20%EC%82%AC%EA%B8%B0%20%ED%94%BC%ED%95%B4%20%EA%B5%AC%EC%A0%9C%EB%B2%95%20%EB%85%BC%EB%9E%80'},
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '전세 사기 5만건 돌파... 구조적 개혁 없인 피해 반복된다', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EC%A0%84%EC%84%B8%20%EC%82%AC%EA%B8%B0%20%ED%94%BC%ED%95%B4%20%EA%B5%AC%EC%A0%9C%EB%B2%95%20%EB%85%BC%EB%9E%80'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '전세 사기 구제법, 선의의 임대인 재산권은 누가 지키나', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EC%A0%84%EC%84%B8%20%EC%82%AC%EA%B8%B0%20%ED%94%BC%ED%95%B4%20%EA%B5%AC%EC%A0%9C%EB%B2%95%20%EB%85%BC%EB%9E%80'},
+      { outlet_id: 'donga', outlet_name: '동아일보', headline: '피해 구제 필요하지만... 시장 왜곡·도덕적 해이 우려', spectrum_score: 4.0, category: 'conservative' , url: 'https://www.donga.com/news/search?query=%EC%A0%84%EC%84%B8%20%EC%82%AC%EA%B8%B0%20%ED%94%BC%ED%95%B4%20%EA%B5%AC%EC%A0%9C%EB%B2%95%20%EB%85%BC%EB%9E%80'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '전세 사기 피해 7.8조... 피해자 구제와 시장 안정 사이 균형 필요', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EC%A0%84%EC%84%B8%20%EC%82%AC%EA%B8%B0%20%ED%94%BC%ED%95%B4%20%EA%B5%AC%EC%A0%9C%EB%B2%95%20%EB%85%BC%EB%9E%80'},
       { outlet_id: 'jtbc', outlet_name: 'JTBC', headline: '20~30대가 전세사기 피해의 67%... 청년 주거 대책 시급', spectrum_score: 2.2, category: 'progressive' },
     ],
   },
@@ -4001,11 +4058,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: 'AI 기본법은 딥페이크, 개인정보 침해 등으로부터 시민을 보호하는 장치를 마련하지만, 과도한 규제는 AI 서비스 발전을 늦출 수 있습니다. 규제와 혁신의 균형점을 찾는 것이 핵심입니다.',
     article_count: 234,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: 'AI 무법지대 안 된다... 시민 보호 위한 기본법 시급', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '딥페이크·차별·감시... AI 시대, 인권 보호 장치 있어야', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '규제만 앞세우면 AI 산업 경쟁력 추락... 혁신 먼저', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: 'AI 기본법, 글로벌 경쟁에서 뒤처지지 않을까 우려', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: 'AI 기본법 제정... 혁신과 규제 사이 줄타기', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: 'AI 무법지대 안 된다... 시민 보호 위한 기본법 시급', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=AI%20%EA%B7%9C%EC%A0%9C%20vs%20%ED%98%81%EC%8B%A0%20%EB%85%BC%EC%9F%81%20%E2%80%94%20AI%20%EA%B8%B0%EB%B3%B8%EB%B2%95%20%EC%A0%9C%EC%A0%95%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '딥페이크·차별·감시... AI 시대, 인권 보호 장치 있어야', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=AI%20%EA%B7%9C%EC%A0%9C%20vs%20%ED%98%81%EC%8B%A0%20%EB%85%BC%EC%9F%81%20%E2%80%94%20AI%20%EA%B8%B0%EB%B3%B8%EB%B2%95%20%EC%A0%9C%EC%A0%95%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '규제만 앞세우면 AI 산업 경쟁력 추락... 혁신 먼저', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=AI%20%EA%B7%9C%EC%A0%9C%20vs%20%ED%98%81%EC%8B%A0%20%EB%85%BC%EC%9F%81%20%E2%80%94%20AI%20%EA%B8%B0%EB%B3%B8%EB%B2%95%20%EC%A0%9C%EC%A0%95%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: 'AI 기본법, 글로벌 경쟁에서 뒤처지지 않을까 우려', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=AI%20%EA%B7%9C%EC%A0%9C%20vs%20%ED%98%81%EC%8B%A0%20%EB%85%BC%EC%9F%81%20%E2%80%94%20AI%20%EA%B8%B0%EB%B3%B8%EB%B2%95%20%EC%A0%9C%EC%A0%95%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: 'AI 기본법 제정... 혁신과 규제 사이 줄타기', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=AI%20%EA%B7%9C%EC%A0%9C%20vs%20%ED%98%81%EC%8B%A0%20%EB%85%BC%EC%9F%81%20%E2%80%94%20AI%20%EA%B8%B0%EB%B3%B8%EB%B2%95%20%EC%A0%9C%EC%A0%95%20%EB%85%BC%EC%9D%98'},
     ],
   },
   {
@@ -4033,11 +4090,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '기후변화로 극단적 기상 현상이 잦아지고 있습니다. 재해 보험 가입, 거주지 침수 위험도 확인, 온열질환 예방 수칙 숙지 등 개인 차원의 대비도 중요합니다.',
     article_count: 456,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '"이건 자연재해가 아니라 인재"... 기후위기 대응 예산 1.8%의 민낯', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '폭우·폭염 동시 강타... 기후재난 시대, 탄소중립 가속해야', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '역대급 폭우에 도시 마비... 노후 하수관로 방치한 대가', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'donga', outlet_name: '동아일보', headline: '40도 폭염에 시간당 120mm 폭우까지... 방재 인프라 총점검 시급', spectrum_score: 4.0, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '사망 23명·이재민 1.8만... 기후변화가 일상이 된 대한민국', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '"이건 자연재해가 아니라 인재"... 기후위기 대응 예산 1.8%의 민낯', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EA%B8%B0%ED%9B%84%EC%9C%84%EA%B8%B0%20%E2%80%94%20%EC%97%AD%EB%8C%80%EA%B8%89%20%ED%8F%AD%EC%9A%B0%C2%B7%ED%8F%AD%EC%97%BC%20%ED%94%BC%ED%95%B4'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '폭우·폭염 동시 강타... 기후재난 시대, 탄소중립 가속해야', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EA%B8%B0%ED%9B%84%EC%9C%84%EA%B8%B0%20%E2%80%94%20%EC%97%AD%EB%8C%80%EA%B8%89%20%ED%8F%AD%EC%9A%B0%C2%B7%ED%8F%AD%EC%97%BC%20%ED%94%BC%ED%95%B4'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '역대급 폭우에 도시 마비... 노후 하수관로 방치한 대가', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EA%B8%B0%ED%9B%84%EC%9C%84%EA%B8%B0%20%E2%80%94%20%EC%97%AD%EB%8C%80%EA%B8%89%20%ED%8F%AD%EC%9A%B0%C2%B7%ED%8F%AD%EC%97%BC%20%ED%94%BC%ED%95%B4'},
+      { outlet_id: 'donga', outlet_name: '동아일보', headline: '40도 폭염에 시간당 120mm 폭우까지... 방재 인프라 총점검 시급', spectrum_score: 4.0, category: 'conservative' , url: 'https://www.donga.com/news/search?query=%EA%B8%B0%ED%9B%84%EC%9C%84%EA%B8%B0%20%E2%80%94%20%EC%97%AD%EB%8C%80%EA%B8%89%20%ED%8F%AD%EC%9A%B0%C2%B7%ED%8F%AD%EC%97%BC%20%ED%94%BC%ED%95%B4'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '사망 23명·이재민 1.8만... 기후변화가 일상이 된 대한민국', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EA%B8%B0%ED%9B%84%EC%9C%84%EA%B8%B0%20%E2%80%94%20%EC%97%AD%EB%8C%80%EA%B8%89%20%ED%8F%AD%EC%9A%B0%C2%B7%ED%8F%AD%EC%97%BC%20%ED%94%BC%ED%95%B4'},
       { outlet_id: 'mbc', outlet_name: 'MBC', headline: '기후위기 현실로... 올여름 폭우·폭염 피해 역대 최악', spectrum_score: 2.0, category: 'progressive' },
     ],
   },
@@ -4066,12 +4123,12 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '검찰개혁은 권력 남용 방지와 수사 공백 사이의 균형이 핵심입니다. 공수처와 경찰의 수사 역량이 충분히 갖춰지지 않으면 부패·범죄 수사에 공백이 생길 수 있으므로 이행 과정 모니터링이 중요합니다.',
     article_count: 298,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '검찰개혁 2단계 시동... 수사권 분산으로 권력 남용 차단', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"계엄 사태의 교훈"... 검찰 권력 해체가 민주주의 완성', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '검찰 수사권 폐지하면 부패 수사는 누가... "검찰 무력화" 우려', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '검찰개혁 2단계, 수사 공백 메울 대안 없이 밀어붙이기', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '검찰 수사권 축소... 권력 견제와 수사 공백 사이 딜레마', spectrum_score: 2.8, category: 'center' },
-      { outlet_id: 'donga', outlet_name: '동아일보', headline: '대검 "수사 공백 불가피"... 검찰개혁 2단계 첨예한 대립', spectrum_score: 4.0, category: 'conservative' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '검찰개혁 2단계 시동... 수사권 분산으로 권력 남용 차단', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EA%B2%80%EC%B0%B0%EA%B0%9C%ED%98%81%202%EB%8B%A8%EA%B3%84%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '"계엄 사태의 교훈"... 검찰 권력 해체가 민주주의 완성', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EA%B2%80%EC%B0%B0%EA%B0%9C%ED%98%81%202%EB%8B%A8%EA%B3%84%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '검찰 수사권 폐지하면 부패 수사는 누가... "검찰 무력화" 우려', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EA%B2%80%EC%B0%B0%EA%B0%9C%ED%98%81%202%EB%8B%A8%EA%B3%84%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '검찰개혁 2단계, 수사 공백 메울 대안 없이 밀어붙이기', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=%EA%B2%80%EC%B0%B0%EA%B0%9C%ED%98%81%202%EB%8B%A8%EA%B3%84%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '검찰 수사권 축소... 권력 견제와 수사 공백 사이 딜레마', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EA%B2%80%EC%B0%B0%EA%B0%9C%ED%98%81%202%EB%8B%A8%EA%B3%84%20%EB%85%BC%EC%9D%98'},
+      { outlet_id: 'donga', outlet_name: '동아일보', headline: '대검 "수사 공백 불가피"... 검찰개혁 2단계 첨예한 대립', spectrum_score: 4.0, category: 'conservative' , url: 'https://www.donga.com/news/search?query=%EA%B2%80%EC%B0%B0%EA%B0%9C%ED%98%81%202%EB%8B%A8%EA%B3%84%20%EB%85%BC%EC%9D%98'},
     ],
   },
   {
@@ -4099,11 +4156,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '최저임금 1만원 돌파는 저임금 노동자의 소득 개선에 긍정적이지만, 소상공인의 인건비 부담도 현실입니다. 일자리안정자금 등 보완 정책이 제대로 작동하는지 모니터링이 필요합니다.',
     article_count: 267,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '최저시급 1만원 시대... 하지만 "시급 1만원으로 서울에서 살 수 있나"', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '38년 만에 1만원 돌파... 최저임금 인상은 "권리"다', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '최저임금 1만원 시대, 소상공인 "더 이상 못 버틴다"', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '최저임금 1만원 돌파... 고용 한파 오나', spectrum_score: 3.8, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '시급 10,030원 확정... 노동자 환영·소상공인 우려 교차', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '최저시급 1만원 시대... 하지만 "시급 1만원으로 서울에서 살 수 있나"', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%201%EB%A7%8C%EC%9B%90%20%EB%8F%8C%ED%8C%8C%20%E2%80%94%202026%EB%85%84%20%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%20%ED%99%95%EC%A0%95'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '38년 만에 1만원 돌파... 최저임금 인상은 "권리"다', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%201%EB%A7%8C%EC%9B%90%20%EB%8F%8C%ED%8C%8C%20%E2%80%94%202026%EB%85%84%20%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%20%ED%99%95%EC%A0%95'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '최저임금 1만원 시대, 소상공인 "더 이상 못 버틴다"', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%201%EB%A7%8C%EC%9B%90%20%EB%8F%8C%ED%8C%8C%20%E2%80%94%202026%EB%85%84%20%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%20%ED%99%95%EC%A0%95'},
+      { outlet_id: 'joongang', outlet_name: '중앙일보', headline: '최저임금 1만원 돌파... 고용 한파 오나', spectrum_score: 3.8, category: 'conservative' , url: 'https://www.joongang.co.kr/search?keyword=%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%201%EB%A7%8C%EC%9B%90%20%EB%8F%8C%ED%8C%8C%20%E2%80%94%202026%EB%85%84%20%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%20%ED%99%95%EC%A0%95'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '시급 10,030원 확정... 노동자 환영·소상공인 우려 교차', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%201%EB%A7%8C%EC%9B%90%20%EB%8F%8C%ED%8C%8C%20%E2%80%94%202026%EB%85%84%20%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%20%ED%99%95%EC%A0%95'},
       { outlet_id: 'kbs', outlet_name: 'KBS', headline: '최저임금 사상 첫 1만원대... 321만명에 영향', spectrum_score: 2.5, category: 'center' },
     ],
   },
@@ -4132,11 +4189,11 @@ const NEWS_EVENTS_DATA: NewsEvent[] = [
     citizen_takeaway: '지방소멸은 단순히 지방의 문제가 아니라 국가 전체의 위기입니다. 지방에서 양질의 교육·의료·일자리를 누릴 수 있는 환경이 조성되지 않으면 수도권 과밀과 지방 공동화라는 악순환은 계속됩니다.',
     article_count: 189,
     coverage: [
-      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '수도권 인구 50% 돌파... "지방은 죽어가는데 서울만 비대해진다"', spectrum_score: 1.2, category: 'progressive' },
-      { outlet_id: 'khan', outlet_name: '경향신문', headline: '113개 시·군·구 소멸 위기... 균형발전 없이 대한민국 미래 없다', spectrum_score: 1.5, category: 'progressive' },
-      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '절반이 소멸위험... 행정구역 통폐합 더 이상 미룰 수 없다', spectrum_score: 4.5, category: 'conservative' },
-      { outlet_id: 'donga', outlet_name: '동아일보', headline: '지방소멸 가속화... 규제 완화로 기업 유치해야 살길', spectrum_score: 4.0, category: 'conservative' },
-      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '지방소멸 위기 113곳... 연 1조 기금으로는 역부족', spectrum_score: 2.8, category: 'center' },
+      { outlet_id: 'hankyoreh', outlet_name: '한겨레', headline: '수도권 인구 50% 돌파... "지방은 죽어가는데 서울만 비대해진다"', spectrum_score: 1.2, category: 'progressive' , url: 'https://search.hani.co.kr/search?searchword=%EC%A7%80%EB%B0%A9%EC%86%8C%EB%A9%B8%20%EC%9C%84%EA%B8%B0%20%EC%8B%AC%ED%99%94%20%E2%80%94%20113%EA%B0%9C%20%EC%8B%9C%C2%B7%EA%B5%B0%C2%B7%EA%B5%AC%20%EC%86%8C%EB%A9%B8%EC%9C%84%ED%97%98'},
+      { outlet_id: 'khan', outlet_name: '경향신문', headline: '113개 시·군·구 소멸 위기... 균형발전 없이 대한민국 미래 없다', spectrum_score: 1.5, category: 'progressive' , url: 'https://search.khan.co.kr/search.html?stb=khan&q=%EC%A7%80%EB%B0%A9%EC%86%8C%EB%A9%B8%20%EC%9C%84%EA%B8%B0%20%EC%8B%AC%ED%99%94%20%E2%80%94%20113%EA%B0%9C%20%EC%8B%9C%C2%B7%EA%B5%B0%C2%B7%EA%B5%AC%20%EC%86%8C%EB%A9%B8%EC%9C%84%ED%97%98'},
+      { outlet_id: 'chosun', outlet_name: '조선일보', headline: '절반이 소멸위험... 행정구역 통폐합 더 이상 미룰 수 없다', spectrum_score: 4.5, category: 'conservative' , url: 'https://www.chosun.com/search/?query=%EC%A7%80%EB%B0%A9%EC%86%8C%EB%A9%B8%20%EC%9C%84%EA%B8%B0%20%EC%8B%AC%ED%99%94%20%E2%80%94%20113%EA%B0%9C%20%EC%8B%9C%C2%B7%EA%B5%B0%C2%B7%EA%B5%AC%20%EC%86%8C%EB%A9%B8%EC%9C%84%ED%97%98'},
+      { outlet_id: 'donga', outlet_name: '동아일보', headline: '지방소멸 가속화... 규제 완화로 기업 유치해야 살길', spectrum_score: 4.0, category: 'conservative' , url: 'https://www.donga.com/news/search?query=%EC%A7%80%EB%B0%A9%EC%86%8C%EB%A9%B8%20%EC%9C%84%EA%B8%B0%20%EC%8B%AC%ED%99%94%20%E2%80%94%20113%EA%B0%9C%20%EC%8B%9C%C2%B7%EA%B5%B0%C2%B7%EA%B5%AC%20%EC%86%8C%EB%A9%B8%EC%9C%84%ED%97%98'},
+      { outlet_id: 'hankookilbo', outlet_name: '한국일보', headline: '지방소멸 위기 113곳... 연 1조 기금으로는 역부족', spectrum_score: 2.8, category: 'center' , url: 'https://www.hankookilbo.com/Search?keyword=%EC%A7%80%EB%B0%A9%EC%86%8C%EB%A9%B8%20%EC%9C%84%EA%B8%B0%20%EC%8B%AC%ED%99%94%20%E2%80%94%20113%EA%B0%9C%20%EC%8B%9C%C2%B7%EA%B5%B0%C2%B7%EA%B5%AC%20%EC%86%8C%EB%A9%B8%EC%9C%84%ED%97%98'},
       { outlet_id: 'ytn', outlet_name: 'YTN', headline: '수도권 과반 시대... 비수도권 20대 10년간 32% 줄어', spectrum_score: 2.5, category: 'center' },
     ],
   },

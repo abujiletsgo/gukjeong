@@ -774,26 +774,46 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
             <>
               <PartyDistributionBar coSponsors={bill.co_sponsors} />
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-3">
-                {bill.co_sponsors.map((cs, i) => (
-                  <div
-                    key={i}
-                    className="rounded-lg border border-gray-200 p-3 text-center"
-                    style={{ borderTopWidth: '3px', borderTopColor: getPartyColor(cs.party) }}
-                  >
-                    <p className="font-semibold text-sm text-gray-900">{cs.name}</p>
-                    <p className="text-xs mt-0.5" style={{ color: getPartyColor(cs.party) }}>{cs.party}</p>
-                    {cs.district && <p className="text-xs text-gray-400 mt-0.5">{cs.district}</p>}
-                    {cs.role && (
-                      <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full ${
-                        cs.role === '대표발의'
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-gray-100 text-gray-500'
-                      }`}>
-                        {cs.role}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                {bill.co_sponsors.map((cs, i) => {
+                  const card = (
+                    <div
+                      key={i}
+                      className={`rounded-lg border border-gray-200 p-3 text-center${
+                        cs.legislator_id ? ' hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group' : ''
+                      }`}
+                      style={{ borderTopWidth: '3px', borderTopColor: getPartyColor(cs.party) }}
+                    >
+                      <p className="font-semibold text-sm text-gray-900">{cs.name}</p>
+                      <p className="text-xs mt-0.5" style={{ color: getPartyColor(cs.party) }}>{cs.party}</p>
+                      {cs.district && <p className="text-xs text-gray-400 mt-0.5">{cs.district}</p>}
+                      {cs.role && (
+                        <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full ${
+                          cs.role === '대표발의'
+                            ? 'bg-amber-100 text-amber-700'
+                            : 'bg-gray-100 text-gray-500'
+                        }`}>
+                          {cs.role}
+                        </span>
+                      )}
+                      {cs.legislator_id && (
+                        <p className="text-xs text-blue-500 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                          <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                          </svg>
+                          활동 현황 보기 →
+                        </p>
+                      )}
+                    </div>
+                  );
+                  return cs.legislator_id ? (
+                    <Link key={i} href={`/legislators/${cs.legislator_id}`}>
+                      {card}
+                    </Link>
+                  ) : (
+                    card
+                  );
+                })}
               </div>
             </>
           ) : (
