@@ -103,3 +103,12 @@
   apps/web/app/about/page.tsx | 17 ++++-------------
   apps/web/app/layout.tsx     |  4 ++--
   3 files changed, 21 insertions(+), 15 deletions(-)
+
+## 2026-03-26 (16:02 UTC) · @Tom Kwon
+**Commit:** feat: Deep explorable bills — perspectives, controversy analysis, co-sponsors, timelines (dc7ef48) by Tom Kwon
+**Changed:**
+  apps/web/app/bills/[id]/BillDetailClient.tsx |  874 ++++++++++++++++-----
+  apps/web/lib/data.ts                         | 1084 +++++++++++++++++++++++++-
+  apps/web/lib/types.ts                        |   51 ++
+  apps/web/tsconfig.tsbuildinfo                |    2 +-
+  4 files changed, 1820 insertions(+), 191 deletions(-)

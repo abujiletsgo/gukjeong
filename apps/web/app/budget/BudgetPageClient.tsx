@@ -42,6 +42,7 @@ export default function BudgetPageClient({
 }: BudgetPageClientProps) {
   const [selectedYear, setSelectedYear] = useState(2026);
   const [selectedSector, setSelectedSector] = useState('보건·복지·고용');
+  const [selectedSubSector, setSelectedSubSector] = useState<string | null>(null);
   const availableYears = [2024, 2025, 2026];
 
   const currentSectors = sectorDataByYear[selectedYear] || sectorDataByYear[2026];
@@ -236,7 +237,7 @@ export default function BudgetPageClient({
             return (
               <button
                 key={sector}
-                onClick={() => setSelectedSector(sector)}
+                onClick={() => { setSelectedSector(sector); setSelectedSubSector(null); }}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
                   isActive
                     ? 'text-white shadow-sm'
@@ -266,54 +267,128 @@ export default function BudgetPageClient({
 
         {/* 하위 분류 바 차트 */}
         {subSectorData.length > 0 ? (
-          <div className="space-y-2.5">
-            {subSectorData.map((item, idx) => {
-              const barWidth = Math.max(2, (item.amount / maxSubAmount) * 100);
-              const barColor = getSectorColor(selectedSector, idx);
-              return (
-                <div key={item.sub_sector} className="group">
-                  <div className="flex items-center gap-3">
-                    {/* 항목명 */}
-                    <span className="text-sm text-gray-700 w-36 sm:w-44 shrink-0 truncate" title={item.sub_sector}>
-                      {item.sub_sector}
-                    </span>
-
-                    {/* 바 */}
-                    <div className="flex-1 h-7 bg-gray-100 rounded relative overflow-hidden">
-                      <div
-                        className="h-full rounded transition-all duration-500 ease-out"
-                        style={{
-                          width: `${barWidth}%`,
-                          backgroundColor: barColor,
-                          opacity: 0.85,
-                        }}
-                      />
-                      {/* 바 내부 퍼센트 (바가 충분히 넓을 때) */}
-                      {barWidth > 25 && (
-                        <span className="absolute left-2 top-0 h-full flex items-center text-[11px] font-medium text-white/90">
-                          {item.percentage.toFixed(1)}%
+          <div>
+            <p className="text-xs text-gray-400 mb-3 flex items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              각 항목을 클릭하면 상세 설명을 볼 수 있습니다
+            </p>
+            <div className="space-y-1">
+              {subSectorData.map((item, idx) => {
+                const barWidth = Math.max(2, (item.amount / maxSubAmount) * 100);
+                const barColor = getSectorColor(selectedSector, idx);
+                const isExpanded = selectedSubSector === item.sub_sector;
+                const isEtc = item.sub_sector.startsWith('기타');
+                const hasDescription = !!(item.description || isEtc);
+                const totalBudget = 728;
+                const percentOfTotal = ((item.amount / totalBudget) * 100);
+                return (
+                  <div key={item.sub_sector}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSubSector(isExpanded ? null : item.sub_sector)}
+                      className={`w-full text-left rounded-lg px-2 py-1.5 transition-colors ${
+                        isExpanded ? 'bg-gray-50' : 'hover:bg-gray-50/60'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {/* 항목명 */}
+                        <span className="text-sm text-gray-700 w-36 sm:w-44 shrink-0 truncate" title={item.sub_sector}>
+                          {item.sub_sector}
                         </span>
-                      )}
-                    </div>
 
-                    {/* 금액 */}
-                    <div className="text-right shrink-0 w-20">
-                      <span className="text-sm font-semibold text-gray-800">
-                        {item.amount.toFixed(1)}
-                      </span>
-                      <span className="text-xs text-gray-400 ml-0.5">조</span>
-                    </div>
+                        {/* 바 */}
+                        <div className="flex-1 h-7 bg-gray-100 rounded relative overflow-hidden">
+                          <div
+                            className="h-full rounded transition-all duration-500 ease-out"
+                            style={{
+                              width: `${barWidth}%`,
+                              backgroundColor: barColor,
+                              opacity: 0.85,
+                            }}
+                          />
+                          {/* 바 내부 퍼센트 (바가 충분히 넓을 때) */}
+                          {barWidth > 25 && (
+                            <span className="absolute left-2 top-0 h-full flex items-center text-[11px] font-medium text-white/90">
+                              {item.percentage.toFixed(1)}%
+                            </span>
+                          )}
+                        </div>
 
-                    {/* 비중 (바 바깥, 좁은 바용) */}
-                    {barWidth <= 25 && (
-                      <span className="text-[11px] text-gray-400 w-12 text-right shrink-0">
-                        {item.percentage.toFixed(1)}%
-                      </span>
+                        {/* 금액 */}
+                        <div className="text-right shrink-0 w-20">
+                          <span className="text-sm font-semibold text-gray-800">
+                            {item.amount.toFixed(1)}
+                          </span>
+                          <span className="text-xs text-gray-400 ml-0.5">조</span>
+                        </div>
+
+                        {/* 비중 (바 바깥, 좁은 바용) */}
+                        {barWidth <= 25 && (
+                          <span className="text-[11px] text-gray-400 w-12 text-right shrink-0">
+                            {item.percentage.toFixed(1)}%
+                          </span>
+                        )}
+
+                        {/* 셰브론 인디케이터 */}
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className={`shrink-0 text-gray-300 transition-transform duration-200 ${
+                            isExpanded ? 'rotate-180' : ''
+                          }`}
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </div>
+                    </button>
+
+                    {/* 확장 패널 */}
+                    {isExpanded && (
+                      <div className="mx-2 mt-1 mb-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                        <div className="mb-2">
+                          <span className="text-lg font-bold text-gray-900">
+                            {item.amount.toFixed(1)}조원
+                          </span>
+                          <span className="text-sm text-gray-500 ml-1.5">
+                            (전체 예산의 {percentOfTotal.toFixed(1)}%)
+                          </span>
+                        </div>
+
+                        {item.description && (
+                          <p className="text-sm text-gray-600 leading-relaxed mb-2">
+                            {item.description}
+                          </p>
+                        )}
+
+                        {isEtc && (
+                          <p className="text-xs text-gray-400 italic mb-2">
+                            여러 소규모 사업을 합산한 항목입니다
+                          </p>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSubSector(null);
+                          }}
+                          className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 mt-1"
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18 15l-6-6-6 6" />
+                          </svg>
+                          접기
+                        </button>
+                      </div>
                     )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         ) : (
           <div className="text-center py-8 text-gray-400 text-sm">

@@ -450,6 +450,7 @@ export interface SubSectorData {
   sub_sector: string;
   amount: number;  // 조원
   percentage: number; // of parent sector
+  description?: string;  // 이 항목이 뭔지, 왜 이 금액인지 설명
 }
 
 export interface ApiResponse<T> {
