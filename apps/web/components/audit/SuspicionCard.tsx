@@ -34,7 +34,7 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <PatternBadge pattern={patternType} score={score} />
-            <span className="text-xs text-gray-400">{flag.severity}</span>
+            <span className="text-xs text-gray-400">{flag.severity === 'HIGH' ? '높음' : flag.severity === 'MEDIUM' ? '보통' : '낮음'}</span>
           </div>
           <div className="font-semibold text-sm text-gray-800 group-hover:text-accent transition-colors mt-1">
             {patternLabels[patternType] || patternType}

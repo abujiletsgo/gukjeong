@@ -163,7 +163,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                   </span>
                 )}
                 <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: `${severityColor}15`, color: severityColor }}>
-                  {flag.severity}
+                  {flag.severity === 'HIGH' ? '높음' : flag.severity === 'MEDIUM' ? '보통' : '낮음'}
                 </span>
                 <span className="text-xs text-gray-400">
                   {targetType === 'department' ? '정부 부처' : targetType}
@@ -788,7 +788,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
           </div>
           <div className="flex justify-between text-sm py-2 border-b border-gray-50">
             <span className="text-gray-500">심각도</span>
-            <span className="font-medium" style={{ color: severityColor }}>{flag.severity}</span>
+            <span className="font-medium" style={{ color: severityColor }}>{flag.severity === 'HIGH' ? '높음' : flag.severity === 'MEDIUM' ? '보통' : '낮음'}</span>
           </div>
           <div className="flex justify-between text-sm py-2 border-b border-gray-50">
             <span className="text-gray-500">상태</span>
