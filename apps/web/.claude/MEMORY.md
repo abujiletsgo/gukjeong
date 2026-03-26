@@ -95,3 +95,11 @@
   apps/web/lib/db/index.ts              |    6 +
   apps/web/lib/db/schema.ts             |  156 +
   ... and 12 more files
+
+## 2026-03-26 (10:19 UTC) · @Tom Kwon
+**Commit:** chore: Remove GitHub/open-source references — private project (fcc5548) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md  | 15 +++++++++++++++
+  apps/web/app/about/page.tsx | 17 ++++-------------
+  apps/web/app/layout.tsx     |  4 ++--
+  3 files changed, 21 insertions(+), 15 deletions(-)
