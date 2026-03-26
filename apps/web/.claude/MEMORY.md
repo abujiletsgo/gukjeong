@@ -80,3 +80,18 @@
   apps/web/lib/types.ts                         |  32 +
   apps/web/tsconfig.tsbuildinfo                 |   2 +-
   6 files changed, 1219 insertions(+), 114 deletions(-)
+
+## 2026-03-26 (10:12 UTC) · @Tom Kwon
+**Commit:** feat: Data provenance + demo banner + full about page with sources & methodology (01270b6) by Tom Kwon
+**Changed:**
+  apps/web/.claude/FACTS.md             |   15 +
+  apps/web/.claude/MEMORY.md            |   11 +
+  apps/web/.gitignore                   |    3 +
+  apps/web/app/about/page.tsx           |  255 +-
+  apps/web/app/api/cron/scrape/route.ts |   83 +
+  apps/web/app/api/sync/status/route.ts |   92 +
+  apps/web/app/layout.tsx               |    9 +
+  apps/web/drizzle.config.ts            |   10 +
+  apps/web/lib/db/index.ts              |    6 +
+  apps/web/lib/db/schema.ts             |  156 +
+  ... and 12 more files

@@ -100,7 +100,7 @@ const jsonLdGovOrg = {
   },
   inLanguage: 'ko',
   sameAs: [
-    'https://github.com/gukjeong',
+    'https://gukjeong.kr',
   ],
 };
 
@@ -223,7 +223,7 @@ export default function RootLayout({
             </div>
             <div className="mt-8 pt-8 border-t border-gray-200 text-center text-xs text-gray-400">
               <p>미디어 분류는 학술 연구 기반 참고 분류이며, 감사 분석은 AI 기반 의심 패턴 탐지 결과입니다.</p>
-              <p className="mt-1">&copy; 2026 국정투명. 오픈소스 프로젝트.</p>
+              <p className="mt-1">&copy; 2026 국정투명. All rights reserved.</p>
             </div>
           </div>
         </footer>
