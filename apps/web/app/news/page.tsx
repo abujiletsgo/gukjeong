@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { getNewsEvents, getMediaOutlets } from '@/lib/data';
+import NewsPageClient from './NewsPageClient';
 
 export const metadata: Metadata = {
   title: '뉴스 프레임 비교',
@@ -11,16 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default function NewsPage() {
-  return (
-    <div className="container-page py-8">
-      <h1 className="section-title">뉴스 프레임 비교</h1>
-      <p className="text-gray-600 mb-2">같은 사건에 대한 서로 다른 미디어의 보도 프레임을 비교합니다.</p>
-      <p className="text-xs text-gray-400 mb-6">
-        * 미디어 분류는 학술 연구 기반 참고 분류입니다.
-      </p>
-      <div className="card">
-        <p className="text-gray-400 text-center py-16">FrameComparison 컴포넌트 준비 중</p>
-      </div>
-    </div>
-  );
+  const events = getNewsEvents();
+  const outlets = getMediaOutlets();
+  return <NewsPageClient events={events} outlets={outlets} />;
 }

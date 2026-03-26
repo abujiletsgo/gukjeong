@@ -2,6 +2,7 @@
 // 대통령 비교 스트립 — 전 대통령 수평 비교 시각화
 import { useState, useMemo } from 'react';
 import type { President } from '@/lib/types';
+import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 import { getPresidentColor, getPresidentBgColor, getTermYears } from '@/lib/utils';
 
 interface PresidentCompareStripProps {
@@ -97,13 +98,9 @@ export default function PresidentCompareStrip({
                 key={president.id}
                 className="flex flex-col items-center w-20 sm:w-24 flex-shrink-0"
               >
-                {/* Avatar placeholder */}
-                <div
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-white font-bold text-sm mb-2 shadow-sm"
-                  style={{ backgroundColor: color }}
-                >
-                  {president.name.slice(-2)}
-                </div>
+                {/* Portrait */}
+                <PresidentPortrait id={president.id} name={president.name} party={president.party} size={48} className="mb-2 shadow-sm sm:hidden" />
+                <PresidentPortrait id={president.id} name={president.name} party={president.party} size={56} className="mb-2 shadow-sm hidden sm:block" />
 
                 {/* Name */}
                 <p className="text-xs font-bold text-gray-900 text-center leading-tight">

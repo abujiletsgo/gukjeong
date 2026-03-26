@@ -68,10 +68,17 @@ export default function BudgetPageClient({
     <div className="container-page py-6 sm:py-8">
       {/* 페이지 헤더 */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">예산 시각화</h1>
-        <p className="text-sm text-gray-500 mt-2">
-          대한민국 정부 예산의 세입, 세출, 국가채무를 한눈에 확인하세요.
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h0M18 12h0"/></svg>
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">예산 시각화</h1>
+            <p className="text-sm text-gray-500">
+              대한민국 정부 예산의 세입, 세출, 국가채무를 한눈에 확인하세요.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* KPI 히어로 */}
@@ -82,11 +89,13 @@ export default function BudgetPageClient({
           change={selectedYear >= 2026 ? '전년 대비 +7.5%' : undefined}
           trend="up"
           source="기획재정부"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>}
         />
         <KPI
           label="국가채무 (2024)"
           value={`${nationalDebt.toFixed(0)}조`}
           source="기획재정부"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5"><path d="M2 20h20M6 20V12l4-4 4 4 4-8v16"/></svg>}
         />
         <KPI
           label="세수 (2024)"
@@ -94,6 +103,7 @@ export default function BudgetPageClient({
           change="예산 대비 △30.8조 부족"
           trend="down"
           source="기획재정부"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>}
         />
         <KPI
           label="GDP 대비 채무"
@@ -101,6 +111,7 @@ export default function BudgetPageClient({
           change="OECD 평균 112.3%"
           trend="neutral"
           source="기획재정부"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>}
         />
       </div>
 
@@ -128,7 +139,10 @@ export default function BudgetPageClient({
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         {/* TreeMap */}
         <div className="card">
-          <h2 className="font-bold text-lg mb-1">{selectedYear}년 분야별 예산</h2>
+          <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="4" rx="1"/><rect x="14" y="10" width="7" height="4" rx="1"/><rect x="3" y="13" width="7" height="8" rx="1"/><rect x="14" y="17" width="7" height="4" rx="1"/></svg>
+            {selectedYear}년 분야별 예산
+          </h2>
           <p className="text-xs text-gray-400 mb-4">
             크기 = 예산 규모 · 출처: 기획재정부
           </p>
@@ -137,7 +151,10 @@ export default function BudgetPageClient({
 
         {/* 세출 추이 */}
         <div className="card">
-          <h2 className="font-bold text-lg mb-1">세출 추이 (1998-2026)</h2>
+          <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5"><path d="M2 20h20M6 20V12l4-4 4 4 4-8v16"/></svg>
+            세출 추이 (1998-2026)
+          </h2>
           <p className="text-xs text-gray-400 mb-4">본예산 기준, 조원 단위</p>
           <StackedArea
             data={spendingTrendData}
@@ -149,7 +166,10 @@ export default function BudgetPageClient({
 
       {/* Sankey */}
       <div className="card mb-6">
-        <h2 className="font-bold text-lg mb-1">세입 → 세출 흐름도</h2>
+        <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>
+          세입 → 세출 흐름도
+        </h2>
         <p className="text-xs text-gray-400 mb-4">
           주요 수입원에서 지출 분야로의 자금 흐름 (2026년 예산안 기준) · 출처: 기획재정부
         </p>
@@ -159,14 +179,20 @@ export default function BudgetPageClient({
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         {/* 국가채무 */}
         <div className="card">
-          <h2 className="font-bold text-lg mb-1">국가채무 궤적</h2>
+          <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5"><path d="M2 20h20M6 20V12l4-4 4 4 4-8v16"/></svg>
+            국가채무 궤적
+          </h2>
           <p className="text-xs text-gray-400 mb-4">채무 규모 및 GDP 대비 비율</p>
           <DebtChart data={debtChartData} height={350} />
         </div>
 
         {/* 국제 비교 */}
         <div className="card">
-          <h2 className="font-bold text-lg mb-1">GDP 대비 국가채무 국제 비교</h2>
+          <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            GDP 대비 국가채무 국제 비교
+          </h2>
           <p className="text-xs text-gray-400 mb-4">D1 기준 · 출처: IMF, OECD</p>
           <div className="space-y-3 mt-6">
             {[
@@ -199,7 +225,10 @@ export default function BudgetPageClient({
 
       {/* 비교 테이블 */}
       <div className="card">
-        <h2 className="font-bold text-lg mb-4">{selectedYear}년 분야별 예산 상세</h2>
+        <h2 className="flex items-center gap-2 font-bold text-lg mb-4">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          {selectedYear}년 분야별 예산 상세
+        </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

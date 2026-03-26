@@ -2,6 +2,7 @@
 // 대통령 타임라인 — 인터랙티브 가로 스크롤 카드 타임라인
 import type { President, FiscalYearly } from '@/lib/types';
 import Sparkline from '@/components/charts/Sparkline';
+import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 import { getPresidentColor, getPresidentBgColor, formatPercent } from '@/lib/utils';
 
 interface PresidentTimelineProps {
@@ -38,14 +39,9 @@ export default function PresidentTimeline({ presidents, fiscalData }: PresidentT
                 <div className="h-1.5" style={{ backgroundColor: partyColor }} />
 
                 <div className="p-4">
-                  {/* 이니셜 아바타 + 이름 */}
+                  {/* 초상화 + 이름 */}
                   <div className="flex items-center gap-3 mb-3">
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0"
-                      style={{ backgroundColor: bgColor, color: partyColor }}
-                    >
-                      {initials}
-                    </div>
+                    <PresidentPortrait id={p.id} name={p.name} party={p.party} size={48} />
                     <div>
                       <div className="font-bold text-base text-gray-900 group-hover:text-accent transition-colors">
                         {p.name}

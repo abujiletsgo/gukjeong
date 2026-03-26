@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
-import { getPresidents, getFiscalData } from '@/lib/data';
+import { getPresidents, getFiscalData, getPresidentComparisonMetrics } from '@/lib/data';
 import PresidentTimeline from '@/components/timeline/PresidentTimeline';
+import PresidentPortrait from '@/components/presidents/PresidentPortrait';
+import PresidentCompareClient from './PresidentCompareClient';
 
 export const metadata: Metadata = {
   title: '역대 대통령 비교',
@@ -15,6 +17,7 @@ export const metadata: Metadata = {
 export default function PresidentsPage() {
   const presidents = getPresidents();
   const fiscalData = getFiscalData();
+  const comparisonMetrics = getPresidentComparisonMetrics();
 
   // 대통령별 통계 계산
   const presidentStats = presidents.map(p => {
@@ -43,20 +46,28 @@ export default function PresidentsPage() {
     <div className="container-page py-6 sm:py-8">
       {/* 페이지 헤더 */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-          역대 대통령 비교
-        </h1>
-        <p className="text-sm sm:text-base text-gray-500 mt-2">
-          김영삼 대통령(1993)부터 현재까지, 동일한 경제 지표로 비교합니다.
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5"><path d="M3 21V7l9-5 9 5v14"/><path d="M9 21V12h6v9"/><circle cx="12" cy="4" r="1" fill="#2563eb"/></svg>
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              역대 대통령 비교
+            </h1>
+            <p className="text-sm sm:text-base text-gray-500">
+              김영삼 대통령(1993)부터 현재까지, 동일한 경제 지표로 비교합니다.
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-gray-400 mt-2 ml-13">
           출처: 기획재정부, 한국은행 ECOS · 모든 금액은 조원 단위 (본예산 기준)
         </p>
       </div>
 
       {/* 타임라인 */}
       <section className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           대통령 타임라인
         </h2>
         <PresidentTimeline presidents={presidents} fiscalData={fiscalData} />
@@ -64,7 +75,8 @@ export default function PresidentsPage() {
 
       {/* 비교 테이블 */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.5"><path d="M2 20h20M6 20V4l4 4 4-4 4 4v12"/></svg>
           경제 성과 비교
         </h2>
         <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
@@ -83,7 +95,8 @@ export default function PresidentsPage() {
               {presidentStats.map((p, i) => (
                 <tr key={p.id} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                   <td className="py-3 px-2">
-                    <a href={`/presidents/${p.id}`} className="font-medium text-gray-900 hover:text-accent transition-colors">
+                    <a href={`/presidents/${p.id}`} className="flex items-center gap-2 font-medium text-gray-900 hover:text-accent transition-colors">
+                      <PresidentPortrait id={p.id} name={p.name} party={p.party} size={32} />
                       {p.name}
                     </a>
                   </td>
@@ -119,6 +132,15 @@ export default function PresidentsPage() {
         <p className="text-[10px] text-gray-300 mt-3">
           * 지출/채무 증가율은 임기 시작연도 대비 마지막연도 기준 · 동일한 데이터 기준으로 모든 대통령에 적용
         </p>
+      </section>
+
+      {/* 심층 비교 */}
+      <section className="mt-10">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          심층 비교
+        </h2>
+        <PresidentCompareClient metrics={comparisonMetrics} fiscalData={fiscalData} />
       </section>
     </div>
   );

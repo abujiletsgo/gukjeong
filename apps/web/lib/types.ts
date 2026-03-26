@@ -55,11 +55,14 @@ export interface Bill {
   proposer_name?: string;
   committee?: string;
   status?: string;
-  vote_result?: Record<string, unknown>;
+  status_detail?: string;
+  vote_result?: BillVoteResult;
   ai_summary?: string;
   ai_category?: string;
   ai_controversy_score?: number;
   ai_citizen_impact?: string;
+  co_sponsors_count?: number;
+  related_bills?: string[];
 }
 
 export interface Legislator {
@@ -145,6 +148,24 @@ export interface NewsEvent {
   conservative_frame?: Record<string, string>;
   citizen_takeaway?: string;
   article_count?: number;
+  coverage?: NewsArticle[];
+}
+
+export interface NewsArticle {
+  outlet_id: string;
+  outlet_name: string;
+  headline: string;
+  spectrum_score: number;
+  category: string;
+  url?: string;
+}
+
+export interface BillVoteResult {
+  total: number;
+  yes: number;
+  no: number;
+  abstain: number;
+  absent: number;
 }
 
 export interface MediaOutlet {
@@ -239,6 +260,31 @@ export interface CampaignPledge {
   outcome_summary?: string;
   budget_impact?: string;
   related_bills?: string[];
+}
+
+export interface PresidentComparisonMetrics {
+  id: string;
+  name: string;
+  era: string;
+  party?: string;
+  term_start: string;
+  term_end?: string | null;
+  gdp_growth_avg?: number;
+  // Fiscal
+  avg_spending: number;          // avg annual spending (조원)
+  spending_growth_pct: number;   // % increase start to end
+  debt_growth_pct: number;       // % increase start to end
+  avg_debt_to_gdp: number;      // average debt/GDP ratio
+  // Social indicators (verified data)
+  unemployment_avg: number;      // 평균 실업률 %
+  housing_price_change: number;  // 서울 주택가격 변동률 %
+  birth_rate_end: number;        // 임기 마지막 해 합계출산율
+  approval_avg: number;          // 평균 지지율 %
+  // Governance
+  policies_count: number;        // 주요 정책 수
+  key_events_count: number;      // 주요 사건 수
+  pledge_fulfillment_avg: number; // 공약 평균 이행률 %
+  corruption_index_end: number;  // 임기말 CPI (투명성 지수, 100점 만점)
 }
 
 export interface ApiResponse<T> {

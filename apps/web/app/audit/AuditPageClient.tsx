@@ -55,10 +55,17 @@ export default function AuditPageClient({
     <div className="container-page py-6 sm:py-8">
       {/* 페이지 헤더 */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI 감사관</h1>
-        <p className="text-sm text-gray-500 mt-2">
-          나라장터 공개 계약 데이터에서 AI가 의심 패턴을 자동으로 탐지합니다.
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI 감사관</h1>
+            <p className="text-sm text-gray-500">
+              나라장터 공개 계약 데이터에서 AI가 의심 패턴을 자동으로 탐지합니다.
+            </p>
+          </div>
+        </div>
         <div className="mt-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800">
           이 분석은 AI 기반 자동 탐지 결과이며, <strong>의심 패턴</strong>일 뿐 비리 확정이 아닙니다.
           모든 부처에 동일한 기준이 적용됩니다.
@@ -71,21 +78,25 @@ export default function AuditPageClient({
           label="탐지된 플래그"
           value={`${kpis.totalFlags}건`}
           source="AI 자동 탐지"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>}
         />
         <KPI
           label="높은 심각도"
           value={`${kpis.highSeverity}건`}
           source="HIGH 등급"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>}
         />
         <KPI
           label="모니터링 부처"
           value={`${kpis.departmentsMonitored}개`}
           source="중앙행정기관"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5"><path d="M3 21V7l9-5 9 5v14"/><path d="M9 21V12h6v9"/></svg>}
         />
         <KPI
           label="평균 의심 점수"
           value={`${kpis.avgScore}`}
           source="0-100 스케일"
+          icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>}
         />
       </div>
 
@@ -221,16 +232,19 @@ export default function AuditPageClient({
         <h2 className="font-bold text-lg mb-4">감사 패턴 설명</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
           {[
-            { pattern: 'yearend_spike', desc: 'Q4 지출이 연간의 40% 초과' },
-            { pattern: 'vendor_concentration', desc: '동일 업체 계약 30% 이상 또는 3년 연속' },
-            { pattern: 'contract_splitting', desc: '수의계약 한도(2000만원) 직하 계약 3건 이상' },
-            { pattern: 'inflated_pricing', desc: '타 부처 대비 30% 이상 고가 계약' },
-            { pattern: 'zombie_project', desc: '3년 이상 집행률 50% 미만 사업' },
-            { pattern: 'bid_rigging', desc: '동일 입찰 조합이 5회 이상 반복' },
+            { pattern: 'yearend_spike', desc: 'Q4 지출이 연간의 40% 초과', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2"><path d="M2 20h20M6 20V12l4-4 4 4 4-8v16"/></svg> },
+            { pattern: 'vendor_concentration', desc: '동일 업체 계약 30% 이상 또는 3년 연속', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg> },
+            { pattern: 'contract_splitting', desc: '수의계약 한도(2000만원) 직하 계약 3건 이상', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M14 14l7 7M3 8V3h5M10 10L3 3"/></svg> },
+            { pattern: 'inflated_pricing', desc: '타 부처 대비 30% 이상 고가 계약', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ec4899" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
+            { pattern: 'zombie_project', desc: '3년 이상 집행률 50% 미만 사업', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> },
+            { pattern: 'bid_rigging', desc: '동일 입찰 조합이 5회 이상 반복', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> },
           ].map(item => (
             <div key={item.pattern} className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
-              <PatternBadge pattern={item.pattern} size="sm" />
-              <span className="text-xs text-gray-600 flex-1">{item.desc}</span>
+              <div className="shrink-0 mt-0.5">{item.icon}</div>
+              <div className="flex-1">
+                <PatternBadge pattern={item.pattern} size="sm" />
+                <span className="text-xs text-gray-600 block mt-1">{item.desc}</span>
+              </div>
             </div>
           ))}
         </div>

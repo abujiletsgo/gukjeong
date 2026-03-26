@@ -18,7 +18,7 @@ export default function Sparkline({
   showArea = false,
   label,
 }: SparklineProps) {
-  if (!data || data.length === 0) {
+  if (!data || data.length < 2) {
     return <div style={{ width, height }} className="bg-gray-100 rounded animate-pulse" />;
   }
 

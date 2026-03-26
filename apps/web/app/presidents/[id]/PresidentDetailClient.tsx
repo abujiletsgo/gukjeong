@@ -16,6 +16,7 @@ import MetricComparisonRow from '@/components/presidents/MetricComparisonRow';
 import BeforeAfterCard from '@/components/presidents/BeforeAfterCard';
 import BudgetWaterfall from '@/components/presidents/BudgetWaterfall';
 import BudgetBarChart, { ExecutionRateRanking } from '@/components/presidents/BudgetBarChart';
+import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 import { getPresidentColor, getPresidentBgColor, formatTrillions, getTermYears } from '@/lib/utils';
 
 // ============================================================
@@ -177,12 +178,8 @@ export default function PresidentDetailClient({
         <div className="h-2" style={{ backgroundColor: partyColor }} />
         <div className="p-4 sm:p-6">
           <div className="flex items-start gap-4 sm:gap-6">
-            <div
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold flex-shrink-0"
-              style={{ backgroundColor: bgColor, color: partyColor }}
-            >
-              {president.name.charAt(0)}
-            </div>
+            <PresidentPortrait id={president.id} name={president.name} party={president.party} size={80} className="hidden sm:block" />
+            <PresidentPortrait id={president.id} name={president.name} party={president.party} size={64} className="sm:hidden" />
 
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900">

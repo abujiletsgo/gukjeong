@@ -1,31 +1,29 @@
 import type { Metadata } from 'next';
+import { getBillById } from '@/lib/data';
+import BillDetailClient from './BillDetailClient';
+import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const bill = getBillById(id);
   return {
-    title: `법안 상세 — ${params.id}`,
-    description: `법안 ${params.id}의 AI 요약, 시민 영향 분석 및 투표 결과를 확인하세요.`,
-    openGraph: {
-      title: `법안 상세 | 국정투명`,
-      description: `국회 발의 법안의 AI 요약과 시민 영향 분석`,
-    },
+    title: bill ? bill.title : '법안 상세',
+    description: bill?.ai_summary || '법안 상세 정보',
   };
 }
 
-export default function BillDetailPage({ params }: { params: { id: string } }) {
-  return (
-    <div className="container-page py-8">
-      <h1 className="section-title">법안 상세</h1>
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="card md:col-span-2">
-          <h2 className="font-bold text-lg mb-4">AI 요약</h2>
-          <p className="text-gray-400">법안 요약 및 시민 영향 분석 준비 중</p>
-          <div className="ai-badge mt-4">AI 분석</div>
-        </div>
-        <div className="card">
-          <h2 className="font-bold text-lg mb-4">투표 결과</h2>
-          <p className="text-gray-400">투표 현황 준비 중</p>
-        </div>
+export default async function BillDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const bill = getBillById(id);
+
+  if (!bill) {
+    return (
+      <div className="container-page py-8">
+        <Link href="/bills" className="text-accent hover:underline">&larr; 법안 목록</Link>
+        <p className="mt-8 text-gray-400">법안을 찾을 수 없습니다.</p>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <BillDetailClient bill={bill} />;
 }
