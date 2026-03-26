@@ -100,9 +100,23 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
       </a>
 
       {/* ── 경고 배너 ── */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-sm text-yellow-800">
-        <strong className="font-semibold">AI 자동 탐지 결과</strong> &mdash; 이 분석은 AI 기반 자동 탐지 결과이며, <strong>의심 패턴</strong>일 뿐 비리 확정이 아닙니다.
-        모든 부처에 동일한 기준이 적용됩니다.
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div className="flex items-start gap-3">
+          <svg className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <path d="M12 9v4M12 17h.01"/>
+          </svg>
+          <div>
+            <p className="text-sm text-yellow-800 font-semibold mb-1">이 분석에 대해</p>
+            <ul className="text-xs text-yellow-700 space-y-1">
+              <li>• 이 페이지는 AI가 공개 데이터에서 통계적 이상 패턴을 탐지한 결과입니다.</li>
+              <li>• <strong>의심 패턴 ≠ 비리 확정</strong>. 합리적 설명이 있을 수 있습니다.</li>
+              <li>• 아래 &quot;비리가 아닐 수 있는 이유&quot;를 반드시 함께 읽어주세요.</li>
+              <li>• 모든 부처에 동일한 기준이 적용됩니다.</li>
+              <li>• 원본 데이터는 정부 공식 사이트에서 직접 확인할 수 있습니다.</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       {/* ═══ 1. Header ═══ */}
@@ -342,6 +356,93 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
         </div>
       </div>
 
+      {/* ═══ 원시 데이터 ═══ */}
+      <div className="card mt-6">
+        <h2 className="font-bold text-lg mb-2">원시 데이터</h2>
+        <p className="text-xs text-gray-500 mb-4">
+          이 분석의 근거가 된 원본 데이터입니다. 아래 정부 사이트에서 직접 확인할 수 있습니다.
+        </p>
+
+        {/* Detail data as key-value table */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-4 font-mono text-xs">
+          <div className="text-gray-400 mb-2">// 탐지 데이터</div>
+          {Object.entries(detail).map(([key, value]) => (
+            <div key={key} className="flex gap-2 py-1">
+              <span className="text-gray-500 w-32 shrink-0">{key}:</span>
+              <span className="text-gray-800">
+                {typeof value === 'number' ? value.toLocaleString('ko-KR') :
+                 typeof value === 'object' ? JSON.stringify(value) :
+                 String(value)}
+              </span>
+            </div>
+          ))}
+          {Object.keys(detail).length === 0 && (
+            <div className="text-gray-400 py-1">데이터 없음</div>
+          )}
+        </div>
+
+        {/* Evidence as key-value */}
+        {evidence && typeof evidence === 'object' && Object.keys(evidence).length > 0 && (
+          <div className="bg-red-50 rounded-lg p-4 mb-4 font-mono text-xs">
+            <div className="text-red-400 mb-2">// 기준 초과 증거</div>
+            {Object.entries(evidence).map(([key, value]) => (
+              <div key={key} className="flex gap-2 py-1">
+                <span className="text-red-500 w-32 shrink-0">{key}:</span>
+                <span className="text-red-800">
+                  {typeof value === 'number' ? value.toLocaleString('ko-KR') :
+                   typeof value === 'object' ? JSON.stringify(value) :
+                   String(value)}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Direct verification links */}
+        <div className="bg-blue-50 rounded-lg p-4">
+          <h3 className="font-semibold text-sm text-blue-800 mb-2">직접 확인하기</h3>
+          <p className="text-xs text-blue-700 mb-3">
+            아래 정부 공식 사이트에서 원본 데이터를 직접 조회할 수 있습니다.
+            검색어 힌트를 참고하여 관련 계약을 찾아보세요.
+          </p>
+          <div className="space-y-2">
+            <div className="flex items-start gap-2">
+              <span className="text-blue-600 shrink-0">1.</span>
+              <div>
+                <a href="https://www.g2b.go.kr:8081/ep/tbid/tbidList.do" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">
+                  나라장터 계약 검색 ↗
+                </a>
+                <p className="text-[11px] text-blue-600 mt-0.5">
+                  검색어: &quot;{targetId}&quot; 입력 → 계약 현황 탭에서 해당 부처 계약 확인
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-blue-600 shrink-0">2.</span>
+              <div>
+                <a href="https://www.bai.go.kr/bai/result/list" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">
+                  감사원 감사결과 검색 ↗
+                </a>
+                <p className="text-[11px] text-blue-600 mt-0.5">
+                  검색어: &quot;{targetId}&quot; 또는 &quot;{patternLabels[patternType]}&quot; 입력
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-blue-600 shrink-0">3.</span>
+              <div>
+                <a href="https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">
+                  열린재정 세출 현황 ↗
+                </a>
+                <p className="text-[11px] text-blue-600 mt-0.5">
+                  부처명 &quot;{targetId}&quot; 선택 → 분기별 세출 확인
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ═══ 5. 타임라인 ═══ */}
       {timeline.length > 0 && (
         <div className="card mt-6">
@@ -445,6 +546,29 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
           <div className="flex justify-between text-sm py-2 border-b border-gray-50">
             <span className="text-gray-500">상태</span>
             <span className="text-gray-800">{flag.status === 'detected' ? '탐지됨' : flag.status}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ 분석 방법론 ═══ */}
+      <div className="card mt-6">
+        <h2 className="font-bold text-lg mb-3">분석 방법론</h2>
+        <div className="text-sm text-gray-600 space-y-3">
+          <div>
+            <h3 className="font-semibold text-gray-800 mb-1">데이터 수집</h3>
+            <p>나라장터(조달청)에서 공개하는 정부 계약 데이터를 수집합니다. 모든 데이터는 정보공개법에 따라 누구나 접근 가능합니다.</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800 mb-1">패턴 탐지</h3>
+            <p>감사원이 실제 감사에서 사용하는 10가지 통계적 이상 패턴(연말급증, 업체집중, 계약분할 등)을 기준으로 자동 탐지합니다. 기준치는 감사원 감사매뉴얼을 참고했습니다.</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800 mb-1">의심 점수</h3>
+            <p>0-100 스케일로 패턴의 통계적 이상 정도를 수치화합니다. 점수가 높을수록 통계적으로 드문 패턴이며, 반드시 비리를 의미하지 않습니다.</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800 mb-1">한계</h3>
+            <p>이 시스템은 통계적 이상만 탐지하며, 비리 여부를 판단하지 않습니다. 실제 비리 확인은 감사원, 검찰 등 수사기관의 조사가 필요합니다. 현재 시범 운영 중이며, 개별 계약 데이터는 시뮬레이션입니다.</p>
           </div>
         </div>
       </div>

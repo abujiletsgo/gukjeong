@@ -286,9 +286,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '국토교통부의 4분기 계약 건별 긴급성 검토가 필요합니다. 특히 12월 마지막 2주에 체결된 계약을 집중 점검하고, 수의계약 비율이 높은 건은 감사원 특별감사를 요청해야 합니다. 내년도 분기별 예산 집행 계획 수립도 의무화해야 합니다.',
       real_case_example: '2019년 감사원 「도로공사 예산집행 실태」 감사에서 한국도로공사의 연말 밀어내기를 적발했습니다. 12월 마지막 2주에 287억 원 규모의 도로 보수 공사 27건이 발주되었으나, 이 중 18건(196억 원)이 이듬해 3월까지 착공하지 않은 서류상 계약이었습니다. 감사원은 담당자 12명에 대해 주의 처분을 내렸고, 196억 원의 집행을 취소하도록 시정 요구했습니다. 이후 국토교통부는 분기별 예산 집행 가이드라인을 도입했으나, 2024년에도 4분기 집중 집행 비율이 58%로 유사한 패턴이 반복되고 있습니다.',
       related_links: [
-        { title: '나라장터 국토교통부 4분기 계약 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 연말 예산 밀어내기 감사 보고서', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '열린재정 국토교통부 세출 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '나라장터에서 국토교통부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '열린재정에서 국토교통부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
       ],
       contracts: [
         { title: '서울~세종 고속도로 2차 보수공사', amount: 1800000000, vendor: '(주)대한건설', date: '2025-12-18', method: '제한경쟁입찰' },
@@ -321,9 +321,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '15건의 수의계약 각각에 대해 경쟁 입찰이 불가능했던 사유를 소명받아야 합니다. 방위사업청과 합동으로 해당 업체의 납품 단가를 시장 가격과 비교 검증하고, 향후 유사 계약은 공개경쟁입찰로 전환하도록 권고해야 합니다.',
       real_case_example: '2020년 감사원 「방위사업 계약 관리 실태」 감사에서 방위사업청의 K-9 자주포 부품 조달 과정을 조사했습니다. (주)한국방산정밀 1개 업체에 4년간 15건, 총 128억 원 규모의 수의계약이 집중되었으며, 경쟁 가능한 부품 7종(83억 원)에 대해서도 기술 특수성을 명분으로 경쟁 입찰을 생략한 사실이 확인되었습니다. 감사원은 83억 원에 대한 과다 지급분 17억 원의 환수를 요구하고, 관련 계약 담당자 5명에 대한 징계를 요구했습니다. 방위사업청은 2021년부터 부품별 경쟁 가능성 사전 심사제를 도입했으나, 수의계약 비율은 여전히 35% 이상을 유지하고 있습니다.',
       related_links: [
-        { title: '나라장터 국방부 계약 현황 조회', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 방산 분야 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 국방위원회 예산 심사 보고서', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '나라장터에서 국방부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: '차기 전투기 항전장비 정비 용역', amount: 8500000000, vendor: '(주)한국방산기술', date: '2025-09-15', method: '수의계약' },
@@ -356,9 +356,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '5건의 계약이 실제로 별개의 사업인지, 하나의 사업을 쪼갠 것인지 확인해야 합니다. 계약 내용의 연관성 분석과 함께, (주)그린솔루션과 환경부 담당자 간의 관계도 조사할 필요가 있습니다. 유사 패턴이 다른 부서에도 있는지 전수 조사를 권고합니다.',
       real_case_example: '2021년 감사원 「환경부 수의계약 운용 실태」 감사에서 한국환경공단의 계약 분할 사례를 적발했습니다. (주)그린환경컨설팅과 1,950만 원 단위(수의계약 한도 2,000만 원 직하)의 용역 계약 8건을 6개월간 반복 체결했으며, 합산 금액 1억 5,600만 원은 공개경쟁입찰 의무 대상이었습니다. 감사원은 1억 5,600만 원 전액에 대한 계약 무효 및 재입찰을 권고하고, 담당 부서장 포함 4명에 대해 경고 처분을 요구했습니다. 환경공단은 이후 동일 업체 반복계약 자동 경보 시스템을 도입했으며, 해당 업체는 6개월간 입찰 참가 제한 조치를 받았습니다.',
       related_links: [
-        { title: '나라장터 환경부 수의계약 조회', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 수의계약 관련 감사 사례', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '열린재정 환경부 세출 내역', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '나라장터에서 환경부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '열린재정에서 환경부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
       ],
       contracts: [
         { title: '수질오염 측정장비 유지보수 (1차)', amount: 19800000, vendor: '(주)그린솔루션', date: '2025-03-15', method: '수의계약' },
@@ -391,9 +391,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '교육부의 4분기 학교 시설 관련 계약을 전수 조사하여 연초에 계획된 사업인지, 연말에 급하게 추가된 사업인지 구분해야 합니다. 불필요한 연말 지출은 다음 연도로 이월하도록 하고, 분기별 균형 집행 가이드라인을 강화해야 합니다.',
       real_case_example: '2022년 감사원 「시도교육청 시설사업 예산집행 실태」 감사에서 전국 17개 시도교육청의 연말 학교 시설 보수 사업을 점검했습니다. 12월에 발주된 89건(총 156억 원)의 학교 보수공사 중 34건(67억 원)이 완공 전 대금을 선지급했고, 7건(12억 원)은 실제 공사 없이 서류만 처리한 허위 계약이었습니다. 감사원은 허위 계약 관련자 7명을 수사기관에 고발하고, 선지급금 67억 원의 반환 및 12억 원의 환수를 요구했습니다. 교육부는 2023년부터 학교시설 공사대금 지급 전 현장 확인 의무제를 시행했으나, 일선 교육청의 이행률은 62%에 그치고 있습니다.',
       related_links: [
-        { title: '열린재정 교육부 세출 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
-        { title: '감사원 교육 분야 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 교육위원회 예산 심사 현황', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '열린재정에서 교육부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: '전국 노후 학교 건물 안전점검 용역', amount: 850000000, vendor: '(주)한국시설안전', date: '2025-11-25', method: '제한경쟁입찰' },
@@ -426,9 +426,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '8건의 계약이 동일 업체에 집중된 사유를 검토하고, 기술 전문성 요구가 합리적이었는지 제3자 전문가 검증이 필요합니다. 향후 대형 IT 사업은 분리 발주 원칙을 적용하여 다양한 업체가 참여할 수 있도록 해야 합니다.',
       real_case_example: '2023년 감사원 「과학기술정보통신부 디지털 뉴딜 사업 추진 실태」 감사에서 특정 SI 업체 (주)디지털브릿지에 4년간 23건, 총 230억 원 규모의 계약이 집중된 사실을 적발했습니다. 해당 업체 출신 K 상무가 과기정통부 디지털전환 자문위원으로 활동하면서 사업 요구 사항을 사전에 입수하고 입찰 사양서에 반영한 정황이 포착되었습니다. 감사원은 K 상무를 업무방해 혐의로 수사기관에 고발하고, 과기정통부에 230억 원 규모 계약의 적정성 재검토 및 42억 원의 과다 지급분 환수를 요구했습니다. 이후 과기정통부는 자문위원 이해충돌 방지 규정을 강화했으며, 해당 업체는 2년간 정부 입찰 참가 제한 처분을 받았습니다.',
       related_links: [
-        { title: '나라장터 과기정통부 IT 용역 계약 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 정보화 사업 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '열린재정 과기정통부 정보화 예산', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '나라장터에서 과학기술정보통신부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '열린재정에서 과학기술정보통신부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
       ],
       contracts: [
         { title: '국가 AI 컴퓨팅 센터 운영 위탁', amount: 1200000000, vendor: '(주)IT컨설팅코리아', date: '2025-04-10', method: '수의계약' },
@@ -461,9 +461,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '4건의 계약이 동일한 전산 장비 구매 목적인지 확인하고, 분할 발주 사유를 소명받아야 합니다. 조달청과 협의하여 수의계약 한도 직하 반복 계약에 대한 자동 경보 시스템을 도입하고, 위반 시 담당자 징계 기준도 마련해야 합니다.',
       real_case_example: '2020년 감사원 「정부통합전산센터 장비 조달 실태」 감사에서 행정안전부 정부통합전산센터의 서버 장비 분할 구매를 적발했습니다. 동일 사양 서버 장비를 1,900만 원 단위(수의계약 한도 2,000만 원 직하)로 6건 분할 체결하여 합산 1억 1,400만 원에 달했으며, 모두 동일 업체 (주)아이티솔루션에 발주되었습니다. 감사원은 계약 무효 및 공개경쟁입찰 재실시를 권고하고, 담당 사무관 1명 감봉, 주무관 2명 견책 처분을 요구했습니다. 재입찰 결과 동일 사양 장비를 8,700만 원에 조달하여 2,700만 원(24%)을 절감했습니다. 행안부는 이후 전산 장비 구매에 대해 조달청 통합구매제를 의무 적용하고 있습니다.',
       related_links: [
-        { title: '나라장터 행정안전부 물품 구매 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 조달 분야 부정행위 적발 현황', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 행정안전위원회 국정감사 자료', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '나라장터에서 행정안전부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: '정부청사 네트워크 스위치 교체 (1차)', amount: 19800000, vendor: '(주)디지털행정', date: '2025-05-12', method: '수의계약' },
@@ -497,9 +497,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '해외 제조사 직거래 가격과 실제 구매가를 비교하는 독립 감정이 필요합니다. 중간 유통 업체의 마진 구조를 투명하게 공개하도록 하고, 고가 연구장비 구매 시 해외 가격 비교 의무화 제도를 도입해야 합니다.',
       real_case_example: '2021년 감사원 「국가 연구개발 장비 구매 실태」 감사에서 한국과학기술연구원(KIST)의 첨단 분석장비 조달 과정을 조사했습니다. 독일 제조사 직구매가 대비 45% 높은 가격으로 국내 중개업체 (주)사이언스트레이드를 통해 전자현미경 3대, 질량분석기 5대 등 총 87억 원 규모를 구매한 사실이 확인되었습니다. 중개업체의 마진율이 통상 15~20%인 업계 관행 대비 45%로 비정상적이었으며, 해당 업체 대표가 KIST 장비구매위원회 위원의 대학 동기인 것으로 밝혀졌습니다. 감사원은 과다 지급분 28억 원의 환수와 장비구매위원회 구성 변경을 권고했습니다. KIST는 이후 고가 연구장비에 대해 해외 제조사 견적 직접 비교를 의무화했으며, 환수 절차는 현재 진행 중입니다.',
       related_links: [
-        { title: '나라장터 과기정통부 연구장비 구매 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 R&D 예산 집행 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '열린재정 과기정통부 R&D 예산 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '나라장터에서 과학기술정보통신부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '열린재정에서 과학기술정보통신부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
       ],
       contracts: [
         { title: '양자컴퓨팅 극저온 냉각장치 도입', amount: 4800000000, vendor: '(주)퀀텀사이언스', date: '2025-08-20', method: '수의계약' },
@@ -532,9 +532,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '즉각적인 사업 중간평가를 실시하여 계속 추진, 전면 재설계, 또는 사업 중단 중 하나를 결정해야 합니다. 이미 집행된 280억 원의 사용처를 건별로 추적하고, 컨설팅 업체의 성과를 엄격히 평가해야 합니다.',
       real_case_example: '2022년 감사원 「행정안전부 차세대 전자정부 시스템 사업 추진 실태」 감사에서 7년간 520억 원을 투입한 해당 사업의 완성률이 25%에 불과한 사실을 적발했습니다. 520억 원 중 컨설팅 비용이 180억 원(35%), 시스템 개발비 230억 원(44%)이었으나, 개발된 모듈 중 실제 운영 가능한 것은 12%에 그쳤습니다. 사업 중간에 3차례 총괄 업체가 교체되면서 기존 성과물의 호환성이 상실된 것이 주요 원인이었습니다. 감사원은 사업 전면 백지화와 함께 사업관리 부실에 책임이 있는 전·현직 담당자 8명에 대한 징계를 요구했습니다. 520억 원은 매몰비용으로 확정되었으며, 2024년 새로운 전자정부 사업이 재추진되고 있습니다.',
       related_links: [
-        { title: '열린재정 스마트시티 관련 예산 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
-        { title: '감사원 대형 국책사업 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 예산정책처 사업 평가 보고서', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '열린재정에서 국토교통부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: '스마트시티 통합플랫폼 기본설계 (3차 변경)', amount: 5200000000, vendor: '(주)스마트시티솔루션', date: '2025-03-10', method: '수의계약' },
@@ -567,9 +567,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '12월 집중 집행 건을 전수 조사하여 긴급성이 인정되는지 확인해야 합니다. 복지시설 개보수 사업은 연초에 계획을 수립하여 상반기에 착수하도록 사업 관리 체계를 개선해야 합니다.',
       real_case_example: '2023년 감사원 「국민건강보험공단 의료장비 구매 실태」 감사에서 보건복지부 산하 건보공단의 연말 의료장비 밀어내기 집행을 적발했습니다. 12월 15~31일 사이 MRI 3대(28억 원), CT 스캐너 2대(14억 원) 등 총 42억 원 규모의 고가 의료장비를 긴급 구매했으나, MRI 1대(9억 원)는 설치 공간 미확보로 6개월간 창고에 방치되었고, CT 스캐너 1대(7억 원)는 운영 인력 부재로 가동하지 못했습니다. 감사원은 16억 원 상당의 장비에 대해 부당 구매로 판정하고, 구매 담당 부서장 포함 5명에 대한 징계를 요구했습니다. 건보공단은 이후 고가 의료장비 구매 시 설치 환경 및 운영 인력 사전 확인서 제출을 의무화했습니다.',
       related_links: [
-        { title: '열린재정 보건복지부 세출 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
-        { title: '감사원 복지 분야 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '나라장터 보건복지부 계약 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '열린재정에서 보건복지부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '나라장터에서 보건복지부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
       ],
       contracts: [
         { title: '공공요양시설 냉난방 설비 교체', amount: 3200000000, vendor: '(주)한국설비공사', date: '2025-12-08', method: '제한경쟁입찰' },
@@ -602,9 +602,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '공정거래위원회에 입찰 담합 조사를 의뢰해야 합니다. 3개 업체의 임원진 관계, 주주 구조, 하도급 관계를 철저히 조사하고, 담합이 확인되면 입찰 참가 자격 박탈 및 과징금을 부과해야 합니다. 관련 국방부 담당자의 업체 접촉 기록도 확인해야 합니다.',
       real_case_example: '2019년 공정거래위원회 「군용 통신장비 입찰 담합 조사」에서 (주)한국방산전자, (주)밀리테크, (주)디펜스통신, (주)국방네트웍스 4개 업체의 7년간 조직적 입찰 담합을 적발했습니다. 2012~2019년 43건의 입찰(총 960억 원 규모)에서 사전에 낙찰 업체를 순번으로 정하고 나머지 업체는 들러리 입찰을 한 사실이 확인되었습니다. 업체 임원 간 카카오톡 단체방에서 가격 조율 증거가 확보되었으며, 낙찰률이 97~99%로 경쟁 입찰 평균(85~90%) 대비 비정상적으로 높았습니다. 공정위는 4개 업체에 총 214억 원의 과징금을 부과하고, 주도 업체 임원 3명을 형사 고발했습니다. 이 중 2명은 2021년 실형(징역 1년 6개월)을 선고받았으며, 방사청은 재발 방지를 위해 입찰 패턴 AI 분석 시스템을 2022년부터 시범 운영하고 있습니다.',
       related_links: [
-        { title: '나라장터 국방부 경쟁입찰 계약 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 방위사업 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 국방위원회 방산 비리 청문회 기록', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '나라장터에서 국방부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: '차세대 전술통신체계 2단계 구축', amount: 12000000000, vendor: '(주)한국방산기술', date: '2025-05-20', method: '경쟁입찰' },
@@ -637,9 +637,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '스마트팜 사업의 입찰 요건이 특정 업체에 유리하게 설정되지 않았는지 검토해야 합니다. 기술 규격의 개방성을 높여 더 많은 업체가 참여할 수 있도록 하고, 분리 발주를 통해 소규모 농업 기술 기업의 참여 기회를 확대해야 합니다.',
       real_case_example: '2022년 감사원 「스마트팜 혁신밸리 조성사업 추진 실태」 감사에서 농림축산식품부의 스마트팜 사업 내 이해충돌 사례를 적발했습니다. (주)애그리텍이 전북 김제 혁신밸리의 시설 설계·납품·운영을 동시에 수주(총 85억 원)하면서, 자사 독자 규격의 환경제어 시스템을 기준으로 시설을 설계하여 경쟁 업체 7곳의 참여를 원천 차단했습니다. 입찰 사양서에 해당 업체만 충족 가능한 기술 요건 4개가 포함되어 있었으며, 사양서 작성에 해당 업체 기술이사가 자문으로 참여한 사실이 확인되었습니다. 감사원은 85억 원 규모 계약의 재입찰 실시와 개방형 기술 규격 재설정을 권고하고, 농식품부 담당 과장에 대해 직위 해제를 요구했습니다. 재입찰 후 3개 업체가 참여하여 68억 원에 계약이 체결되어 17억 원(20%)이 절감되었습니다.',
       related_links: [
-        { title: '나라장터 농식품부 스마트팜 사업 입찰 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 농업 분야 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '열린재정 농식품부 예산 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '나라장터에서 농림축산식품부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '열린재정에서 농림축산식품부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
       ],
       contracts: [
         { title: '스마트팜 혁신밸리 2단계 시설 구축', amount: 2800000000, vendor: '(주)한국농업기술', date: '2025-04-15', method: '제한경쟁입찰' },
@@ -672,9 +672,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '6건의 용역이 실제로 별개의 독립된 사업인지, 하나의 프로젝트를 인위적으로 분할한 것인지 조사해야 합니다. (주)문화콘텐츠기획과 문체부 담당자 간의 관계도 확인하고, 문화 분야 수의계약 관리 기준을 강화해야 합니다.',
       real_case_example: '2021년 감사원 「문화체육관광부 한류 홍보사업 계약 관리 실태」 감사에서 (주)문화콘텐츠기획에 대한 수의계약 분할 체결을 적발했습니다. 한류 홍보 영상 제작, SNS 마케팅, 해외 매체 기고 등 9건의 용역을 각각 1,900만 원(수의계약 한도 2,000만 원 직하)으로 계약하여 합산 1억 7,100만 원에 달했습니다. 9건의 용역이 모두 동일한 「2021 한류 글로벌 홍보」 프로젝트의 하위 과업임에도 별개 사업으로 위장한 사실이 확인되었으며, 해당 기획사 대표는 문체부 전직 사무관 L씨의 대학 동문으로 밝혀졌습니다. 감사원은 1억 7,100만 원 전액에 대해 계약 무효 및 재입찰을 권고하고, 담당자 3명에 대한 징계를 요구했습니다. 재입찰 결과 다른 업체가 1억 2,300만 원에 수주하여 4,800만 원(28%)이 절감되었습니다.',
       related_links: [
-        { title: '나라장터 문체부 용역 계약 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 문화 분야 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '열린재정 문체부 세출 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '나라장터에서 문화체육관광부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '열린재정에서 문화체육관광부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
       ],
       contracts: [
         { title: '한류 문화축제 홍보영상 제작', amount: 19900000, vendor: '(주)문화콘텐츠기획', date: '2025-02-10', method: '수의계약' },
@@ -707,9 +707,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '해외 제조사 및 유사 장비 납품 이력을 기반으로 적정 가격을 재산정해야 합니다. 독점 납품 구조를 해소하기 위해 해외 업체 참여를 허용하는 국제 입찰을 도입하고, 고가 해양 장비 구매 시 원가 분석 의무화가 필요합니다.',
       real_case_example: '2020년 감사원 「해양수산부 해양과학 장비 조달 실태」 감사에서 해양과학 관측장비의 과다 지급 사례를 적발했습니다. 노르웨이 Kongsberg社의 해저 음향측심기 4대와 해류계 6대를 국내 대리점 (주)오션테크를 통해 구매했으며, 제조사 직구매가(27억 원) 대비 55% 높은 42억 원에 계약이 체결되었습니다. (주)오션테크의 실질적 역할은 통관 대행과 설치 지원에 불과했으나 15억 원의 과도한 마진을 취득한 것으로 확인되었습니다. 감사원은 과다 지급분 15억 원의 환수를 요구하고, 해수부에 해양 장비 국제 입찰 의무화를 권고했습니다. 해수부는 2021년부터 5억 원 이상 수입 장비에 대해 해외 제조사 직접 견적 비교를 의무화했으며, 환수 절차는 소송으로 이어져 2024년 1심에서 12억 원 환수 판결이 내려졌습니다.',
       related_links: [
-        { title: '나라장터 해수부 장비 구매 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
-        { title: '감사원 해양 분야 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 농림축산식품해양수산위원회 예산 심사', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '나라장터에서 해양수산부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: '해양환경 모니터링 무인선박 시스템 구축', amount: 2900000000, vendor: '(주)오션로보틱스', date: '2025-06-12', method: '수의계약' },
@@ -742,9 +742,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '사업 전면 재평가를 실시하여 기존 성과물의 활용 가능성을 판단해야 합니다. 150억 원의 집행 내역을 건별로 추적하여 성과 없는 지출을 확인하고, 책임 소재를 명확히 해야 합니다. 향후 유사 사업은 단계별 성과 검증을 의무화해야 합니다.',
       real_case_example: '2023년 감사원 「교육부 에듀테크 혁신 플랫폼 사업 추진 실태」 감사에서 4년간 180억 원을 투입한 해당 사업의 실효성 부족을 적발했습니다. 전국 11,800개 초·중·고교 중 실제 플랫폼을 활용하는 학교는 944곳(8%)에 불과했으며, 활용 학교의 월평균 접속 교사 수도 2.3명에 그쳤습니다. 180억 원 중 SI 개발비 120억 원은 현장 교사 의견 수렴 없이 진행되어 실제 수업에 필요한 기능이 누락되었고, 교사 교육 예산은 전체의 3%(5.4억 원)에 불과했습니다. 감사원은 사업 전면 재설계 또는 중단을 권고하고, 사업관리 부실 책임자 6명에 대한 징계를 요구했습니다. 교육부는 2024년 사업을 잠정 중단하고 현장 교사 500명이 참여하는 재설계 TF를 구성하여 2025년 재추진을 준비하고 있습니다.',
       related_links: [
-        { title: '열린재정 교육부 디지털 교육 예산 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
-        { title: '감사원 교육 정보화 사업 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 교육위원회 AI 교육 관련 질의', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '열린재정에서 교육부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: 'AI 디지털 교과서 핵심 엔진 개발 (3차 변경계약)', amount: 4500000000, vendor: '(주)에듀AI시스템', date: '2025-02-15', method: '수의계약' },
@@ -777,9 +777,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '11~12월 신규 계약 건의 긴급성과 연초 계획 포함 여부를 확인해야 합니다. R&D 사업은 연중 균형 집행 원칙을 적용하고, 4분기 신규 과제 발주는 특별 승인을 거치도록 규정을 강화해야 합니다.',
       real_case_example: '2022년 감사원 「산업통상자원부 에너지 기술개발 사업 예산집행 실태」 감사에서 연말 밀어내기식 연구과제 선정을 적발했습니다. 12월 15~28일 사이 긴급 선정된 35건(총 56억 원)의 연구과제 중 18건(32억 원)이 이듬해 3월까지 연구진 구성조차 완료하지 못했으며, 이 중 5건(8억 원)은 연구 책임자가 이미 다른 과제를 수행 중이어서 결국 중도 포기되었습니다. 감사원은 8억 원의 환수와 함께 중도 포기 과제의 연구 책임자 5명에 대해 향후 2년간 국가 R&D 과제 참여 제한을 권고했습니다. 산업부는 2023년부터 4분기 신규 과제 선정 시 기관장 특별 승인을 의무화하고, 연구진 구성 완료 확인 후 예산을 집행하는 단계별 지급 방식을 도입했습니다.',
       related_links: [
-        { title: '열린재정 산업부 R&D 예산 집행 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
-        { title: '감사원 산업·에너지 분야 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '나라장터 산업부 계약 현황', url: 'https://www.g2b.go.kr/pt/menu/selectSubFrame.do?framesrc=/pt/menu/frameTgong.do?url=https://www.g2b.go.kr:8101/ep/tbid/tbidList.do', source: '나라장터' },
+        { title: '열린재정에서 산업통상자원부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '나라장터에서 산업통상자원부 계약 검색하기', url: 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', source: '나라장터' },
       ],
       contracts: [
         { title: '차세대 이차전지 원천기술 연구 과제', amount: 2200000000, vendor: '(주)에너지테크연구소', date: '2025-11-28', method: '제한경쟁입찰' },
@@ -812,9 +812,9 @@ export function getAuditFlags(): AuditFlag[] {
       what_should_happen: '국민권익위원회에 공직자윤리법 위반 여부 조사를 의뢰해야 합니다. K 전 국장의 퇴직 전 해당 업체와의 접촉 기록을 확인하고, 5건의 계약 심사 과정에서 전직 동료에 대한 영향력 행사가 있었는지 조사해야 합니다. 재정 분야 고위 공무원의 퇴직 후 취업 제한 기간(현행 2년) 연장도 검토해야 합니다.',
       real_case_example: '2023년 국민권익위원회 「기획재정부 퇴직 공무원 취업 실태 조사」에서 전직 과장급 공무원 3명의 전관예우 의혹을 조사했습니다. 기재부 예산실 출신 P 전 과장, 재정관리국 출신 Q 전 과장, 세제실 출신 R 전 과장이 퇴직 후 동일 회계법인 (주)대한회계에 취업하여, 기재부 관련 예산 컨설팅 용역 12건(총 96억 원)을 수주했습니다. 이 중 8건(72억 원)은 해당 공무원의 전 소속 부서가 발주한 용역이었으며, 입찰 과정에서 전직 동료에게 사전 정보를 제공받은 정황이 확인되었습니다. 국민권익위는 3명 전원을 공직자윤리법 위반으로 검찰에 고발했고, 이 중 P·Q 2명은 취업 제한 기간(퇴직 후 3년) 내 취업으로 2024년 각각 벌금 3,000만 원이 선고되었습니다. 기재부는 퇴직 후 취업 제한 대상 직위를 확대하고, 재취업 심사 강화 방안을 마련 중입니다.',
       related_links: [
-        { title: '열린재정 기획재정부 용역 계약 현황', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
-        { title: '감사원 재정 운영 감사결과', url: 'https://www.bai.go.kr/bai/result/branch', source: '감사원' },
-        { title: '국회 기획재정위원회 국정감사 자료', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
+        { title: '열린재정에서 기획재정부 세출 확인하기', url: 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', source: '열린재정' },
+        { title: '감사원 감사결과 보고서 검색', url: 'https://www.bai.go.kr/bai/result/list', source: '감사원' },
+        { title: '국회 의안정보시스템에서 관련 법안 검색', url: 'https://likms.assembly.go.kr/bill/main.do', source: '국회' },
       ],
       contracts: [
         { title: '국가재정 중장기 전략 수립 컨설팅', amount: 5200000000, vendor: '(주)국제재정컨설팅', date: '2024-09-15', method: '제한경쟁입찰' },
