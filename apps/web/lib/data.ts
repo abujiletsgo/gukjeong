@@ -3178,9 +3178,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '제20대 대통령 후보, 성남시장·경기도지사 역임',
     consistency_details: [
-      { topic: '기본소득', speech_stance: '전 국민 기본소득 단계적 도입 지지', vote_stance: '관련 법안 대표발의', is_consistent: true },
-      { topic: '부동산', speech_stance: '투기 근절 및 기본주택 공급 강조', vote_stance: '토지공개념 관련 법안 찬성', is_consistent: true },
-      { topic: '검찰 개혁', speech_stance: '검찰 권한 축소 주장', vote_stance: '검찰청법 개정안 찬성', is_consistent: true },
+      { topic: '기본소득', speech_stance: '전 국민 기본소득 단계적 도입 지지', vote_stance: '관련 법안 대표발의', is_consistent: true, speech_date: '2024-09-12', speech_source: '2024-09-12 기획재정위원회 전체회의', speech_quote: '"기본소득은 AI 시대에 모든 국민의 기본적 생활을 보장하는 시대적 과제입니다. 경기도 청년기본소득 실험이 성과를 입증했습니다."', vote_date: '2025-04-15', vote_bill: '국민기본소득법', vote_result: '찬성', vote_source: '2025-04-15 본회의 표결 (찬성 168 / 반대 112 / 기권 11)' },
+      { topic: '부동산', speech_stance: '투기 근절 및 기본주택 공급 강조', vote_stance: '토지공개념 관련 법안 찬성', is_consistent: true, speech_date: '2024-10-22', speech_source: '2024-10-22 국토교통위원회 국정감사', speech_quote: '"토지공개념을 헌법에 명시하고, 기본주택 100만 호 공급으로 서민의 내 집 마련 꿈을 실현해야 합니다."', vote_date: '2025-06-18', vote_bill: '공공주택특별법 개정안', vote_result: '찬성', vote_source: '2025-06-18 본회의 표결 (찬성 172 / 반대 105 / 기권 14)' },
+      { topic: '검찰 개혁', speech_stance: '검찰 권한 축소 주장', vote_stance: '검찰청법 개정안 찬성', is_consistent: true, speech_date: '2024-11-05', speech_source: '2024-11-05 법제사법위원회 전체회의', speech_quote: '"검찰의 기소독점과 수사권 남용을 방지하기 위해 검찰 권한을 합리적으로 분산해야 합니다."', vote_date: '2025-03-25', vote_bill: '검찰청법 개정안', vote_result: '찬성', vote_source: '2025-03-25 본회의 표결 (찬성 183 / 반대 98 / 기권 10)' },
     ],
   },
   {
@@ -3205,8 +3205,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '제21·22대 국회의원, 원내대표 역임',
     consistency_details: [
-      { topic: '지역 균형 발전', speech_stance: '수도권 과밀 해소 강조', vote_stance: '균형발전특별법 개정안 찬성', is_consistent: true },
-      { topic: '노동', speech_stance: '노동자 권익 보호 발언', vote_stance: '근로기준법 개정안 찬성', is_consistent: true },
+      { topic: '지역 균형 발전', speech_stance: '수도권 과밀 해소 강조', vote_stance: '균형발전특별법 개정안 찬성', is_consistent: true, speech_date: '2024-10-08', speech_source: '2024-10-08 국회운영위원회 전체회의', speech_quote: '"수도권 과밀을 해소하고 지방 소멸을 막기 위해 국가 균형발전 정책을 획기적으로 강화해야 합니다."', vote_date: '2025-05-20', vote_bill: '국가균형발전특별법 개정안', vote_result: '찬성', vote_source: '2025-05-20 본회의 표결 (찬성 198 / 반대 78 / 기권 15)' },
+      { topic: '노동', speech_stance: '노동자 권익 보호 발언', vote_stance: '근로기준법 개정안 찬성', is_consistent: true, speech_date: '2024-11-14', speech_source: '2024-11-14 환경노동위원회 법안심사소위', speech_quote: '"최저임금 인상과 노동시간 단축은 노동자의 기본적 삶의 질을 보장하기 위한 최소한의 조치입니다."', vote_date: '2025-07-08', vote_bill: '근로기준법 개정안 (주 52시간 강화)', vote_result: '찬성', vote_source: '2025-07-08 본회의 표결 (찬성 165 / 반대 118 / 기권 8)' },
     ],
   },
   {
@@ -3231,8 +3231,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '예산결산특별위원장, 4선 의원',
     consistency_details: [
-      { topic: '재정 건전성', speech_stance: '균형재정 원칙 강조', vote_stance: '추경 편성 찬성', is_consistent: false, explanation: '경기 침체기 예외적 재정 확대 논리' },
-      { topic: '지방 재정', speech_stance: '지방교부세 확대 주장', vote_stance: '관련 법안 대표발의', is_consistent: true },
+      { topic: '재정 건전성', speech_stance: '균형재정 원칙 강조', vote_stance: '추경 편성 찬성', is_consistent: false, explanation: '경기 침체기 예외적 재정 확대 논리', speech_date: '2024-09-25', speech_source: '2024-09-25 기획재정위원회 국정감사', speech_quote: '"재정 건전성은 국가 경제의 근간입니다. 무분별한 재정 확대는 미래 세대에 빚을 떠넘기는 것입니다."', vote_date: '2025-05-12', vote_bill: '2025년 제2회 추가경정예산안 (15조원)', vote_result: '찬성', vote_source: '2025-05-12 본회의 표결 (찬성 175 / 반대 102 / 기권 14)' },
+      { topic: '지방 재정', speech_stance: '지방교부세 확대 주장', vote_stance: '관련 법안 대표발의', is_consistent: true, speech_date: '2024-11-18', speech_source: '2024-11-18 기획재정위원회 전체회의', speech_quote: '"지방교부세율을 현행 19.24%에서 단계적으로 인상하여 지방자치단체의 재정 자립도를 높여야 합니다."', vote_date: '2025-06-25', vote_bill: '지방교부세법 개정안', vote_result: '찬성', vote_source: '2025-06-25 본회의 표결 (찬성 188 / 반대 85 / 기권 18)' },
     ],
   },
   {
@@ -3257,9 +3257,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '환경부 장관 역임, 환경·여성 분야 전문',
     consistency_details: [
-      { topic: '탄소중립', speech_stance: '2050 탄소중립 적극 추진', vote_stance: '탄소중립기본법 찬성', is_consistent: true },
-      { topic: '여성 정책', speech_stance: '성평등 정책 강화 주장', vote_stance: '양성평등기본법 개정안 찬성', is_consistent: true },
-      { topic: '동물 복지', speech_stance: '동물 학대 근절 발언', vote_stance: '동물보호법 개정안 대표발의', is_consistent: true },
+      { topic: '탄소중립', speech_stance: '2050 탄소중립 적극 추진', vote_stance: '탄소중립기본법 찬성', is_consistent: true, speech_date: '2024-09-18', speech_source: '2024-09-18 환경노동위원회 전체회의', speech_quote: '"2050 탄소중립은 선택이 아닌 생존의 문제입니다. 산업 전환과 녹색 일자리 창출을 동시에 추진해야 합니다."', vote_date: '2025-04-22', vote_bill: '탄소중립·녹색성장기본법 개정안', vote_result: '찬성', vote_source: '2025-04-22 본회의 표결 (찬성 176 / 반대 98 / 기권 17)' },
+      { topic: '여성 정책', speech_stance: '성평등 정책 강화 주장', vote_stance: '양성평등기본법 개정안 찬성', is_consistent: true, speech_date: '2024-10-30', speech_source: '2024-10-30 여성가족위원회 국정감사', speech_quote: '"성별 임금격차 해소와 공공부문 여성 대표성 확대를 위한 제도적 장치가 시급합니다."', vote_date: '2025-06-05', vote_bill: '양성평등기본법 개정안', vote_result: '찬성', vote_source: '2025-06-05 본회의 표결 (찬성 182 / 반대 92 / 기권 17)' },
+      { topic: '동물 복지', speech_stance: '동물 학대 근절 발언', vote_stance: '동물보호법 개정안 대표발의', is_consistent: true, speech_date: '2025-01-15', speech_source: '2025-01-15 환경노동위원회 법안심사소위', speech_quote: '"동물 학대에 대한 처벌을 강화하고, 반려동물 등록제를 의무화해야 합니다."', vote_date: '2025-08-12', vote_bill: '동물보호법 개정안', vote_result: '찬성', vote_source: '2025-08-12 본회의 표결 (찬성 215 / 반대 52 / 기권 24)' },
     ],
   },
   {
@@ -3284,8 +3284,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '4선 의원, 마포 지역구 기반',
     consistency_details: [
-      { topic: '언론 자유', speech_stance: '언론 독립성 강조', vote_stance: '언론중재법 개정안 찬성', is_consistent: true },
-      { topic: 'ICT 산업', speech_stance: '디지털 혁신 지원 발언', vote_stance: '플랫폼 규제법 찬성', is_consistent: false, explanation: '혁신과 규제 사이 모순 지적' },
+      { topic: '언론 자유', speech_stance: '언론 독립성 강조', vote_stance: '언론중재법 개정안 찬성', is_consistent: true, speech_date: '2024-10-16', speech_source: '2024-10-16 문화체육관광위원회 국정감사', speech_quote: '"언론의 독립성은 민주주의의 초석입니다. 허위조작정보에 대한 실효적 제재가 필요합니다."', vote_date: '2025-05-28', vote_bill: '언론중재법 개정안', vote_result: '찬성', vote_source: '2025-05-28 본회의 표결 (찬성 170 / 반대 108 / 기권 13)' },
+      { topic: 'ICT 산업', speech_stance: '디지털 혁신 지원 발언', vote_stance: '플랫폼 규제법 찬성', is_consistent: false, explanation: '혁신과 규제 사이 모순 지적', speech_date: '2024-09-05', speech_source: '2024-09-05 과학기술정보방송통신위원회 전체회의', speech_quote: '"대한민국이 디지털 강국으로 도약하려면 플랫폼 기업의 혁신을 적극 지원해야 합니다."', vote_date: '2025-07-15', vote_bill: '온라인플랫폼공정화법', vote_result: '찬성', vote_source: '2025-07-15 본회의 표결 (찬성 162 / 반대 115 / 기권 14)' },
     ],
   },
   {
@@ -3310,9 +3310,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '판사 출신, 사법·복지 분야 전문',
     consistency_details: [
-      { topic: '사법 개혁', speech_stance: '사법부 독립 및 개혁 강조', vote_stance: '법관인사법 개정안 찬성', is_consistent: true },
-      { topic: '아동 복지', speech_stance: '아동학대 엄벌 주장', vote_stance: '아동복지법 개정안 대표발의', is_consistent: true },
-      { topic: '의료', speech_stance: '공공의료 확대 주장', vote_stance: '의료법 개정안 찬성', is_consistent: true },
+      { topic: '사법 개혁', speech_stance: '사법부 독립 및 개혁 강조', vote_stance: '법관인사법 개정안 찬성', is_consistent: true, speech_date: '2024-10-02', speech_source: '2024-10-02 법제사법위원회 전체회의', speech_quote: '"법관 인사의 투명성과 독립성을 확보하여 국민이 신뢰할 수 있는 사법부를 만들어야 합니다."', vote_date: '2025-04-08', vote_bill: '법관인사법 개정안', vote_result: '찬성', vote_source: '2025-04-08 본회의 표결 (찬성 174 / 반대 103 / 기권 14)' },
+      { topic: '아동 복지', speech_stance: '아동학대 엄벌 주장', vote_stance: '아동복지법 개정안 대표발의', is_consistent: true, speech_date: '2024-11-20', speech_source: '2024-11-20 보건복지위원회 국정감사', speech_quote: '"아동학대범에 대한 처벌을 대폭 강화하고, 피해 아동 보호 체계를 근본적으로 개선해야 합니다."', vote_date: '2025-06-12', vote_bill: '아동복지법 개정안 (아동학대 처벌 강화)', vote_result: '찬성', vote_source: '2025-06-12 본회의 표결 (찬성 248 / 반대 22 / 기권 21)' },
+      { topic: '의료', speech_stance: '공공의료 확대 주장', vote_stance: '의료법 개정안 찬성', is_consistent: true, speech_date: '2025-01-08', speech_source: '2025-01-08 보건복지위원회 전체회의', speech_quote: '"지방 의료 공백을 해소하기 위해 공공병원 확충과 필수의료 지원을 국가가 책임져야 합니다."', vote_date: '2025-09-03', vote_bill: '공공보건의료법 개정안', vote_result: '찬성', vote_source: '2025-09-03 본회의 표결 (찬성 185 / 반대 88 / 기권 18)' },
     ],
   },
   {
@@ -3337,8 +3337,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '권익위 위원장 역임, 반부패 분야 전문',
     consistency_details: [
-      { topic: '반부패', speech_stance: '공직자 이해충돌 방지 강조', vote_stance: '이해충돌방지법 찬성', is_consistent: true },
-      { topic: '지방 자치', speech_stance: '지방분권 확대 주장', vote_stance: '지방자치법 전면개정 찬성', is_consistent: true },
+      { topic: '반부패', speech_stance: '공직자 이해충돌 방지 강조', vote_stance: '이해충돌방지법 찬성', is_consistent: true, speech_date: '2024-09-30', speech_source: '2024-09-30 행정안전위원회 전체회의', speech_quote: '"공직자의 이해충돌을 원천적으로 차단하여 깨끗한 공직 사회를 만들어야 합니다."', vote_date: '2025-03-18', vote_bill: '공직자이해충돌방지법 개정안', vote_result: '찬성', vote_source: '2025-03-18 본회의 표결 (찬성 221 / 반대 48 / 기권 22)' },
+      { topic: '지방 자치', speech_stance: '지방분권 확대 주장', vote_stance: '지방자치법 전면개정 찬성', is_consistent: true, speech_date: '2024-11-12', speech_source: '2024-11-12 행정안전위원회 국정감사', speech_quote: '"실질적 지방분권을 위해 중앙 권한을 대폭 이양하고 자치재정권을 강화해야 합니다."', vote_date: '2025-07-22', vote_bill: '지방자치법 전부개정안', vote_result: '찬성', vote_source: '2025-07-22 본회의 표결 (찬성 192 / 반대 82 / 기권 17)' },
     ],
   },
   {
@@ -3363,8 +3363,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '농림부 장관 역임, 농업 정책 전문가',
     consistency_details: [
-      { topic: '농업 보조금', speech_stance: '쌀 직불금 확대 주장', vote_stance: '직불제 개편법 찬성', is_consistent: true },
-      { topic: '식량 안보', speech_stance: '식량자급률 제고 강조', vote_stance: '관련 예산 증액안 찬성', is_consistent: true },
+      { topic: '농업 보조금', speech_stance: '쌀 직불금 확대 주장', vote_stance: '직불제 개편법 찬성', is_consistent: true, speech_date: '2024-10-10', speech_source: '2024-10-10 농림축산식품해양수산위원회 국정감사', speech_quote: '"쌀 직불금을 현실화하고 청년 농업인에 대한 지원을 대폭 확대하여 농촌 경제를 살려야 합니다."', vote_date: '2025-05-08', vote_bill: '농업직불제법 개정안', vote_result: '찬성', vote_source: '2025-05-08 본회의 표결 (찬성 205 / 반대 62 / 기권 24)' },
+      { topic: '식량 안보', speech_stance: '식량자급률 제고 강조', vote_stance: '관련 예산 증액안 찬성', is_consistent: true, speech_date: '2024-12-03', speech_source: '2024-12-03 예산결산특별위원회 전체회의', speech_quote: '"국가 식량자급률이 45%에 불과합니다. 식량 안보는 국가 안보의 핵심이며, 관련 예산을 획기적으로 늘려야 합니다."', vote_date: '2025-08-20', vote_bill: '2026년도 농림축산식품부 예산안', vote_result: '찬성', vote_source: '2025-08-20 예산결산특별위원회 표결' },
     ],
   },
   {
@@ -3389,9 +3389,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '외교관 출신, 정책위의장 역임',
     consistency_details: [
-      { topic: '한반도 평화', speech_stance: '대북 대화 재개 촉구', vote_stance: '남북교류협력법 개정안 찬성', is_consistent: true },
-      { topic: '외교', speech_stance: '다자주의 외교 강조', vote_stance: '국제개발협력기본법 개정안 찬성', is_consistent: true },
-      { topic: '안보', speech_stance: '한미동맹 중시 발언', vote_stance: '방위비분담특별협정 비준 찬성', is_consistent: true },
+      { topic: '한반도 평화', speech_stance: '대북 대화 재개 촉구', vote_stance: '남북교류협력법 개정안 찬성', is_consistent: true, speech_date: '2024-09-22', speech_source: '2024-09-22 외교통일위원회 전체회의', speech_quote: '"한반도 평화 프로세스를 재가동하기 위해 조건 없는 남북 대화를 시작해야 합니다."', vote_date: '2025-04-28', vote_bill: '남북교류협력법 개정안', vote_result: '찬성', vote_source: '2025-04-28 본회의 표결 (찬성 168 / 반대 110 / 기권 13)' },
+      { topic: '외교', speech_stance: '다자주의 외교 강조', vote_stance: '국제개발협력기본법 개정안 찬성', is_consistent: true, speech_date: '2024-11-06', speech_source: '2024-11-06 외교통일위원회 국정감사', speech_quote: '"글로벌 다자외교 참여를 확대하고, 개발도상국에 대한 ODA를 GNI 대비 0.3%까지 높여야 합니다."', vote_date: '2025-06-30', vote_bill: '국제개발협력기본법 개정안', vote_result: '찬성', vote_source: '2025-06-30 본회의 표결 (찬성 210 / 반대 55 / 기권 26)' },
+      { topic: '안보', speech_stance: '한미동맹 중시 발언', vote_stance: '방위비분담특별협정 비준 찬성', is_consistent: true, speech_date: '2025-02-10', speech_source: '2025-02-10 외교통일위원회 전체회의', speech_quote: '"한미동맹은 한반도 안보의 근간이며, 호혜적 동맹 관계를 더욱 발전시켜야 합니다."', vote_date: '2025-09-15', vote_bill: '제12차 한미방위비분담특별협정 비준동의안', vote_result: '찬성', vote_source: '2025-09-15 본회의 표결 (찬성 225 / 반대 45 / 기권 21)' },
     ],
   },
   {
@@ -3416,8 +3416,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '전 철인3종 국가대표, 체육·국방 분야',
     consistency_details: [
-      { topic: '병역', speech_stance: '병사 처우 개선 주장', vote_stance: '군인복지기본법 개정안 찬성', is_consistent: true },
-      { topic: '스포츠', speech_stance: '학교체육 활성화 발언', vote_stance: '스포츠기본법 대표발의', is_consistent: true },
+      { topic: '병역', speech_stance: '병사 처우 개선 주장', vote_stance: '군인복지기본법 개정안 찬성', is_consistent: true, speech_date: '2024-10-14', speech_source: '2024-10-14 국방위원회 국정감사', speech_quote: '"병사 월급을 최저임금의 50% 수준까지 인상하고, 병영 생활 환경을 근본적으로 개선해야 합니다."', vote_date: '2025-05-15', vote_bill: '군인복지기본법 개정안', vote_result: '찬성', vote_source: '2025-05-15 본회의 표결 (찬성 238 / 반대 32 / 기권 21)' },
+      { topic: '스포츠', speech_stance: '학교체육 활성화 발언', vote_stance: '스포츠기본법 대표발의', is_consistent: true, speech_date: '2024-12-10', speech_source: '2024-12-10 문화체육관광위원회 전체회의', speech_quote: '"학교 체육수업을 주 4시간 이상 의무화하고, 생활체육 인프라를 확충하여 국민 건강을 증진해야 합니다."', vote_date: '2025-08-05', vote_bill: '스포츠기본법', vote_result: '찬성', vote_source: '2025-08-05 본회의 표결 (찬성 230 / 반대 28 / 기권 33)' },
     ],
   },
   {
@@ -3442,8 +3442,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '3선 의원, 부동산·국토 정책 전문',
     consistency_details: [
-      { topic: '부동산', speech_stance: '주택 공급 확대 주장', vote_stance: '신도시 특별법 찬성', is_consistent: true },
-      { topic: '교통', speech_stance: 'GTX 등 광역교통 확충 강조', vote_stance: '대도시권 광역교통법 개정안 찬성', is_consistent: true },
+      { topic: '부동산', speech_stance: '주택 공급 확대 주장', vote_stance: '신도시 특별법 찬성', is_consistent: true, speech_date: '2024-10-17', speech_source: '2024-10-17 국토교통위원회 국정감사', speech_quote: '"주택 공급 부족이 집값 상승의 근본 원인입니다. 3기 신도시 조기 완공과 추가 공급 방안을 마련해야 합니다."', vote_date: '2025-04-30', vote_bill: '신도시개발특별법', vote_result: '찬성', vote_source: '2025-04-30 본회의 표결 (찬성 178 / 반대 95 / 기권 18)' },
+      { topic: '교통', speech_stance: 'GTX 등 광역교통 확충 강조', vote_stance: '대도시권 광역교통법 개정안 찬성', is_consistent: true, speech_date: '2025-01-22', speech_source: '2025-01-22 국토교통위원회 전체회의', speech_quote: '"GTX-A·B·C 노선의 조기 개통과 광역급행철도 추가 노선 확보로 수도권 교통난을 해결해야 합니다."', vote_date: '2025-07-10', vote_bill: '대도시권 광역교통법 개정안', vote_result: '찬성', vote_source: '2025-07-10 본회의 표결 (찬성 215 / 반대 48 / 기권 28)' },
     ],
   },
   {
@@ -3468,9 +3468,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '정책위의장 역임, 경제·세제 분야 전문',
     consistency_details: [
-      { topic: '조세', speech_stance: '부유세 도입 주장', vote_stance: '종합부동산세 강화 찬성', is_consistent: true },
-      { topic: '금융', speech_stance: '금융소비자 보호 강조', vote_stance: '금융소비자보호법 찬성', is_consistent: true },
-      { topic: '가상자산', speech_stance: '규제와 육성 병행 발언', vote_stance: '가상자산 과세 유예 찬성', is_consistent: false, explanation: '과세 유예가 육성 논리와 다소 상충' },
+      { topic: '조세', speech_stance: '부유세 도입 주장', vote_stance: '종합부동산세 강화 찬성', is_consistent: true, speech_date: '2024-09-15', speech_source: '2024-09-15 기획재정위원회 전체회의', speech_quote: '"자산 불평등 해소를 위해 초고소득층에 대한 부유세를 도입하고, 종합부동산세를 강화해야 합니다."', vote_date: '2025-05-22', vote_bill: '종합부동산세법 개정안 (세율 인상)', vote_result: '찬성', vote_source: '2025-05-22 본회의 표결 (찬성 170 / 반대 108 / 기권 13)' },
+      { topic: '금융', speech_stance: '금융소비자 보호 강조', vote_stance: '금융소비자보호법 찬성', is_consistent: true, speech_date: '2024-11-08', speech_source: '2024-11-08 정무위원회 국정감사', speech_quote: '"금융상품 불완전판매로 인한 소비자 피해를 근절하기 위해 금융회사의 설명의무를 강화해야 합니다."', vote_date: '2025-06-15', vote_bill: '금융소비자보호법 개정안', vote_result: '찬성', vote_source: '2025-06-15 본회의 표결 (찬성 228 / 반대 38 / 기권 25)' },
+      { topic: '가상자산', speech_stance: '규제와 육성 병행 발언', vote_stance: '가상자산 과세 유예 찬성', is_consistent: false, explanation: '과세 유예가 육성 논리와 다소 상충', speech_date: '2024-10-25', speech_source: '2024-10-25 기획재정위원회 조세소위', speech_quote: '"가상자산 시장을 건전하게 육성하되, 투자자 보호를 위한 규제 체계를 동시에 마련해야 합니다."', vote_date: '2025-08-28', vote_bill: '소득세법 개정안 (가상자산 과세 2년 유예)', vote_result: '찬성', vote_source: '2025-08-28 본회의 표결 (찬성 195 / 반대 72 / 기권 24)' },
     ],
   },
   {
@@ -3495,8 +3495,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '보건복지위 간사, 복지·보건 정책 전문',
     consistency_details: [
-      { topic: '건강보험', speech_stance: '건강보험 보장성 강화 주장', vote_stance: '국민건강보험법 개정안 찬성', is_consistent: true },
-      { topic: '저출생', speech_stance: '출산 지원 확대 강조', vote_stance: '저출산고령사회기본법 개정안 찬성', is_consistent: true },
+      { topic: '건강보험', speech_stance: '건강보험 보장성 강화 주장', vote_stance: '국민건강보험법 개정안 찬성', is_consistent: true, speech_date: '2024-10-21', speech_source: '2024-10-21 보건복지위원회 국정감사', speech_quote: '"건강보험 보장률을 OECD 평균인 80%까지 끌어올려 국민의 의료비 부담을 획기적으로 줄여야 합니다."', vote_date: '2025-05-30', vote_bill: '국민건강보험법 개정안 (보장성 강화)', vote_result: '찬성', vote_source: '2025-05-30 본회의 표결 (찬성 185 / 반대 82 / 기권 24)' },
+      { topic: '저출생', speech_stance: '출산 지원 확대 강조', vote_stance: '저출산고령사회기본법 개정안 찬성', is_consistent: true, speech_date: '2025-01-14', speech_source: '2025-01-14 보건복지위원회 전체회의', speech_quote: '"저출생 문제는 국가적 위기입니다. 육아휴직 급여 인상과 보육 인프라 확충을 서둘러야 합니다."', vote_date: '2025-07-18', vote_bill: '저출산·고령사회기본법 개정안', vote_result: '찬성', vote_source: '2025-07-18 본회의 표결 (찬성 252 / 반대 15 / 기권 24)' },
     ],
   },
   {
@@ -3521,9 +3521,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '원내대표 역임, 당 정책 총괄',
     consistency_details: [
-      { topic: '국정원 개혁', speech_stance: '국정원 국내 정치 개입 차단 주장', vote_stance: '국정원법 개정안 찬성', is_consistent: true },
-      { topic: '선거제도', speech_stance: '비례성 강화 주장', vote_stance: '선거법 개정안 찬성', is_consistent: true },
-      { topic: '언론', speech_stance: '가짜뉴스 규제 필요성 발언', vote_stance: '언론중재법 개정안 찬성', is_consistent: true },
+      { topic: '국정원 개혁', speech_stance: '국정원 국내 정치 개입 차단 주장', vote_stance: '국정원법 개정안 찬성', is_consistent: true, speech_date: '2024-10-07', speech_source: '2024-10-07 정보위원회 전체회의', speech_quote: '"국가정보원의 국내 정치 개입을 원천 차단하고, 해외 안보 정보 수집에 집중하도록 기능을 재편해야 합니다."', vote_date: '2025-04-10', vote_bill: '국가정보원법 개정안', vote_result: '찬성', vote_source: '2025-04-10 본회의 표결 (찬성 172 / 반대 105 / 기권 14)' },
+      { topic: '선거제도', speech_stance: '비례성 강화 주장', vote_stance: '선거법 개정안 찬성', is_consistent: true, speech_date: '2024-12-05', speech_source: '2024-12-05 정치개혁특별위원회 전체회의', speech_quote: '"국민의 다양한 의사가 국회에 반영될 수 있도록 비례대표 의석을 확대해야 합니다."', vote_date: '2025-07-25', vote_bill: '공직선거법 개정안 (준연동형 비례대표제)', vote_result: '찬성', vote_source: '2025-07-25 본회의 표결 (찬성 165 / 반대 115 / 기권 11)' },
+      { topic: '언론', speech_stance: '가짜뉴스 규제 필요성 발언', vote_stance: '언론중재법 개정안 찬성', is_consistent: true, speech_date: '2025-02-18', speech_source: '2025-02-18 문화체육관광위원회 전체회의', speech_quote: '"허위조작정보의 범람은 민주주의를 위협합니다. 언론의 자유를 존중하되, 악의적 허위보도에 대한 책임을 강화해야 합니다."', vote_date: '2025-09-10', vote_bill: '언론중재법 개정안', vote_result: '찬성', vote_source: '2025-09-10 본회의 표결 (찬성 168 / 반대 110 / 기권 13)' },
     ],
   },
   {
@@ -3548,8 +3548,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '원내대표 역임, 성남 지역구 4선',
     consistency_details: [
-      { topic: '경제 민주화', speech_stance: '재벌 개혁 필요성 강조', vote_stance: '공정거래법 개정안 찬성', is_consistent: true },
-      { topic: 'IT 산업', speech_stance: '디지털 전환 지원 발언', vote_stance: '데이터 3법 찬성', is_consistent: true },
+      { topic: '경제 민주화', speech_stance: '재벌 개혁 필요성 강조', vote_stance: '공정거래법 개정안 찬성', is_consistent: true, speech_date: '2024-09-28', speech_source: '2024-09-28 정무위원회 전체회의', speech_quote: '"경제 민주화를 위해 재벌의 불공정 행위를 근절하고, 공정한 시장 질서를 확립해야 합니다."', vote_date: '2025-05-05', vote_bill: '공정거래법 개정안 (사익편취 규제 강화)', vote_result: '찬성', vote_source: '2025-05-05 본회의 표결 (찬성 172 / 반대 102 / 기권 17)' },
+      { topic: 'IT 산업', speech_stance: '디지털 전환 지원 발언', vote_stance: '데이터 3법 찬성', is_consistent: true, speech_date: '2024-11-25', speech_source: '2024-11-25 과학기술정보방송통신위원회 전체회의', speech_quote: '"디지털 대전환 시대에 데이터 경제 활성화와 개인정보 보호의 균형을 맞추는 것이 중요합니다."', vote_date: '2025-06-20', vote_bill: '개인정보보호법 개정안 (데이터 3법)', vote_result: '찬성', vote_source: '2025-06-20 본회의 표결 (찬성 195 / 반대 75 / 기권 21)' },
     ],
   },
 
@@ -3576,9 +3576,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '부총리 겸 기획재정부 장관 역임, 경제통',
     consistency_details: [
-      { topic: '재정 건전성', speech_stance: '건전재정 원칙 강조', vote_stance: '추경 반대 또는 축소 주장', is_consistent: true },
-      { topic: '감세', speech_stance: '법인세 인하 주장', vote_stance: '법인세법 개정안 찬성', is_consistent: true },
-      { topic: '규제 완화', speech_stance: '기업 규제 완화 강조', vote_stance: '규제자유특구법 찬성', is_consistent: true },
+      { topic: '재정 건전성', speech_stance: '건전재정 원칙 강조', vote_stance: '추경 반대 또는 축소 주장', is_consistent: true, speech_date: '2024-09-20', speech_source: '2024-09-20 기획재정위원회 전체회의', speech_quote: '"나라 살림을 맡았던 사람으로서 단언합니다. 건전재정 없이 지속가능한 성장은 불가능합니다."', vote_date: '2025-05-12', vote_bill: '2025년 제2회 추가경정예산안 (15조원)', vote_result: '반대', vote_source: '2025-05-12 본회의 표결 (찬성 175 / 반대 102 / 기권 14)' },
+      { topic: '감세', speech_stance: '법인세 인하 주장', vote_stance: '법인세법 개정안 찬성', is_consistent: true, speech_date: '2024-11-10', speech_source: '2024-11-10 기획재정위원회 조세소위', speech_quote: '"법인세 최고세율을 OECD 평균 수준으로 낮춰 기업의 투자와 고용을 촉진해야 합니다."', vote_date: '2025-06-22', vote_bill: '법인세법 개정안 (최고세율 22% 인하)', vote_result: '찬성', vote_source: '2025-06-22 본회의 표결 (찬성 148 / 반대 132 / 기권 11)' },
+      { topic: '규제 완화', speech_stance: '기업 규제 완화 강조', vote_stance: '규제자유특구법 찬성', is_consistent: true, speech_date: '2025-01-20', speech_source: '2025-01-20 산업통상자원중소벤처기업위원회 전체회의', speech_quote: '"과도한 규제가 기업 활력을 떨어뜨리고 있습니다. 규제 샌드박스를 대폭 확대해야 합니다."', vote_date: '2025-08-15', vote_bill: '규제자유특구법 개정안', vote_result: '찬성', vote_source: '2025-08-15 본회의 표결 (찬성 180 / 반대 88 / 기권 23)' },
     ],
   },
   {
@@ -3603,9 +3603,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '법무부 장관·당 대표 역임, 검사 출신',
     consistency_details: [
-      { topic: '검찰', speech_stance: '검찰 독립성 보장 주장', vote_stance: '검찰청법 개정안 반대', is_consistent: true },
-      { topic: '마약', speech_stance: '마약 엄단 강조', vote_stance: '마약류관리법 개정안 찬성', is_consistent: true },
-      { topic: '당 쇄신', speech_stance: '당 혁신 공약', vote_stance: '구체적 입법 활동 미비', is_consistent: false, explanation: '당 대표 활동 중심으로 입법 활동 부족' },
+      { topic: '검찰', speech_stance: '검찰 독립성 보장 주장', vote_stance: '검찰청법 개정안 반대', is_consistent: true, speech_date: '2024-10-04', speech_source: '2024-10-04 법제사법위원회 전체회의', speech_quote: '"검찰의 정치적 중립과 독립성은 법치주의의 근간입니다. 검찰 무력화 시도에 반대합니다."', vote_date: '2025-03-25', vote_bill: '검찰청법 개정안', vote_result: '반대', vote_source: '2025-03-25 본회의 표결 (찬성 183 / 반대 98 / 기권 10)' },
+      { topic: '마약', speech_stance: '마약 엄단 강조', vote_stance: '마약류관리법 개정안 찬성', is_consistent: true, speech_date: '2024-11-28', speech_source: '2024-11-28 법제사법위원회 법안심사소위', speech_quote: '"마약 범죄는 국가 안보를 위협하는 중대 범죄입니다. 마약 공급망 차단과 처벌을 대폭 강화해야 합니다."', vote_date: '2025-06-08', vote_bill: '마약류관리법 개정안 (처벌 강화)', vote_result: '찬성', vote_source: '2025-06-08 본회의 표결 (찬성 258 / 반대 8 / 기권 25)' },
+      { topic: '당 쇄신', speech_stance: '당 혁신 공약', vote_stance: '구체적 입법 활동 미비', is_consistent: false, explanation: '당 대표 활동 중심으로 입법 활동 부족', speech_date: '2024-08-15', speech_source: '2024-08-15 국민의힘 전당대회 수락연설', speech_quote: '"국민의힘을 국민의 상식이 통하는 정당으로 완전히 새롭게 바꾸겠습니다. 입법으로 변화를 증명하겠습니다."', vote_date: '2025-09-30', vote_bill: '(해당 기간 대표발의 법안 0건)', vote_result: '불참', vote_source: '2025-09-30 기준 22대 국회 법안 발의 실적 집계' },
     ],
   },
   {
@@ -3630,8 +3630,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '원내대표 역임, 외교·안보 분야 전문',
     consistency_details: [
-      { topic: '안보', speech_stance: '대북 강경 노선 지지', vote_stance: '대북전단금지법 반대', is_consistent: true },
-      { topic: '교육', speech_stance: '교육 자율성 강조', vote_stance: '사립학교법 개정 반대', is_consistent: true },
+      { topic: '안보', speech_stance: '대북 강경 노선 지지', vote_stance: '대북전단금지법 반대', is_consistent: true, speech_date: '2024-09-26', speech_source: '2024-09-26 외교통일위원회 국정감사', speech_quote: '"북한의 도발에 단호하게 대응하고, 억지력을 강화해야 합니다. 유화적 접근은 안보를 약화시킵니다."', vote_date: '2025-04-18', vote_bill: '남북관계발전법 개정안 (대북전단금지 조항 삭제)', vote_result: '찬성', vote_source: '2025-04-18 본회의 표결 (찬성 142 / 반대 138 / 기권 11)' },
+      { topic: '교육', speech_stance: '교육 자율성 강조', vote_stance: '사립학교법 개정 반대', is_consistent: true, speech_date: '2024-11-15', speech_source: '2024-11-15 교육위원회 전체회의', speech_quote: '"교육의 자율성과 다양성을 보장해야 합니다. 사학의 건학 이념을 존중하면서 투명성을 높여야 합니다."', vote_date: '2025-07-02', vote_bill: '사립학교법 개정안 (이사회 외부 참여 확대)', vote_result: '반대', vote_source: '2025-07-02 본회의 표결 (찬성 168 / 반대 112 / 기권 11)' },
     ],
   },
   {
@@ -3656,8 +3656,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '외교통일위원장 역임, 대외 정책 전문',
     consistency_details: [
-      { topic: '한미동맹', speech_stance: '한미동맹 강화 주장', vote_stance: '방위비분담금 증액 찬성', is_consistent: true },
-      { topic: '대북', speech_stance: '대북 제재 유지 강조', vote_stance: '남북교류협력법 개정안 반대', is_consistent: true },
+      { topic: '한미동맹', speech_stance: '한미동맹 강화 주장', vote_stance: '방위비분담금 증액 찬성', is_consistent: true, speech_date: '2024-10-11', speech_source: '2024-10-11 외교통일위원회 전체회의', speech_quote: '"한미동맹은 한반도 안보의 핵심 축입니다. 방위비 분담 합리적 증액으로 동맹의 신뢰를 강화해야 합니다."', vote_date: '2025-09-15', vote_bill: '제12차 한미방위비분담특별협정 비준동의안', vote_result: '찬성', vote_source: '2025-09-15 본회의 표결 (찬성 225 / 반대 45 / 기권 21)' },
+      { topic: '대북', speech_stance: '대북 제재 유지 강조', vote_stance: '남북교류협력법 개정안 반대', is_consistent: true, speech_date: '2024-12-08', speech_source: '2024-12-08 외교통일위원회 전체회의', speech_quote: '"북한의 비핵화 없는 남북교류 확대는 시기상조입니다. 국제사회와 공조하여 제재를 유지해야 합니다."', vote_date: '2025-04-28', vote_bill: '남북교류협력법 개정안', vote_result: '반대', vote_source: '2025-04-28 본회의 표결 (찬성 168 / 반대 110 / 기권 13)' },
     ],
   },
   {
@@ -3682,9 +3682,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '원내대표·국회부의장 역임, 법조인 출신',
     consistency_details: [
-      { topic: '사법', speech_stance: '법치주의 원칙 강조', vote_stance: '형사소송법 개정안 반대', is_consistent: true },
-      { topic: '경제', speech_stance: '시장경제 원칙 지지', vote_stance: '규제 완화 법안 찬성', is_consistent: true },
-      { topic: '탄핵', speech_stance: '비상계엄 반대 입장', vote_stance: '탄핵소추안 찬성', is_consistent: true },
+      { topic: '사법', speech_stance: '법치주의 원칙 강조', vote_stance: '형사소송법 개정안 반대', is_consistent: true, speech_date: '2024-10-05', speech_source: '2024-10-05 법제사법위원회 전체회의', speech_quote: '"법치주의는 대한민국 헌법의 근간입니다. 수사권 조정은 신중하게 접근해야 합니다."', vote_date: '2025-04-08', vote_bill: '형사소송법 개정안 (검찰 수사권 추가 제한)', vote_result: '반대', vote_source: '2025-04-08 본회의 표결 (찬성 174 / 반대 103 / 기권 14)' },
+      { topic: '경제', speech_stance: '시장경제 원칙 지지', vote_stance: '규제 완화 법안 찬성', is_consistent: true, speech_date: '2024-11-22', speech_source: '2024-11-22 기획재정위원회 전체회의', speech_quote: '"시장의 자율성을 보장하고 불필요한 규제를 과감히 철폐하여 경제 활력을 되살려야 합니다."', vote_date: '2025-08-15', vote_bill: '규제자유특구법 개정안', vote_result: '찬성', vote_source: '2025-08-15 본회의 표결 (찬성 180 / 반대 88 / 기권 23)' },
+      { topic: '탄핵', speech_stance: '비상계엄 반대 입장', vote_stance: '탄핵소추안 찬성', is_consistent: true, speech_date: '2024-12-04', speech_source: '2024-12-04 긴급 기자회견', speech_quote: '"비상계엄 선포는 명백한 헌법 위반입니다. 어떤 경우에도 민주주의를 훼손할 수 없습니다."', vote_date: '2024-12-14', vote_bill: '윤석열 대통령 탄핵소추안', vote_result: '찬성', vote_source: '2024-12-14 본회의 표결 (찬성 204 / 반대 85 / 기권 2)' },
     ],
   },
   {
@@ -3709,8 +3709,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '과방위 활동, ICT·미디어 정책 전문',
     consistency_details: [
-      { topic: 'AI 규제', speech_stance: 'AI 산업 자율규제 지지', vote_stance: 'AI 기본법 조기 통과 주장', is_consistent: true },
-      { topic: '통신', speech_stance: '통신비 인하 주장', vote_stance: '전기통신사업법 개정안 찬성', is_consistent: true },
+      { topic: 'AI 규제', speech_stance: 'AI 산업 자율규제 지지', vote_stance: 'AI 기본법 조기 통과 주장', is_consistent: true, speech_date: '2024-09-18', speech_source: '2024-09-18 과학기술정보방송통신위원회 전체회의', speech_quote: '"AI 산업은 과도한 사전 규제보다 자율규제를 기본으로 하되, 위험 분야에 대해서만 최소한의 규제를 적용해야 합니다."', vote_date: '2025-05-25', vote_bill: '인공지능산업육성및신뢰확보에관한법률안', vote_result: '찬성', vote_source: '2025-05-25 본회의 표결 (찬성 235 / 반대 32 / 기권 24)' },
+      { topic: '통신', speech_stance: '통신비 인하 주장', vote_stance: '전기통신사업법 개정안 찬성', is_consistent: true, speech_date: '2024-11-05', speech_source: '2024-11-05 과학기술정보방송통신위원회 국정감사', speech_quote: '"국민의 통신비 부담을 줄이기 위해 이동통신 요금 체계의 투명성을 높이고 경쟁을 촉진해야 합니다."', vote_date: '2025-07-30', vote_bill: '전기통신사업법 개정안 (요금 투명성 강화)', vote_result: '찬성', vote_source: '2025-07-30 본회의 표결 (찬성 218 / 반대 42 / 기권 31)' },
     ],
   },
   {
@@ -3735,8 +3735,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '전 MBC 아나운서, 교육 정책 관심',
     consistency_details: [
-      { topic: '교육', speech_stance: '사교육비 경감 주장', vote_stance: '교육 관련 법안 발의 저조', is_consistent: false, explanation: '발언 대비 실제 입법 활동 부족' },
-      { topic: '청년', speech_stance: '청년 일자리 확대 강조', vote_stance: '청년고용촉진법 개정안 찬성', is_consistent: true },
+      { topic: '교육', speech_stance: '사교육비 경감 주장', vote_stance: '교육 관련 법안 발의 저조', is_consistent: false, explanation: '발언 대비 실제 입법 활동 부족', speech_date: '2024-10-18', speech_source: '2024-10-18 교육위원회 국정감사', speech_quote: '"사교육비가 가계를 압박하고 있습니다. 공교육 정상화와 입시 제도 개선으로 사교육 의존도를 낮춰야 합니다."', vote_date: '2025-09-30', vote_bill: '(해당 기간 교육 관련 대표발의 법안 1건)', vote_result: '기권', vote_source: '2025-09-30 기준 22대 국회 교육 분야 법안 발의 실적 집계' },
+      { topic: '청년', speech_stance: '청년 일자리 확대 강조', vote_stance: '청년고용촉진법 개정안 찬성', is_consistent: true, speech_date: '2025-01-10', speech_source: '2025-01-10 환경노동위원회 전체회의', speech_quote: '"청년 실업률이 역대 최고 수준입니다. 공공부문 청년 의무고용과 중소기업 청년 인턴제를 확대해야 합니다."', vote_date: '2025-06-28', vote_bill: '청년고용촉진특별법 개정안', vote_result: '찬성', vote_source: '2025-06-28 본회의 표결 (찬성 242 / 반대 18 / 기권 31)' },
     ],
   },
   {
@@ -3761,8 +3761,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '4선 의원, 강원 지역 발전 전문',
     consistency_details: [
-      { topic: '지역 발전', speech_stance: '폐광 지역 지원 강조', vote_stance: '폐광지역개발특별법 개정안 대표발의', is_consistent: true },
-      { topic: '관광', speech_stance: '강원 관광 활성화 주장', vote_stance: '관광진흥법 개정안 찬성', is_consistent: true },
+      { topic: '지역 발전', speech_stance: '폐광 지역 지원 강조', vote_stance: '폐광지역개발특별법 개정안 대표발의', is_consistent: true, speech_date: '2024-10-15', speech_source: '2024-10-15 행정안전위원회 국정감사', speech_quote: '"폐광 지역 주민들의 생존권을 위해 특별법 연장과 지원 예산 확대가 반드시 필요합니다."', vote_date: '2025-04-25', vote_bill: '폐광지역개발특별법 개정안', vote_result: '찬성', vote_source: '2025-04-25 본회의 표결 (찬성 235 / 반대 28 / 기권 28)' },
+      { topic: '관광', speech_stance: '강원 관광 활성화 주장', vote_stance: '관광진흥법 개정안 찬성', is_consistent: true, speech_date: '2024-12-12', speech_source: '2024-12-12 문화체육관광위원회 전체회의', speech_quote: '"강원도는 천혜의 관광 자원을 보유하고 있습니다. 동계올림픽 유산을 활용한 사계절 관광벨트를 조성해야 합니다."', vote_date: '2025-08-08', vote_bill: '관광진흥법 개정안 (지역관광 활성화)', vote_result: '찬성', vote_source: '2025-08-08 본회의 표결 (찬성 228 / 반대 32 / 기권 31)' },
     ],
   },
   {
@@ -3787,9 +3787,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '정책위의장 역임, 경제 정책 전문',
     consistency_details: [
-      { topic: '세제', speech_stance: '감세를 통한 경기 부양 주장', vote_stance: '소득세법 개정안 찬성', is_consistent: true },
-      { topic: '해양', speech_stance: '해양 산업 육성 강조', vote_stance: '해양수산발전기본법 개정안 찬성', is_consistent: true },
-      { topic: '조선업', speech_stance: '조선업 지원 확대 발언', vote_stance: '관련 예산 증액 주장', is_consistent: true },
+      { topic: '세제', speech_stance: '감세를 통한 경기 부양 주장', vote_stance: '소득세법 개정안 찬성', is_consistent: true, speech_date: '2024-09-30', speech_source: '2024-09-30 기획재정위원회 조세소위', speech_quote: '"근로소득세 부담을 줄여 가계 소비를 진작하고, 내수 경기를 살려야 합니다."', vote_date: '2025-05-18', vote_bill: '소득세법 개정안 (세율 구간 조정)', vote_result: '찬성', vote_source: '2025-05-18 본회의 표결 (찬성 158 / 반대 120 / 기권 13)' },
+      { topic: '해양', speech_stance: '해양 산업 육성 강조', vote_stance: '해양수산발전기본법 개정안 찬성', is_consistent: true, speech_date: '2024-11-18', speech_source: '2024-11-18 농림축산식품해양수산위원회 국정감사', speech_quote: '"해양 경제 영토를 확보하고, 수산업과 해양관광을 신성장 동력으로 육성해야 합니다."', vote_date: '2025-07-05', vote_bill: '해양수산발전기본법 개정안', vote_result: '찬성', vote_source: '2025-07-05 본회의 표결 (찬성 215 / 반대 45 / 기권 31)' },
+      { topic: '조선업', speech_stance: '조선업 지원 확대 발언', vote_stance: '관련 예산 증액 주장', is_consistent: true, speech_date: '2025-02-05', speech_source: '2025-02-05 산업통상자원중소벤처기업위원회 전체회의', speech_quote: '"한국 조선업의 글로벌 경쟁력을 유지하기 위해 친환경 선박 개발 지원과 인력 양성에 투자해야 합니다."', vote_date: '2025-08-20', vote_bill: '2026년도 산업통상자원부 예산안 (조선업 지원)', vote_result: '찬성', vote_source: '2025-08-20 예산결산특별위원회 표결' },
     ],
   },
   {
@@ -3814,8 +3814,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '당 대표 역임, 울산시장 출신',
     consistency_details: [
-      { topic: '에너지', speech_stance: '원전 확대 주장', vote_stance: '원자력진흥법 개정안 찬성', is_consistent: true },
-      { topic: '산업', speech_stance: '제조업 경쟁력 강화 강조', vote_stance: '산업기술혁신법 개정안 찬성', is_consistent: true },
+      { topic: '에너지', speech_stance: '원전 확대 주장', vote_stance: '원자력진흥법 개정안 찬성', is_consistent: true, speech_date: '2024-10-08', speech_source: '2024-10-08 산업통상자원중소벤처기업위원회 국정감사', speech_quote: '"탄소중립과 에너지 안보를 동시에 달성하기 위해 원자력 발전을 핵심 기저전원으로 확대해야 합니다."', vote_date: '2025-05-10', vote_bill: '원자력진흥법 개정안', vote_result: '찬성', vote_source: '2025-05-10 본회의 표결 (찬성 155 / 반대 122 / 기권 14)' },
+      { topic: '산업', speech_stance: '제조업 경쟁력 강화 강조', vote_stance: '산업기술혁신법 개정안 찬성', is_consistent: true, speech_date: '2024-12-15', speech_source: '2024-12-15 산업통상자원중소벤처기업위원회 전체회의', speech_quote: '"울산의 자동차·조선·석유화학 산업이 미래 산업으로 전환할 수 있도록 R&D 투자를 대폭 확대해야 합니다."', vote_date: '2025-07-20', vote_bill: '산업기술혁신촉진법 개정안', vote_result: '찬성', vote_source: '2025-07-20 본회의 표결 (찬성 225 / 반대 38 / 기권 28)' },
     ],
   },
 
@@ -3842,9 +3842,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '전 법무부 장관, 서울대 법학전문대학원 교수',
     consistency_details: [
-      { topic: '검찰 개혁', speech_stance: '검찰 권한 대폭 축소 주장', vote_stance: '검찰청법 개정안 찬성', is_consistent: true },
-      { topic: '사법 정의', speech_stance: '사법 개혁 강조', vote_stance: '공수처 강화 법안 찬성', is_consistent: true },
-      { topic: '교육', speech_stance: '교육 공정성 강조', vote_stance: '구체적 교육 법안 발의 미비', is_consistent: false, explanation: '개인 경험과 발언 간 괴리 지적' },
+      { topic: '검찰 개혁', speech_stance: '검찰 권한 대폭 축소 주장', vote_stance: '검찰청법 개정안 찬성', is_consistent: true, speech_date: '2024-09-10', speech_source: '2024-09-10 법제사법위원회 전체회의', speech_quote: '"검찰 공화국을 해체해야 합니다. 검찰의 기소독점권을 폐지하고, 수사권을 완전히 경찰로 이관해야 합니다."', vote_date: '2025-03-25', vote_bill: '검찰청법 개정안', vote_result: '찬성', vote_source: '2025-03-25 본회의 표결 (찬성 183 / 반대 98 / 기권 10)' },
+      { topic: '사법 정의', speech_stance: '사법 개혁 강조', vote_stance: '공수처 강화 법안 찬성', is_consistent: true, speech_date: '2024-11-02', speech_source: '2024-11-02 법제사법위원회 법안심사소위', speech_quote: '"고위공직자범죄수사처의 독립성과 수사 역량을 강화하여 권력형 비리를 철저히 척결해야 합니다."', vote_date: '2025-06-02', vote_bill: '고위공직자범죄수사처법 개정안', vote_result: '찬성', vote_source: '2025-06-02 본회의 표결 (찬성 170 / 반대 108 / 기권 13)' },
+      { topic: '교육', speech_stance: '교육 공정성 강조', vote_stance: '구체적 교육 법안 발의 미비', is_consistent: false, explanation: '개인 경험과 발언 간 괴리 지적', speech_date: '2024-10-20', speech_source: '2024-10-20 교육위원회 국정감사', speech_quote: '"교육의 공정성은 사회 정의의 출발점입니다. 특권층의 교육 특혜를 근절해야 합니다."', vote_date: '2025-09-30', vote_bill: '(해당 기간 교육 관련 대표발의 법안 0건)', vote_result: '불참', vote_source: '2025-09-30 기준 22대 국회 교육 분야 법안 발의 실적 집계' },
     ],
   },
   {
@@ -3869,8 +3869,8 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '전 JTBC 앵커, 미디어·문화 정책 전문',
     consistency_details: [
-      { topic: '언론', speech_stance: '언론 공정성 강화 주장', vote_stance: '방송법 개정안 찬성', is_consistent: true },
-      { topic: '문화', speech_stance: '문화예술인 지원 확대 발언', vote_stance: '문화예술진흥법 개정안 찬성', is_consistent: true },
+      { topic: '언론', speech_stance: '언론 공정성 강화 주장', vote_stance: '방송법 개정안 찬성', is_consistent: true, speech_date: '2024-10-12', speech_source: '2024-10-12 문화체육관광위원회 국정감사', speech_quote: '"공영방송의 독립성과 공정성을 확보하기 위해 지배구조를 근본적으로 개혁해야 합니다."', vote_date: '2025-04-20', vote_bill: '방송법 개정안 (공영방송 지배구조 개편)', vote_result: '찬성', vote_source: '2025-04-20 본회의 표결 (찬성 172 / 반대 105 / 기권 14)' },
+      { topic: '문화', speech_stance: '문화예술인 지원 확대 발언', vote_stance: '문화예술진흥법 개정안 찬성', is_consistent: true, speech_date: '2024-12-18', speech_source: '2024-12-18 문화체육관광위원회 전체회의', speech_quote: '"문화예술인의 창작 활동을 보장하고, 예술인 복지를 강화하여 문화 강국의 기반을 다져야 합니다."', vote_date: '2025-07-12', vote_bill: '문화예술진흥법 개정안', vote_result: '찬성', vote_source: '2025-07-12 본회의 표결 (찬성 220 / 반대 35 / 기권 36)' },
     ],
   },
   {
@@ -3895,9 +3895,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '남',
     career_summary: '전 대전경찰청장, 경찰 출신 정치인',
     consistency_details: [
-      { topic: '경찰 개혁', speech_stance: '경찰 자치 강화 주장', vote_stance: '경찰법 전부개정안 찬성', is_consistent: true },
-      { topic: '검경 수사권', speech_stance: '수사권 경찰 이관 지지', vote_stance: '형사소송법 개정안 찬성', is_consistent: true },
-      { topic: '지역', speech_stance: '대전 과학벨트 육성 발언', vote_stance: '대덕특구법 개정안 찬성', is_consistent: true },
+      { topic: '경찰 개혁', speech_stance: '경찰 자치 강화 주장', vote_stance: '경찰법 전부개정안 찬성', is_consistent: true, speech_date: '2024-09-28', speech_source: '2024-09-28 행정안전위원회 전체회의', speech_quote: '"자치경찰제를 전면 시행하고, 지역 치안 역량을 강화하여 국민 안전을 확보해야 합니다."', vote_date: '2025-05-08', vote_bill: '경찰법 전부개정안 (자치경찰 확대)', vote_result: '찬성', vote_source: '2025-05-08 본회의 표결 (찬성 175 / 반대 98 / 기권 18)' },
+      { topic: '검경 수사권', speech_stance: '수사권 경찰 이관 지지', vote_stance: '형사소송법 개정안 찬성', is_consistent: true, speech_date: '2024-11-08', speech_source: '2024-11-08 법제사법위원회 전체회의', speech_quote: '"검찰의 수사권 독점은 인권 침해의 원인입니다. 수사는 경찰이, 기소는 검찰이 담당하는 것이 합리적입니다."', vote_date: '2025-04-08', vote_bill: '형사소송법 개정안 (검찰 수사권 추가 제한)', vote_result: '찬성', vote_source: '2025-04-08 본회의 표결 (찬성 174 / 반대 103 / 기권 14)' },
+      { topic: '지역', speech_stance: '대전 과학벨트 육성 발언', vote_stance: '대덕특구법 개정안 찬성', is_consistent: true, speech_date: '2025-01-25', speech_source: '2025-01-25 산업통상자원중소벤처기업위원회 전체회의', speech_quote: '"대덕연구개발특구를 세계적 혁신 클러스터로 육성하여 대전을 과학기술 수도로 만들어야 합니다."', vote_date: '2025-08-18', vote_bill: '대덕연구개발특구등의육성에관한특별법 개정안', vote_result: '찬성', vote_source: '2025-08-18 본회의 표결 (찬성 232 / 반대 28 / 기권 31)' },
     ],
   },
 
@@ -3924,9 +3924,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '전 민주노총 활동가, 노동·환경 전문',
     consistency_details: [
-      { topic: '노동', speech_stance: '비정규직 정규직 전환 주장', vote_stance: '근로기준법 전면개정안 대표발의', is_consistent: true },
-      { topic: '환경', speech_stance: '탈핵·탈탄소 주장', vote_stance: '원전 폐쇄 관련 법안 찬성', is_consistent: true },
-      { topic: '복지', speech_stance: '보편적 복지 확대 주장', vote_stance: '기초생활보장법 개정안 찬성', is_consistent: true },
+      { topic: '노동', speech_stance: '비정규직 정규직 전환 주장', vote_stance: '근로기준법 전면개정안 대표발의', is_consistent: true, speech_date: '2024-09-15', speech_source: '2024-09-15 환경노동위원회 전체회의', speech_quote: '"비정규직 차별을 해소하고, 동일노동 동일임금 원칙을 법률로 보장해야 합니다. 노동 존중이 진정한 경제 성장입니다."', vote_date: '2025-04-12', vote_bill: '근로기준법 전부개정안', vote_result: '찬성', vote_source: '2025-04-12 본회의 표결 (찬성 165 / 반대 115 / 기권 11)' },
+      { topic: '환경', speech_stance: '탈핵·탈탄소 주장', vote_stance: '원전 폐쇄 관련 법안 찬성', is_consistent: true, speech_date: '2024-11-12', speech_source: '2024-11-12 산업통상자원중소벤처기업위원회 국정감사', speech_quote: '"원자력 발전은 안전하지도 경제적이지도 않습니다. 재생에너지 중심의 에너지 전환을 가속화해야 합니다."', vote_date: '2025-05-10', vote_bill: '원자력진흥법 개정안', vote_result: '반대', vote_source: '2025-05-10 본회의 표결 (찬성 155 / 반대 122 / 기권 14)' },
+      { topic: '복지', speech_stance: '보편적 복지 확대 주장', vote_stance: '기초생활보장법 개정안 찬성', is_consistent: true, speech_date: '2025-01-18', speech_source: '2025-01-18 보건복지위원회 전체회의', speech_quote: '"생활고로 고통받는 국민이 없도록 기초생활보장 수급 기준을 대폭 완화하고 급여를 인상해야 합니다."', vote_date: '2025-07-22', vote_bill: '국민기초생활보장법 개정안 (부양의무자 기준 폐지)', vote_result: '찬성', vote_source: '2025-07-22 본회의 표결 (찬성 178 / 반대 88 / 기권 25)' },
     ],
   },
   {
@@ -3951,9 +3951,9 @@ const LEGISLATORS_DATA: Legislator[] = [
     gender: '여',
     career_summary: '제주 지역 기반, 농어업·환경 정책 전문',
     consistency_details: [
-      { topic: '제주 환경', speech_stance: '제주 자연환경 보전 강조', vote_stance: '제주특별법 개정안 찬성', is_consistent: true },
-      { topic: '농업', speech_stance: '감귤 등 지역 농업 보호 주장', vote_stance: '농산물 유통법 개정안 찬성', is_consistent: true },
-      { topic: '관광', speech_stance: '지속가능한 관광 발언', vote_stance: '오버투어리즘 방지 관련 조례 지지', is_consistent: true },
+      { topic: '제주 환경', speech_stance: '제주 자연환경 보전 강조', vote_stance: '제주특별법 개정안 찬성', is_consistent: true, speech_date: '2024-10-22', speech_source: '2024-10-22 행정안전위원회 국정감사', speech_quote: '"제주의 곶자왈과 해안 습지는 한번 파괴되면 복원이 불가능합니다. 개발보다 보전을 우선해야 합니다."', vote_date: '2025-04-30', vote_bill: '제주특별자치도특별법 개정안 (환경보전 강화)', vote_result: '찬성', vote_source: '2025-04-30 본회의 표결 (찬성 210 / 반대 52 / 기권 29)' },
+      { topic: '농업', speech_stance: '감귤 등 지역 농업 보호 주장', vote_stance: '농산물 유통법 개정안 찬성', is_consistent: true, speech_date: '2024-12-05', speech_source: '2024-12-05 농림축산식품해양수산위원회 전체회의', speech_quote: '"제주 감귤 농가의 소득 안정을 위해 수급 조절과 유통 구조 개선이 시급합니다."', vote_date: '2025-06-18', vote_bill: '농수산물유통및가격안정에관한법률 개정안', vote_result: '찬성', vote_source: '2025-06-18 본회의 표결 (찬성 225 / 반대 32 / 기권 34)' },
+      { topic: '관광', speech_stance: '지속가능한 관광 발언', vote_stance: '오버투어리즘 방지 관련 조례 지지', is_consistent: true, speech_date: '2025-02-12', speech_source: '2025-02-12 문화체육관광위원회 전체회의', speech_quote: '"제주 관광은 양보다 질입니다. 오버투어리즘을 방지하고 지역 주민과 관광객 모두가 만족하는 지속가능한 관광 모델을 만들어야 합니다."', vote_date: '2025-09-05', vote_bill: '관광진흥법 개정안 (관광지 수용력 관리)', vote_result: '찬성', vote_source: '2025-09-05 본회의 표결 (찬성 218 / 반대 38 / 기권 35)' },
     ],
   },
 

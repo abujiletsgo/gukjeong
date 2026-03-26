@@ -99,6 +99,14 @@ export interface ConsistencyItem {
   vote_stance: string;            // 실제 투표
   is_consistent: boolean;
   explanation?: string;
+  // 증거 (proof)
+  speech_date?: string;           // 발언 날짜
+  speech_source?: string;         // 발언 출처 (e.g., "2024-10-15 본회의 대정부질문")
+  speech_quote?: string;          // 실제 발언 인용
+  vote_date?: string;             // 투표 날짜
+  vote_bill?: string;             // 투표 대상 법안명
+  vote_result?: string;           // 찬성/반대/기권
+  vote_source?: string;           // 투표 출처 (e.g., "2025-03-20 본회의 표결")
 }
 
 export interface AuditFlag {

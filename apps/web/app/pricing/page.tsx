@@ -46,7 +46,7 @@ const TIERS = [
       { text: '부처별·위원회별 필터', included: true },
       { text: '설문 참여 + 크레딧 적립', included: true },
       { text: 'AI 감사 상세 보기', included: true },
-      { text: '국회의원 기본 성적표', included: true },
+      { text: '국회의원 활동 데이터', included: true },
       { text: '말과 행동 일치도 분석', included: false },
       { text: 'CSV 다운로드', included: false },
       { text: 'API 접근', included: false },
@@ -132,7 +132,7 @@ const FAQ = [
 
 const USE_CASES = [
   { icon: '📱', role: '일반 시민', plan: '무료', use: '대통령 비교, 예산 확인, 뉴스 프레임 비교' },
-  { icon: '🎓', role: '대학생·연구자', plan: 'Pro', use: '법안 분석, 국회의원 성적표, CSV 데이터' },
+  { icon: '🎓', role: '대학생·연구자', plan: 'Pro', use: '법안 분석, 국회의원 활동 현황, CSV 데이터' },
   { icon: '📰', role: '기자·언론인', plan: 'Pro / 기관', use: '감사 데이터, API로 팩트체크' },
   { icon: '🏛️', role: '시민단체·NGO', plan: '기관', use: '벌크 데이터, 맞춤 설문, 임베드 위젯' },
   { icon: '⚖️', role: '국회 보좌관', plan: '기관', use: '정책 비교 데이터, 법안 영향 분석' },
@@ -282,7 +282,7 @@ export default function PricingPage() {
               { feature: '뉴스 프레임', free: true, member: true, pro: true, inst: true },
               { feature: 'AI 감사 요약', free: true, member: true, pro: true, inst: true },
               { feature: 'AI 감사 상세 (계약·타임라인)', free: false, member: true, pro: true, inst: true },
-              { feature: '국회의원 기본 성적표', free: false, member: true, pro: true, inst: true },
+              { feature: '국회의원 활동 데이터', free: false, member: true, pro: true, inst: true },
               { feature: '말과 행동 일치도', free: false, member: false, pro: true, inst: true },
               { feature: '검색', free: '5/일', member: '15/일', pro: '무제한', inst: '무제한' },
               { feature: 'CSV 다운로드', free: false, member: false, pro: '30/월', inst: '무제한' },

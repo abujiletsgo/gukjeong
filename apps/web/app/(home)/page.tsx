@@ -200,7 +200,7 @@ export default function HomePage() {
               <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">국회의원</span>
               <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">국회의원 성적표</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">국회의원 활동 현황</h3>
             <p className="text-sm text-gray-500 mb-5">출석, 발의, 발언, 말과 행동 일치도 종합 평가.</p>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="bg-gray-50 rounded-lg py-2.5">
