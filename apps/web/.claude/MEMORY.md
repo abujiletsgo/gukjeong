@@ -69,3 +69,14 @@
   apps/web/app/(home)/page.tsx  | 393 ++++++++++++++++++++++--------------------
   apps/web/tsconfig.tsbuildinfo |   2 +-
   3 files changed, 224 insertions(+), 186 deletions(-)
+
+## 2026-03-26 (09:50 UTC) · @Tom Kwon
+**Commit:** feat: Deep audit details with links/contracts/timeline + 10 more flags + 8 more news (fc0da73) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md                    |   8 +
+  apps/web/app/audit/[id]/AuditDetailClient.tsx | 456 ++++++++++----
+  apps/web/components/audit/SuspicionCard.tsx   |  19 +-
+  apps/web/lib/data.ts                          | 816 +++++++++++++++++++++++++-
+  apps/web/lib/types.ts                         |  32 +
+  apps/web/tsconfig.tsbuildinfo                 |   2 +-
+  6 files changed, 1219 insertions(+), 114 deletions(-)
