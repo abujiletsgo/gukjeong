@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import type { Legislator } from '@/lib/types';
 import Link from 'next/link';
 import WordsVsActions from '@/components/legislators/WordsVsActions';
@@ -29,6 +29,236 @@ function getElectedLabel(count?: number): string {
   return `${count}선`;
 }
 
+// ── Cross-linking: Bills in our DB ──
+const KNOWN_BILLS: { id: string; title: string; status: string }[] = [
+  { id: 'bill-001', title: '간호법', status: '가결' },
+  { id: 'bill-002', title: '노란봉투법', status: '가결' },
+  { id: 'bill-003', title: '양곡관리법 개정안', status: '폐기' },
+  { id: 'bill-004', title: '플랫폼 종사자 보호법', status: '계류' },
+  { id: 'bill-005', title: '탄소중립 기본법 개정안', status: '계류' },
+  { id: 'bill-006', title: '디지털자산 기본법', status: '계류' },
+  { id: 'bill-007', title: '반도체특별법', status: '가결' },
+  { id: 'bill-008', title: '인공지능 기본법', status: '계류' },
+  { id: 'bill-009', title: '방송법 개정안', status: '가결' },
+  { id: 'bill-010', title: '전국민 돌봄법', status: '계류' },
+  { id: 'bill-011', title: '부동산 실거래 투명화법', status: '계류' },
+  { id: 'bill-012', title: '청년기본소득법', status: '계류' },
+  { id: 'bill-013', title: '공직자 이해충돌방지법 개정안', status: '가결' },
+  { id: 'bill-014', title: '채용절차공정화법 개정안', status: '계류' },
+  { id: 'bill-015', title: '전기통신사업법 개정안', status: '계류' },
+  { id: 'bill-016', title: '재난안전관리 기본법 개정안', status: '가결' },
+];
+
+// ── 시뮬레이션 데이터 생성 유틸 ──
+
+/** Seeded PRNG for deterministic per-legislator data */
+function seededRandom(seed: string) {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) {
+    h = (Math.imul(31, h) + seed.charCodeAt(i)) | 0;
+  }
+  return function () {
+    h = (h ^ (h >>> 16)) * 0x45d9f3b;
+    h = (h ^ (h >>> 16)) * 0x45d9f3b;
+    h = h ^ (h >>> 16);
+    return (h >>> 0) / 0xffffffff;
+  };
+}
+
+function generateDatesBackward(count: number, startDate: string = '2026-03-25'): string[] {
+  const dates: string[] = [];
+  const base = new Date(startDate);
+  for (let i = 0; i < count; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() - (i * 3 + Math.floor(i / 3)));
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    dates.push(`${yyyy}-${mm}-${dd}`);
+  }
+  return dates;
+}
+
+interface SessionItem {
+  type: '본회의' | '위원회';
+  date: string;
+  attended: boolean;
+}
+
+function generateAttendanceSessions(attendanceRate: number, seed: string): SessionItem[] {
+  const rng = seededRandom(seed + '-attendance');
+  const count = 20;
+  const dates = generateDatesBackward(count);
+  const attendedCount = Math.round((attendanceRate / 100) * count);
+  const statuses = Array.from({ length: count }, (_, i) => i < attendedCount);
+  // Shuffle with seeded RNG
+  for (let i = statuses.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [statuses[i], statuses[j]] = [statuses[j], statuses[i]];
+  }
+  return dates.map((date, i) => ({
+    type: (rng() > 0.4 ? '본회의' : '위원회') as '본회의' | '위원회',
+    date,
+    attended: statuses[i],
+  }));
+}
+
+interface BillItem {
+  title: string;
+  date: string;
+  status: string;
+  linkedBillId?: string;
+  role: '대표발의' | '공동발의';
+}
+
+const SIMULATED_BILL_TITLES = [
+  '청년기본소득법',
+  '플랫폼노동자보호법',
+  '공공임대주택 확대법',
+  '소상공인 지원법 개정안',
+  '아동학대처벌법 강화안',
+  '디지털 개인정보 보호법',
+  '최저임금법 개정안',
+  '중소기업 기술보호법',
+  '국민건강보험법 개정안',
+  '재난지원금 지급법',
+  '기후위기 대응법',
+  '노인복지법 개정안',
+  '장애인 차별금지법 강화안',
+  '학교폭력예방법 개정안',
+  '여성폭력방지법 개정안',
+  '공직선거법 개정안',
+  '지방재정법 개정안',
+  '식품안전기본법 개정안',
+  '주택임대차보호법 개정안',
+  '교통안전법 개정안',
+  '문화산업진흥법 개정안',
+  '군인복지법 개정안',
+  '소비자기본법 개정안',
+  '중대재해처벌법 개정안',
+  '전기사업법 개정안',
+  '항공안전법 개정안',
+  '관광진흥법 개정안',
+  '도시재생법 개정안',
+  '산업안전보건법 개정안',
+  '농어업인 삶의 질 향상법',
+];
+
+const BILL_STATUSES = ['계류 중', '소위 심사 중', '전체회의 상정', '본회의 상정', '가결', '폐기'];
+
+function generateBillItems(count: number, seed: string): BillItem[] {
+  const rng = seededRandom(seed + '-bills');
+  const dates = generateDatesBackward(Math.max(count, 1), '2026-03-15');
+  const items: BillItem[] = [];
+
+  for (let i = 0; i < Math.min(count, 30); i++) {
+    const titleIdx = Math.floor(rng() * SIMULATED_BILL_TITLES.length);
+    const title = SIMULATED_BILL_TITLES[titleIdx];
+    const statusIdx = Math.floor(rng() * BILL_STATUSES.length);
+
+    // Check if this matches a known bill
+    const knownMatch = KNOWN_BILLS.find(b => title.includes(b.title) || b.title.includes(title));
+
+    items.push({
+      title: `${title}`,
+      date: dates[i % dates.length],
+      status: knownMatch ? knownMatch.status : BILL_STATUSES[statusIdx],
+      linkedBillId: knownMatch?.id,
+      role: rng() > 0.3 ? '공동발의' : '대표발의',
+    });
+  }
+  return items;
+}
+
+interface SpeechItem {
+  type: string;
+  topic: string;
+  date: string;
+}
+
+const SPEECH_TYPES = ['대정부질문', '5분 자유발언', '의사진행발언', '교섭단체 대표연설', '긴급현안질문', '인사청문회 질의'];
+const SPEECH_TOPICS = [
+  '부동산 정책', '저출산 대책', '경제 활성화', '청년 고용', '교육 정책',
+  '환경 문제', '복지 예산', '외교 안보', '디지털 전환', '의료 개혁',
+  '기후 변화', '중소기업 지원', '노동 정책', '국방 예산', '통일 정책',
+  '사법 개혁', '지방 분권', '과학기술 투자', '공정경제', '문화 정책',
+];
+
+function generateSpeechItems(count: number, seed: string, topics?: string[]): SpeechItem[] {
+  const rng = seededRandom(seed + '-speech');
+  const dates = generateDatesBackward(Math.max(count, 1), '2026-03-20');
+  const availableTopics = topics && topics.length > 0 ? [...topics, ...SPEECH_TOPICS] : SPEECH_TOPICS;
+  const items: SpeechItem[] = [];
+
+  for (let i = 0; i < count; i++) {
+    items.push({
+      type: SPEECH_TYPES[Math.floor(rng() * SPEECH_TYPES.length)],
+      topic: availableTopics[Math.floor(rng() * availableTopics.length)],
+      date: dates[i % dates.length],
+    });
+  }
+  return items;
+}
+
+interface VoteItem {
+  billTitle: string;
+  vote: '찬성' | '반대' | '기권';
+  date: string;
+  linkedBillId?: string;
+}
+
+function generateVoteItems(voteRate: number, seed: string): VoteItem[] {
+  const rng = seededRandom(seed + '-vote');
+  const count = 15;
+  const dates = generateDatesBackward(count, '2026-03-22');
+  const items: VoteItem[] = [];
+
+  // Use some known bills + simulated ones
+  const voteBills = [
+    { title: '간호법', id: 'bill-001' },
+    { title: '반도체특별법', id: 'bill-007' },
+    { title: '방송법 개정안', id: 'bill-009' },
+    { title: '노란봉투법', id: 'bill-002' },
+    { title: '공직자 이해충돌방지법 개정안', id: 'bill-013' },
+    { title: '재난안전관리 기본법 개정안', id: 'bill-016' },
+    { title: '청년기본소득법', id: 'bill-012' },
+    { title: '교육기본법 개정안', id: undefined },
+    { title: '정보통신망법 개정안', id: undefined },
+    { title: '국민연금법 개정안', id: undefined },
+    { title: '도시재생법 개정안', id: undefined },
+    { title: '산업안전보건법 개정안', id: undefined },
+    { title: '형사소송법 개정안', id: undefined },
+    { title: '주택법 개정안', id: undefined },
+    { title: '식품위생법 개정안', id: undefined },
+  ];
+
+  const participatedCount = Math.round((voteRate / 100) * count);
+
+  for (let i = 0; i < count; i++) {
+    const bill = voteBills[i % voteBills.length];
+    const participated = i < participatedCount;
+    let vote: '찬성' | '반대' | '기권';
+    if (!participated) {
+      // Not really used since we only show participated votes
+      vote = '기권';
+    } else {
+      const r = rng();
+      vote = r > 0.25 ? '찬성' : r > 0.1 ? '반대' : '기권';
+    }
+
+    if (participated) {
+      items.push({
+        billTitle: bill.title,
+        vote,
+        date: dates[i],
+        linkedBillId: bill.id,
+      });
+    }
+  }
+  return items;
+}
+
+
 // ── Props ──
 interface LegislatorDetailClientProps {
   legislator: Legislator;
@@ -56,7 +286,131 @@ function NeutralBar({ value, max = 100, label }: { value: number; max?: number; 
   );
 }
 
-// ── Radar Chart (Pure SVG) — 활동 프로필 ──
+// ── Info Box (context explanation) ──
+function InfoBox({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-3 rounded-lg bg-gray-50 border border-gray-100 p-3 flex gap-2.5">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" className="shrink-0 mt-0.5">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="16" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12.01" y2="8" />
+      </svg>
+      <div className="text-xs text-gray-500 leading-relaxed">{children}</div>
+    </div>
+  );
+}
+
+// ── External link ──
+function ExternalLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+    >
+      {children}
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+        <polyline points="15 3 21 3 21 9" />
+        <line x1="10" y1="14" x2="21" y2="3" />
+      </svg>
+    </a>
+  );
+}
+
+// ── Section Expand Header ──
+function SectionHeader({
+  title,
+  summary,
+  isOpen,
+  onToggle,
+}: {
+  title: string;
+  summary: React.ReactNode;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      className="w-full text-left flex items-start justify-between gap-3 group"
+      aria-expanded={isOpen}
+    >
+      <div className="flex-1 min-w-0">
+        <h2 className="font-bold text-lg text-gray-900 group-hover:text-gray-700 transition-colors">
+          {title}
+        </h2>
+        <div className="text-sm text-gray-600 mt-1">{summary}</div>
+      </div>
+      <span className="shrink-0 mt-1.5 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className={`text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </span>
+    </button>
+  );
+}
+
+// ── "더 보기" wrapper ──
+function ExpandableList<T>({
+  items,
+  initialCount = 10,
+  renderItem,
+}: {
+  items: T[];
+  initialCount?: number;
+  renderItem: (item: T, index: number) => React.ReactNode;
+}) {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? items : items.slice(0, initialCount);
+  const hasMore = items.length > initialCount;
+
+  return (
+    <div>
+      <div className="space-y-0">{visible.map((item, i) => renderItem(item, i))}</div>
+      {hasMore && !showAll && (
+        <button
+          onClick={() => setShowAll(true)}
+          className="mt-3 text-sm text-blue-600 hover:text-blue-800 hover:underline font-medium"
+        >
+          더 보기 ({items.length - initialCount}건 더)
+        </button>
+      )}
+      {hasMore && showAll && (
+        <button
+          onClick={() => setShowAll(false)}
+          className="mt-3 text-sm text-gray-500 hover:text-gray-700 hover:underline"
+        >
+          접기
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── Status badge for bills ──
+function BillStatusBadge({ status }: { status: string }) {
+  let cls = 'bg-gray-100 text-gray-600';
+  if (status === '가결') cls = 'bg-green-100 text-green-700';
+  else if (status === '폐기') cls = 'bg-red-100 text-red-700';
+  else if (status.includes('심사') || status.includes('계류') || status.includes('상정')) cls = 'bg-amber-100 text-amber-700';
+  return (
+    <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-medium ${cls}`}>
+      {status}
+    </span>
+  );
+}
+
+// ── Radar Chart (Pure SVG) ──
 function RadarChart({ legislator, partyColor }: { legislator: Legislator; partyColor: string }) {
   const cx = 150, cy = 150, r = 110;
   const axes = [
@@ -183,6 +537,12 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
   const billsPassed = legislator.bills_passed_count ?? 0;
   const speechCount = legislator.speech_count ?? 0;
 
+  // Expandable sections state
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+  const toggle = useCallback((key: string) => {
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+  }, []);
+
   // 같은 위원회 동료
   const committeeColleagues = useMemo(() => {
     if (!legislator.committee) return [];
@@ -196,6 +556,27 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
     if (!legislator.consistency_details) return [];
     return legislator.consistency_details.map(d => d.topic);
   }, [legislator.consistency_details]);
+
+  // 시뮬레이션 세부 데이터 생성
+  const attendanceSessions = useMemo(
+    () => generateAttendanceSessions(attendance, legislator.id),
+    [attendance, legislator.id],
+  );
+
+  const billItems = useMemo(
+    () => generateBillItems(billsProposed, legislator.id),
+    [billsProposed, legislator.id],
+  );
+
+  const speechItems = useMemo(
+    () => generateSpeechItems(speechCount, legislator.id, topics),
+    [speechCount, legislator.id, topics],
+  );
+
+  const voteItems = useMemo(
+    () => generateVoteItems(voteRate, legislator.id),
+    [voteRate, legislator.id],
+  );
 
   return (
     <div className="container-page py-6 sm:py-8 space-y-6">
@@ -265,22 +646,65 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
         </div>
       </div>
 
-      {/* ── Section 1: 출석 현황 ── */}
+      {/* ── Section 1: 출석 현황 (expandable) ── */}
       <div className="card">
-        <h2 className="font-bold text-lg mb-4">출석 현황</h2>
-        <p className="text-sm text-gray-600 mb-3">
-          전체 본회의 중 <span className="font-semibold text-gray-900">{attendance}%</span> 출석
-        </p>
-        <NeutralBar value={attendance} label="출석률" />
+        <SectionHeader
+          title="출석 현황"
+          summary={
+            <span>
+              전체 본회의 중 <span className="font-semibold text-gray-900">{attendance}%</span> 출석
+            </span>
+          }
+          isOpen={!!openSections['attendance']}
+          onToggle={() => toggle('attendance')}
+        />
+        <div className="mt-3">
+          <NeutralBar value={attendance} label="출석률" />
+        </div>
+
+        {openSections['attendance'] && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">최근 회의 출석 내역</h3>
+            <ExpandableList
+              items={attendanceSessions}
+              initialCount={10}
+              renderItem={(session, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between py-2 px-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-400 w-20 shrink-0 font-mono">{session.date}</span>
+                    <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-600">
+                      {session.type}
+                    </span>
+                  </div>
+                  <span className={`text-sm font-medium ${session.attended ? 'text-green-600' : 'text-red-500'}`}>
+                    {session.attended ? '\u2713 출석' : '\u2717 결석'}
+                  </span>
+                </div>
+              )}
+            />
+            <InfoBox>
+              본회의는 국회 전체 의원이 모여 법안을 심의/표결하는 회의입니다. 위원회는 소속 상임위원회에서 법안을 심사하는 회의입니다.
+            </InfoBox>
+          </div>
+        )}
       </div>
 
-      {/* ── Section 2: 법안 활동 ── */}
+      {/* ── Section 2: 법안 활동 (expandable) ── */}
       <div className="card">
-        <h2 className="font-bold text-lg mb-4">법안 활동</h2>
-        <p className="text-sm text-gray-600 mb-1">
-          발의 법안 <span className="font-semibold text-gray-900">{billsProposed}건</span>,
-          이 중 <span className="font-semibold text-gray-900">{billsPassed}건</span> 통과
-        </p>
+        <SectionHeader
+          title="법안 활동"
+          summary={
+            <span>
+              발의 법안 <span className="font-semibold text-gray-900">{billsProposed}건</span>,
+              이 중 <span className="font-semibold text-gray-900">{billsPassed}건</span> 통과
+            </span>
+          }
+          isOpen={!!openSections['bills']}
+          onToggle={() => toggle('bills')}
+        />
         {billsProposed > 0 && (
           <div className="mt-3">
             <div className="flex items-center justify-between mb-1.5">
@@ -297,14 +721,62 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
             </div>
           </div>
         )}
+
+        {openSections['bills'] && billItems.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">발의 법안 목록</h3>
+            <ExpandableList
+              items={billItems}
+              initialCount={10}
+              renderItem={(bill, i) => (
+                <div
+                  key={i}
+                  className="flex items-start justify-between gap-2 py-2.5 px-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {bill.linkedBillId ? (
+                        <Link
+                          href={`/bills/${bill.linkedBillId}`}
+                          className="text-sm font-medium text-blue-700 hover:text-blue-900 hover:underline"
+                        >
+                          {bill.title}
+                        </Link>
+                      ) : (
+                        <span className="text-sm font-medium text-gray-800">{bill.title}</span>
+                      )}
+                      <span className="text-[11px] text-gray-400">{bill.role}</span>
+                    </div>
+                    <span className="text-xs text-gray-400 font-mono">{bill.date}</span>
+                  </div>
+                  <BillStatusBadge status={bill.status} />
+                </div>
+              )}
+            />
+            <InfoBox>
+              법안 발의는 국회의원의 핵심 업무입니다. 법안을 제출하려면 의원 10명 이상의 서명이 필요합니다.
+            </InfoBox>
+            <div className="mt-2">
+              <ExternalLink href="https://open.assembly.go.kr/portal/assm/search/memberSchPage.do">
+                열린국회정보에서 원문 확인
+              </ExternalLink>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* ── Section 3: 본회의 발언 ── */}
+      {/* ── Section 3: 본회의 발언 (expandable) ── */}
       <div className="card">
-        <h2 className="font-bold text-lg mb-4">본회의 발언</h2>
-        <p className="text-sm text-gray-600">
-          본회의 발언 <span className="font-semibold text-gray-900">{speechCount}회</span>
-        </p>
+        <SectionHeader
+          title="본회의 발언"
+          summary={
+            <span>
+              본회의 발언 <span className="font-semibold text-gray-900">{speechCount}회</span>
+            </span>
+          }
+          isOpen={!!openSections['speech']}
+          onToggle={() => toggle('speech')}
+        />
         {topics.length > 0 && (
           <div className="mt-3">
             <p className="text-xs text-gray-500 mb-2">관련 주제</p>
@@ -317,15 +789,98 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
             </div>
           </div>
         )}
+
+        {openSections['speech'] && speechItems.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">발언 내역</h3>
+            <ExpandableList
+              items={speechItems}
+              initialCount={10}
+              renderItem={(speech, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between py-2 px-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded transition-colors"
+                >
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-medium text-gray-800">{speech.type}</span>
+                    <span className="text-sm text-gray-500">-- {speech.topic}</span>
+                  </div>
+                  <span className="text-xs text-gray-400 font-mono shrink-0">{speech.date}</span>
+                </div>
+              )}
+            />
+            <InfoBox>
+              본회의 발언은 국회 회의록에 기록되며, 국회 회의록 시스템에서 원문을 확인할 수 있습니다.
+            </InfoBox>
+            <div className="mt-2">
+              <ExternalLink href="https://likms.assembly.go.kr/record/index.jsp">
+                국회 회의록 검색
+              </ExternalLink>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* ── Section 4: 투표 참여 ── */}
+      {/* ── Section 4: 투표 참여 (expandable) ── */}
       <div className="card">
-        <h2 className="font-bold text-lg mb-4">투표 참여</h2>
-        <p className="text-sm text-gray-600 mb-3">
-          투표 참여율 <span className="font-semibold text-gray-900">{voteRate > 0 ? `${voteRate}%` : '-'}</span>
-        </p>
-        <NeutralBar value={voteRate} label="투표 참여율" />
+        <SectionHeader
+          title="투표 참여"
+          summary={
+            <span>
+              투표 참여율 <span className="font-semibold text-gray-900">{voteRate > 0 ? `${voteRate}%` : '-'}</span>
+            </span>
+          }
+          isOpen={!!openSections['vote']}
+          onToggle={() => toggle('vote')}
+        />
+        <div className="mt-3">
+          <NeutralBar value={voteRate} label="투표 참여율" />
+        </div>
+
+        {openSections['vote'] && voteItems.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">최근 투표 기록</h3>
+            <ExpandableList
+              items={voteItems}
+              initialCount={10}
+              renderItem={(vote, i) => {
+                let voteCls = 'text-green-600';
+                if (vote.vote === '반대') voteCls = 'text-red-500';
+                else if (vote.vote === '기권') voteCls = 'text-gray-400';
+
+                return (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between py-2 px-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded transition-colors"
+                  >
+                    <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+                      {vote.linkedBillId ? (
+                        <Link
+                          href={`/bills/${vote.linkedBillId}`}
+                          className="text-sm font-medium text-blue-700 hover:text-blue-900 hover:underline"
+                        >
+                          {vote.billTitle}
+                        </Link>
+                      ) : (
+                        <span className="text-sm font-medium text-gray-800">{vote.billTitle}</span>
+                      )}
+                      <span className="text-xs text-gray-400 font-mono">{vote.date}</span>
+                    </div>
+                    <span className={`text-sm font-semibold shrink-0 ${voteCls}`}>{vote.vote}</span>
+                  </div>
+                );
+              }}
+            />
+            <InfoBox>
+              투표는 국회의원의 가장 기본적인 의무입니다. 본회의 표결에 참여하지 않으면 결석으로 기록됩니다.
+            </InfoBox>
+            <div className="mt-2">
+              <ExternalLink href="https://open.assembly.go.kr/portal/assm/search/memberSchPage.do">
+                열린국회정보에서 투표 기록 확인
+              </ExternalLink>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Section 5: 말과 행동 ── */}
@@ -377,10 +932,10 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
         </div>
       )}
 
-      {/* ── 출처 면책 ── */}
-      <div className="text-xs text-gray-400 text-center py-4 border-t border-gray-100 leading-relaxed">
-        이 페이지의 모든 수치는 열린국회정보 공개 데이터 기반입니다.<br />
-        시범 운영 중이며, API 연동 후 실시간 업데이트됩니다.
+      {/* ── 출처 면책 + 시범 데이터 안내 ── */}
+      <div className="text-xs text-gray-400 text-center py-4 border-t border-gray-100 leading-relaxed space-y-1">
+        <p>이 페이지의 모든 수치는 열린국회정보 공개 데이터 기반입니다.</p>
+        <p>세부 내역은 시범 데이터입니다. API 연동 후 실제 국회 데이터로 대체됩니다.</p>
       </div>
     </div>
   );

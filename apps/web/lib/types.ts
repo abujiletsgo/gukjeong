@@ -108,6 +108,7 @@ export interface CoSponsor {
   party: string;
   district?: string;
   role?: string;                    // "대표발의" | "공동발의"
+  legislator_id?: string;           // links to /legislators/[id]
 }
 
 export interface BillTimelineItem {
