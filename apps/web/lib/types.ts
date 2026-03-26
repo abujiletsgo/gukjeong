@@ -63,6 +63,57 @@ export interface Bill {
   ai_citizen_impact?: string;
   co_sponsors_count?: number;
   related_bills?: string[];
+  // 배경 및 맥락
+  background?: string;              // 이 법안이 나오게 된 배경/맥락
+  problem_statement?: string;       // 현재 어떤 문제가 있어서 이 법이 필요한지
+  // 상세 시민 영향
+  citizen_impact_detail?: CitizenImpactDetail;
+  // 논쟁 상세
+  controversy_detail?: ControversyDetail;
+  // 찬반 관점 (perspectives)
+  perspectives?: BillPerspective[];
+  // 공동발의자 상세
+  co_sponsors?: CoSponsor[];
+  // 법안 진행 타임라인
+  bill_timeline?: BillTimelineItem[];
+}
+
+export interface CitizenImpactDetail {
+  who_benefits?: string;            // 누가 혜택을 받는지
+  who_is_affected?: string;         // 누가 영향을 받는지 (부정적)
+  daily_life_change?: string;       // 일상생활에 어떤 변화가 있는지
+  estimated_cost?: string;          // 예상 비용 (세금 영향)
+  timeline_to_effect?: string;      // 언제부터 체감할 수 있는지
+  real_example?: string;            // 구체적 시나리오
+}
+
+export interface ControversyDetail {
+  score: number;                    // 0-100
+  why_controversial?: string;       // 왜 논쟁적인지 설명
+  key_disagreements?: string[];     // 핵심 쟁점 목록
+  approval_reasons?: string[];      // 찬성 측 주요 논거
+  disapproval_reasons?: string[];   // 반대 측 주요 논거
+}
+
+export interface BillPerspective {
+  stance: '찬성' | '반대' | '조건부 찬성';
+  who: string;                      // e.g., "더불어민주당", "의사협회", "시민단체"
+  argument: string;                 // 주요 주장
+  quote?: string;                   // 실제 발언 인용
+  quote_source?: string;            // 발언 출처
+}
+
+export interface CoSponsor {
+  name: string;
+  party: string;
+  district?: string;
+  role?: string;                    // "대표발의" | "공동발의"
+}
+
+export interface BillTimelineItem {
+  date: string;
+  event: string;
+  detail?: string;
 }
 
 export interface Legislator {
