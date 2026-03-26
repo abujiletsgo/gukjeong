@@ -640,35 +640,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
         </div>
       )}
 
-      {/* ═══ 6. 관련 링크 ═══ */}
-      {relatedLinks.length > 0 && (
-        <div className="card mt-6">
-          <h2 className="font-bold text-lg mb-4">관련 자료</h2>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {relatedLinks.map((link, i) => (
-              <a
-                key={i}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-start gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 hover:border-gray-200 rounded-lg p-4 transition-all duration-200"
-              >
-                <div className="flex-1 min-w-0">
-                  <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mb-1.5 ${getSourceColor(link.source)}`}>
-                    {link.source}
-                  </span>
-                  <p className="text-sm text-gray-800 font-medium leading-snug group-hover:text-blue-700 transition-colors line-clamp-2">
-                    {link.title}
-                  </p>
-                </div>
-                <span className="text-gray-400 group-hover:text-blue-500 transition-colors flex-shrink-0 mt-1" aria-hidden="true">
-                  &#x2197;
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* 관련 자료 — "직접 확인하기"로 통합 (원시 데이터 섹션에 포함) */}
 
       {/* ═══ 7. 유사 감사 사례 (Similar Cases) ═══ */}
       {similarCases.length > 0 ? (
