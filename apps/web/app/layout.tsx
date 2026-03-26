@@ -201,7 +201,7 @@ export default function RootLayout({
                   <li><a href="/presidents" className="hover:text-gray-700">대통령 비교</a></li>
                   <li><a href="/budget" className="hover:text-gray-700">예산 시각화</a></li>
                   <li><a href="/bills" className="hover:text-gray-700">법안 추적</a></li>
-                  <li><a href="/legislators" className="hover:text-gray-700">국회의원 성적표</a></li>
+                  <li><a href="/legislators" className="hover:text-gray-700">국회의원 활동 분류</a></li>
                 </ul>
               </div>
               <div>

@@ -119,7 +119,7 @@ export default function Scorecard({ legislator }: { legislator: Legislator }) {
         {/* Bottom link hint */}
         <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-end">
           <span className="text-xs text-gray-400 group-hover:text-accent transition-colors flex items-center gap-1">
-            상세 성적표
+            활동 현황
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
           </span>
         </div>

@@ -1,13 +1,29 @@
 'use client';
 // 예산 시각화 — 클라이언트 컴포넌트
-import { useState } from 'react';
-import type { FiscalYearly, FiscalBySector } from '@/lib/types';
+import { useState, useMemo } from 'react';
+import type { FiscalYearly, FiscalBySector, SubSectorData } from '@/lib/types';
+import { getSubSectorData } from '@/lib/data';
 import KPI from '@/components/common/KPI';
 import StackedArea from '@/components/charts/StackedArea';
 import DebtChart from '@/components/charts/DebtChart';
 import TreeMapChart from '@/components/charts/TreeMap';
 import SankeyChart from '@/components/charts/SankeyChart';
 import { formatTrillions, formatPercent } from '@/lib/utils';
+
+// 분야별 색상 매핑 (TreeMap과 동일 색상 계열)
+const SECTOR_COLORS: Record<string, { base: string; gradient: string[] }> = {
+  '보건·복지·고용': { base: '#3b82f6', gradient: ['#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93bbfd', '#bfdbfe', '#dbeafe', '#eff6ff', '#c7d9f7', '#a5c4f3'] },
+  '교육': { base: '#8b5cf6', gradient: ['#6d28d9', '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe'] },
+  '국방': { base: '#ef4444', gradient: ['#b91c1c', '#dc2626', '#ef4444', '#f87171', '#fca5a5'] },
+  '일반·지방행정': { base: '#f59e0b', gradient: ['#b45309', '#d97706', '#f59e0b', '#fbbf24', '#fde68a'] },
+  '산업·중소기업·에너지': { base: '#10b981', gradient: ['#047857', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0'] },
+  'R&D': { base: '#06b6d4', gradient: ['#0e7490', '#0891b2', '#06b6d4', '#22d3ee', '#67e8f9', '#a5f3fc', '#cffafe'] },
+  '공공질서·안전': { base: '#f43f5e', gradient: ['#be123c', '#e11d48', '#f43f5e', '#fb7185', '#fda4af'] },
+  'SOC': { base: '#84cc16', gradient: ['#4d7c0f', '#65a30d', '#84cc16', '#a3e635', '#bef264', '#d9f99d'] },
+  '농림·수산·식품': { base: '#14b8a6', gradient: ['#0f766e', '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4'] },
+  '환경': { base: '#22c55e', gradient: ['#15803d', '#16a34a', '#22c55e', '#4ade80', '#86efac', '#bbf7d0'] },
+  '문화·체육·관광': { base: '#a855f7', gradient: ['#7e22ce', '#9333ea', '#a855f7', '#c084fc', '#d8b4fe'] },
+};
 
 interface BudgetPageClientProps {
   fiscalData: FiscalYearly[];
@@ -25,6 +41,7 @@ export default function BudgetPageClient({
   latest2024,
 }: BudgetPageClientProps) {
   const [selectedYear, setSelectedYear] = useState(2026);
+  const [selectedSector, setSelectedSector] = useState('보건·복지·고용');
   const availableYears = [2024, 2025, 2026];
 
   const currentSectors = sectorDataByYear[selectedYear] || sectorDataByYear[2026];
@@ -59,10 +76,42 @@ export default function BudgetPageClient({
     yoyChange: s.yoy_change || 0,
   }));
 
+  // 하위 분류 데이터
+  const subSectorData = useMemo(
+    () => getSubSectorData(selectedSector, selectedYear),
+    [selectedSector, selectedYear]
+  );
+
+  // 선택된 분야의 총 예산
+  const selectedSectorTotal = useMemo(() => {
+    const found = currentSectors.find(s => s.sector === selectedSector);
+    return found?.amount || 0;
+  }, [currentSectors, selectedSector]);
+
+  // 하위 분류 최대 금액 (바 차트 스케일링용)
+  const maxSubAmount = useMemo(
+    () => Math.max(...subSectorData.map(d => d.amount), 1),
+    [subSectorData]
+  );
+
   const totalSpending = latestYear?.total_spending || 728;
   const nationalDebt = latest2024?.national_debt || 1175;
   const taxRevenue = latest2024?.tax_revenue || 336.5;
   const debtToGdp = latest2024?.debt_to_gdp || 46.8;
+
+  // 분야별 색상 가져오기
+  const getSectorColor = (sector: string, index: number = 0): string => {
+    const colors = SECTOR_COLORS[sector];
+    if (!colors) return '#6b7280';
+    return colors.gradient[Math.min(index, colors.gradient.length - 1)];
+  };
+
+  const getSectorBaseColor = (sector: string): string => {
+    return SECTOR_COLORS[sector]?.base || '#6b7280';
+  };
+
+  // 분야 목록 (셀렉터용)
+  const sectorList = currentSectors.map(s => s.sector);
 
   return (
     <div className="container-page py-6 sm:py-8">
@@ -164,6 +213,121 @@ export default function BudgetPageClient({
         </div>
       </div>
 
+      {/* 예산 상세 분류 (Sub-Sector Drill-Down) */}
+      <div className="card mb-6">
+        <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18"/>
+            <path d="M3 15h18"/>
+            <path d="M9 3v18"/>
+          </svg>
+          예산 상세 분류
+        </h2>
+        <p className="text-xs text-gray-400 mb-4">
+          분야를 선택하면 세부 항목별 예산 배분을 확인할 수 있습니다 (2026년 예산안 기준)
+        </p>
+
+        {/* 분야 셀렉터 (pills) */}
+        <div className="flex flex-wrap gap-1.5 mb-6">
+          {sectorList.map(sector => {
+            const isActive = sector === selectedSector;
+            const baseColor = getSectorBaseColor(sector);
+            return (
+              <button
+                key={sector}
+                onClick={() => setSelectedSector(sector)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                  isActive
+                    ? 'text-white shadow-sm'
+                    : 'text-gray-600 bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                }`}
+                style={isActive ? { backgroundColor: baseColor, borderColor: baseColor } : undefined}
+              >
+                {sector}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 선택된 분야 요약 헤더 */}
+        <div className="flex items-baseline gap-3 mb-5">
+          <div
+            className="w-3 h-3 rounded-sm shrink-0"
+            style={{ backgroundColor: getSectorBaseColor(selectedSector) }}
+          />
+          <div>
+            <span className="font-bold text-gray-900 text-base">{selectedSector}</span>
+            <span className="text-gray-400 text-sm ml-2">
+              {selectedSectorTotal.toFixed(1)}조원
+            </span>
+          </div>
+        </div>
+
+        {/* 하위 분류 바 차트 */}
+        {subSectorData.length > 0 ? (
+          <div className="space-y-2.5">
+            {subSectorData.map((item, idx) => {
+              const barWidth = Math.max(2, (item.amount / maxSubAmount) * 100);
+              const barColor = getSectorColor(selectedSector, idx);
+              return (
+                <div key={item.sub_sector} className="group">
+                  <div className="flex items-center gap-3">
+                    {/* 항목명 */}
+                    <span className="text-sm text-gray-700 w-36 sm:w-44 shrink-0 truncate" title={item.sub_sector}>
+                      {item.sub_sector}
+                    </span>
+
+                    {/* 바 */}
+                    <div className="flex-1 h-7 bg-gray-100 rounded relative overflow-hidden">
+                      <div
+                        className="h-full rounded transition-all duration-500 ease-out"
+                        style={{
+                          width: `${barWidth}%`,
+                          backgroundColor: barColor,
+                          opacity: 0.85,
+                        }}
+                      />
+                      {/* 바 내부 퍼센트 (바가 충분히 넓을 때) */}
+                      {barWidth > 25 && (
+                        <span className="absolute left-2 top-0 h-full flex items-center text-[11px] font-medium text-white/90">
+                          {item.percentage.toFixed(1)}%
+                        </span>
+                      )}
+                    </div>
+
+                    {/* 금액 */}
+                    <div className="text-right shrink-0 w-20">
+                      <span className="text-sm font-semibold text-gray-800">
+                        {item.amount.toFixed(1)}
+                      </span>
+                      <span className="text-xs text-gray-400 ml-0.5">조</span>
+                    </div>
+
+                    {/* 비중 (바 바깥, 좁은 바용) */}
+                    {barWidth <= 25 && (
+                      <span className="text-[11px] text-gray-400 w-12 text-right shrink-0">
+                        {item.percentage.toFixed(1)}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-400 text-sm">
+            {selectedYear !== 2026
+              ? '하위 분류 데이터는 2026년 예산안에서만 제공됩니다.'
+              : '해당 분야의 하위 분류 데이터가 없습니다.'}
+          </div>
+        )}
+
+        <p className="text-[10px] text-gray-300 mt-4">
+          출처: 기획재정부 나라살림 예산개요 · 2026년 예산안 기준
+        </p>
+      </div>
+
       {/* Sankey */}
       <div className="card mb-6">
         <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
@@ -196,12 +360,12 @@ export default function BudgetPageClient({
           <p className="text-xs text-gray-400 mb-4">D1 기준 · 출처: IMF, OECD</p>
           <div className="space-y-3 mt-6">
             {[
-              { country: '일본', value: 260, flag: '🇯🇵' },
-              { country: '미국', value: 121, flag: '🇺🇸' },
-              { country: 'OECD 평균', value: 112.3, flag: '🌐' },
-              { country: '영국', value: 101, flag: '🇬🇧' },
-              { country: '독일', value: 64, flag: '🇩🇪' },
-              { country: '한국', value: 46.8, flag: '🇰🇷', highlight: true },
+              { country: '일본', value: 260, flag: '\u{1F1EF}\u{1F1F5}' },
+              { country: '미국', value: 121, flag: '\u{1F1FA}\u{1F1F8}' },
+              { country: 'OECD 평균', value: 112.3, flag: '\u{1F310}' },
+              { country: '영국', value: 101, flag: '\u{1F1EC}\u{1F1E7}' },
+              { country: '독일', value: 64, flag: '\u{1F1E9}\u{1F1EA}' },
+              { country: '한국', value: 46.8, flag: '\u{1F1F0}\u{1F1F7}', highlight: true },
             ].map(item => (
               <div key={item.country} className="flex items-center gap-3">
                 <span className="text-lg">{item.flag}</span>

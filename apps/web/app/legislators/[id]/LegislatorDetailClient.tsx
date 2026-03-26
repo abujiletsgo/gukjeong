@@ -26,20 +26,13 @@ function getElectedLabel(count?: number): string {
   return `${count}선`;
 }
 
-function getScoreColor(score: number): string {
-  if (score >= 80) return '#10B981';
-  if (score >= 60) return '#F59E0B';
-  if (score >= 40) return '#F97316';
-  return '#EF4444';
-}
-
 // ── Props ──
 interface LegislatorDetailClientProps {
   legislator: Legislator;
   allLegislators: Legislator[];
 }
 
-// ── Radar Chart (Pure SVG) ──
+// ── Radar Chart (Pure SVG) — 활동 프로필 ──
 function RadarChart({ legislator, partyColor }: { legislator: Legislator; partyColor: string }) {
   const cx = 150, cy = 150, r = 110;
   const axes = [
@@ -122,62 +115,7 @@ function RadarChart({ legislator, partyColor }: { legislator: Legislator; partyC
   );
 }
 
-// ── Score Ring (SVG) ──
-function ScoreRing({ score, color, size = 56 }: { score: number; color: string; size?: number }) {
-  const radius = (size - 8) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
-  return (
-    <svg width={size} height={size} className="block">
-      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#e5e7eb" strokeWidth="4" />
-      <circle
-        cx={size / 2} cy={size / 2} r={radius} fill="none"
-        stroke={color} strokeWidth="4" strokeLinecap="round"
-        strokeDasharray={circumference} strokeDashoffset={offset}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        className="animate-gauge"
-        style={{ '--gauge-circumference': circumference, '--gauge-offset': offset } as React.CSSProperties}
-      />
-      <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central" fontSize="14" fontWeight="bold" className="fill-gray-900">
-        {score}
-      </text>
-    </svg>
-  );
-}
-
-// ── Horizontal Bar Metric ──
-function MetricBar({ label, value, avg, max, color }: { label: string; value: number; avg: number; max: number; color: string }) {
-  const pctValue = Math.min((value / max) * 100, 100);
-  const pctAvg = Math.min((avg / max) * 100, 100);
-  return (
-    <div className="mb-4">
-      <div className="flex justify-between text-sm mb-1">
-        <span className="text-gray-700 font-medium">{label}</span>
-        <span className="text-gray-900 font-bold">{typeof value === 'number' ? (value % 1 === 0 ? value : value.toFixed(1)) : '-'}</span>
-      </div>
-      <div className="relative h-5 bg-gray-100 rounded-full overflow-hidden">
-        <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${pctValue}%`, backgroundColor: color, opacity: 0.85 }} />
-        {/* Average marker */}
-        <div
-          className="absolute top-0 bottom-0 w-0.5 border-l-2 border-dashed border-gray-400"
-          style={{ left: `${pctAvg}%` }}
-          title={`평균: ${avg.toFixed(1)}`}
-        />
-      </div>
-      <div className="text-xs text-gray-400 mt-0.5 text-right">평균 {avg.toFixed(1)}</div>
-    </div>
-  );
-}
-
 // ── SVG Icons ──
-function IconActivity() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-    </svg>
-  );
-}
-
 function IconAttendance() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -216,22 +154,38 @@ function IconConsistency() {
   );
 }
 
+// ── 활동 현황 항목 ──
+function MetricFact({
+  label,
+  value,
+  unit,
+  icon,
+  color,
+}: {
+  label: string;
+  value: string | number;
+  unit: string;
+  icon: React.ReactNode;
+  color: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-b-0">
+      <div className="shrink-0" style={{ color }}>{icon}</div>
+      <div className="flex-1 min-w-0">
+        <span className="text-sm text-gray-600">{label}</span>
+      </div>
+      <div className="text-right shrink-0">
+        <span className="text-lg font-bold text-gray-900">{value}</span>
+        <span className="text-sm text-gray-400 ml-0.5">{unit}</span>
+      </div>
+    </div>
+  );
+}
 
-export default function LegislatorDetailClient({ legislator, allLegislators }: LegislatorDetailClientProps) {
+
+export default function LegislatorDetailClient({ legislator }: LegislatorDetailClientProps) {
   const partyColor = getPartyColor(legislator.party);
   const electedLabel = getElectedLabel(legislator.elected_count);
-
-  // Averages
-  const avg = (field: keyof Legislator) => {
-    const vals = allLegislators.map(l => l[field]).filter((v): v is number => typeof v === 'number' && v > 0);
-    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-  };
-
-  const avgAttendance = avg('attendance_rate');
-  const avgVoteParticipation = avg('vote_participation_rate');
-  const avgBillsProposed = avg('bills_proposed_count');
-  const avgSpeechCount = avg('speech_count');
-  const avgConsistency = avg('consistency_score');
 
   return (
     <div className="container-page py-6 sm:py-8 space-y-6">
@@ -302,15 +256,8 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
         </div>
       </div>
 
-      {/* ── KPI Row ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {/* Activity Score */}
-        <div className="card flex flex-col items-center text-center">
-          <div className="text-accent mb-1"><IconActivity /></div>
-          <ScoreRing score={legislator.ai_activity_score ?? 0} color={getScoreColor(legislator.ai_activity_score ?? 0)} />
-          <div className="kpi-label mt-1">활동 점수</div>
-        </div>
-
+      {/* ── KPI Row — 사실 기반 ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {/* Attendance */}
         <div className="card flex flex-col items-center text-center">
           <div className="text-blue-500 mb-1"><IconAttendance /></div>
@@ -323,9 +270,14 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
           <div className="text-emerald-500 mb-1"><IconBill /></div>
           <div className="kpi-value">
             {legislator.bills_proposed_count ?? 0}
-            <span className="text-sm font-normal text-gray-400"> / {legislator.bills_passed_count ?? 0}건 가결</span>
+            <span className="text-sm font-normal text-gray-400">건 발의</span>
           </div>
-          <div className="kpi-label">발의 법안</div>
+          <div className="kpi-label">
+            {(legislator.bills_passed_count ?? 0) > 0
+              ? `${legislator.bills_passed_count}건 가결`
+              : '법안 활동'
+            }
+          </div>
         </div>
 
         {/* Speech */}
@@ -343,26 +295,61 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
         </div>
       </div>
 
-      {/* ── Radar + Score Breakdown ── */}
+      {/* ── 활동 프로필 (Radar) + 활동 현황 ── */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* Radar Chart */}
         <div className="card">
-          <h2 className="font-bold text-lg mb-4">종합 역량 분석</h2>
+          <h2 className="font-bold text-lg mb-4">활동 프로필</h2>
           <RadarChart legislator={legislator} partyColor={partyColor} />
           <p className="text-xs text-gray-400 text-center mt-2">
             수치는 0~100 기준 정규화. 법안활동 80건=100%, 발언 30회=100% 기준.
           </p>
         </div>
 
-        {/* Score Breakdown */}
+        {/* 활동 현황 — 사실 나열 */}
         <div className="card">
-          <h2 className="font-bold text-lg mb-4">전체 평균 비교</h2>
-          <MetricBar label="출석률" value={legislator.attendance_rate ?? 0} avg={avgAttendance} max={100} color={partyColor} />
-          <MetricBar label="투표 참여율" value={legislator.vote_participation_rate ?? 0} avg={avgVoteParticipation} max={100} color={partyColor} />
-          <MetricBar label="발의 법안" value={legislator.bills_proposed_count ?? 0} avg={avgBillsProposed} max={100} color={partyColor} />
-          <MetricBar label="본회의 발언" value={legislator.speech_count ?? 0} avg={avgSpeechCount} max={100} color={partyColor} />
-          <MetricBar label="말행일치도" value={legislator.consistency_score ?? 0} avg={avgConsistency} max={100} color={partyColor} />
-          <p className="text-xs text-gray-400 mt-2">점선은 전체 국회의원 평균입니다.</p>
+          <h2 className="font-bold text-lg mb-4">활동 현황</h2>
+          <MetricFact
+            label="출석률"
+            value={legislator.attendance_rate ?? '-'}
+            unit="%"
+            icon={<IconAttendance />}
+            color="#2563eb"
+          />
+          <MetricFact
+            label="투표 참여율"
+            value={legislator.vote_participation_rate ?? '-'}
+            unit="%"
+            icon={
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
+            }
+            color="#7c3aed"
+          />
+          <MetricFact
+            label="발의 법안"
+            value={legislator.bills_proposed_count ?? 0}
+            unit="건"
+            icon={<IconBill />}
+            color="#059669"
+          />
+          <MetricFact
+            label="본회의 발언"
+            value={legislator.speech_count ?? 0}
+            unit="회"
+            icon={<IconSpeech />}
+            color="#8b5cf6"
+          />
+          <MetricFact
+            label="말행일치도"
+            value={legislator.consistency_score ?? '-'}
+            unit="%"
+            icon={<IconConsistency />}
+            color="#0d9488"
+          />
+          <p className="text-xs text-gray-400 mt-3">22대 국회 활동 기준 공개 데이터입니다.</p>
         </div>
       </div>
 
@@ -390,7 +377,7 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
 
       {/* ── Disclaimer ── */}
       <div className="text-xs text-gray-400 text-center py-4 border-t border-gray-100">
-        활동 점수는 공개된 국회 데이터를 기반으로 AI가 산출한 참고 지표입니다.
+        공개된 국회 데이터를 기반으로 정리한 활동 현황입니다.
       </div>
     </div>
   );

@@ -298,6 +298,14 @@ export default function BillsPageClient({ bills }: { bills: Bill[] }) {
       {/* Status Pipeline */}
       <StatusPipeline bills={bills} />
 
+      {/* Data disclaimer */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800 mb-6">
+        현재 표시된 법안은 22대 국회의 <strong>주요 법안 {bills.length}건</strong>입니다.
+        실제 22대 국회에서는 약 25,000건 이상의 법안이 발의되었으며,
+        열린국회정보 API 연동이 완료되면 전체 법안을 실시간으로 제공할 예정입니다.
+        <a href="/about#data" className="underline font-semibold ml-1">데이터 출처 →</a>
+      </div>
+
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Status tabs */}

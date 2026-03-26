@@ -361,6 +361,13 @@ export interface PresidentComparisonMetrics {
   corruption_index_end: number;  // 임기말 CPI (투명성 지수, 100점 만점)
 }
 
+export interface SubSectorData {
+  sector: string;
+  sub_sector: string;
+  amount: number;  // 조원
+  percentage: number; // of parent sector
+}
+
 export interface ApiResponse<T> {
   data: T;
   total?: number;

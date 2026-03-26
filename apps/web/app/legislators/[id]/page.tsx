@@ -7,8 +7,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const legislator = getLegislatorById(id);
   return {
-    title: legislator ? `${legislator.name} 의원 성적표` : '국회의원 성적표',
-    description: legislator ? `${legislator.name} 의원의 활동 점수, 출석률, 말행일치도 분석` : '국회의원 성적표',
+    title: legislator ? `${legislator.name} 의원 활동 현황` : '국회의원 활동 현황',
+    description: legislator ? `${legislator.name} 의원의 출석률, 법안 발의, 말행일치도 현황` : '국회의원 활동 현황',
   };
 }
 
