@@ -1,0 +1,1127 @@
+[
+  {
+    "president_id": "ysk",
+    "pledge_text": "금융실명제 실시",
+    "category": "경제·금융",
+    "pledge_source": "대통령 취임사",
+    "pledge_date": "1993-02-25",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "1993년 8월 12일 대통령 긴급재정경제명령으로 전격 시행. 금융실명거래및비밀보장에관한법률로 법제화.",
+    "budget_impact": "지하경제 양성화로 세수 확대 효과",
+    "related_bills": [
+      "금융실명거래및비밀보장에관한법률"
+    ]
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "군부 사조직 척결 및 군의 정치적 중립 확보",
+    "category": "정치·개혁",
+    "pledge_source": "취임사·선거공약",
+    "pledge_date": "1992-12-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "하나회 해체. 전두환·노태우 전 대통령 구속 기소. 5·18특별법 제정.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "5·18민주화운동등에관한특별법",
+      "헌정질서파괴범죄의공소시효등에관한특별법"
+    ]
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "OECD 가입으로 선진국 진입",
+    "category": "외교·국제",
+    "pledge_source": "세계화 구상",
+    "pledge_date": "1994-11-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "1996년 12월 OECD 29번째 회원국으로 가입. 자본시장 급속 개방이 1997년 외환위기 원인 중 하나로 지적.",
+    "budget_impact": "OECD 분담금 연간 약 200억원",
+    "related_bills": []
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "지방자치제 전면 부활",
+    "category": "정치·개혁",
+    "pledge_source": "선거공약",
+    "pledge_date": "1992-12-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "1995년 6·27 지방선거로 지방자치단체장 직선제 부활. 풀뿌리 민주주의 정착.",
+    "budget_impact": "지방재정교부금 제도 확대",
+    "related_bills": [
+      "지방자치법 개정"
+    ]
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "공직자 재산공개 및 부정부패 척결",
+    "category": "정치·개혁",
+    "pledge_source": "취임사",
+    "pledge_date": "1993-02-25",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 95,
+    "outcome_summary": "공직자윤리법 개정으로 고위공직자 재산등록·공개 의무화. 대통령 본인 재산 공개 선례.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "공직자윤리법 개정안"
+    ]
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "부동산실명제 도입",
+    "category": "경제·금융",
+    "pledge_source": "정책공약",
+    "pledge_date": "1993-03-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "1995년 부동산실권리자명의등기에관한법률 제정. 명의신탁 금지로 부동산 투기 억제.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "부동산실권리자명의등기에관한법률"
+    ]
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "역사바로세우기 - 5.18 재평가",
+    "category": "정치·개혁",
+    "pledge_source": "정책공약",
+    "pledge_date": "1995-01-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "5.18 광주민주화운동을 공식 민주화운동으로 재평가. 5.18특별법 제정. 전두환 노태우 사법 처리.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "5.18민주화운동등에관한특별법"
+    ]
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "세계화(Segyehwa) 추진",
+    "category": "경제·외교",
+    "pledge_source": "세계화 선언",
+    "pledge_date": "1994-11-17",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 50,
+    "outcome_summary": "세계화추진위원회 설치. OECD 가입, WTO 출범 참여 등 성과. 급속한 개방이 외환위기 원인으로 지적.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "교육개혁 - 5.31 교육개혁안",
+    "category": "교육",
+    "pledge_source": "교육개혁위원회",
+    "pledge_date": "1995-05-31",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 75,
+    "outcome_summary": "대학설립준칙주의 도입, 학교운영위원회 설치, 교육정보화 추진. 신자유주의적 교육개혁 논란.",
+    "budget_impact": "교육정보화 예산 약 2조원",
+    "related_bills": [
+      "교육기본법"
+    ]
+  },
+  {
+    "president_id": "ysk",
+    "pledge_text": "국민연금 전 국민 확대 추진",
+    "category": "복지·연금",
+    "pledge_source": "정책공약",
+    "pledge_date": "1993-06-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 60,
+    "outcome_summary": "농어민 자영업자로 국민연금 적용 확대. 1999년 전 국민 확대(후임 정부 완료)의 기반 마련.",
+    "budget_impact": "국민연금 기금 확대",
+    "related_bills": [
+      "국민연금법 개정"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "IMF 외환위기 조기 극복",
+    "category": "경제·금융",
+    "pledge_source": "취임사·선거공약",
+    "pledge_date": "1997-12-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "2001년 8월 IMF 구제금융 195억 달러 전액 조기 상환(당초 2004년 예정). 금 모으기 운동으로 국민 참여.",
+    "budget_impact": "공적자금 168조원 투입(금융구조조정)",
+    "related_bills": [
+      "공적자금관리특별법"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "햇볕정책(대북 포용정책) 추진",
+    "category": "외교·안보",
+    "pledge_source": "선거공약·취임사",
+    "pledge_date": "1998-02-25",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 90,
+    "outcome_summary": "2000년 남북정상회담 개최 및 6·15공동선언. 금강산 관광 개시. 개성공단 합의. 노벨평화상 수상(2000.10).",
+    "budget_impact": "대북지원 및 금강산·개성사업 관련 수천억원",
+    "related_bills": [
+      "남북교류협력에관한법률 개정"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "IT 강국 건설",
+    "category": "산업·기술",
+    "pledge_source": "정책공약",
+    "pledge_date": "1998-03-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 95,
+    "outcome_summary": "초고속인터넷 보급률 세계 1위 달성. 전자정부 구현. 벤처 활성화. 사이버코리아21 계획 추진.",
+    "budget_impact": "정보통신 인프라 투자 약 10조원",
+    "related_bills": [
+      "정보화촉진기본법",
+      "전자정부법"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "국민기초생활보장제도 도입",
+    "category": "복지·사회",
+    "pledge_source": "정책공약",
+    "pledge_date": "1998-09-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "국민기초생활보장법 시행(2000.10). 기존 생활보호제도를 대체, 최저생활 보장의 국가 의무 명시.",
+    "budget_impact": "연간 약 5조원(초기)",
+    "related_bills": [
+      "국민기초생활보장법"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "4대 부문 구조개혁",
+    "category": "경제·금융",
+    "pledge_source": "취임사",
+    "pledge_date": "1998-02-25",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 80,
+    "outcome_summary": "금융·기업·노동·공공 4대 부문 구조개혁 추진. 부실 금융기관 정리, 재벌 빅딜, 정리해고제 도입. 비정규직 양산 부작용.",
+    "budget_impact": "공적자금 168조원",
+    "related_bills": [
+      "근로기준법 개정",
+      "금융감독기구설치법"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "국가인권위원회 설립",
+    "category": "인권·민주주의",
+    "pledge_source": "선거공약",
+    "pledge_date": "1997-12-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "국가인권위원회법 제정(2001.5). 국가인권위원회 출범(2001.11). 독립적 인권기구 설치.",
+    "budget_impact": "연간 약 300억원",
+    "related_bills": [
+      "국가인권위원회법"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "의약분업 실시",
+    "category": "보건·의료",
+    "pledge_source": "정책공약",
+    "pledge_date": "1999-01-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "의약분업 시행(2000.7). 의사 파업, 약사 반발 등 진통. 건강보험 재정위기 유발.",
+    "budget_impact": "건강보험 재정 추가 부담 수조원",
+    "related_bills": [
+      "약사법 개정"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "전자정부 구현",
+    "category": "행정·디지털",
+    "pledge_source": "정책공약",
+    "pledge_date": "1998-11-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 95,
+    "outcome_summary": "전자정부법 제정(2001). 정부 민원서비스 온라인화. UN 전자정부 평가 세계 상위권 진입.",
+    "budget_impact": "전자정부 예산 연간 약 5,000억원",
+    "related_bills": [
+      "전자정부법"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "남녀고용평등 강화 및 여성부 신설",
+    "category": "인권·양성평등",
+    "pledge_source": "정책공약",
+    "pledge_date": "1998-03-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "여성부 신설(2001.1). 남녀고용평등법 강화. 여성 공직 참여 확대.",
+    "budget_impact": "여성부 예산 연간 약 1,000억원",
+    "related_bills": [
+      "정부조직법 개정",
+      "남녀고용평등법 개정"
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "pledge_text": "언론 자유 및 인권 신장",
+    "category": "인권·민주주의",
+    "pledge_source": "선거공약",
+    "pledge_date": "1997-12-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 85,
+    "outcome_summary": "국가보안법 적용 완화. 양심수 석방. 사형 집행 중단(1998~). 시민사회 활동 보장 강화.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "행정수도 충청권 이전",
+    "category": "정치·개혁",
+    "pledge_source": "선거공약",
+    "pledge_date": "2002-09-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 50,
+    "outcome_summary": "2004년 헌법재판소 위헌 결정으로 행정수도 이전 무산. 행정중심복합도시(세종시) 건설로 수정 추진.",
+    "budget_impact": "세종시 건설 총 22.5조원",
+    "related_bills": [
+      "신행정수도건설특별법(위헌)",
+      "행정중심복합도시건설특별법"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "국가균형발전",
+    "category": "지역·균형",
+    "pledge_source": "선거공약",
+    "pledge_date": "2002-10-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 75,
+    "outcome_summary": "국가균형발전특별법 제정. 혁신도시 10곳, 기업도시 추진. 공공기관 지방이전 계획 수립.",
+    "budget_impact": "국가균형발전특별회계 연간 약 7조원",
+    "related_bills": [
+      "국가균형발전특별법"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "권력분산 및 참여 민주주의",
+    "category": "정치·개혁",
+    "pledge_source": "선거공약",
+    "pledge_date": "2002-10-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 55,
+    "outcome_summary": "대통령 권한 자제(검찰·국세청 등 권력기관 정치적 중립). 지방분권특별법 제정. 제왕적 대통령제 관행 완화.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "지방분권특별법"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "한미FTA 추진",
+    "category": "외교·통상",
+    "pledge_source": "정책결정",
+    "pledge_date": "2006-02-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 80,
+    "outcome_summary": "2007년 4월 한미FTA 타결. 국내 격렬한 찬반 논쟁. 이명박 정부에서 재협상 후 비준(2012 발효).",
+    "budget_impact": "FTA 피해보전 직불금 등 농업 지원 예산 수조원",
+    "related_bills": [
+      "한미자유무역협정 비준동의안"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "종합부동산세 도입으로 부동산 투기 억제",
+    "category": "부동산·세제",
+    "pledge_source": "정책공약",
+    "pledge_date": "2003-10-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "종합부동산세법 시행(2005). 고가 부동산 보유세 강화. 이명박 정부에서 대폭 완화.",
+    "budget_impact": "종부세 세수 연간 약 1~2조원",
+    "related_bills": [
+      "종합부동산세법"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "과거사 진상규명",
+    "category": "인권·민주주의",
+    "pledge_source": "선거공약",
+    "pledge_date": "2002-10-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 80,
+    "outcome_summary": "진실·화해를위한과거사정리기본법 제정(2005). 과거사정리위원회 설치·운영. 한국전쟁 전후 민간인 학살 등 조사.",
+    "budget_impact": "과거사정리위원회 운영비 연간 약 150억원",
+    "related_bills": [
+      "진실·화해를위한과거사정리기본법"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "공공기관 지방 이전",
+    "category": "지역·균형",
+    "pledge_source": "선거공약",
+    "pledge_date": "2002-10-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 80,
+    "outcome_summary": "전국 10개 혁신도시로 공공기관 153개 이전 결정. 2007년 혁신도시 착공. 이전 완료는 이명박 박근혜 정부에서.",
+    "budget_impact": "혁신도시 건설 총 약 12조원",
+    "related_bills": [
+      "혁신도시건설및지원에관한특별법"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "국가보안법 폐지 추진",
+    "category": "인권·민주주의",
+    "pledge_source": "선거공약",
+    "pledge_date": "2002-10-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 5,
+    "outcome_summary": "국가보안법 폐지 또는 대체입법 추진했으나 한나라당 반대로 국회 통과 실패. 현행 유지.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "국가보안법 폐지안(국회 부결)"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "사학법 개정 (사학 민주화)",
+    "category": "교육·개혁",
+    "pledge_source": "정책공약",
+    "pledge_date": "2004-01-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 55,
+    "outcome_summary": "사립학교법 개정(2005). 개방형 이사제 도입. 이명박 정부에서 재개정(후퇴).",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "사립학교법 개정"
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "pledge_text": "비정규직 보호법 제정",
+    "category": "고용·노동",
+    "pledge_source": "정책공약",
+    "pledge_date": "2004-09-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 90,
+    "outcome_summary": "비정규직보호법(기간제법 파견법 차별시정법) 제정(2006.11). 2년 초과 사용 시 정규직 전환 의무.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "기간제및단시간근로자보호등에관한법률",
+      "파견근로자보호등에관한법률"
+    ]
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "747 공약 (7% 성장, 4만 달러, 세계 7위)",
+    "category": "경제·성장",
+    "pledge_source": "선거공약집",
+    "pledge_date": "2007-08-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 15,
+    "outcome_summary": "연평균 성장률 3.2%(7% 목표 미달). 1인당 국민소득 2만 달러대(4만 달러 미달). 세계경제 순위 15위권. 글로벌 금융위기로 목표 달성 불가.",
+    "budget_impact": "경기부양책 약 50조원",
+    "related_bills": []
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "한반도 대운하 건설",
+    "category": "국토·인프라",
+    "pledge_source": "선거공약",
+    "pledge_date": "2007-06-01",
+    "fulfillment_status": "수정이행",
+    "fulfillment_pct": 40,
+    "outcome_summary": "대운하 반대 여론으로 '4대강 살리기 사업'으로 수정. 22.2조원 투입하여 4대강 16개 보 건설. 환경 파괴·녹조 논란 지속.",
+    "budget_impact": "총 22.2조원(4대강 사업 기준)",
+    "related_bills": [
+      "4대강살리기추진본부 설치 관련 법안"
+    ]
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "감세정책(법인세·소득세 인하)",
+    "category": "세제·경제",
+    "pledge_source": "선거공약",
+    "pledge_date": "2007-10-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "법인세 최고세율 25%→22% 인하. 소득세 구간 조정. 종부세 완화. 부유층 감세·부자 감세 논란.",
+    "budget_impact": "연간 약 13조원 세수 감소 추정",
+    "related_bills": [
+      "조세특례제한법 개정",
+      "소득세법 개정",
+      "법인세법 개정"
+    ]
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "녹색성장 전략 추진",
+    "category": "환경·에너지",
+    "pledge_source": "8·15 경축사",
+    "pledge_date": "2008-08-15",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 55,
+    "outcome_summary": "녹색성장기본법 제정(2010). 글로벌녹색성장연구소(GGGI) 설립. 4대강 사업과의 환경적 모순 지적.",
+    "budget_impact": "녹색뉴딜 약 50조원(5년간)",
+    "related_bills": [
+      "녹색성장기본법"
+    ]
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "G20 정상회의 서울 개최",
+    "category": "외교·국제",
+    "pledge_source": "정책목표",
+    "pledge_date": "2009-09-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "2010년 11월 서울 G20 정상회의 성공 개최. 글로벌 금융 안전망 논의 주도. 한국의 국제적 위상 제고.",
+    "budget_impact": "G20 행사비 약 3,000억원",
+    "related_bills": []
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "자원외교 강화",
+    "category": "외교·에너지",
+    "pledge_source": "선거공약",
+    "pledge_date": "2007-09-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 40,
+    "outcome_summary": "해외 자원개발 투자 확대. 이후 경제성 없는 부실투자 다수 확인. 해외자원개발 비리 수사로 관련자 처벌.",
+    "budget_impact": "해외자원개발 투자 약 30조원(공기업 포함)",
+    "related_bills": []
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "영어 몰입교육 실시",
+    "category": "교육",
+    "pledge_source": "선거공약",
+    "pledge_date": "2007-12-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 10,
+    "outcome_summary": "영어 몰입교육 도입 계획 발표 후 교원노조 학부모 반발로 사실상 철회. 영어교육 강화로 수정.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "한반도 비핵 개방 3000 구상",
+    "category": "외교·안보",
+    "pledge_source": "선거공약",
+    "pledge_date": "2007-08-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 5,
+    "outcome_summary": "북한 비핵화 시 1인당 국민소득 3,000달러 달성 지원 구상. 북한 반응 없음. 천안함 연평도 사태로 무산.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "공기업 선진화(민영화) 추진",
+    "category": "경제·행정",
+    "pledge_source": "선거공약",
+    "pledge_date": "2007-09-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 40,
+    "outcome_summary": "공기업 선진화 방안 발표. 산업은행 인천공항 민영화 시도 후 좌절. 공공기관 기능조정 통폐합 일부 시행.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "공공기관운영에관한법률 개정"
+    ]
+  },
+  {
+    "president_id": "lmb",
+    "pledge_text": "종합편성채널 도입",
+    "category": "방송·미디어",
+    "pledge_source": "미디어 정책",
+    "pledge_date": "2008-12-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "미디어법 개정(2009). 종합편성채널 4개 출범(TV조선, JTBC, 채널A, MBN, 2011.12). 미디어 다양성 vs 보수편향 논란.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "방송법 개정",
+      "신문법 개정"
+    ]
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "경제민주화 실현",
+    "category": "경제·공정",
+    "pledge_source": "선거공약",
+    "pledge_date": "2012-09-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 20,
+    "outcome_summary": "취임 초기 일부 재벌 규제 법안 추진 후 후퇴. 경제민주화 관련 공약 대부분 미이행. 최경환 경제팀 출범 후 성장 중심으로 전환.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "공정거래법 개정안(국회 계류)"
+    ]
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "창조경제 구현",
+    "category": "산업·혁신",
+    "pledge_source": "선거공약",
+    "pledge_date": "2012-10-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 25,
+    "outcome_summary": "창조경제혁신센터 17개 설치(대기업 연계). 개념 모호성 비판. 국정농단 사태에서 미르·K스포츠 재단과 연계되어 정책 신뢰 붕괴.",
+    "budget_impact": "창조경제 관련 예산 연간 약 1조원",
+    "related_bills": []
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "기초연금 도입 (65세 이상 전원 20만원)",
+    "category": "복지·연금",
+    "pledge_source": "선거공약",
+    "pledge_date": "2012-10-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 75,
+    "outcome_summary": "기초연금법 시행(2014.7). 월 20만원 지급 시작. 공약의 '모든 어르신'에서 소득 하위 70%로 대상 축소. 국민연금 연계감액 논란.",
+    "budget_impact": "연간 약 10조원",
+    "related_bills": [
+      "기초연금법"
+    ]
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "국민행복시대 (맞춤형 복지)",
+    "category": "복지·사회",
+    "pledge_source": "선거공약",
+    "pledge_date": "2012-11-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 45,
+    "outcome_summary": "4대 중증질환 보장 확대 등 일부 복지 공약 이행. 누리과정 재원 갈등. 전반적 복지 공약 이행률 저조.",
+    "budget_impact": "복지 예산 증가분 연간 약 10조원",
+    "related_bills": []
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "한반도 신뢰프로세스",
+    "category": "외교·안보",
+    "pledge_source": "선거공약",
+    "pledge_date": "2012-10-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 10,
+    "outcome_summary": "북한 핵실험·미사일 도발 지속. 개성공단 전면 폐쇄(2016.2). 남북관계 최악 수준으로 경색.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "4대 악 척결 (성폭력 학교폭력 가정폭력 불량식품)",
+    "category": "사회·안전",
+    "pledge_source": "선거공약",
+    "pledge_date": "2012-10-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 45,
+    "outcome_summary": "성폭력 처벌 강화, 학교폭력 대책 등 법제 정비. 그러나 근본적 사회문제 해결에는 한계.",
+    "budget_impact": "관련 예산 연간 약 3,000억원",
+    "related_bills": [
+      "성폭력범죄의처벌등에관한특별법 개정",
+      "학교폭력예방법 개정"
+    ]
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "고교 무상교육 추진",
+    "category": "교육",
+    "pledge_source": "선거공약",
+    "pledge_date": "2012-10-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 40,
+    "outcome_summary": "임기 중 고교 무상교육 전면 시행 미달성. 2019년(문재인 정부)에서야 단계적 시행 시작.",
+    "budget_impact": "연간 약 2조원(전면 시행 시)",
+    "related_bills": [
+      "초중등교육법 개정안(국회 계류)"
+    ]
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "통일대박론 - 통일 준비",
+    "category": "외교·안보",
+    "pledge_source": "신년 기자회견",
+    "pledge_date": "2014-01-06",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 10,
+    "outcome_summary": "통일준비위원회 설치(2014.7). 그러나 북한 핵실험 미사일 도발, 개성공단 폐쇄 등으로 남북관계 최악 경색.",
+    "budget_impact": "통일준비위 운영비 약 100억원",
+    "related_bills": []
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "THAAD(사드) 한국 배치",
+    "category": "국방·안보",
+    "pledge_source": "정책결정",
+    "pledge_date": "2016-07-08",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "성주에 사드 배치 결정(2016.7). 중국의 경제 보복(한한령 등) 발생. 한중관계 악화.",
+    "budget_impact": "미군 부담(한국측 부지 제공)",
+    "related_bills": []
+  },
+  {
+    "president_id": "pgh",
+    "pledge_text": "규제개혁 - 손톱밑가시 뽑기",
+    "category": "경제·규제",
+    "pledge_source": "규제개혁 장관회의",
+    "pledge_date": "2014-03-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 35,
+    "outcome_summary": "규제 기요틴 추진. 규제 총량 축소 시도. 일부 규제 완화 성과. 전반적 규제 혁신 체감도 낮음.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "행정규제기본법 개정"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "최저임금 1만원 달성",
+    "category": "고용·노동",
+    "pledge_source": "선거공약집",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 65,
+    "outcome_summary": "2017년 6,470원 → 2022년 9,160원. 1만원 목표 미달성. 2018년 16.4% 인상 후 부작용으로 인상폭 축소.",
+    "budget_impact": "중소기업 일자리안정자금 연간 약 3조원 투입",
+    "related_bills": [
+      "최저임금법 개정안"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "비정규직 제로 시대",
+    "category": "고용·노동",
+    "pledge_source": "선거공약집",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 50,
+    "outcome_summary": "공공부문 비정규직 20.5만 명 정규직 전환 추진. 무기계약직 전환이 대부분으로 정규직 실질 전환 논란. 민간부문은 성과 미흡.",
+    "budget_impact": "정규직 전환 비용 연간 약 1.5조원",
+    "related_bills": [
+      "기간제및단시간근로자보호등에관한법률 개정안"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "탈원전 및 에너지 전환",
+    "category": "에너지·환경",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 55,
+    "outcome_summary": "신고리 5·6호기 공론화(건설 재개 결정). 월성 1호기 조기 폐쇄. 재생에너지 비중 6.5%→9.2%로 확대. 에너지 안보·전기료 논란.",
+    "budget_impact": "재생에너지 투자 약 20조원(5년간)",
+    "related_bills": [
+      "에너지전환 관련 시행령 개정"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "고위공직자범죄수사처(공수처) 설치",
+    "category": "정치·사법",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "공수처법 제정(2020.1). 고위공직자범죄수사처 출범(2021.1). 검찰개혁의 핵심 과제로 추진.",
+    "budget_impact": "공수처 연간 예산 약 250억원",
+    "related_bills": [
+      "고위공직자범죄수사처설치및운영에관한법률"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "건강보험 보장률 70% 달성 (문재인케어)",
+    "category": "보건·의료",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 60,
+    "outcome_summary": "건강보험 보장률 62.7%→65.3%로 상승(2020). 70% 목표 미달성. 비급여의 급여화로 보험 재정 부담 증가, 의료비 풍선효과.",
+    "budget_impact": "건강보험 재정 추가 투입 약 30조원(5년간)",
+    "related_bills": [
+      "국민건강보험법 개정"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "부동산 투기 근절 및 주거 안정",
+    "category": "부동산·주거",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 15,
+    "outcome_summary": "25차례 부동산 대책에도 서울 아파트값 83% 상승. 종부세·양도세 강화, 임대차3법 시행. 정책 실패로 국민적 비판.",
+    "budget_impact": "공공임대주택 건설 등 연간 약 20조원",
+    "related_bills": [
+      "주택임대차보호법 개정",
+      "종합부동산세법 개정",
+      "부동산거래신고법 개정"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "남북관계 개선 및 한반도 평화프로세스",
+    "category": "외교·안보",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 50,
+    "outcome_summary": "2018년 판문점·평양 남북정상회담 3차례 개최. 판문점선언·9월 평양공동선언 채택. 하노이 북미회담 결렬 후 교착 상태.",
+    "budget_impact": "남북협력기금 연간 약 1조원",
+    "related_bills": [
+      "남북관계발전법"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "검찰개혁(검경 수사권 조정)",
+    "category": "정치·사법",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 85,
+    "outcome_summary": "형사소송법·검찰청법 개정(2020.2). 검찰 직접수사 범위 축소. 경찰에 1차적 수사권 부여. 검수완박법 추진(임기 말).",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "형사소송법 개정",
+      "검찰청법 개정"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "아동수당 도입",
+    "category": "복지·가족",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 95,
+    "outcome_summary": "아동수당 월 10만원 도입(2018.9). 만 6세 미만 → 만 7세 미만으로 확대. 약 480만 명 수혜.",
+    "budget_impact": "연간 약 2.1조원",
+    "related_bills": [
+      "아동수당법"
+    ]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "치매 국가책임제 실현",
+    "category": "보건·복지",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 85,
+    "outcome_summary": "치매안심센터 256개소 설치. 치매 건강보험 급여 확대. 치매환자 본인부담 대폭 경감.",
+    "budget_impact": "연간 약 2조원",
+    "related_bills": ["치매관리법 개정"]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "도시재생 뉴딜사업 추진",
+    "category": "도시·주거",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 55,
+    "outcome_summary": "5년간 100곳 도시재생 뉴딜사업 추진. 총 50조원 투자 계획. 일부 사업 성과 미흡 논란.",
+    "budget_impact": "연간 약 10조원",
+    "related_bills": ["도시재생특별법 개정"]
+  },
+  {
+    "president_id": "mji",
+    "pledge_text": "국방개혁 2.0 (복무기간 단축)",
+    "category": "국방·안보",
+    "pledge_source": "선거공약",
+    "pledge_date": "2017-04-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 80,
+    "outcome_summary": "육군 복무기간 21개월→18개월 단축(2020.6 완료). 병력 50만→36.5만 감축 추진.",
+    "budget_impact": "국방예산 연간 약 50조원",
+    "related_bills": ["병역법 개정"]
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "주 52시간 근로시간제 유연화",
+    "category": "고용·노동",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "미이행",
+    "fulfillment_pct": 5,
+    "outcome_summary": "주 69시간 허용안 발표(2023.3) 후 MZ세대 강력 반발. 여론 악화로 사실상 철회.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": [
+      "근로기준법 개정안(철회)"
+    ]
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "원전 확대 및 원전 수출",
+    "category": "에너지·산업",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 55,
+    "outcome_summary": "탈원전 정책 폐기. 신한울 3·4호기 건설 재개 결정. 체코 원전 수주 우선협상대상자 선정(2024). 탄핵으로 후속 불투명.",
+    "budget_impact": "원전 건설 약 10조원 이상",
+    "related_bills": []
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "반도체 초강대국 도약(K-Chips)",
+    "category": "산업·기술",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 45,
+    "outcome_summary": "반도체특별법(K-Chips Act) 통과(2023). 세액공제 확대(최대 25%). 용인 반도체 클러스터 착공. 탄핵으로 추진 동력 상실.",
+    "budget_impact": "반도체 R&D 등 약 3조원(연간)",
+    "related_bills": [
+      "국가첨단전략산업특별법(K-Chips Act)"
+    ]
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "의대정원 2,000명 증원",
+    "category": "보건·의료",
+    "pledge_source": "정책발표",
+    "pledge_date": "2024-02-01",
+    "fulfillment_status": "중단",
+    "fulfillment_pct": 30,
+    "outcome_summary": "2025학년도 의대정원 2,000명 증원 발표(2024.2). 전공의 집단사직 사태로 의료 공백 심각. 정원 확대 시행되었으나 탄핵으로 후속 정책 불확실.",
+    "budget_impact": "의대 증원 관련 교육예산 약 5,000억원",
+    "related_bills": []
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "강제징용 해법 제시 및 한일관계 정상화",
+    "category": "외교·역사",
+    "pledge_source": "외교정책",
+    "pledge_date": "2023-03-06",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 50,
+    "outcome_summary": "제3자 변제 해법 발표(2023.3). 한일 정상 셔틀외교 재개. 후쿠시마 오염수 방류 관련 정부 입장 논란. 국내 여론 분열.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "종합부동산세 부담 정상화",
+    "category": "세제·부동산",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 80,
+    "outcome_summary": "종부세 기본공제 9억→12억 상향. 세율 인하. 1주택자 세부담 대폭 경감. 다주택자 중과 완화.",
+    "budget_impact": "종부세 세수 감소 연간 약 2~3조원",
+    "related_bills": [
+      "종합부동산세법 개정"
+    ]
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "법인세 인하 (기업 활력 제고)",
+    "category": "세제·경제",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "완전이행",
+    "fulfillment_pct": 100,
+    "outcome_summary": "법인세 최고세율 25%→24%(2023), 24%→22%(국회 수정 미통과로 24% 확정). 중소기업 세율도 인하.",
+    "budget_impact": "법인세 세수 감소 연간 약 6조원",
+    "related_bills": [
+      "법인세법 개정"
+    ]
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "한미 글로벌 포괄적 전략동맹 강화",
+    "category": "외교·안보",
+    "pledge_source": "선거공약·외교정책",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 60,
+    "outcome_summary": "워싱턴선언(2023.4) 채택. 한미 핵협의그룹(NCG) 설치. 캠프데이비드 한미일 정상회의(2023.8). 탄핵 후 외교 공백.",
+    "budget_impact": "방위비분담금 인상",
+    "related_bills": []
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "소상공인·자영업자 손실보상",
+    "category": "경제·민생",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "대부분이행",
+    "fulfillment_pct": 75,
+    "outcome_summary": "소상공인 손실보상 62만 명 지급 완료. 소상공인 전기료 특별지원. 고금리 시기 이자부담 가중으로 추가 지원 요구.",
+    "budget_impact": "손실보상 약 15조원",
+    "related_bills": [
+      "소상공인보호및지원에관한법률 개정"
+    ]
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "디지털플랫폼정부 구현",
+    "category": "행정·디지털",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "중단",
+    "fulfillment_pct": 30,
+    "outcome_summary": "디지털플랫폼정부위원회 출범. AI 기반 맞춤형 행정서비스 추진. 탄핵으로 사실상 중단.",
+    "budget_impact": "연간 약 5,000억원",
+    "related_bills": []
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "건전재정 기조 확립",
+    "category": "재정·경제",
+    "pledge_source": "선거공약",
+    "pledge_date": "2022-02-01",
+    "fulfillment_status": "일부이행",
+    "fulfillment_pct": 45,
+    "outcome_summary": "재정준칙 도입 추진. 세출 구조조정 시도. 그러나 세수 결손(2023년 56조, 2024년 31조)으로 건전재정 기조 유지 어려움.",
+    "budget_impact": "세수 결손 총 약 87조원",
+    "related_bills": ["국가재정법 개정안"]
+  },
+  {
+    "president_id": "ysy",
+    "pledge_text": "인구위기 대응 종합대책",
+    "category": "인구·사회",
+    "pledge_source": "정책발표",
+    "pledge_date": "2023-06-01",
+    "fulfillment_status": "중단",
+    "fulfillment_pct": 15,
+    "outcome_summary": "인구위기대응기획부 신설 추진. 2023년 합계출산율 0.72명 역대 최저. 실효성 있는 대책 부재. 탄핵으로 중단.",
+    "budget_impact": "저출생 예산 연간 약 50조원(기존 포함)",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "기본소득 단계적 도입",
+    "category": "복지·소득",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "추진중",
+    "fulfillment_pct": 5,
+    "outcome_summary": "청년기본소득 등 단계적 도입 추진 예정. 취임 초기 단계.",
+    "budget_impact": "연간 약 15~30조원 추정(전면 시행 시)",
+    "related_bills": [
+      "기본소득법안(검토중)"
+    ]
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "기본주택 공급",
+    "category": "부동산·주거",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "미착수",
+    "fulfillment_pct": 0,
+    "outcome_summary": "역세권 등 공공택지 활용 저렴한 장기임대·분양주택 대량 공급 계획. 구체적 시행 미착수.",
+    "budget_impact": "연간 약 10~20조원 추정",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "기본금융 도입",
+    "category": "금융·복지",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "미착수",
+    "fulfillment_pct": 0,
+    "outcome_summary": "서민·저신용자 대상 기본적 금융서비스 접근권 보장 계획. 구체적 시행 미착수.",
+    "budget_impact": "미정",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "소상공인 부채 구조조정",
+    "category": "경제·민생",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "추진중",
+    "fulfillment_pct": 10,
+    "outcome_summary": "코로나·고금리로 누적된 소상공인 부채의 체계적 해소 추진 예정.",
+    "budget_impact": "약 20~30조원 추정",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "지역화폐 전국 확대",
+    "category": "지역·경제",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "미착수",
+    "fulfillment_pct": 0,
+    "outcome_summary": "경기도지사 시절 성남시 지역화폐 성공 경험을 전국으로 확대하는 계획. 구체적 시행 미착수.",
+    "budget_impact": "연간 약 5~10조원 추정",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "헌법 개정 추진 (분권형 개헌)",
+    "category": "정치·제도",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "미착수",
+    "fulfillment_pct": 0,
+    "outcome_summary": "대통령 4년 중임제 등 권력구조 개편, 기본권 강화 개헌 추진 계획. 구체적 논의 미착수.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "AI 산업 육성 및 디지털 전환",
+    "category": "산업·기술",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "추진중",
+    "fulfillment_pct": 5,
+    "outcome_summary": "AI 국가전략 수립 및 반도체-AI 통합 산업생태계 구축 추진 예정.",
+    "budget_impact": "미정",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "검찰개혁 완성 및 법치 정상화",
+    "category": "정치·사법",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "추진중",
+    "fulfillment_pct": 5,
+    "outcome_summary": "12.3 비상계엄 관련 사법 처리 및 권력기관 개혁 추진 예정.",
+    "budget_impact": "별도 예산 없음",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "의료개혁 및 필수의료 지원체계 구축",
+    "category": "보건·의료",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "추진중",
+    "fulfillment_pct": 5,
+    "outcome_summary": "전공의 사태 수습, 의대정원 문제 재논의, 필수의료 수가 인상 등 추진 예정.",
+    "budget_impact": "미정",
+    "related_bills": []
+  },
+  {
+    "president_id": "ljm",
+    "pledge_text": "민생경제 긴급 안정 대책",
+    "category": "경제·민생",
+    "pledge_source": "선거공약",
+    "pledge_date": "2025-04-01",
+    "fulfillment_status": "추진중",
+    "fulfillment_pct": 10,
+    "outcome_summary": "물가 안정, 가계부채 관리, 소상공인 긴급지원 등 민생경제 안정화 추진 예정.",
+    "budget_impact": "추경 편성 검토 중",
+    "related_bills": []
+  }
+]

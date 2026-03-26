@@ -1,6 +1,18 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getPresidentById, getFiscalByPresident, getFiscalData, getPoliciesByPresident, getEventsByPresident, getPresidents } from '@/lib/data';
+import {
+  getPresidentById,
+  getFiscalByPresident,
+  getFiscalData,
+  getPoliciesByPresident,
+  getEventsByPresident,
+  getPresidents,
+  getCampaignPledgesByPresident,
+  getNationalAgendaByPresident,
+  getReportCardByPresident,
+  getKeyEventsByPresident,
+  getBudgetComparisonByPresident,
+} from '@/lib/data';
 import PresidentDetailClient from './PresidentDetailClient';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -10,10 +22,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
   return {
     title: `${president.name} (${president.era})`,
-    description: `${president.name} 대통령의 재정, 정책, 주요 사건 분석 — ${president.era}`,
+    description: `${president.name} 대통령의 재정, 정책, 공약이행, 성과분석 — ${president.era}`,
     openGraph: {
       title: `${president.name} — ${president.era} | 국정투명`,
-      description: `${president.name} 대통령 임기 중 경제 지표와 주요 정책을 분석합니다.`,
+      description: `${president.name} 대통령 임기 중 경제 지표, 공약 이행률, 국정과제 분석을 확인하세요.`,
     },
   };
 }
@@ -34,6 +46,13 @@ export default function PresidentDetailPage({ params }: { params: { id: string }
   const policies = getPoliciesByPresident(params.id);
   const events = getEventsByPresident(params.id);
 
+  // 새로운 데이터 소스
+  const pledges = getCampaignPledgesByPresident(params.id);
+  const agendas = getNationalAgendaByPresident(params.id);
+  const reportCard = getReportCardByPresident(params.id);
+  const keyEvents = getKeyEventsByPresident(params.id);
+  const budgetComparison = getBudgetComparisonByPresident(params.id);
+
   // 경제 KPI 계산
   const spending = fiscalData.map(f => f.total_spending || 0).filter(v => v > 0);
   const debt = fiscalData.map(f => f.national_debt || 0).filter(v => v > 0);
@@ -50,7 +69,6 @@ export default function PresidentDetailPage({ params }: { params: { id: string }
     ? ((lastYearDebt - firstYearDebt) / firstYearDebt * 100).toFixed(1)
     : '-';
 
-  // 마지막 연도의 채무비율 찾기
   const lastFiscalWithRatio = [...fiscalData].reverse().find(f => f.debt_to_gdp);
   const debtToGdp = lastFiscalWithRatio?.debt_to_gdp?.toString() || '-';
 
@@ -73,6 +91,11 @@ export default function PresidentDetailPage({ params }: { params: { id: string }
         firstYearDebt,
         lastYearDebt,
       }}
+      pledges={pledges}
+      agendas={agendas}
+      reportCard={reportCard}
+      keyEvents={keyEvents}
+      budgetComparison={budgetComparison}
     />
   );
 }

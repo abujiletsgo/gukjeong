@@ -185,6 +185,62 @@ export interface CreditEntry {
   created_at?: string;
 }
 
+export interface NationalAgenda {
+  id: string;
+  president_id: string;
+  agenda_number: number;
+  goal_category: string;
+  strategy?: string;
+  title: string;
+  description?: string;
+  implementation_status: string;
+  completion_rate: number;
+  budget_committed?: number;
+  budget_executed?: number;
+  target_metric?: string;
+  target_value?: string;
+  actual_value?: string;
+  outcome_summary?: string;
+  ai_assessment?: string;
+  ai_citizen_impact?: string;
+}
+
+export interface ReportCardMetric {
+  id: string;
+  president_id: string;
+  category: string;
+  metric_name: string;
+  baseline_value: number;
+  baseline_year: number;
+  target_value?: number;
+  final_value: number;
+  unit: string;
+  trend: 'improved' | 'worsened' | 'stable';
+  grade?: string;
+  source: string;
+  note?: string;
+  // 다른 시각 (Multiple Perspectives)
+  progressive_frame?: string;   // 진보 언론 평가
+  conservative_frame?: string;  // 보수 언론 평가
+  citizen_reality?: string;     // 실제 시민 체감
+  context_note?: string;        // 맥락 설명 (왜 이 수치가 중요한지)
+  real_world_example?: string;  // 구체적 사례
+}
+
+export interface CampaignPledge {
+  id: string;
+  president_id: string;
+  pledge_text: string;
+  category: string;
+  pledge_source: string;
+  pledge_date?: string;
+  fulfillment_status: string;
+  fulfillment_pct: number;
+  outcome_summary?: string;
+  budget_impact?: string;
+  related_bills?: string[];
+}
+
 export interface ApiResponse<T> {
   data: T;
   total?: number;

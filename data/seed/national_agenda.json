@@ -1,0 +1,955 @@
+[
+  {
+    "president_id": "ysk",
+    "era": "문민정부",
+    "agenda_title": "신한국 창조를 위한 개혁과제",
+    "total_tasks": null,
+    "goals": [
+      {"goal": "정치개혁", "description": "군사문화 청산 및 민주주의 정착"}
+    ],
+    "items": [
+      {
+        "task_id": "ysk-01",
+        "goal": "정치개혁",
+        "title": "금융실명제 실시",
+        "description": "1993년 8월 대통령 긴급재정경제명령으로 금융실명제 전격 시행",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1993-08-12",
+        "outcome": "지하경제 양성화, 조세 형평성 제고. 금융실명거래및비밀보장에관한법률 제정."
+      },
+      {
+        "task_id": "ysk-02",
+        "goal": "정치개혁",
+        "title": "하나회 척결 및 군 사조직 해체",
+        "description": "군부 내 사조직 하나회를 해체하고 관련 장성 전원 예편 조치",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1993-03-01",
+        "outcome": "군의 정치 중립화 달성. 전두환·노태우 전 대통령 구속·수감."
+      },
+      {
+        "task_id": "ysk-03",
+        "goal": "정치개혁",
+        "title": "역사바로세우기",
+        "description": "5·18 광주민주화운동 재평가, 전두환·노태우 전직 대통령 사법 처리",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1995-11-01",
+        "outcome": "5·18특별법 제정. 전두환 사형(후 감형), 노태우 징역 17년 선고."
+      },
+      {
+        "task_id": "ysk-04",
+        "goal": "경제개혁",
+        "title": "공직자 재산공개",
+        "description": "고위공직자 재산등록 및 공개 의무화",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1993-03-01",
+        "outcome": "공직자윤리법 개정, 재산공개 의무화로 공직사회 투명성 제고."
+      },
+      {
+        "task_id": "ysk-05",
+        "goal": "경제개혁",
+        "title": "OECD 가입",
+        "description": "선진국 클럽 OECD 가입 추진",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1994-01-01",
+        "outcome": "1996년 12월 OECD 29번째 회원국 가입. 단, 성급한 자본시장 개방이 1997년 외환위기의 한 원인으로 지적됨."
+      },
+      {
+        "task_id": "ysk-06",
+        "goal": "경제개혁",
+        "title": "세계화(Segyehwa) 전략",
+        "description": "한국 경제의 세계화 추진 및 국제 경쟁력 강화",
+        "status": "일부완료",
+        "completion_rate": 50,
+        "start_date": "1995-01-01",
+        "outcome": "세계화추진위원회 설치. OECD 가입 등 성과가 있었으나 급속한 개방이 외환위기 촉발 요인으로 작용."
+      },
+      {
+        "task_id": "ysk-07",
+        "goal": "사회개혁",
+        "title": "지방자치제 전면 실시",
+        "description": "1995년 지방선거를 통한 지방자치단체장 직선제 부활",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1995-06-27",
+        "outcome": "30여 년 만에 지방자치단체장 주민직선 실시. 풀뿌리 민주주의 정착의 기틀."
+      },
+      {
+        "task_id": "ysk-08",
+        "goal": "경제개혁",
+        "title": "부동산실명제 실시",
+        "description": "부동산 명의신탁 금지 및 실명 거래 의무화",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1995-07-01",
+        "outcome": "부동산실권리자명의등기에관한법률 제정. 부동산 투기 억제 기여."
+      }
+    ]
+  },
+  {
+    "president_id": "kdj",
+    "era": "국민의 정부",
+    "agenda_title": "민주주의와 시장경제의 병행 발전",
+    "total_tasks": null,
+    "goals": [
+      {"goal": "경제위기 극복", "description": "IMF 외환위기 조기 극복"},
+      {"goal": "민주주의 발전", "description": "인권과 민주주의 심화"},
+      {"goal": "남북관계 개선", "description": "햇볕정책을 통한 평화 구축"}
+    ],
+    "items": [
+      {
+        "task_id": "kdj-01",
+        "goal": "경제위기 극복",
+        "title": "IMF 외환위기 조기 극복",
+        "description": "구제금융 조기 상환 및 경제 구조개혁",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "1998-02-25",
+        "outcome": "2001년 8월 IMF 구제금융 전액 상환 완료(당초 2004년 예정). 금 모으기 운동 등 국민적 참여."
+      },
+      {
+        "task_id": "kdj-02",
+        "goal": "경제위기 극복",
+        "title": "4대 부문 구조개혁",
+        "description": "금융·기업·노동·공공 4대 부문 구조개혁 추진",
+        "status": "완료",
+        "completion_rate": 85,
+        "start_date": "1998-03-01",
+        "outcome": "부실 금융기관 정리(5대 은행 → 4대 은행), 재벌 빅딜, 정리해고제 도입. 공공부문 구조조정으로 공무원 10만 명 감축."
+      },
+      {
+        "task_id": "kdj-03",
+        "goal": "남북관계 개선",
+        "title": "햇볕정책(대북 포용정책)",
+        "description": "대화와 교류협력을 통한 남북관계 개선",
+        "status": "완료",
+        "completion_rate": 80,
+        "start_date": "1998-02-25",
+        "outcome": "2000년 6·15 남북공동선언. 금강산 관광 개시(1998). 개성공단 합의. 이산가족 상봉 실시."
+      },
+      {
+        "task_id": "kdj-04",
+        "goal": "남북관계 개선",
+        "title": "남북정상회담 개최",
+        "description": "분단 이후 최초의 남북정상회담 추진",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2000-06-13",
+        "outcome": "2000년 6월 13~15일 평양에서 김정일 국방위원장과 역사적 첫 남북정상회담. 6·15공동선언 채택."
+      },
+      {
+        "task_id": "kdj-05",
+        "goal": "민주주의 발전",
+        "title": "국민기초생활보장제도 도입",
+        "description": "최저생계비 이하 국민에 대한 국가 지원 체계 구축",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2000-10-01",
+        "outcome": "국민기초생활보장법 시행(2000.10). 생활보호제도를 대체하여 최저생활 보장의 국가 의무화."
+      },
+      {
+        "task_id": "kdj-06",
+        "goal": "경제위기 극복",
+        "title": "IT 강국 건설",
+        "description": "정보통신 인프라 투자 및 벤처 육성",
+        "status": "완료",
+        "completion_rate": 90,
+        "start_date": "1998-06-01",
+        "outcome": "초고속 인터넷 보급률 세계 1위 달성. 벤처 붐 조성. 전자정부 구현. 2002 한일월드컵 인터넷 중계."
+      },
+      {
+        "task_id": "kdj-07",
+        "goal": "민주주의 발전",
+        "title": "의약분업 실시",
+        "description": "의사 처방과 약사 조제의 분리",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2000-07-01",
+        "outcome": "의약분업 시행. 의사 파업 등 진통이 있었으나 제도 안착. 건강보험 재정위기 유발 논란."
+      },
+      {
+        "task_id": "kdj-08",
+        "goal": "민주주의 발전",
+        "title": "국가인권위원회 설립",
+        "description": "독립적 국가인권기구 신설",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2001-11-25",
+        "outcome": "국가인권위원회법 제정 및 위원회 출범(2001.11). 인권 보호 및 증진을 위한 독립기구 설치."
+      }
+    ]
+  },
+  {
+    "president_id": "nmh",
+    "era": "참여정부",
+    "agenda_title": "참여정부 국정과제",
+    "total_tasks": null,
+    "goals": [
+      {"goal": "국민과 함께하는 민주주의", "description": "분권과 참여 민주주의"},
+      {"goal": "더불어 사는 균형발전 사회", "description": "지역균형발전"},
+      {"goal": "평화와 번영의 동북아 시대", "description": "동북아 평화 구축"}
+    ],
+    "items": [
+      {
+        "task_id": "nmh-01",
+        "goal": "더불어 사는 균형발전 사회",
+        "title": "행정수도 이전(세종시)",
+        "description": "수도권 집중 해소를 위한 행정수도 충청권 이전",
+        "status": "일부완료",
+        "completion_rate": 60,
+        "start_date": "2003-04-01",
+        "outcome": "2004년 헌법재판소 위헌 결정으로 행정수도 이전 좌절. 행정중심복합도시(세종시) 건설로 수정 추진."
+      },
+      {
+        "task_id": "nmh-02",
+        "goal": "국민과 함께하는 민주주의",
+        "title": "국가균형발전특별법 제정",
+        "description": "수도권과 비수도권 간 균형발전 법적 기틀 마련",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2004-01-01",
+        "outcome": "국가균형발전특별법 제정(2004). 국가균형발전위원회 설치. 혁신도시·기업도시 추진."
+      },
+      {
+        "task_id": "nmh-03",
+        "goal": "국민과 함께하는 민주주의",
+        "title": "과거사 청산",
+        "description": "진실·화해를 위한 과거사정리위원회 설치",
+        "status": "완료",
+        "completion_rate": 80,
+        "start_date": "2005-05-31",
+        "outcome": "진실·화해를위한과거사정리기본법 제정. 한국전쟁 전후 민간인 학살 등 과거사 조사."
+      },
+      {
+        "task_id": "nmh-04",
+        "goal": "평화와 번영의 동북아 시대",
+        "title": "한미FTA 체결",
+        "description": "한미 자유무역협정 협상 및 타결",
+        "status": "완료",
+        "completion_rate": 80,
+        "start_date": "2006-06-01",
+        "outcome": "2007년 4월 한미FTA 타결. 국내 격렬한 찬반 논쟁. 이명박 정부에서 비준(2012년 발효)."
+      },
+      {
+        "task_id": "nmh-05",
+        "goal": "국민과 함께하는 민주주의",
+        "title": "권력기관 개혁",
+        "description": "국가정보원·검찰·경찰 등 권력기관 중립화",
+        "status": "일부완료",
+        "completion_rate": 50,
+        "start_date": "2003-03-01",
+        "outcome": "국정원 국내정치 개입 중단 시도. 검찰 독립 강화. 그러나 제도적 완성에는 미흡."
+      },
+      {
+        "task_id": "nmh-06",
+        "goal": "평화와 번영의 동북아 시대",
+        "title": "2차 남북정상회담",
+        "description": "10·4 남북공동선언 채택",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2007-10-02",
+        "outcome": "2007년 10월 2~4일 평양 방문. 10·4선언 채택(남북경협 확대, 서해평화협력특별지대 등). 이후 이행 중단."
+      },
+      {
+        "task_id": "nmh-07",
+        "goal": "더불어 사는 균형발전 사회",
+        "title": "종합부동산세 도입",
+        "description": "부동산 투기 억제를 위한 보유세 강화",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2005-01-01",
+        "outcome": "종합부동산세법 시행(2005). 고가 부동산 보유자 세부담 강화. 이명박 정부에서 대폭 완화."
+      },
+      {
+        "task_id": "nmh-08",
+        "goal": "국민과 함께하는 민주주의",
+        "title": "언론개혁",
+        "description": "언론사 세무조사 및 신문법 개정",
+        "status": "일부완료",
+        "completion_rate": 55,
+        "start_date": "2003-06-01",
+        "outcome": "신문법 개정(소유제한 강화). 언론사 세무조사 실시. 보수 언론과의 갈등 심화."
+      }
+    ]
+  },
+  {
+    "president_id": "lmb",
+    "era": "이명박 정부",
+    "agenda_title": "선진일류국가 실현",
+    "total_tasks": 192,
+    "goals": [
+      {"goal": "섬기는 정부", "description": "작은 정부, 실용적 거버넌스"},
+      {"goal": "활력있는 시장경제", "description": "규제 완화, 민간 중심 성장"},
+      {"goal": "능동적 복지", "description": "일을 통한 복지"},
+      {"goal": "인재대국", "description": "교육·인재 양성"},
+      {"goal": "성숙한 세계국가", "description": "글로벌 리더십"}
+    ],
+    "items": [
+      {
+        "task_id": "lmb-01",
+        "goal": "활력있는 시장경제",
+        "title": "4대강 살리기 사업",
+        "description": "한반도 대운하 공약을 수정하여 4대강(한강·낙동강·금강·영산강) 정비사업으로 추진",
+        "status": "완료",
+        "completion_rate": 95,
+        "start_date": "2009-06-01",
+        "outcome": "총사업비 22.2조원 투입. 16개 보 건설. 녹조 발생, 환경 파괴 논란 지속. 문재인 정부에서 일부 보 개방."
+      },
+      {
+        "task_id": "lmb-02",
+        "goal": "활력있는 시장경제",
+        "title": "감세정책(법인세·소득세 인하)",
+        "description": "법인세 최고세율 25%→22%, 소득세 최고세율 인하",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2008-09-01",
+        "outcome": "법인세 최고세율 25%→22% 인하. 소득세 구간 조정. 부유층 감세 논란."
+      },
+      {
+        "task_id": "lmb-03",
+        "goal": "성숙한 세계국가",
+        "title": "G20 서울 정상회의 개최",
+        "description": "비G8 국가 최초의 G20 정상회의 유치·개최",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2010-11-11",
+        "outcome": "2010년 11월 서울 G20 정상회의 성공 개최. 글로벌 금융 안전망 논의. 한국의 국제적 위상 제고."
+      },
+      {
+        "task_id": "lmb-04",
+        "goal": "활력있는 시장경제",
+        "title": "녹색성장 전략",
+        "description": "저탄소 녹색성장을 국가 비전으로 추진",
+        "status": "일부완료",
+        "completion_rate": 65,
+        "start_date": "2008-08-15",
+        "outcome": "녹색성장기본법 제정. 글로벌녹색성장연구소(GGGI) 설립. 그러나 4대강 사업과의 모순 지적."
+      },
+      {
+        "task_id": "lmb-05",
+        "goal": "성숙한 세계국가",
+        "title": "한미FTA 비준 및 발효",
+        "description": "노무현 정부에서 타결된 한미FTA 비준 추진",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2011-11-22",
+        "outcome": "2011년 국회 비준 통과(야당 최루탄 반대 속). 2012년 3월 15일 발효. 한미 교역량 증가."
+      },
+      {
+        "task_id": "lmb-06",
+        "goal": "활력있는 시장경제",
+        "title": "규제 완화 및 민영화",
+        "description": "공기업 선진화(민영화), 규제 총량제 도입",
+        "status": "일부완료",
+        "completion_rate": 60,
+        "start_date": "2008-06-01",
+        "outcome": "산업은행 민영화 추진(좌절). 인천공항 지분 매각 추진(철회). 규제 완화 일부 성과."
+      },
+      {
+        "task_id": "lmb-07",
+        "goal": "성숙한 세계국가",
+        "title": "자원외교",
+        "description": "해외 에너지 자원 확보를 위한 자원외교 추진",
+        "status": "완료",
+        "completion_rate": 70,
+        "start_date": "2008-05-01",
+        "outcome": "해외 자원개발 투자 확대. 이후 경제성 논란, 해외자원개발 부실투자 비리 수사."
+      },
+      {
+        "task_id": "lmb-08",
+        "goal": "성숙한 세계국가",
+        "title": "한EU FTA 체결",
+        "description": "유럽연합과의 자유무역협정 체결",
+        "status": "완료",
+        "completion_rate": 100,
+        "start_date": "2010-10-06",
+        "outcome": "한EU FTA 서명(2010.10) 및 잠정 발효(2011.7). EU 최초의 아시아 FTA 파트너."
+      }
+    ]
+  },
+  {
+    "president_id": "pgh",
+    "era": "박근혜 정부",
+    "agenda_title": "국민행복, 희망의 새 시대",
+    "total_tasks": 140,
+    "goals": [
+      {"goal": "경제부흥", "description": "창조경제 실현"},
+      {"goal": "국민행복", "description": "맞춤형 고용·복지"},
+      {"goal": "문화융성", "description": "문화가 있는 삶"},
+      {"goal": "평화통일 기반 구축", "description": "한반도 신뢰프로세스"}
+    ],
+    "items": [
+      {
+        "task_id": "pgh-01",
+        "goal": "경제부흥",
+        "title": "창조경제 추진",
+        "description": "ICT 융합 기반의 창조경제 생태계 구축",
+        "status": "중단",
+        "completion_rate": 30,
+        "start_date": "2013-06-01",
+        "outcome": "창조경제혁신센터 17개 설치. 그러나 창조경제 개념 모호성 비판. 탄핵 후 사실상 폐기."
+      },
+      {
+        "task_id": "pgh-02",
+        "goal": "국민행복",
+        "title": "기초연금 도입",
+        "description": "65세 이상 어르신에게 기초연금 지급",
+        "status": "완료",
+        "completion_rate": 90,
+        "start_date": "2014-07-01",
+        "outcome": "기초연금법 시행(2014.7). 월 20만원 지급 시작. 공약의 '모든 어르신' 대상에서 소득 하위 70%로 축소."
+      },
+      {
+        "task_id": "pgh-03",
+        "goal": "경제부흥",
+        "title": "경제민주화",
+        "description": "재벌 개혁, 경제적 약자 보호",
+        "status": "미흡",
+        "completion_rate": 25,
+        "start_date": "2013-03-01",
+        "outcome": "초기 재벌 규제 법안 일부 추진 후 후퇴. 경제민주화 공약 대부분 미이행."
+      },
+      {
+        "task_id": "pgh-04",
+        "goal": "평화통일 기반 구축",
+        "title": "한반도 신뢰프로세스",
+        "description": "남북 간 신뢰 구축을 통한 점진적 통일 기반 마련",
+        "status": "미흡",
+        "completion_rate": 15,
+        "start_date": "2013-03-01",
+        "outcome": "개성공단 일시 폐쇄(2013) 후 재개. 2016년 북한 4차 핵실험 후 개성공단 전면 폐쇄. 남북관계 경색."
+      },
+      {
+        "task_id": "pgh-05",
+        "goal": "국민행복",
+        "title": "4대 중증질환 국가 책임제",
+        "description": "암·심장·뇌혈관·희귀난치성 질환 건강보험 보장 확대",
+        "status": "일부완료",
+        "completion_rate": 70,
+        "start_date": "2013-06-01",
+        "outcome": "4대 중증질환 비급여 해소 추진. 건강보험 보장률 일부 상승. 완전 달성에는 미흡."
+      },
+      {
+        "task_id": "pgh-06",
+        "goal": "문화융성",
+        "title": "문화융성 정책",
+        "description": "문화예술 지원 확대 및 한류 진흥",
+        "status": "중단",
+        "completion_rate": 35,
+        "start_date": "2013-05-01",
+        "outcome": "문화예술계 블랙리스트 사건으로 정책 신뢰 훼손. 문화체육관광부 장관 직권남용으로 유죄 판결."
+      },
+      {
+        "task_id": "pgh-07",
+        "goal": "경제부흥",
+        "title": "규제 프리존 특별법",
+        "description": "지역별 규제 완화 특구 지정",
+        "status": "미완료",
+        "completion_rate": 20,
+        "start_date": "2015-01-01",
+        "outcome": "국회 계류 중 탄핵으로 폐기."
+      },
+      {
+        "task_id": "pgh-08",
+        "goal": "국민행복",
+        "title": "누리과정(무상보육) 확대",
+        "description": "0~5세 무상보육 전면 시행",
+        "status": "일부완료",
+        "completion_rate": 75,
+        "start_date": "2013-03-01",
+        "outcome": "누리과정 전면 시행. 재원 부담을 둘러싼 중앙-지방 갈등 발생. 시도교육청 반발."
+      }
+    ]
+  },
+  {
+    "president_id": "mji",
+    "era": "문재인 정부",
+    "agenda_title": "100대 국정과제",
+    "total_tasks": 100,
+    "goals": [
+      {"goal": "국민이 주인인 정부", "description": "적폐청산, 반부패 개혁, 참여 민주주의", "task_range": "1-20"},
+      {"goal": "더불어 잘사는 경제", "description": "소득주도성장, 공정경제, 혁신성장", "task_range": "21-40"},
+      {"goal": "내 삶을 책임지는 국가", "description": "교육·복지·건강·안전", "task_range": "41-65"},
+      {"goal": "고르게 발전하는 지역", "description": "지방분권, 균형발전", "task_range": "66-75"},
+      {"goal": "평화와 번영의 한반도", "description": "남북관계, 외교, 국방개혁", "task_range": "76-100"}
+    ],
+    "items": [
+      {
+        "task_id": "mji-01",
+        "goal": "국민이 주인인 정부",
+        "task_number": 1,
+        "title": "적폐의 철저한 청산",
+        "description": "국정농단, 방산비리, 권력기관 비위 등 적폐 수사 및 제도 개혁",
+        "status": "일부완료",
+        "completion_rate": 70,
+        "start_date": "2017-05-10",
+        "outcome": "국정농단 관련자 사법 처리. 적폐청산위원회 운영. 일부 과잉수사 논란."
+      },
+      {
+        "task_id": "mji-02",
+        "goal": "국민이 주인인 정부",
+        "task_number": 2,
+        "title": "반부패 개혁으로 청렴한 대한민국 실현",
+        "description": "고위공직자범죄수사처(공수처) 설치 등 반부패 시스템 구축",
+        "status": "완료",
+        "completion_rate": 85,
+        "start_date": "2017-05-10",
+        "outcome": "공수처법 제정(2020.1) 및 공수처 출범(2021.1). 이해충돌방지법 제정."
+      },
+      {
+        "task_id": "mji-03",
+        "goal": "국민이 주인인 정부",
+        "task_number": 3,
+        "title": "국민 눈높이에 맞는 과거사 문제 해결",
+        "description": "5·18 진상조사, 세월호 특별수사단 등 과거사 재조사",
+        "status": "일부완료",
+        "completion_rate": 65,
+        "start_date": "2017-06-01",
+        "outcome": "5·18 진상규명특별법 제정. 세월호 선체 인양 및 특별수사단 운영. 일부 미해결 과제 잔존."
+      },
+      {
+        "task_id": "mji-05",
+        "goal": "국민이 주인인 정부",
+        "task_number": 5,
+        "title": "자치분권 로드맵 실현",
+        "description": "연방제 수준의 자치분권 추진, 자치경찰제 도입",
+        "status": "일부완료",
+        "completion_rate": 55,
+        "start_date": "2017-10-01",
+        "outcome": "자치경찰제 시행(2021.7). 지방이양일괄법 제정. 그러나 재정분권 및 헌법 개정은 미완."
+      },
+      {
+        "task_id": "mji-09",
+        "goal": "국민이 주인인 정부",
+        "task_number": 9,
+        "title": "검경 수사권 조정 및 검찰개혁",
+        "description": "검찰과 경찰의 수사권 분리, 검찰 직접수사 축소",
+        "status": "완료",
+        "completion_rate": 90,
+        "start_date": "2017-06-01",
+        "outcome": "형사소송법·검찰청법 개정(2020.2). 검찰 직접수사 범위 축소. 경찰에 1차적 수사권 부여."
+      },
+      {
+        "task_id": "mji-21",
+        "goal": "더불어 잘사는 경제",
+        "task_number": 21,
+        "title": "소득주도성장을 위한 일자리 경제",
+        "description": "최저임금 인상, 비정규직 정규직 전환 등 소득주도성장 추진",
+        "status": "일부완료",
+        "completion_rate": 55,
+        "start_date": "2017-05-10",
+        "outcome": "최저임금 대폭 인상(2018년 16.4%, 2019년 10.9%). 고용 감소 부작용 논란. 자영업자 부담 증가."
+      },
+      {
+        "task_id": "mji-22",
+        "goal": "더불어 잘사는 경제",
+        "task_number": 22,
+        "title": "비정규직 제로 시대 추진",
+        "description": "공공부문 비정규직의 정규직 전환",
+        "status": "일부완료",
+        "completion_rate": 65,
+        "start_date": "2017-07-01",
+        "outcome": "공공부문 비정규직 20.5만 명 정규직 전환 추진. 무기계약직 전환 비율이 높아 '정규직' 논란."
+      },
+      {
+        "task_id": "mji-25",
+        "goal": "더불어 잘사는 경제",
+        "task_number": 25,
+        "title": "혁신을 응원하는 창업국가 조성",
+        "description": "스타트업 지원, 규제 샌드박스 도입",
+        "status": "완료",
+        "completion_rate": 80,
+        "start_date": "2017-09-01",
+        "outcome": "규제 샌드박스 시행(2019). 벤처투자 역대 최고 경신. K-유니콘 프로젝트."
+      },
+      {
+        "task_id": "mji-30",
+        "goal": "더불어 잘사는 경제",
+        "task_number": 30,
+        "title": "재벌 총수 일가 전횡 방지 및 소유구조 개편",
+        "description": "공정거래법 전면 개정, 기업 지배구조 투명화",
+        "status": "일부완료",
+        "completion_rate": 60,
+        "start_date": "2017-07-01",
+        "outcome": "공정거래법 전부개정(2020.12). 자회사 의무공개매수제 도입 무산. 징벌적 손해배상제 확대."
+      },
+      {
+        "task_id": "mji-34",
+        "goal": "더불어 잘사는 경제",
+        "task_number": 34,
+        "title": "탈원전 정책 및 에너지 전환",
+        "description": "신규 원전 건설 중단, 재생에너지 비중 확대",
+        "status": "일부완료",
+        "completion_rate": 60,
+        "start_date": "2017-06-19",
+        "outcome": "신고리 5·6호기 공론화(건설 재개 결정). 월성 1호기 조기 폐쇄. 재생에너지 비중 6.5%→9.2%. 에너지 안보 논란."
+      },
+      {
+        "task_id": "mji-41",
+        "goal": "내 삶을 책임지는 국가",
+        "task_number": 41,
+        "title": "치매 국가책임제",
+        "description": "치매 관리를 국가가 책임지는 시스템 구축",
+        "status": "완료",
+        "completion_rate": 85,
+        "start_date": "2017-09-01",
+        "outcome": "치매안심센터 256개소 설치. 치매 건강보험 급여 확대. 치매환자 본인부담 경감."
+      },
+      {
+        "task_id": "mji-47",
+        "goal": "내 삶을 책임지는 국가",
+        "task_number": 47,
+        "title": "건강보험 보장 강화(문재인 케어)",
+        "description": "비급여의 급여화를 통한 의료비 부담 경감",
+        "status": "일부완료",
+        "completion_rate": 70,
+        "start_date": "2017-08-09",
+        "outcome": "건강보험 보장률 62.7%→65.3%로 상승(2020). 비급여 전환에 따른 의료비 풍선효과 지적."
+      },
+      {
+        "task_id": "mji-52",
+        "goal": "내 삶을 책임지는 국가",
+        "task_number": 52,
+        "title": "주거복지 로드맵(부동산 안정)",
+        "description": "주택 공급 확대, 임대주택 확충, 부동산 투기 억제",
+        "status": "미흡",
+        "completion_rate": 35,
+        "start_date": "2017-11-29",
+        "outcome": "25차례 부동산 대책에도 서울 아파트값 83% 상승(임기 중). 종부세 강화, 대출규제, 임대차3법 시행. 정책 실패 비판."
+      },
+      {
+        "task_id": "mji-55",
+        "goal": "내 삶을 책임지는 국가",
+        "task_number": 55,
+        "title": "아동수당 도입 및 보육 강화",
+        "description": "0~5세 아동수당 도입, 보육 국가책임 강화",
+        "status": "완료",
+        "completion_rate": 90,
+        "start_date": "2018-09-01",
+        "outcome": "아동수당 월 10만원 지급 시작(2018.9). 이후 만 7세 미만으로 확대. 총 480만 명 수혜."
+      },
+      {
+        "task_id": "mji-68",
+        "goal": "고르게 발전하는 지역",
+        "task_number": 68,
+        "title": "도시재생 뉴딜사업",
+        "description": "낙후된 도심지 재생을 통한 균형발전",
+        "status": "일부완료",
+        "completion_rate": 60,
+        "start_date": "2017-09-01",
+        "outcome": "5년간 100곳 도시재생 뉴딜사업 추진. 총 50조원 투자 계획. 일부 사업 성과 미흡 논란."
+      },
+      {
+        "task_id": "mji-78",
+        "goal": "평화와 번영의 한반도",
+        "task_number": 78,
+        "title": "남북관계 개선 및 한반도 평화 정착",
+        "description": "남북대화 재개, 정상회담, 한반도 비핵화 추진",
+        "status": "일부완료",
+        "completion_rate": 50,
+        "start_date": "2017-05-10",
+        "outcome": "2018년 판문점·평양 남북정상회담 3회 개최. 판문점선언·9월 평양공동선언 채택. 하노이 북미회담 결렬 후 교착."
+      },
+      {
+        "task_id": "mji-89",
+        "goal": "평화와 번영의 한반도",
+        "task_number": 89,
+        "title": "국방개혁 2.0",
+        "description": "병력 감축, 복무기간 단축, 국방운영 효율화",
+        "status": "일부완료",
+        "completion_rate": 70,
+        "start_date": "2018-07-27",
+        "outcome": "육군 병력 50만→36.5만 감축 추진. 복무기간 18개월로 단축(2020.6). 방위사업 투명성 강화."
+      },
+      {
+        "task_id": "mji-95",
+        "goal": "평화와 번영의 한반도",
+        "task_number": 95,
+        "title": "신남방·신북방 정책",
+        "description": "아세안·인도와의 관계를 4강 수준으로 격상, 유라시아 협력 확대",
+        "status": "일부완료",
+        "completion_rate": 55,
+        "start_date": "2017-11-01",
+        "outcome": "한-아세안 특별정상회의 부산 개최(2019). 아세안·인도 교역 증가. 신북방은 러시아 관계 등 성과 제한적."
+      }
+    ]
+  },
+  {
+    "president_id": "ysy",
+    "era": "윤석열 정부",
+    "agenda_title": "110대 국정과제",
+    "total_tasks": 110,
+    "goals": [
+      {"goal": "상식이 회복된 반듯한 나라", "description": "법치주의 확립, 공정한 사회", "task_range": "1-19"},
+      {"goal": "민간이 끌고 정부가 미는 역동적 경제", "description": "규제 혁신, 민간 주도 성장", "task_range": "20-40"},
+      {"goal": "따뜻한 동행 모두가 행복한 사회", "description": "복지·교육·안전", "task_range": "41-65"},
+      {"goal": "자율과 창의로 만드는 담대한 미래", "description": "과학기술·디지털", "task_range": "66-80"},
+      {"goal": "자유, 평화, 번영에 기여하는 글로벌 중추국가", "description": "한미동맹, 글로벌 외교", "task_range": "81-95"},
+      {"goal": "대한민국 어디서나 살기 좋은 지방시대", "description": "균형발전, 지방분권", "task_range": "96-110"}
+    ],
+    "items": [
+      {
+        "task_id": "ysy-01",
+        "goal": "상식이 회복된 반듯한 나라",
+        "task_number": 1,
+        "title": "검찰·경찰 수사권 재조정",
+        "description": "경찰 수사권 완전이관에 따른 검찰 수사권 보강",
+        "status": "일부완료",
+        "completion_rate": 50,
+        "start_date": "2022-05-10",
+        "outcome": "검수완박법 시행에도 검찰 직접수사 유지 시도. 수사권 논쟁 지속. 탄핵 후 정책 방향 불투명."
+      },
+      {
+        "task_id": "ysy-05",
+        "goal": "상식이 회복된 반듯한 나라",
+        "task_number": 5,
+        "title": "공정한 세금 체계 확립",
+        "description": "종합부동산세 부담 정상화, 법인세 인하",
+        "status": "일부완료",
+        "completion_rate": 60,
+        "start_date": "2022-07-01",
+        "outcome": "종부세 기본공제 9억→12억 상향. 법인세 최고세율 25%→24% 인하(2023). 1주택자 세부담 경감."
+      },
+      {
+        "task_id": "ysy-20",
+        "goal": "민간이 끌고 정부가 미는 역동적 경제",
+        "task_number": 20,
+        "title": "원전 생태계 강화 및 원전 수출",
+        "description": "탈원전 정책 폐기, 원전 산업 재건 및 수출 추진",
+        "status": "일부완료",
+        "completion_rate": 55,
+        "start_date": "2022-07-01",
+        "outcome": "신한울 3·4호기 건설 재개 결정. 체코 원전 수주(2024). 그러나 탄핵으로 후속 정책 중단."
+      },
+      {
+        "task_id": "ysy-22",
+        "goal": "민간이 끌고 정부가 미는 역동적 경제",
+        "task_number": 22,
+        "title": "반도체 등 첨단산업 초강대국 도약",
+        "description": "반도체특별법 제정, K-반도체 벨트 조성",
+        "status": "일부완료",
+        "completion_rate": 45,
+        "start_date": "2022-07-01",
+        "outcome": "반도체특별법(K-Chips Act) 국회 통과(2023). 세액공제 확대. 용인 반도체 클러스터 착공. 탄핵으로 후속 추진 불투명."
+      },
+      {
+        "task_id": "ysy-25",
+        "goal": "민간이 끌고 정부가 미는 역동적 경제",
+        "task_number": 25,
+        "title": "주 52시간제 유연화",
+        "description": "근로시간 유연화를 통한 기업 경쟁력 강화",
+        "status": "폐기",
+        "completion_rate": 10,
+        "start_date": "2023-03-01",
+        "outcome": "주 69시간 근무 허용안 발표 후 MZ세대 강력 반발. 여론 악화로 사실상 철회."
+      },
+      {
+        "task_id": "ysy-30",
+        "goal": "민간이 끌고 정부가 미는 역동적 경제",
+        "task_number": 30,
+        "title": "규제혁신을 통한 기업 활력 제고",
+        "description": "기업규제 총량 감축, 네거티브 규제 전환",
+        "status": "중단",
+        "completion_rate": 30,
+        "start_date": "2022-09-01",
+        "outcome": "규제혁신추진단 설치. 일부 규제 완화 성과. 탄핵으로 추진 중단."
+      },
+      {
+        "task_id": "ysy-41",
+        "goal": "따뜻한 동행 모두가 행복한 사회",
+        "task_number": 41,
+        "title": "의대 정원 확대",
+        "description": "지역 필수의료 강화를 위한 의대 입학정원 증원",
+        "status": "중단",
+        "completion_rate": 30,
+        "start_date": "2024-02-01",
+        "outcome": "2025학년도 의대정원 2,000명 증원 발표(2024.2). 전공의 집단사직 사태 발생. 의료 공백 심각. 탄핵으로 정책 방향 불투명."
+      },
+      {
+        "task_id": "ysy-50",
+        "goal": "따뜻한 동행 모두가 행복한 사회",
+        "task_number": 50,
+        "title": "인구위기 대응",
+        "description": "저출산 대응을 위한 범정부 종합대책",
+        "status": "중단",
+        "completion_rate": 20,
+        "start_date": "2022-10-01",
+        "outcome": "인구위기 대응 특별기획위원회 설치. 저출생대응기획부 신설 추진. 2023년 합계출산율 0.72명으로 역대 최저. 실효성 논란."
+      },
+      {
+        "task_id": "ysy-55",
+        "goal": "따뜻한 동행 모두가 행복한 사회",
+        "task_number": 55,
+        "title": "소상공인·자영업자 지원 강화",
+        "description": "코로나 손실보상 및 소상공인 경영 지원",
+        "status": "일부완료",
+        "completion_rate": 55,
+        "start_date": "2022-06-01",
+        "outcome": "소상공인 손실보상 62만 명 지급 완료. 소상공인 전기료 특별지원. 고금리 시기 이자부담 가중."
+      },
+      {
+        "task_id": "ysy-66",
+        "goal": "자율과 창의로 만드는 담대한 미래",
+        "task_number": 66,
+        "title": "디지털 플랫폼 정부 구현",
+        "description": "AI·데이터 기반 맞춤형 정부서비스 제공",
+        "status": "중단",
+        "completion_rate": 35,
+        "start_date": "2022-09-01",
+        "outcome": "디지털플랫폼정부위원회 출범. 마이데이터 확산 추진. 탄핵으로 사실상 중단."
+      },
+      {
+        "task_id": "ysy-81",
+        "goal": "자유, 평화, 번영에 기여하는 글로벌 중추국가",
+        "task_number": 81,
+        "title": "한미 글로벌 포괄적 전략동맹 강화",
+        "description": "한미동맹을 경제·기술·안보 전 분야 포괄 동맹으로 격상",
+        "status": "일부완료",
+        "completion_rate": 60,
+        "start_date": "2022-05-21",
+        "outcome": "워싱턴선언(2023.4), 캠프데이비드 한미일 정상회의(2023.8). 한미 핵협의그룹(NCG) 설치. 탄핵 후 외교 공백."
+      },
+      {
+        "task_id": "ysy-85",
+        "goal": "자유, 평화, 번영에 기여하는 글로벌 중추국가",
+        "task_number": 85,
+        "title": "한일관계 정상화",
+        "description": "강제징용 해법 제시 및 한일 협력 복원",
+        "status": "일부완료",
+        "completion_rate": 50,
+        "start_date": "2023-03-06",
+        "outcome": "강제징용 제3자 변제 해법 발표(2023.3). 한일 정상 셔틀외교 재개. 국내 여론 분열. 후쿠시마 오염수 방류 갈등."
+      },
+      {
+        "task_id": "ysy-90",
+        "goal": "자유, 평화, 번영에 기여하는 글로벌 중추국가",
+        "task_number": 90,
+        "title": "대북 3대 정책(담대한 구상)",
+        "description": "북한 비핵화 시 경제 지원하는 '담대한 구상' 제안",
+        "status": "미흡",
+        "completion_rate": 10,
+        "start_date": "2022-08-15",
+        "outcome": "북한 반응 없음. 남북관계 경색 지속. 북한의 ICBM 발사, 정찰위성 발사 등 도발 계속."
+      },
+      {
+        "task_id": "ysy-96",
+        "goal": "대한민국 어디서나 살기 좋은 지방시대",
+        "task_number": 96,
+        "title": "지방시대위원회 설치 및 운영",
+        "description": "대통령 직속 지방시대위원회를 통한 균형발전 추진",
+        "status": "중단",
+        "completion_rate": 30,
+        "start_date": "2023-01-01",
+        "outcome": "지방시대위원회 출범(2023.3). 기회발전특구 지정 추진. 탄핵으로 사실상 중단."
+      },
+      {
+        "task_id": "ysy-100",
+        "goal": "대한민국 어디서나 살기 좋은 지방시대",
+        "task_number": 100,
+        "title": "기회발전특구 지정 및 운영",
+        "description": "비수도권에 기업 유치 인센티브 제공하는 특구 조성",
+        "status": "중단",
+        "completion_rate": 25,
+        "start_date": "2023-06-01",
+        "outcome": "기회발전특구특별법 국회 통과(2023.12). 경북·전남·충북·강원 등 특구 지정. 탄핵으로 후속 추진 불투명."
+      }
+    ]
+  },
+  {
+    "president_id": "ljm",
+    "era": "이재명 정부",
+    "agenda_title": "이재명 정부 국정과제(초기)",
+    "total_tasks": null,
+    "goals": [
+      {"goal": "국민 먹고사는 문제 해결", "description": "민생경제 안정"},
+      {"goal": "공정하고 따뜻한 사회", "description": "양극화 해소, 사회안전망"},
+      {"goal": "평화와 협력의 한반도", "description": "남북관계 복원"}
+    ],
+    "items": [
+      {
+        "task_id": "ljm-01",
+        "goal": "국민 먹고사는 문제 해결",
+        "title": "기본소득 단계적 도입",
+        "description": "청년기본소득 등 단계적 기본소득 제도 도입 추진",
+        "status": "미착수",
+        "completion_rate": 0,
+        "start_date": "2025-06-04",
+        "outcome": null
+      },
+      {
+        "task_id": "ljm-02",
+        "goal": "국민 먹고사는 문제 해결",
+        "title": "기본주택 공급",
+        "description": "역세권 등 공공택지에 저렴한 공공분양·임대주택 대량 공급",
+        "status": "미착수",
+        "completion_rate": 0,
+        "start_date": "2025-06-04",
+        "outcome": null
+      },
+      {
+        "task_id": "ljm-03",
+        "goal": "국민 먹고사는 문제 해결",
+        "title": "소상공인·자영업자 부채 탕감",
+        "description": "코로나·고금리로 누적된 소상공인 부채의 체계적 해소",
+        "status": "추진중",
+        "completion_rate": 10,
+        "start_date": "2025-06-04",
+        "outcome": null
+      },
+      {
+        "task_id": "ljm-04",
+        "goal": "공정하고 따뜻한 사회",
+        "title": "의료개혁 및 필수의료 강화",
+        "description": "의대정원 문제 해결, 필수의료·지역의료 지원체계 구축",
+        "status": "추진중",
+        "completion_rate": 5,
+        "start_date": "2025-06-04",
+        "outcome": null
+      },
+      {
+        "task_id": "ljm-05",
+        "goal": "공정하고 따뜻한 사회",
+        "title": "저출생 대응 종합대책",
+        "description": "주거·일자리·돌봄의 종합적 저출생 대응",
+        "status": "추진중",
+        "completion_rate": 5,
+        "start_date": "2025-06-04",
+        "outcome": null
+      },
+      {
+        "task_id": "ljm-06",
+        "goal": "국민 먹고사는 문제 해결",
+        "title": "지역화폐 확대 및 기본금융 도입",
+        "description": "지역경제 활성화를 위한 지역화폐 확대, 기본금융 서비스 제공",
+        "status": "미착수",
+        "completion_rate": 0,
+        "start_date": "2025-06-04",
+        "outcome": null
+      },
+      {
+        "task_id": "ljm-07",
+        "goal": "평화와 협력의 한반도",
+        "title": "남북 대화 재개 추진",
+        "description": "남북 간 대화 채널 복원 및 교류협력 재개",
+        "status": "미착수",
+        "completion_rate": 0,
+        "start_date": "2025-06-04",
+        "outcome": null
+      },
+      {
+        "task_id": "ljm-08",
+        "goal": "공정하고 따뜻한 사회",
+        "title": "헌법 개정 추진",
+        "description": "분권형 개헌, 기본권 강화 등 헌법 개정 추진",
+        "status": "미착수",
+        "completion_rate": 0,
+        "start_date": "2025-06-04",
+        "outcome": null
+      }
+    ]
+  }
+]

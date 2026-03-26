@@ -97,6 +97,20 @@
   }
 }
 
+/* 차트 애니메이션 */
+@keyframes gauge-fill {
+  from { stroke-dashoffset: var(--gauge-circumference); }
+  to { stroke-dashoffset: var(--gauge-offset); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-gauge { animation: gauge-fill 1.5s ease-out forwards; }
+.animate-fade-in { animation: fade-in-up 0.5s ease-out forwards; }
+
 /* 인쇄 스타일 */
 @media print {
   header, footer, nav {

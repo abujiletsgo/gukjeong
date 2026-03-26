@@ -2,7 +2,10 @@
 from app.models.base import Base
 from app.models.user import User, Subscription, ApiKey
 from app.models.citizen_profile import CitizenProfile
-from app.models.president import President, Policy, KeyEvent, PresidentialGovernance, PledgeTracking
+from app.models.president import (
+    President, Policy, KeyEvent, PresidentialGovernance, PledgeTracking,
+    NationalAgenda, PresidentialReportCard,
+)
 from app.models.fiscal import FiscalYearly, FiscalBySector, FiscalByDepartment
 from app.models.bill import Bill
 from app.models.legislator import Legislator, LegislatorSpeech, LegislatorVote, ConsistencyAnalysis
@@ -21,6 +24,7 @@ __all__ = [
     "User", "Subscription", "ApiKey",
     "CitizenProfile",
     "President", "Policy", "KeyEvent", "PresidentialGovernance", "PledgeTracking",
+    "NationalAgenda", "PresidentialReportCard",
     "FiscalYearly", "FiscalBySector", "FiscalByDepartment",
     "Bill",
     "Legislator", "LegislatorSpeech", "LegislatorVote", "ConsistencyAnalysis",
