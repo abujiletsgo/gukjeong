@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.db.database import get_db
+from app.dependencies import require_auth
 from app.models.survey import Survey
 
 router = APIRouter()
@@ -42,7 +43,11 @@ async def get_survey(survey_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/surveys/{survey_id}/respond")
-async def respond_to_survey(survey_id: str, db: AsyncSession = Depends(get_db)):
-    """설문 응답 제출 (인증 필요)"""
+async def respond_to_survey(
+    survey_id: str,
+    user: dict = Depends(require_auth),  # 인증 필수 — 익명 응답 불가
+    db: AsyncSession = Depends(get_db),
+):
+    """설문 응답 제출 (카카오/네이버 인증 필수)"""
     # TODO: 응답 저장 구현
-    return {"status": "submitted"}
+    return {"status": "submitted", "user_id": user["id"]}

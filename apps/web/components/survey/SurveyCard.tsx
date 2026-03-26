@@ -8,9 +8,9 @@ export default function SurveyCard({ survey }: { survey: Survey }) {
       <h3 className="font-bold text-lg">{survey.title}</h3>
       <p className="text-sm text-gray-600 mt-2">{survey.description}</p>
       <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
-        <span>참여: {survey.totalResponses}명</span>
-        {survey.representativenessScore && (
-          <span>대표성: {survey.representativenessScore}/100</span>
+        <span>참여: {survey.total_responses}명</span>
+        {survey.representativeness_score && (
+          <span>대표성: {survey.representativeness_score}/100</span>
         )}
       </div>
     </a>

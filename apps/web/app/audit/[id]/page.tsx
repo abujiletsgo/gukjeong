@@ -13,10 +13,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     vendor_concentration: '업체 집중도',
     contract_splitting: '계약 분할',
   };
-  const patternType = flag.patternType || flag.pattern_type || '';
+  const patternType = flag.pattern_type;
   return {
     title: `감사 플래그: ${patternLabels[patternType] || patternType}`,
-    description: `${flag.targetId || flag.target_id}에서 감지된 의심 패턴 상세 분석`,
+    description: `${flag.target_id}에서 감지된 의심 패턴 상세 분석`,
   };
 }
 

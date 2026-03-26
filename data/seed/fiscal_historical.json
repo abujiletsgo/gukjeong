@@ -165,17 +165,21 @@
     "national_debt": 1175.0,
     "debt_to_gdp": 46.8,
     "tax_revenue": 336.5,
+    "tax_revenue_budget": 367.3,
+    "tax_shortfall": -30.8,
     "president_id": "ysy"
   },
   {
     "year": 2025,
     "total_spending": 677.0,
     "national_debt": 1222.0,
-    "president_id": "ysy"
+    "president_id": "ysy",
+    "note": "국가채무 추정치"
   },
   {
     "year": 2026,
     "total_spending": 728.0,
-    "president_id": "ljm"
+    "president_id": "ljm",
+    "note": "예산안"
   }
 ]

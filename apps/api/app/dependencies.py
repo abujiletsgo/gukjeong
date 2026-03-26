@@ -5,7 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
 from app.config import TIER_LIMITS, get_settings
 import hashlib
+import logging
 import time
+
+logger = logging.getLogger(__name__)
 
 
 settings = get_settings()
@@ -63,7 +66,9 @@ class RateLimiter:
 
     async def check(self, identifier: str) -> bool:
         """제한 확인 (True = 허용, False = 초과)"""
-        # TODO: Redis 연동
+        # WARNING: Redis 미연동 — 레이트 리밋 미적용 상태
+        # 프로덕션 배포 전 반드시 Redis 연동 필요
+        logger.warning("RateLimiter: Redis 미연동 — 모든 요청 허용 중 (프로덕션 위험)")
         return True
 
     async def __call__(self, request: Request) -> bool:

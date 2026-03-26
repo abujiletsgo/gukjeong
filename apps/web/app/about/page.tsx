@@ -3,6 +3,11 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: '소개',
   description: '국정투명 프로젝트 소개 — 수치로 보는 대한민국 정부',
+  openGraph: {
+    title: '소개 | 국정투명',
+    description: '대한민국 시민이 정부의 운영을 수치 기반으로 투명하게 볼 수 있는 AI 기반 시민 투명성 플랫폼',
+    images: [{ url: '/og/default.png', width: 1200, height: 630 }],
+  },
 };
 
 export default function AboutPage() {

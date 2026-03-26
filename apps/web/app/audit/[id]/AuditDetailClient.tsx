@@ -10,12 +10,12 @@ interface AuditDetailClientProps {
 }
 
 export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
-  const score = flag.suspicionScore || flag.suspicion_score || 0;
-  const patternType = flag.patternType || flag.pattern_type || '';
-  const targetId = flag.targetId || flag.target_id || '';
-  const targetType = flag.targetType || flag.target_type || '';
-  const aiAnalysis = flag.aiAnalysis || flag.ai_analysis || '';
-  const createdAt = flag.createdAt || flag.created_at || '';
+  const score = flag.suspicion_score;
+  const patternType = flag.pattern_type;
+  const targetId = flag.target_id || '';
+  const targetType = flag.target_type || '';
+  const aiAnalysis = flag.ai_analysis || '';
+  const createdAt = flag.created_at || '';
   const severityColor = getSeverityColor(score);
 
   const patternLabels: Record<string, string> = {

@@ -54,7 +54,7 @@ export default function PresidentDetailPage({ params }: { params: { id: string }
   const lastFiscalWithRatio = [...fiscalData].reverse().find(f => f.debt_to_gdp);
   const debtToGdp = lastFiscalWithRatio?.debt_to_gdp?.toString() || '-';
 
-  const gdpGrowth = (president.gdpGrowthAvg || president.gdp_growth_avg || 0).toFixed(1);
+  const gdpGrowth = (president.gdp_growth_avg || 0).toFixed(1);
 
   return (
     <PresidentDetailClient

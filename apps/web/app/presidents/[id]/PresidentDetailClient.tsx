@@ -35,8 +35,8 @@ export default function PresidentDetailClient({
 }: PresidentDetailClientProps) {
   const partyColor = getPresidentColor(president.party);
   const bgColor = getPresidentBgColor(president.party);
-  const termStart = president.termStart || president.term_start || '';
-  const termEnd = president.termEnd || president.term_end || '';
+  const termStart = president.term_start;
+  const termEnd = president.term_end || '';
   const isCurrentPresident = !termEnd;
 
   // 지출 추이 데이터 (간단한 라인용)
@@ -78,7 +78,7 @@ export default function PresidentDetailClient({
                 {president.name}
               </h1>
               <p className="text-sm text-gray-500 mt-1">
-                {president.nameEn || president.name_en}
+                {president.name_en}
               </p>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-sm text-gray-600">
                 <span className="font-medium" style={{ color: partyColor }}>

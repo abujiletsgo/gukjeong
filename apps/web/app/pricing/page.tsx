@@ -3,6 +3,11 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: '요금제',
   description: '국정투명의 무료 및 유료 요금제를 확인하세요.',
+  openGraph: {
+    title: '요금제 | 국정투명',
+    description: '시민의 알 권리는 항상 무료. 더 깊은 분석이 필요하면 Pro를 선택하세요.',
+    images: [{ url: '/og/default.png', width: 1200, height: 630 }],
+  },
 };
 
 export default function PricingPage() {

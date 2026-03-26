@@ -90,8 +90,8 @@ export default function PresidentsPage() {
                   <td className="py-3 px-2 text-gray-500 text-xs">{p.era}</td>
                   <td className="py-3 px-2 text-right text-gray-600">{p.termYears || '-'}</td>
                   <td className="py-3 px-2 text-right font-medium">
-                    {p.gdpGrowthAvg || p.gdp_growth_avg
-                      ? <span className="text-green-600">{(p.gdpGrowthAvg || p.gdp_growth_avg || 0).toFixed(1)}%</span>
+                    {p.gdp_growth_avg
+                      ? <span className="text-green-600">{p.gdp_growth_avg.toFixed(1)}%</span>
                       : <span className="text-gray-400">-</span>
                     }
                   </td>

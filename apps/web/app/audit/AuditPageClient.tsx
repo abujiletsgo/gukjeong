@@ -43,15 +43,13 @@ export default function AuditPageClient({
 
   // 필터링
   const filteredFlags = auditFlags.filter(f => {
-    const pt = f.patternType || f.pattern_type || '';
-    const tid = f.targetId || f.target_id || '';
-    if (patternFilter !== 'all' && pt !== patternFilter) return false;
+    if (patternFilter !== 'all' && f.pattern_type !== patternFilter) return false;
     if (severityFilter !== 'all' && f.severity !== severityFilter) return false;
-    if (departmentFilter !== 'all' && tid !== departmentFilter) return false;
+    if (departmentFilter !== 'all' && (f.target_id || '') !== departmentFilter) return false;
     return true;
   });
 
-  const departments = [...new Set(auditFlags.map(f => f.targetId || f.target_id || ''))].filter(Boolean);
+  const departments = Array.from(new Set(auditFlags.map(f => f.target_id || ''))).filter(Boolean);
 
   return (
     <div className="container-page py-6 sm:py-8">

@@ -20,13 +20,13 @@ export default function PresidentTimeline({ presidents, fiscalData }: PresidentT
             // 해당 대통령 임기 중 재정 데이터
             const presidentFiscal = fiscalData.filter(f => f.president_id === p.id);
             const spendingData = presidentFiscal
-              .map(f => f.total_spending || f.totalSpending || 0)
+              .map(f => f.total_spending || 0)
               .filter(v => v > 0);
 
             const initials = p.name.charAt(0);
             const partyColor = getPresidentColor(p.party);
             const bgColor = getPresidentBgColor(p.party);
-            const isCurrentPresident = !p.termEnd && !p.term_end;
+            const isCurrentPresident = !p.term_end;
 
             return (
               <a
@@ -61,12 +61,12 @@ export default function PresidentTimeline({ presidents, fiscalData }: PresidentT
 
                   {/* 임기 */}
                   <div className="text-xs text-gray-500 mb-3">
-                    {(p.termStart || p.term_start || '').substring(0, 7).replace('-', '.')}
+                    {p.term_start.substring(0, 7).replace('-', '.')}
                     {' ~ '}
                     {isCurrentPresident ? (
                       <span className="text-accent font-medium">현재</span>
                     ) : (
-                      (p.termEnd || p.term_end || '').substring(0, 7).replace('-', '.')
+                      (p.term_end || '').substring(0, 7).replace('-', '.')
                     )}
                     {p.note && (
                       <span className="ml-1 text-red-400 text-[10px]">({p.note})</span>
@@ -74,11 +74,11 @@ export default function PresidentTimeline({ presidents, fiscalData }: PresidentT
                   </div>
 
                   {/* GDP 성장률 */}
-                  {(p.gdpGrowthAvg || p.gdp_growth_avg) && (
+                  {p.gdp_growth_avg && (
                     <div className="flex items-center justify-between text-xs mb-2">
                       <span className="text-gray-500">평균 GDP 성장률</span>
                       <span className="font-semibold text-gray-800">
-                        {formatPercent(p.gdpGrowthAvg || p.gdp_growth_avg || 0)}
+                        {formatPercent(p.gdp_growth_avg)}
                       </span>
                     </div>
                   )}

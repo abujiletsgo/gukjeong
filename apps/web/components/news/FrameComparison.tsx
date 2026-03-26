@@ -12,11 +12,11 @@ export default function FrameComparison({ event }: { event?: NewsEvent }) {
       <h3 className="font-bold text-lg mb-4">{event.title}</h3>
 
       {/* 핵심 사실 */}
-      {event.keyFacts && event.keyFacts.length > 0 && (
+      {event.key_facts && event.key_facts.length > 0 && (
         <div className="bg-gray-50 rounded-lg p-4 mb-4">
           <h4 className="font-semibold text-sm text-gray-700 mb-2">핵심 사실</h4>
           <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-            {event.keyFacts.map((fact, i) => (
+            {event.key_facts.map((fact: string, i: number) => (
               <li key={i}>{fact}</li>
             ))}
           </ul>
@@ -28,22 +28,22 @@ export default function FrameComparison({ event }: { event?: NewsEvent }) {
         <div className="bg-blue-50 rounded-lg p-4">
           <h4 className="font-semibold text-sm text-progressive mb-2">진보 프레임</h4>
           <p className="text-sm text-gray-700">
-            {event.progressiveFrame?.emphasis || '분석 준비 중'}
+            {event.progressive_frame?.emphasis || '분석 준비 중'}
           </p>
         </div>
         <div className="bg-red-50 rounded-lg p-4">
           <h4 className="font-semibold text-sm text-conservative mb-2">보수 프레임</h4>
           <p className="text-sm text-gray-700">
-            {event.conservativeFrame?.emphasis || '분석 준비 중'}
+            {event.conservative_frame?.emphasis || '분석 준비 중'}
           </p>
         </div>
       </div>
 
       {/* 시민 테이크어웨이 */}
-      {event.citizenTakeaway && (
+      {event.citizen_takeaway && (
         <div className="mt-4 bg-amber-50 rounded-lg p-4">
           <h4 className="font-semibold text-sm text-amber-700 mb-1">시민이 알아야 할 것</h4>
-          <p className="text-sm text-gray-700">{event.citizenTakeaway}</p>
+          <p className="text-sm text-gray-700">{event.citizen_takeaway}</p>
         </div>
       )}
 

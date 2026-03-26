@@ -30,9 +30,10 @@ class CommentUpdate(BaseModel):
 
 
 class CommentResponse(BaseModel):
+    model_config = {"from_attributes": True}
+
     id: UUID
     user_id: UUID
-    nickname: Optional[str] = None
     target_type: str
     target_id: str
     parent_id: Optional[UUID] = None
@@ -40,10 +41,7 @@ class CommentResponse(BaseModel):
     upvotes: int = 0
     downvotes: int = 0
     is_deleted: bool = False
-    created_at: datetime
-    reply_count: int = 0
-
-    model_config = {"from_attributes": True}
+    created_at: Optional[datetime] = None
 
 
 class CommentListResponse(BaseModel):
@@ -207,7 +205,7 @@ async def delete_comment(
 @router.post("/{comment_id}/vote")
 async def vote_comment(
     comment_id: UUID,
-    direction: str = Query(..., regex="^(up|down)$"),
+    direction: str = Query(..., pattern="^(up|down)$"),
     user: dict = Depends(require_auth),  # 카카오/네이버 인증 필수
     db: AsyncSession = Depends(get_db),
 ):

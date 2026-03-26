@@ -5,6 +5,8 @@ from datetime import date
 
 
 class BillBrief(BaseModel):
+    model_config = {"from_attributes": True}
+
     id: str
     bill_no: Optional[str] = None
     title: str

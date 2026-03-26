@@ -18,10 +18,10 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
     bid_rigging: '입찰 담합',
   };
 
-  const score = flag.suspicionScore || flag.suspicion_score || 0;
-  const patternType = flag.patternType || flag.pattern_type || '';
-  const targetId = flag.targetId || flag.target_id || '';
-  const aiAnalysis = flag.aiAnalysis || flag.ai_analysis || '';
+  const score = flag.suspicion_score;
+  const patternType = flag.pattern_type;
+  const targetId = flag.target_id || '';
+  const aiAnalysis = flag.ai_analysis || '';
   const severityColor = getSeverityColor(score);
 
   return (

@@ -21,8 +21,8 @@ export default function DepartmentHeatmap({ scores, onDepartmentClick }: Departm
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
       {scores.map((s) => {
-        const score = s.suspicionScore || s.suspicion_score || 0;
-        const flagCount = s.flagCount || s.flag_count || 0;
+        const score = s.suspicion_score;
+        const flagCount = s.flag_count;
         const bgColor = getSeverityColor(score);
         const isHighRisk = score > 50;
 

@@ -19,12 +19,8 @@ dependencies = [
     "celery[redis]>=5.3.0",
     "httpx>=0.26.0",
     "beautifulsoup4>=4.12.0",
-    "scrapy>=2.11.0",
-    "playwright>=1.41.0",
     "anthropic>=0.18.0",
-    "sentence-transformers>=2.3.0",
     "scikit-learn>=1.4.0",
-    "konlpy>=0.6.0",
     "feedparser>=6.0.0",
     "python-jose[cryptography]>=3.3.0",
     "passlib[bcrypt]>=1.7.4",
@@ -32,9 +28,18 @@ dependencies = [
     "sentry-sdk[fastapi]>=1.40.0",
     "pgvector>=0.2.4",
     "meilisearch>=0.31.0",
+    "numpy>=1.26.0",
 ]
 
 [project.optional-dependencies]
+scraping = [
+    "scrapy>=2.11.0",
+    "playwright>=1.41.0",
+]
+nlp = [
+    "sentence-transformers>=2.3.0",
+    "konlpy>=0.6.0",
+]
 dev = [
     "pytest>=7.4.0",
     "pytest-asyncio>=0.23.0",
@@ -43,6 +48,10 @@ dev = [
     "ruff>=0.2.0",
     "mypy>=1.8.0",
 ]
+
+[tool.setuptools.packages.find]
+include = ["app*", "scrapers*", "etl*"]
+exclude = ["tests*", "alembic*"]
 
 [tool.ruff]
 target-version = "py311"

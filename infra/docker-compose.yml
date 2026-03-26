@@ -4,12 +4,13 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     container_name: gukjeong-postgres
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: gukjeong
-      POSTGRES_PASSWORD: gukjeong
-      POSTGRES_DB: gukjeong
+      POSTGRES_USER: ${POSTGRES_USER:-gukjeong}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gukjeong}
+      POSTGRES_DB: ${POSTGRES_DB:-gukjeong}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -21,6 +22,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: gukjeong-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
@@ -37,10 +39,15 @@ services:
     ports:
       - "7700:7700"
     environment:
-      MEILI_MASTER_KEY: masterKey
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-masterKey}
       MEILI_NO_ANALYTICS: "true"
     volumes:
       - meilidata:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:

@@ -3,6 +3,11 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: '국제 비교',
   description: 'OECD 국가와 비교한 대한민국의 재정 지표',
+  openGraph: {
+    title: '국제 비교 | 국정투명',
+    description: 'OECD 국가와 비교한 대한민국의 재정 건전성 지표',
+    images: [{ url: '/og/default.png', width: 1200, height: 630 }],
+  },
 };
 
 export default function ComparePage() {

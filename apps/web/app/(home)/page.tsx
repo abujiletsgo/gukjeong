@@ -113,14 +113,14 @@ export default function HomePage() {
                   key={d.department}
                   className="w-6 h-6 rounded text-[6px] flex items-center justify-center text-white font-bold"
                   style={{
-                    backgroundColor: d.suspicionScore > 50 ? '#ef4444' :
-                      d.suspicionScore > 30 ? '#f97316' :
-                      d.suspicionScore > 15 ? '#eab308' : '#22c55e',
-                    opacity: Math.max(0.5, d.suspicionScore / 80),
+                    backgroundColor: d.suspicion_score > 50 ? '#ef4444' :
+                      d.suspicion_score > 30 ? '#f97316' :
+                      d.suspicion_score > 15 ? '#eab308' : '#22c55e',
+                    opacity: Math.max(0.5, d.suspicion_score / 80),
                   }}
                   title={d.department}
                 >
-                  {d.suspicionScore}
+                  {d.suspicion_score}
                 </div>
               ))}
             </div>

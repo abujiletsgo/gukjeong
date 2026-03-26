@@ -32,7 +32,7 @@ export default function BudgetPageClient({
   // TreeMap 데이터
   const treemapData = currentSectors.map(s => ({
     name: s.sector,
-    value: s.amount,
+    value: s.amount || 0,
     percentage: s.percentage,
     yoy_change: s.yoy_change,
   }));
@@ -54,7 +54,7 @@ export default function BudgetPageClient({
   // 비교 테이블 데이터
   const comparisonData = currentSectors.map(s => ({
     sector: s.sector,
-    amount: s.amount,
+    amount: s.amount || 0,
     percentage: s.percentage || 0,
     yoyChange: s.yoy_change || 0,
   }));

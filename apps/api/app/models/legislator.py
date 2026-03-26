@@ -66,7 +66,7 @@ class LegislatorVote(Base):
     legislator = relationship("Legislator", back_populates="votes")
 
     __table_args__ = (
-        {"schema": None},
+        {"comment": "legislator_id + bill_id unique enforced at DB level"},
     )
 
 

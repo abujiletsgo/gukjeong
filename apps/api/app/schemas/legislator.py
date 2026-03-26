@@ -4,6 +4,8 @@ from typing import Optional
 
 
 class LegislatorBrief(BaseModel):
+    model_config = {"from_attributes": True}
+
     id: str
     name: str
     party: Optional[str] = None

@@ -28,9 +28,9 @@ export default function RankingTable({ legislators }: { legislators?: Legislator
                 <a href={`/legislators/${l.id}`} className="text-accent hover:underline">{l.name}</a>
               </td>
               <td className="px-4 py-3 text-gray-600">{l.party}</td>
-              <td className="px-4 py-3 text-right font-semibold">{l.aiActivityScore || '-'}</td>
-              <td className="px-4 py-3 text-right">{l.attendanceRate ? `${l.attendanceRate}%` : '-'}</td>
-              <td className="px-4 py-3 text-right">{l.consistencyScore ? `${l.consistencyScore}%` : '-'}</td>
+              <td className="px-4 py-3 text-right font-semibold">{l.ai_activity_score || '-'}</td>
+              <td className="px-4 py-3 text-right">{l.attendance_rate ? `${l.attendance_rate}%` : '-'}</td>
+              <td className="px-4 py-3 text-right">{l.consistency_score ? `${l.consistency_score}%` : '-'}</td>
             </tr>
           ))}
         </tbody>

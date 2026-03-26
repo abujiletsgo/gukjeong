@@ -3,6 +3,11 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: '숙의 설문',
   description: '데이터를 먼저 보고, 생각한 후 의견을 나누는 시민 참여 설문',
+  openGraph: {
+    title: '숙의 설문 | 국정투명',
+    description: '데이터를 먼저 보고, 생각한 후 의견을 나누는 시민 참여 설문',
+    images: [{ url: '/og/default.png', width: 1200, height: 630 }],
+  },
 };
 
 export default function SurveyPage() {

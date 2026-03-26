@@ -1,4 +1,4 @@
-// 국정투명 — 시드 데이터 로더
+// 국정투명 -- 시드 데이터 로더
 // MVP에서는 하드코딩된 시드 데이터를 사용합니다.
 // 프로덕션에서는 API 클라이언트(api.ts)로 교체됩니다.
 
@@ -9,14 +9,14 @@ import type { President, FiscalYearly, FiscalBySector, AuditFlag, DepartmentScor
 // ========================================
 
 const PRESIDENTS_DATA: President[] = [
-  { id: "ysk", name: "김영삼", nameEn: "Kim Young-sam", name_en: "Kim Young-sam", termStart: "1993-02-25", termEnd: "1998-02-24", term_start: "1993-02-25", term_end: "1998-02-24", party: "민주자유당→신한국당", era: "문민정부", gdpGrowthAvg: 5.7, gdp_growth_avg: 5.7 },
-  { id: "kdj", name: "김대중", nameEn: "Kim Dae-jung", name_en: "Kim Dae-jung", termStart: "1998-02-25", termEnd: "2003-02-24", term_start: "1998-02-25", term_end: "2003-02-24", party: "새정치국민회의→새천년민주당", era: "국민의 정부", gdpGrowthAvg: 5.2, gdp_growth_avg: 5.2 },
-  { id: "nmh", name: "노무현", nameEn: "Roh Moo-hyun", name_en: "Roh Moo-hyun", termStart: "2003-02-25", termEnd: "2008-02-24", term_start: "2003-02-25", term_end: "2008-02-24", party: "새천년민주당→열린우리당", era: "참여정부", gdpGrowthAvg: 4.3, gdp_growth_avg: 4.3 },
-  { id: "lmb", name: "이명박", nameEn: "Lee Myung-bak", name_en: "Lee Myung-bak", termStart: "2008-02-25", termEnd: "2013-02-24", term_start: "2008-02-25", term_end: "2013-02-24", party: "한나라당→새누리당", era: "이명박 정부", gdpGrowthAvg: 3.2, gdp_growth_avg: 3.2 },
-  { id: "pgh", name: "박근혜", nameEn: "Park Geun-hye", name_en: "Park Geun-hye", termStart: "2013-02-25", termEnd: "2017-03-10", term_start: "2013-02-25", term_end: "2017-03-10", party: "새누리당", era: "박근혜 정부", gdpGrowthAvg: 2.9, gdp_growth_avg: 2.9, note: "탄핵 파면" },
-  { id: "mji", name: "문재인", nameEn: "Moon Jae-in", name_en: "Moon Jae-in", termStart: "2017-05-10", termEnd: "2022-05-09", term_start: "2017-05-10", term_end: "2022-05-09", party: "더불어민주당", era: "문재인 정부", gdpGrowthAvg: 2.3, gdp_growth_avg: 2.3 },
-  { id: "ysy", name: "윤석열", nameEn: "Yoon Suk-yeol", name_en: "Yoon Suk-yeol", termStart: "2022-05-10", termEnd: "2025-04-04", term_start: "2022-05-10", term_end: "2025-04-04", party: "국민의힘", era: "윤석열 정부", gdpGrowthAvg: 1.8, gdp_growth_avg: 1.8, note: "비상계엄→탄핵 파면" },
-  { id: "ljm", name: "이재명", nameEn: "Lee Jae-myung", name_en: "Lee Jae-myung", termStart: "2025-06-04", termEnd: undefined, term_start: "2025-06-04", term_end: undefined, party: "더불어민주당", era: "이재명 정부" },
+  { id: "ysk", name: "김영삼", name_en: "Kim Young-sam", term_start: "1993-02-25", term_end: "1998-02-24", party: "민주자유당→신한국당", era: "문민정부", gdp_growth_avg: 5.7 },
+  { id: "kdj", name: "김대중", name_en: "Kim Dae-jung", term_start: "1998-02-25", term_end: "2003-02-24", party: "새정치국민회의→새천년민주당", era: "국민의 정부", gdp_growth_avg: 5.2 },
+  { id: "nmh", name: "노무현", name_en: "Roh Moo-hyun", term_start: "2003-02-25", term_end: "2008-02-24", party: "새천년민주당→열린우리당", era: "참여정부", gdp_growth_avg: 4.3 },
+  { id: "lmb", name: "이명박", name_en: "Lee Myung-bak", term_start: "2008-02-25", term_end: "2013-02-24", party: "한나라당→새누리당", era: "이명박 정부", gdp_growth_avg: 3.2 },
+  { id: "pgh", name: "박근혜", name_en: "Park Geun-hye", term_start: "2013-02-25", term_end: "2017-03-10", party: "새누리당", era: "박근혜 정부", gdp_growth_avg: 2.9, note: "탄핵 파면" },
+  { id: "mji", name: "문재인", name_en: "Moon Jae-in", term_start: "2017-05-10", term_end: "2022-05-09", party: "더불어민주당", era: "문재인 정부", gdp_growth_avg: 2.3 },
+  { id: "ysy", name: "윤석열", name_en: "Yoon Suk-yeol", term_start: "2022-05-10", term_end: "2025-04-04", party: "국민의힘", era: "윤석열 정부", gdp_growth_avg: 1.8, note: "비상계엄→탄핵 파면" },
+  { id: "ljm", name: "이재명", name_en: "Lee Jae-myung", term_start: "2025-06-04", term_end: undefined, party: "더불어민주당", era: "이재명 정부" },
 ];
 
 // ========================================
@@ -68,43 +68,43 @@ export function getLatestFiscal(): FiscalYearly | undefined { return FISCAL_DATA
 export function getSectorData(year: number = 2026): FiscalBySector[] {
   const data: Record<number, FiscalBySector[]> = {
     2026: [
-      { sector: '보건·복지·고용', amount: 269.1, percentage: 37.0, yoy_change: 7.5 },
-      { sector: '일반·지방행정', amount: 121.1, percentage: 16.6, yoy_change: 5.2 },
-      { sector: '교육', amount: 99.8, percentage: 13.7, yoy_change: 6.8 },
-      { sector: '국방', amount: 66.3, percentage: 9.1, yoy_change: 4.5 },
-      { sector: '산업·중소기업·에너지', amount: 37.2, percentage: 5.1, yoy_change: 8.3 },
-      { sector: 'R&D', amount: 33.8, percentage: 4.6, yoy_change: 19.3 },
-      { sector: '공공질서·안전', amount: 25.4, percentage: 3.5, yoy_change: 3.2 },
-      { sector: 'SOC', amount: 28.5, percentage: 3.9, yoy_change: 11.2 },
-      { sector: '농림·수산·식품', amount: 24.8, percentage: 3.4, yoy_change: 2.1 },
-      { sector: '환경', amount: 13.2, percentage: 1.8, yoy_change: 5.8 },
-      { sector: '문화·체육·관광', amount: 9.8, percentage: 1.3, yoy_change: 4.1 },
+      { sector: '보건·복지·고용', amount: 269.1, percentage: 37.0, yoy_change: 7.5, year: 2026 },
+      { sector: '일반·지방행정', amount: 121.1, percentage: 16.6, yoy_change: 5.2, year: 2026 },
+      { sector: '교육', amount: 99.8, percentage: 13.7, yoy_change: 6.8, year: 2026 },
+      { sector: '국방', amount: 66.3, percentage: 9.1, yoy_change: 4.5, year: 2026 },
+      { sector: '산업·중소기업·에너지', amount: 37.2, percentage: 5.1, yoy_change: 8.3, year: 2026 },
+      { sector: 'R&D', amount: 33.8, percentage: 4.6, yoy_change: 19.3, year: 2026 },
+      { sector: '공공질서·안전', amount: 25.4, percentage: 3.5, yoy_change: 3.2, year: 2026 },
+      { sector: 'SOC', amount: 28.5, percentage: 3.9, yoy_change: 11.2, year: 2026 },
+      { sector: '농림·수산·식품', amount: 24.8, percentage: 3.4, yoy_change: 2.1, year: 2026 },
+      { sector: '환경', amount: 13.2, percentage: 1.8, yoy_change: 5.8, year: 2026 },
+      { sector: '문화·체육·관광', amount: 9.8, percentage: 1.3, yoy_change: 4.1, year: 2026 },
     ],
     2025: [
-      { sector: '보건·복지·고용', amount: 250.3, percentage: 37.0, yoy_change: 4.2 },
-      { sector: '일반·지방행정', amount: 115.1, percentage: 17.0, yoy_change: 3.8 },
-      { sector: '교육', amount: 93.5, percentage: 13.8, yoy_change: 5.1 },
-      { sector: '국방', amount: 63.4, percentage: 9.4, yoy_change: 4.7 },
-      { sector: '산업·중소기업·에너지', amount: 34.3, percentage: 5.1, yoy_change: 3.5 },
-      { sector: 'R&D', amount: 28.3, percentage: 4.2, yoy_change: -1.2 },
-      { sector: '공공질서·안전', amount: 24.6, percentage: 3.6, yoy_change: 2.8 },
-      { sector: 'SOC', amount: 25.6, percentage: 3.8, yoy_change: 8.5 },
-      { sector: '농림·수산·식품', amount: 24.3, percentage: 3.6, yoy_change: 1.5 },
-      { sector: '환경', amount: 12.5, percentage: 1.8, yoy_change: 3.2 },
-      { sector: '문화·체육·관광', amount: 9.4, percentage: 1.4, yoy_change: 3.3 },
+      { sector: '보건·복지·고용', amount: 250.3, percentage: 37.0, yoy_change: 4.2, year: 2025 },
+      { sector: '일반·지방행정', amount: 115.1, percentage: 17.0, yoy_change: 3.8, year: 2025 },
+      { sector: '교육', amount: 93.5, percentage: 13.8, yoy_change: 5.1, year: 2025 },
+      { sector: '국방', amount: 63.4, percentage: 9.4, yoy_change: 4.7, year: 2025 },
+      { sector: '산업·중소기업·에너지', amount: 34.3, percentage: 5.1, yoy_change: 3.5, year: 2025 },
+      { sector: 'R&D', amount: 28.3, percentage: 4.2, yoy_change: -1.2, year: 2025 },
+      { sector: '공공질서·안전', amount: 24.6, percentage: 3.6, yoy_change: 2.8, year: 2025 },
+      { sector: 'SOC', amount: 25.6, percentage: 3.8, yoy_change: 8.5, year: 2025 },
+      { sector: '농림·수산·식품', amount: 24.3, percentage: 3.6, yoy_change: 1.5, year: 2025 },
+      { sector: '환경', amount: 12.5, percentage: 1.8, yoy_change: 3.2, year: 2025 },
+      { sector: '문화·체육·관광', amount: 9.4, percentage: 1.4, yoy_change: 3.3, year: 2025 },
     ],
     2024: [
-      { sector: '보건·복지·고용', amount: 240.3, percentage: 36.6, yoy_change: 2.8 },
-      { sector: '일반·지방행정', amount: 110.9, percentage: 16.9, yoy_change: 4.1 },
-      { sector: '교육', amount: 89.0, percentage: 13.5, yoy_change: 3.5 },
-      { sector: '국방', amount: 60.5, percentage: 9.2, yoy_change: 4.2 },
-      { sector: '산업·중소기업·에너지', amount: 33.1, percentage: 5.0, yoy_change: 2.1 },
-      { sector: 'R&D', amount: 28.7, percentage: 4.4, yoy_change: -16.6 },
-      { sector: '공공질서·안전', amount: 23.9, percentage: 3.6, yoy_change: 3.5 },
-      { sector: 'SOC', amount: 23.6, percentage: 3.6, yoy_change: 6.2 },
-      { sector: '농림·수산·식품', amount: 23.9, percentage: 3.6, yoy_change: 1.2 },
-      { sector: '환경', amount: 12.1, percentage: 1.8, yoy_change: 2.5 },
-      { sector: '문화·체육·관광', amount: 9.1, percentage: 1.4, yoy_change: 2.8 },
+      { sector: '보건·복지·고용', amount: 240.3, percentage: 36.6, yoy_change: 2.8, year: 2024 },
+      { sector: '일반·지방행정', amount: 110.9, percentage: 16.9, yoy_change: 4.1, year: 2024 },
+      { sector: '교육', amount: 89.0, percentage: 13.5, yoy_change: 3.5, year: 2024 },
+      { sector: '국방', amount: 60.5, percentage: 9.2, yoy_change: 4.2, year: 2024 },
+      { sector: '산업·중소기업·에너지', amount: 33.1, percentage: 5.0, yoy_change: 2.1, year: 2024 },
+      { sector: 'R&D', amount: 28.7, percentage: 4.4, yoy_change: -16.6, year: 2024 },
+      { sector: '공공질서·안전', amount: 23.9, percentage: 3.6, yoy_change: 3.5, year: 2024 },
+      { sector: 'SOC', amount: 23.6, percentage: 3.6, yoy_change: 6.2, year: 2024 },
+      { sector: '농림·수산·식품', amount: 23.9, percentage: 3.6, yoy_change: 1.2, year: 2024 },
+      { sector: '환경', amount: 12.1, percentage: 1.8, yoy_change: 2.5, year: 2024 },
+      { sector: '문화·체육·관광', amount: 9.1, percentage: 1.4, yoy_change: 2.8, year: 2024 },
     ],
   };
   return data[year] || data[2026];
@@ -116,7 +116,7 @@ export function getSectorData(year: number = 2026): FiscalBySector[] {
 
 export function getSankeyData(year: number = 2026) {
   const sectors = getSectorData(year);
-  const totalSpending = sectors.reduce((s, d) => s + d.amount, 0);
+  const totalSpending = sectors.reduce((s, d) => s + (d.amount || 0), 0);
   const revenueNodes = [
     { name: '소득세', value: 115.2 },
     { name: '법인세', value: 80.3 },
@@ -125,7 +125,7 @@ export function getSankeyData(year: number = 2026) {
     { name: '국채', value: Math.max(0, totalSpending - 336.6) },
   ].filter(n => n.value > 0);
 
-  const spendingNodes = sectors.map(s => ({ name: s.sector, value: s.amount }));
+  const spendingNodes = sectors.map(s => ({ name: s.sector, value: s.amount || 0 }));
   const revTotal = revenueNodes.reduce((s, n) => s + n.value, 0);
 
   const links: { source: string; target: string; value: number }[] = [];
@@ -158,20 +158,20 @@ const DEPARTMENTS = [
 export function getDepartmentScores(): DepartmentScore[] {
   return DEPARTMENTS.map((dept, i) => ({
     department: dept,
-    suspicionScore: Math.max(5, Math.min(85, 15 + Math.floor(Math.sin(i * 2.7) * 30 + Math.cos(i * 1.3) * 20))),
-    flagCount: Math.max(0, Math.floor(Math.sin(i * 3.1) * 8 + 5)),
-    transparencyRank: i + 1,
-  })).sort((a, b) => b.suspicionScore - a.suspicionScore);
+    suspicion_score: Math.max(5, Math.min(85, 15 + Math.floor(Math.sin(i * 2.7) * 30 + Math.cos(i * 1.3) * 20))),
+    flag_count: Math.max(0, Math.floor(Math.sin(i * 3.1) * 8 + 5)),
+    transparency_rank: i + 1,
+  })).sort((a, b) => b.suspicion_score - a.suspicion_score);
 }
 
 export function getAuditFlags(): AuditFlag[] {
   return [
-    { id: 'af-001', patternType: 'yearend_spike', severity: 'HIGH', suspicionScore: 72, targetType: 'department', targetId: '국토교통부', detail: { q4_ratio: 62.3, q4_total: 4500000000, yearly_total: 7222222222, year: 2025 }, evidence: { threshold: '40%', actual: '62.3%', description: '국토교통부의 2025년 Q4 지출이 연간의 62.3%를 차지합니다.' }, aiAnalysis: '국토교통부의 4분기 집중 지출 패턴이 감지되었습니다. 연간 예산의 62.3%가 10~12월에 집중 집행되었으며, 이는 예산 소진 압력에 의한 비효율적 집행 가능성을 시사합니다.', status: 'detected', createdAt: '2026-01-15' },
-    { id: 'af-002', patternType: 'vendor_concentration', severity: 'HIGH', suspicionScore: 65, targetType: 'department', targetId: '국방부', detail: { vendor_name: '(주)한국방산기술', concentration_ratio: 42.8, contract_count: 15 }, evidence: { threshold: '30%', actual: '42.8%' }, aiAnalysis: '국방부 계약의 42.8%가 단일 업체에 집중되어 있습니다. 방산 분야의 특수성을 감안하더라도 경쟁 입찰 없는 수의계약 비율이 높아 주의가 필요합니다.', status: 'detected', createdAt: '2026-01-14' },
-    { id: 'af-003', patternType: 'contract_splitting', severity: 'HIGH', suspicionScore: 58, targetType: 'department', targetId: '환경부', detail: { vendors: [{ vendor_name: '(주)그린솔루션', split_count: 5 }] }, evidence: { threshold: '수의계약 한도(2000만원)의 80-100% 범위 계약 3건 이상' }, aiAnalysis: '환경부에서 수의계약 한도(2,000만원) 직하 금액의 계약이 동일 업체로 5건 반복 발생했습니다. 입찰 회피를 위한 계약 분할 가능성이 있습니다.', status: 'detected', createdAt: '2026-01-13' },
-    { id: 'af-004', patternType: 'yearend_spike', severity: 'MEDIUM', suspicionScore: 45, targetType: 'department', targetId: '교육부', detail: { q4_ratio: 48.2, year: 2025 }, evidence: { threshold: '40%', actual: '48.2%' }, aiAnalysis: '교육부의 4분기 지출 비중이 48.2%로 기준치를 초과했습니다. 연말 학교 시설 보수 계약이 집중된 것으로 보이나, 긴급성 대비 금액이 높습니다.', status: 'detected', createdAt: '2026-01-12' },
-    { id: 'af-005', patternType: 'vendor_concentration', severity: 'MEDIUM', suspicionScore: 42, targetType: 'department', targetId: '과학기술정보통신부', detail: { vendor_name: '(주)IT컨설팅코리아', concentration_ratio: 35.1, contract_count: 8 }, evidence: { threshold: '30%', actual: '35.1%' }, aiAnalysis: 'IT 용역 계약에서 특정 업체 집중도가 35.1%로 나타났습니다. 기술 전문성 요구에 의한 것일 수 있으나, 다양한 업체 참여 기회가 제한된 것은 아닌지 확인이 필요합니다.', status: 'detected', createdAt: '2026-01-11' },
-    { id: 'af-006', patternType: 'contract_splitting', severity: 'MEDIUM', suspicionScore: 38, targetType: 'department', targetId: '행정안전부', detail: { vendors: [{ vendor_name: '(주)디지털행정', split_count: 4 }] }, evidence: { threshold: '수의계약 한도(2000만원)의 80-100% 범위 계약 3건 이상' }, aiAnalysis: '행정안전부 전산 장비 구매에서 1,800~1,980만원 범위의 계약이 4건 발생했습니다. 수의계약 한도 직하 금액의 반복 패턴이 의심됩니다.', status: 'detected', createdAt: '2026-01-10' },
+    { id: 'af-001', pattern_type: 'yearend_spike', severity: 'HIGH', suspicion_score: 72, target_type: 'department', target_id: '국토교통부', detail: { q4_ratio: 62.3, q4_total: 4500000000, yearly_total: 7222222222, year: 2025 }, evidence: { threshold: '40%', actual: '62.3%', description: '국토교통부의 2025년 Q4 지출이 연간의 62.3%를 차지합니다.' }, ai_analysis: '국토교통부의 4분기 집중 지출 패턴이 감지되었습니다. 연간 예산의 62.3%가 10~12월에 집중 집행되었으며, 이는 예산 소진 압력에 의한 비효율적 집행 가능성을 시사합니다.', status: 'detected', created_at: '2026-01-15' },
+    { id: 'af-002', pattern_type: 'vendor_concentration', severity: 'HIGH', suspicion_score: 65, target_type: 'department', target_id: '국방부', detail: { vendor_name: '(주)한국방산기술', concentration_ratio: 42.8, contract_count: 15 }, evidence: { threshold: '30%', actual: '42.8%' }, ai_analysis: '국방부 계약의 42.8%가 단일 업체에 집중되어 있습니다. 방산 분야의 특수성을 감안하더라도 경쟁 입찰 없는 수의계약 비율이 높아 주의가 필요합니다.', status: 'detected', created_at: '2026-01-14' },
+    { id: 'af-003', pattern_type: 'contract_splitting', severity: 'HIGH', suspicion_score: 58, target_type: 'department', target_id: '환경부', detail: { vendors: [{ vendor_name: '(주)그린솔루션', split_count: 5 }] }, evidence: { threshold: '수의계약 한도(2000만원)의 80-100% 범위 계약 3건 이상' }, ai_analysis: '환경부에서 수의계약 한도(2,000만원) 직하 금액의 계약이 동일 업체로 5건 반복 발생했습니다. 입찰 회피를 위한 계약 분할 가능성이 있습니다.', status: 'detected', created_at: '2026-01-13' },
+    { id: 'af-004', pattern_type: 'yearend_spike', severity: 'MEDIUM', suspicion_score: 45, target_type: 'department', target_id: '교육부', detail: { q4_ratio: 48.2, year: 2025 }, evidence: { threshold: '40%', actual: '48.2%' }, ai_analysis: '교육부의 4분기 지출 비중이 48.2%로 기준치를 초과했습니다. 연말 학교 시설 보수 계약이 집중된 것으로 보이나, 긴급성 대비 금액이 높습니다.', status: 'detected', created_at: '2026-01-12' },
+    { id: 'af-005', pattern_type: 'vendor_concentration', severity: 'MEDIUM', suspicion_score: 42, target_type: 'department', target_id: '과학기술정보통신부', detail: { vendor_name: '(주)IT컨설팅코리아', concentration_ratio: 35.1, contract_count: 8 }, evidence: { threshold: '30%', actual: '35.1%' }, ai_analysis: 'IT 용역 계약에서 특정 업체 집중도가 35.1%로 나타났습니다. 기술 전문성 요구에 의한 것일 수 있으나, 다양한 업체 참여 기회가 제한된 것은 아닌지 확인이 필요합니다.', status: 'detected', created_at: '2026-01-11' },
+    { id: 'af-006', pattern_type: 'contract_splitting', severity: 'MEDIUM', suspicion_score: 38, target_type: 'department', target_id: '행정안전부', detail: { vendors: [{ vendor_name: '(주)디지털행정', split_count: 4 }] }, evidence: { threshold: '수의계약 한도(2000만원)의 80-100% 범위 계약 3건 이상' }, ai_analysis: '행정안전부 전산 장비 구매에서 1,800~1,980만원 범위의 계약이 4건 발생했습니다. 수의계약 한도 직하 금액의 반복 패턴이 의심됩니다.', status: 'detected', created_at: '2026-01-10' },
   ];
 }
 

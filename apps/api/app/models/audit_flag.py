@@ -1,7 +1,7 @@
 """감사 플래그 모델"""
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, SmallInteger, Integer, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, String, Text, SmallInteger, Integer, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP, JSONB
 from sqlalchemy.orm import relationship
 from app.db.database import Base
@@ -18,8 +18,8 @@ class AuditFlag(Base):
     suspicion_score = Column(SmallInteger)
     detail = Column(JSONB)
     evidence = Column(JSONB)
-    ai_analysis = Column(String)
-    related_bai_case = Column(String)
+    ai_analysis = Column(Text)
+    related_bai_case = Column(Text)
     status = Column(String(20), default="detected")
     created_at = Column(TIMESTAMP(timezone=True), default=datetime.utcnow)
 

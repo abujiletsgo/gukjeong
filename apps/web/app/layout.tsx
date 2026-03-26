@@ -61,8 +61,8 @@ export const metadata: Metadata = {
   },
 };
 
-// JSON-LD 구조화 데이터
-const jsonLd = {
+// JSON-LD 구조화 데이터 — WebApplication
+const jsonLdApp = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: '국정투명',
@@ -85,6 +85,25 @@ const jsonLd = {
   },
 };
 
+// JSON-LD — GovernmentOrganization (Schema.org)
+const jsonLdGovOrg = {
+  '@context': 'https://schema.org',
+  '@type': 'GovernmentOrganization',
+  name: '국정투명',
+  alternateName: 'GukjeongTumyeong',
+  url: 'https://gukjeong.kr',
+  description: '공공데이터와 AI 분석 기반 대한민국 정부 투명성 플랫폼',
+  areaServed: {
+    '@type': 'Country',
+    name: '대한민국',
+    sameAs: 'https://en.wikipedia.org/wiki/South_Korea',
+  },
+  inLanguage: 'ko',
+  sameAs: [
+    'https://github.com/gukjeong',
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -95,7 +114,11 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdApp) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGovOrg) }}
         />
       </head>
       <body>

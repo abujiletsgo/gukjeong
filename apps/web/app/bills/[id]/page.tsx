@@ -1,3 +1,16 @@
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  return {
+    title: `법안 상세 — ${params.id}`,
+    description: `법안 ${params.id}의 AI 요약, 시민 영향 분석 및 투표 결과를 확인하세요.`,
+    openGraph: {
+      title: `법안 상세 | 국정투명`,
+      description: `국회 발의 법안의 AI 요약과 시민 영향 분석`,
+    },
+  };
+}
+
 export default function BillDetailPage({ params }: { params: { id: string } }) {
   return (
     <div className="container-page py-8">

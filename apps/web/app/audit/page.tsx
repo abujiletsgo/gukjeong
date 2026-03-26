@@ -20,7 +20,7 @@ export default function AuditPage() {
   const totalFlags = auditFlags.length;
   const highSeverity = auditFlags.filter(f => f.severity === 'HIGH').length;
   const departmentsMonitored = new Set(departmentScores.map(d => d.department)).size;
-  const avgScore = Math.round(departmentScores.reduce((s, d) => s + d.suspicionScore, 0) / departmentScores.length);
+  const avgScore = Math.round(departmentScores.reduce((s, d) => s + d.suspicion_score, 0) / departmentScores.length);
 
   return (
     <AuditPageClient
