@@ -454,6 +454,45 @@ export interface SubSectorData {
   description?: string;  // 이 항목이 뭔지, 왜 이 금액인지 설명
 }
 
+export interface SectorDetail {
+  id: string;                        // URL-safe ID (e.g., 'health-welfare')
+  name: string;                      // 보건·복지·고용
+  amount: number;                    // 총액 (조원)
+  percentage: number;                // 전체 예산 대비 비중
+  yoy_change: number;               // 전년 대비 변동률
+  description: string;               // 이 분야가 뭔지 쉽게 설명
+  why_it_matters: string;            // 왜 이 금액이 중요한지
+  who_benefits: string;              // 누가 혜택을 받는지
+  historical_trend: string;          // 지난 10년간 추세
+  controversy?: string;              // 논란이 있다면
+  related_ministry: string;          // 담당 부처
+  sub_items: SubSectorDetail[];      // 하위 항목 상세
+}
+
+export interface SubSectorDetail {
+  id: string;                        // URL-safe ID
+  name: string;                      // 항목명
+  amount: number;                    // 금액 (조원)
+  percentage: number;                // 상위 분야 대비 비중
+  description: string;               // 이 항목이 뭔지
+  who_receives: string;              // 누가 이 돈을 받는지
+  how_it_works: string;              // 어떻게 집행되는지 (과정)
+  citizen_impact: string;            // 시민 생활에 미치는 영향
+  real_example: string;              // 구체적 사례
+  trend: string;                     // 증가/감소 추세와 이유
+  issues?: string;                   // 문제점이나 논란
+  related_laws?: string[];           // 관련 법률
+  // 3단계 세부 항목 (있는 경우)
+  breakdown?: BudgetBreakdownItem[];
+}
+
+export interface BudgetBreakdownItem {
+  name: string;
+  amount: number;                    // 조원
+  description: string;
+  recipient?: string;                // 수혜 대상
+}
+
 export interface ApiResponse<T> {
   data: T;
   total?: number;

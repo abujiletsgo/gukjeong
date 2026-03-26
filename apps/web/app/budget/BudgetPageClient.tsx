@@ -1,8 +1,9 @@
 'use client';
 // 예산 시각화 — 클라이언트 컴포넌트
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import type { FiscalYearly, FiscalBySector, SubSectorData } from '@/lib/types';
-import { getSubSectorData } from '@/lib/data';
+import { getSubSectorData, getSectorIdByName } from '@/lib/data';
 import KPI from '@/components/common/KPI';
 import StackedArea from '@/components/charts/StackedArea';
 import DebtChart from '@/components/charts/DebtChart';
@@ -40,10 +41,19 @@ export default function BudgetPageClient({
   latestYear,
   latest2024,
 }: BudgetPageClientProps) {
+  const router = useRouter();
   const [selectedYear, setSelectedYear] = useState(2026);
   const [selectedSector, setSelectedSector] = useState('보건·복지·고용');
   const [selectedSubSector, setSelectedSubSector] = useState<string | null>(null);
   const availableYears = [2024, 2025, 2026];
+
+  // TreeMap 클릭 핸들러 — 분야 상세 페이지로 이동
+  const handleTreeMapClick = (sectorName: string) => {
+    const sectorId = getSectorIdByName(sectorName);
+    if (sectorId) {
+      router.push(`/budget/${sectorId}`);
+    }
+  };
 
   const currentSectors = sectorDataByYear[selectedYear] || sectorDataByYear[2026];
 
@@ -194,9 +204,9 @@ export default function BudgetPageClient({
             {selectedYear}년 분야별 예산
           </h2>
           <p className="text-xs text-gray-400 mb-4">
-            크기 = 예산 규모 · 출처: 기획재정부
+            크기 = 예산 규모 · 클릭하면 상세 페이지로 이동 · 출처: 기획재정부
           </p>
-          <TreeMapChart data={treemapData} height={380} />
+          <TreeMapChart data={treemapData} height={380} onSectorClick={handleTreeMapClick} />
         </div>
 
         {/* 세출 추이 */}
@@ -479,9 +489,17 @@ export default function BudgetPageClient({
               </tr>
             </thead>
             <tbody>
-              {comparisonData.map((row, i) => (
+              {comparisonData.map((row, i) => {
+                const sectorId = getSectorIdByName(row.sector);
+                return (
                 <tr key={row.sector} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                  <td className="py-2.5 px-2 font-medium text-gray-800">{row.sector}</td>
+                  <td className="py-2.5 px-2 font-medium text-gray-800">
+                    {sectorId ? (
+                      <a href={`/budget/${sectorId}`} className="hover:text-accent hover:underline transition-colors">
+                        {row.sector}
+                      </a>
+                    ) : row.sector}
+                  </td>
                   <td className="py-2.5 px-2 text-right text-gray-700">{row.amount.toFixed(1)}</td>
                   <td className="py-2.5 px-2 text-right text-gray-500">{row.percentage.toFixed(1)}%</td>
                   <td className={`py-2.5 px-2 text-right font-medium ${
@@ -490,7 +508,8 @@ export default function BudgetPageClient({
                     {row.yoyChange > 0 ? '+' : ''}{row.yoyChange.toFixed(1)}%
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -112,3 +112,13 @@
   apps/web/lib/types.ts                        |   51 ++
   apps/web/tsconfig.tsbuildinfo                |    2 +-
   4 files changed, 1820 insertions(+), 191 deletions(-)
+
+## 2026-03-26 (16:37 UTC) · @Tom Kwon
+**Commit:** fix: Korean severity labels, no emojis, clean nav, remove 이재명 from legislators (209dee6) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/[id]/AuditDetailClient.tsx |  4 +--
+  apps/web/app/layout.tsx                       | 46 +++++++++++++--------------
+  apps/web/components/audit/SuspicionCard.tsx   |  2 +-
+  apps/web/lib/data.ts                          | 28 ++++++++--------
+  apps/web/tsconfig.tsbuildinfo                 |  2 +-
+  5 files changed, 41 insertions(+), 41 deletions(-)

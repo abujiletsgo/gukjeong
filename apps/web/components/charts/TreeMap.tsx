@@ -12,6 +12,7 @@ interface TreeMapItem {
 interface TreeMapProps {
   data?: TreeMapItem[];
   height?: number;
+  onSectorClick?: (name: string) => void;
 }
 
 const SECTOR_COLORS: Record<string, string> = {
@@ -34,15 +35,19 @@ const DEFAULT_COLORS = [
 ];
 
 function CustomContent(props: any) {
-  const { x, y, width, height, name, value, index, depth } = props;
+  const { x, y, width, height, name, value, index, depth, onSectorClick } = props;
   // Skip root node (depth 0) to avoid the double-layer background box
   if (depth === 0) return null;
   if (width < 40 || height < 30) return null;
 
   const color = SECTOR_COLORS[name] || DEFAULT_COLORS[index % DEFAULT_COLORS.length];
+  const isClickable = !!onSectorClick;
 
   return (
-    <g>
+    <g
+      onClick={() => onSectorClick?.(name)}
+      style={{ cursor: isClickable ? 'pointer' : 'default' }}
+    >
       <rect
         x={x}
         y={y}
@@ -63,6 +68,7 @@ function CustomContent(props: any) {
             fill="#fff"
             fontSize={width > 100 ? 12 : 10}
             fontWeight="600"
+            style={{ pointerEvents: 'none' }}
           >
             {name}
           </text>
@@ -73,6 +79,7 @@ function CustomContent(props: any) {
             fill="#fff"
             fontSize={width > 100 ? 13 : 11}
             fontWeight="bold"
+            style={{ pointerEvents: 'none' }}
           >
             {value.toFixed(1)}조
           </text>
@@ -102,7 +109,7 @@ function CustomTooltip({ active, payload }: any) {
   );
 }
 
-export default function TreeMapChart({ data, height = 400 }: TreeMapProps) {
+export default function TreeMapChart({ data, height = 400, onSectorClick }: TreeMapProps) {
   if (!data || data.length === 0) {
     return (
       <div className="w-full flex items-center justify-center text-gray-400" style={{ height }}>
@@ -127,7 +134,7 @@ export default function TreeMapChart({ data, height = 400 }: TreeMapProps) {
         data={treemapData}
         dataKey="value"
         aspectRatio={4 / 3}
-        content={<CustomContent />}
+        content={<CustomContent onSectorClick={onSectorClick} />}
       >
         <Tooltip content={<CustomTooltip />} />
       </Treemap>
