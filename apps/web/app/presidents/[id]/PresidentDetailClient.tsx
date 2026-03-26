@@ -290,6 +290,12 @@ export default function PresidentDetailClient({
                   title: e.title,
                   type: e.impact_type,
                   description: e.description,
+                  why_it_matters: e.why_it_matters,
+                  citizen_impact: e.citizen_impact,
+                  background: e.background,
+                  what_happened_after: e.what_happened_after,
+                  related_numbers: e.related_numbers,
+                  significance_score: e.significance_score,
                 }))}
               />
             </div>

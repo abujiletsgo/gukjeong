@@ -135,6 +135,12 @@ export interface KeyEvent {
   description?: string;
   impact_type?: string;
   significance_score?: number;
+  // 시민을 위한 상세 설명
+  why_it_matters?: string;       // 왜 이 사건이 중요한가 (쉬운 설명)
+  citizen_impact?: string;       // 시민 생활에 미친 구체적 영향
+  background?: string;           // 배경 — 이 사건이 일어나게 된 맥락
+  what_happened_after?: string;  // 이후 어떻게 됐는가
+  related_numbers?: string;      // 관련 수치 (사망자, 금액 등)
 }
 
 export interface NewsEvent {
@@ -224,6 +230,12 @@ export interface NationalAgenda {
   outcome_summary?: string;
   ai_assessment?: string;
   ai_citizen_impact?: string;
+  // 시민을 위한 상세 설명
+  plain_explanation?: string;    // 이 과제가 뭔지 쉽게 설명
+  why_it_matters?: string;       // 왜 중요한가
+  citizen_impact?: string;       // 시민 생활에 미친 영향
+  success_or_failure?: string;   // 성공/실패 이유
+  real_example?: string;         // 실제 체감 사례
 }
 
 export interface ReportCardMetric {
@@ -260,6 +272,12 @@ export interface CampaignPledge {
   outcome_summary?: string;
   budget_impact?: string;
   related_bills?: string[];
+  // 시민을 위한 상세 설명
+  plain_explanation?: string;    // 이 공약이 뭔지 쉽게 설명
+  why_it_matters?: string;       // 왜 이 공약이 중요한가
+  citizen_impact?: string;       // 시민 생활에 미친 영향
+  what_went_wrong?: string;      // 미이행/일부이행인 경우 왜 안 됐는지
+  real_example?: string;         // 실제 체감 사례
 }
 
 export interface PresidentComparisonMetrics {

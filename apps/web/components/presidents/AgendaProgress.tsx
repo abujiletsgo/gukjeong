@@ -1,5 +1,5 @@
 'use client';
-// 국정과제 진행 현황 — 카테고리별 프로그레스
+// 국정과제 진행 현황 — 카테고리별 프로그레스 (클릭 확장 상세)
 import { useState } from 'react';
 import type { NationalAgenda } from '@/lib/types';
 import { getStatusColor, getStatusBgClass } from './StatusBreakdownBar';
@@ -7,6 +7,34 @@ import { formatTrillions } from '@/lib/utils';
 
 interface AgendaProgressProps {
   agendas: NationalAgenda[];
+}
+
+function hasDeepDetail(agenda: NationalAgenda): boolean {
+  return !!(
+    agenda.plain_explanation ||
+    agenda.why_it_matters ||
+    agenda.citizen_impact ||
+    agenda.success_or_failure ||
+    agenda.real_example
+  );
+}
+
+interface DetailSectionProps {
+  icon: string;
+  label: string;
+  content: string;
+}
+
+function DetailSection({ icon, label, content }: DetailSectionProps) {
+  return (
+    <div>
+      <div className="flex items-center gap-1.5 mb-1">
+        <span className="text-xs">{icon}</span>
+        <span className="text-[11px] font-medium text-gray-400">{label}</span>
+      </div>
+      <p className="text-sm text-gray-700 leading-relaxed">{content}</p>
+    </div>
+  );
 }
 
 function AgendaItem({ agenda }: { agenda: NationalAgenda }) {
@@ -51,17 +79,27 @@ function AgendaItem({ agenda }: { agenda: NationalAgenda }) {
             </div>
           </div>
 
-          <svg
-            className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 mt-1 ${expanded ? 'rotate-180' : ''}`}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
+          {/* 화살표 + 토글 텍스트 */}
+          <div className="flex flex-col items-center flex-shrink-0 mt-1 gap-0.5">
+            <svg
+              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+            <span className="text-[9px] text-gray-400">
+              {expanded ? '접기' : '자세히 보기'}
+            </span>
+          </div>
         </div>
       </button>
 
-      {expanded && (
+      {/* 확장 상세 */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ${expanded ? 'max-h-[1500px] opacity-100' : 'max-h-0 opacity-0'}`}
+      >
         <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-0 border-t border-gray-50 space-y-2.5 text-sm">
+          {/* 기존 상세 정보 */}
           {agenda.description && (
             <p className="text-gray-600 text-xs leading-relaxed">{agenda.description}</p>
           )}
@@ -99,8 +137,36 @@ function AgendaItem({ agenda }: { agenda: NationalAgenda }) {
               <p className="text-purple-800 mt-1 leading-relaxed">{agenda.ai_assessment}</p>
             </div>
           )}
+
+          {/* 심층 분석 섹션 */}
+          {hasDeepDetail(agenda) && (
+            <div
+              className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-3 border-l-2 mt-2"
+              style={{ borderColor: statusColor }}
+            >
+              {agenda.plain_explanation && (
+                <DetailSection icon="📝" label="쉽게 말하면" content={agenda.plain_explanation} />
+              )}
+
+              {agenda.why_it_matters && (
+                <DetailSection icon="💡" label="왜 중요한가" content={agenda.why_it_matters} />
+              )}
+
+              {agenda.citizen_impact && (
+                <DetailSection icon="👤" label="시민에게 미친 영향" content={agenda.citizen_impact} />
+              )}
+
+              {agenda.success_or_failure && (
+                <DetailSection icon="📊" label="성공/실패 이유" content={agenda.success_or_failure} />
+              )}
+
+              {agenda.real_example && (
+                <DetailSection icon="📌" label="실제 사례" content={agenda.real_example} />
+              )}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

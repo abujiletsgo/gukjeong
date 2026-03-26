@@ -16,3 +16,33 @@
   apps/api/app/routers/auth.py                       |   28 +-
   apps/api/app/routers/comments.py                   |   10 +-
   ... and 52 more files
+
+## 2026-03-26 (06:10 UTC) · @Tom Kwon
+**Commit:** feat: Deep presidential accountability — pledges, agenda, report cards, infographics (96069bd) by Tom Kwon
+**Changed:**
+  .claude/MEMORY.md                                  |   15 +
+  apps/api/app/models/__init__.py                    |    6 +-
+  apps/api/app/models/president.py                   |   83 +-
+  apps/api/app/routers/presidents.py                 |  515 +++++++--
+  apps/api/app/schemas/president.py                  |  187 +++-
+  apps/web/.claude/MEMORY.md                         |   18 +
+  .../app/presidents/[id]/PresidentDetailClient.tsx  |  614 ++++++++---
+  apps/web/app/presidents/[id]/page.tsx              |   31 +-
+  apps/web/components/presidents/AgendaProgress.tsx  |  164 +++
+  apps/web/components/presidents/AgendaTreemap.tsx   |  218 ++++
+  ... and 25 more files
+
+## 2026-03-26 (06:48 UTC) · @Tom Kwon
+**Commit:** feat: Phase 2 — Bills tracker, News frames, President comparisons, portraits (802f1df) by Tom Kwon
+**Changed:**
+  apps/api/app/routers/bills.py                      | 251 ++++++++--
+  apps/api/app/routers/news.py                       | 259 ++++++++++-
+  apps/api/app/schemas/bill.py                       |  82 +++-
+  apps/api/app/schemas/news.py                       | 125 ++++-
+  apps/web/app/(home)/page.tsx                       | 129 +++++-
+  apps/web/app/audit/AuditPageClient.tsx             |  38 +-
+  apps/web/app/bills/BillsPageClient.tsx             | 416 +++++++++++++++++
+  apps/web/app/bills/[id]/BillDetailClient.tsx       | 424 +++++++++++++++++
+  apps/web/app/bills/[id]/page.tsx                   |  44 +-
+  apps/web/app/bills/page.tsx                        |  13 +-
+  ... and 25 more files
