@@ -2,7 +2,7 @@
 // 감사 플래그 상세 — 클라이언트 컴포넌트
 import { useState } from 'react';
 import type { AuditFlag, AuditContract, AuditTimelineItem, AuditLink, SimilarCase, ContractBid } from '@/lib/types';
-import { getSeverityColor, getSeverityLabel, formatKRW } from '@/lib/utils';
+import { getSeverityColor, getSeverityLabel, formatKRW, formatNumber, formatKeyLabel } from '@/lib/utils';
 import PatternBadge from '@/components/audit/PatternBadge';
 import ScoreBar from '@/components/common/ScoreBar';
 
@@ -301,9 +301,9 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
             <div className="space-y-2">
               {Object.entries(detail).map(([key, value]) => (
                 <div key={key} className="flex justify-between text-sm py-2 border-b border-gray-50">
-                  <span className="text-gray-500">{key}</span>
+                  <span className="text-gray-500">{formatKeyLabel(key)}</span>
                   <span className="font-medium text-gray-800">
-                    {typeof value === 'number' ? value.toLocaleString('ko-KR') :
+                    {typeof value === 'number' ? formatNumber(value, key) :
                      typeof value === 'object' ? JSON.stringify(value) :
                      String(value)}
                   </span>
@@ -321,8 +321,10 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                 <div className="space-y-1">
                   {Object.entries(evidence).map(([key, value]) => (
                     <div key={key} className="flex justify-between text-xs">
-                      <span className="text-red-600">{key}</span>
-                      <span className="font-medium text-red-800">{String(value)}</span>
+                      <span className="text-red-600">{formatKeyLabel(key)}</span>
+                      <span className="font-medium text-red-800">
+                        {typeof value === 'number' ? formatNumber(value, key) : String(value)}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -525,9 +527,9 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
           <div className="text-gray-400 mb-2">// 탐지 데이터</div>
           {Object.entries(detail).map(([key, value]) => (
             <div key={key} className="flex gap-2 py-1">
-              <span className="text-gray-500 w-32 shrink-0">{key}:</span>
+              <span className="text-gray-500 w-32 shrink-0">{formatKeyLabel(key)}:</span>
               <span className="text-gray-800">
-                {typeof value === 'number' ? value.toLocaleString('ko-KR') :
+                {typeof value === 'number' ? formatNumber(value, key) :
                  typeof value === 'object' ? JSON.stringify(value) :
                  String(value)}
               </span>
@@ -544,9 +546,9 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
             <div className="text-red-400 mb-2">// 기준 초과 증거</div>
             {Object.entries(evidence).map(([key, value]) => (
               <div key={key} className="flex gap-2 py-1">
-                <span className="text-red-500 w-32 shrink-0">{key}:</span>
+                <span className="text-red-500 w-32 shrink-0">{formatKeyLabel(key)}:</span>
                 <span className="text-red-800">
-                  {typeof value === 'number' ? value.toLocaleString('ko-KR') :
+                  {typeof value === 'number' ? formatNumber(value, key) :
                    typeof value === 'object' ? JSON.stringify(value) :
                    String(value)}
                 </span>

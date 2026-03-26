@@ -51,9 +51,30 @@ export function formatDateShort(dateStr: string): string {
   return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}`;
 }
 
-// 숫자 콤마 포맷
-export function formatNumber(num: number): string {
-  return num.toLocaleString('ko-KR');
+// 숫자 콤마 포맷 (연도/날짜 키에는 콤마 없이)
+export function formatNumber(value: unknown, key?: string): string {
+  if (value === null || value === undefined) return '-';
+  if (typeof value === 'number') {
+    // Don't add commas to years or date-like numbers
+    if (key && (key.includes('연도') || key.includes('year') || key.includes('날짜') || key.includes('연') || key === 'year')) {
+      return String(value);
+    }
+    // Format large numbers in Korean style
+    if (value >= 100000000) {
+      return `${(value / 100000000).toFixed(1)}억원`;
+    }
+    if (value >= 10000) {
+      return `${(value / 10000).toFixed(0)}만원`;
+    }
+    // Regular numbers with commas
+    return value.toLocaleString('ko-KR');
+  }
+  return String(value);
+}
+
+// 키 라벨 포맷 (밑줄 → 공백)
+export function formatKeyLabel(key: string): string {
+  return key.replace(/_/g, ' ');
 }
 
 // 의심 점수 색상

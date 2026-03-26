@@ -77,9 +77,9 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
       )}
 
       {/* 증거 요약 */}
-      {flag.evidence && typeof flag.evidence === 'object' && (flag.evidence as any).description && (
+      {flag.evidence && typeof flag.evidence === 'object' && ((flag.evidence as any).설명 || (flag.evidence as any).description) && (
         <div className="mt-2 text-[10px] text-gray-400 bg-gray-50 rounded px-2 py-1">
-          {(flag.evidence as any).description}
+          {(flag.evidence as any).설명 || (flag.evidence as any).description}
         </div>
       )}
 
