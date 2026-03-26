@@ -114,6 +114,38 @@ export interface AuditFlag {
   related_bai_case?: string;
   status: string;
   created_at?: string;
+  // 시민을 위한 상세 설명
+  plain_explanation?: string;     // 이 패턴이 뭔지 쉽게 설명
+  why_it_matters?: string;        // 왜 의심스러운지
+  citizen_impact?: string;        // 세금이 어떻게 낭비될 수 있는지
+  what_should_happen?: string;    // 어떤 조치가 필요한지
+  real_case_example?: string;     // 실제 유사 감사원 적발 사례
+  // 관련 링크
+  related_links?: AuditLink[];
+  // 관련 계약 정보
+  contracts?: AuditContract[];
+  // 타임라인
+  timeline?: AuditTimelineItem[];
+}
+
+export interface AuditLink {
+  title: string;
+  url: string;
+  source: string;  // e.g., '나라장터', '감사원', '국회'
+}
+
+export interface AuditContract {
+  title: string;
+  amount: number;         // 원
+  vendor: string;
+  date: string;
+  method: string;         // 일반경쟁, 수의계약 등
+}
+
+export interface AuditTimelineItem {
+  date: string;
+  event: string;
+  type: 'detection' | 'investigation' | 'resolution' | 'info';
 }
 
 export interface DepartmentScore {

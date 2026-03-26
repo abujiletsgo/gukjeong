@@ -61,3 +61,11 @@
   apps/web/components/legislators/RankingTable.tsx   | 306 +++++++-
   apps/web/components/legislators/Scorecard.tsx      | 141 +++-
   ... and 5 more files
+
+## 2026-03-26 (08:49 UTC) · @Tom Kwon
+**Commit:** feat: Minimal data-first landing page — numbers speak, no editorial (e7ea979) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md    |  15 ++
+  apps/web/app/(home)/page.tsx  | 393 ++++++++++++++++++++++--------------------
+  apps/web/tsconfig.tsbuildinfo |   2 +-
+  3 files changed, 224 insertions(+), 186 deletions(-)

@@ -21,7 +21,7 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
   const score = flag.suspicion_score;
   const patternType = flag.pattern_type;
   const targetId = flag.target_id || '';
-  const aiAnalysis = flag.ai_analysis || '';
+  const previewText = flag.plain_explanation || flag.ai_analysis || '';
   const severityColor = getSeverityColor(score);
 
   return (
@@ -54,13 +54,15 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
         </div>
       </div>
 
-      {/* AI 분석 */}
-      {aiAnalysis && (
+      {/* 미리보기 (plain_explanation 우선, 없으면 ai_analysis) */}
+      {previewText && (
         <div className="mt-3 pt-3 border-t border-gray-50">
           <div className="flex items-start gap-2">
-            <span className="ai-badge flex-shrink-0 mt-0.5">AI 분석</span>
+            <span className="ai-badge flex-shrink-0 mt-0.5">
+              {flag.plain_explanation ? '요약' : 'AI 분석'}
+            </span>
             <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
-              {aiAnalysis}
+              {previewText}
             </p>
           </div>
         </div>
@@ -72,6 +74,13 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
           {(flag.evidence as any).description}
         </div>
       )}
+
+      {/* 자세히 보기 링크 */}
+      <div className="mt-3 text-right">
+        <span className="text-xs text-blue-500 group-hover:text-blue-700 font-medium transition-colors">
+          자세히 보기 &rarr;
+        </span>
+      </div>
     </a>
   );
 }
