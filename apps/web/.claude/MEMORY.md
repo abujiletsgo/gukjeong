@@ -46,3 +46,18 @@
   apps/web/app/bills/[id]/page.tsx                   |  44 +-
   apps/web/app/bills/page.tsx                        |  13 +-
   ... and 25 more files
+
+## 2026-03-26 (08:31 UTC) · @Tom Kwon
+**Commit:** feat: Phase 3 — Legislators scorecard + President comparison capped at 4 (da1de71) by Tom Kwon
+**Changed:**
+  .claude/MEMORY.md                                  |  15 +
+  apps/api/app/routers/legislators.py                | 410 ++++++++--
+  apps/api/app/schemas/legislator.py                 | 147 +++-
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 267 +++++++
+  .../legislators/[id]/LegislatorDetailClient.tsx    | 397 ++++++++++
+  apps/web/app/legislators/[id]/page.tsx             |  43 +-
+  apps/web/app/legislators/page.tsx                  |  13 +-
+  apps/web/app/presidents/PresidentCompareClient.tsx |  17 +-
+  apps/web/components/legislators/RankingTable.tsx   | 306 +++++++-
+  apps/web/components/legislators/Scorecard.tsx      | 141 +++-
+  ... and 5 more files

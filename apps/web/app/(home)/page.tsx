@@ -1,6 +1,6 @@
-import { getPresidents, getFiscalData, getDepartmentScores, getAuditFlags, getBills, getNewsEvents, getMediaOutlets } from '@/lib/data';
-import { formatTrillions } from '@/lib/utils';
+import { getPresidents, getFiscalData, getDepartmentScores, getAuditFlags, getBills, getNewsEvents, getMediaOutlets, getLegislators } from '@/lib/data';
 import Sparkline from '@/components/charts/Sparkline';
+import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 
 export default function HomePage() {
   const presidents = getPresidents();
@@ -10,241 +10,264 @@ export default function HomePage() {
   const bills = getBills();
   const newsEvents = getNewsEvents();
   const outlets = getMediaOutlets();
+  const legislators = getLegislators();
 
   const latest = fiscalData[fiscalData.length - 1];
   const latest2024 = fiscalData.find(f => f.year === 2024);
   const spendingTrend = fiscalData.map(f => f.total_spending || 0).filter(v => v > 0);
   const debtTrend = fiscalData.map(f => f.national_debt || 0).filter(v => v > 0);
-
-  const highSeverityFlags = auditFlags.filter(f => f.severity === 'HIGH').length;
+  const highFlags = auditFlags.filter(f => f.severity === 'HIGH').length;
   const passedBills = bills.filter(b => b.status === '가결').length;
-  const totalArticles = newsEvents.reduce((sum, e) => sum + (e.article_count || 0), 0);
+  const pendingBills = bills.filter(b => b.status === '계류').length;
+  const recentPresidents = presidents.slice(-4);
+  const avgAttendance = Math.round(legislators.reduce((s, l) => s + (l.attendance_rate || 0), 0) / legislators.length);
 
   return (
     <div>
-      {/* 히어로 섹션 */}
-      <section className="bg-header text-white py-12 sm:py-16 relative overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
+      {/* ━━━ HERO ━━━ */}
+      <section className="bg-header text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03]">
+          <svg width="100%" height="100%"><defs><pattern id="g" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="16" cy="16" r="1" fill="white"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>
         </div>
-        <div className="container-page text-center relative">
-          {/* Logo icon */}
-          <div className="mx-auto mb-6 w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 2L3 9v14l13 7 13-7V9L16 2z" stroke="#ff6b35" strokeWidth="2" fill="none"/><path d="M16 2v28M3 9l13 7 13-7" stroke="#ff6b35" strokeWidth="1.5" fill="none" opacity="0.5"/><circle cx="16" cy="16" r="4" fill="#ff6b35" opacity="0.8"/></svg>
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            수치로 보는 대한민국 정부
+        <div className="container-page relative py-16 sm:py-24 md:py-32">
+          <p className="text-accent text-sm font-semibold tracking-widest uppercase mb-4">공공데이터 + AI 분석</p>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight max-w-3xl">
+            숫자로 보는<br />대한민국 정부
           </h1>
-          <p className="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto mb-8">
-            공공데이터와 AI 분석으로 정부의 예산, 정책, 계약을 투명하게 보여주는 시민 플랫폼
+          <p className="text-gray-400 text-base sm:text-lg mt-6 max-w-xl leading-relaxed">
+            의견이 아닌 데이터. 같은 기준, 모든 정부.
           </p>
+          <div className="flex flex-wrap gap-3 mt-8">
+            <a href="/presidents" className="btn-primary">대통령 비교 보기</a>
+            <a href="/budget" className="bg-white/10 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/20 transition-colors backdrop-blur-sm">예산 흐름 보기</a>
+          </div>
+        </div>
+      </section>
 
-          {/* 핵심 수치 */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
-            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-              <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              <div className="text-2xl sm:text-3xl font-bold">{latest?.total_spending || 728}조</div>
-              <div className="text-xs text-gray-300 mt-1">2026 총지출(안)</div>
+      {/* ━━━ NUMBERS BAR ━━━ */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="container-page py-6 sm:py-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6 sm:gap-8">
+            <div>
+              <div className="text-3xl sm:text-4xl font-black text-gray-900 tabular-nums">{latest?.total_spending || 728}<span className="text-lg font-bold text-gray-400">조</span></div>
+              <div className="text-xs text-gray-400 mt-1">2026 정부 지출</div>
             </div>
-            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-              <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 20h20M5 20V10l4-6 4 4 4-7 3 3v16"/></svg>
-              <div className="text-2xl sm:text-3xl font-bold">{latest2024?.national_debt || 1175}조</div>
-              <div className="text-xs text-gray-300 mt-1">국가채무 (2024)</div>
+            <div>
+              <div className="text-3xl sm:text-4xl font-black text-gray-900 tabular-nums">{latest2024?.national_debt || 1175}<span className="text-lg font-bold text-gray-400">조</span></div>
+              <div className="text-xs text-gray-400 mt-1">국가채무</div>
             </div>
-            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-              <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 21V7l9-5 9 5v14"/><path d="M9 21V12h6v9"/></svg>
-              <div className="text-2xl sm:text-3xl font-bold">{presidents.length}명</div>
-              <div className="text-xs text-gray-300 mt-1">역대 대통령</div>
+            <div>
+              <div className="text-3xl sm:text-4xl font-black text-gray-900 tabular-nums">{presidents.length}<span className="text-lg font-bold text-gray-400">명</span></div>
+              <div className="text-xs text-gray-400 mt-1">역대 대통령</div>
             </div>
-            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-              <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
-              <div className="text-2xl sm:text-3xl font-bold">{auditFlags.length}건</div>
-              <div className="text-xs text-gray-300 mt-1">AI 감지 의심 패턴</div>
+            <div>
+              <div className="text-3xl sm:text-4xl font-black text-gray-900 tabular-nums">{legislators.length}<span className="text-lg font-bold text-gray-400">명</span></div>
+              <div className="text-xs text-gray-400 mt-1">국회의원 추적</div>
+            </div>
+            <div className="hidden lg:block">
+              <div className="text-3xl sm:text-4xl font-black text-gray-900 tabular-nums">{bills.length}<span className="text-lg font-bold text-gray-400">건</span></div>
+              <div className="text-xs text-gray-400 mt-1">법안 분석</div>
+            </div>
+            <div className="hidden lg:block">
+              <div className="text-3xl sm:text-4xl font-black text-gray-900 tabular-nums">{auditFlags.length}<span className="text-lg font-bold text-gray-400">건</span></div>
+              <div className="text-xs text-gray-400 mt-1">AI 감지 패턴</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 핵심 기능 카드 — 5개 기능 */}
-      <section className="container-page py-10 sm:py-14">
-        <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">주요 기능</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+      {/* ━━━ FEATURES GRID ━━━ */}
+      <section className="container-page py-12 sm:py-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+
           {/* 대통령 비교 */}
-          <a href="/presidents" className="card group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center mb-4">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5"><path d="M3 21V7l9-5 9 5v14"/><path d="M9 21V12h6v9"/><circle cx="12" cy="4" r="1" fill="#2563eb"/></svg>
+          <a href="/presidents" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">대통령</span>
+              <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 group-hover:text-accent transition-colors mb-2">
-              역대 대통령 비교
-            </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              김영삼부터 현재까지 동일한 경제 지표로 비교합니다.
-              GDP 성장률, 정부 지출, 국가채무 변화를 한눈에.
-            </p>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span>{presidents.length}명의 대통령</span>
-              <span>·</span>
-              <span>{fiscalData.length}년의 재정 데이터</span>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">역대 대통령 비교</h3>
+            <p className="text-sm text-gray-500 mb-5">동일 기준, 동일 데이터로 8명의 대통령을 비교합니다.</p>
+            {/* Mini portraits row */}
+            <div className="flex items-center -space-x-2 mb-4">
+              {recentPresidents.map(p => (
+                <PresidentPortrait key={p.id} id={p.id} name={p.name} party={p.party} size={36} />
+              ))}
+              <span className="text-xs text-gray-400 ml-3">외 {presidents.length - 4}명</span>
+            </div>
+            <Sparkline data={spendingTrend} width={280} height={36} color="#3b82f6" showArea />
+          </a>
+
+          {/* 예산 */}
+          <a href="/budget" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">예산</span>
+              <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">예산 시각화</h3>
+            <p className="text-sm text-gray-500 mb-5">728조가 어디서 오고 어디로 가는지 한눈에.</p>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="bg-gray-50 rounded-lg py-2.5">
+                <div className="text-base font-bold text-gray-900">11</div>
+                <div className="text-[10px] text-gray-400">분야</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg py-2.5">
+                <div className="text-base font-bold text-gray-900">29</div>
+                <div className="text-[10px] text-gray-400">연도</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg py-2.5">
+                <div className="text-base font-bold text-red-500">46.8%</div>
+                <div className="text-[10px] text-gray-400">채무/GDP</div>
+              </div>
             </div>
             <div className="mt-4">
-              <Sparkline data={spendingTrend} width={200} height={32} color="#3b82f6" showArea label="정부 지출 추이" />
+              <Sparkline data={debtTrend} width={280} height={36} color="#ef4444" showArea />
             </div>
           </a>
 
-          {/* 예산 시각화 */}
-          <a href="/budget" className="card group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center mb-4">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h0M18 12h0"/></svg>
+          {/* AI 감사 */}
+          <a href="/audit" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-xs font-semibold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">AI 감사</span>
+              <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 group-hover:text-accent transition-colors mb-2">
-              예산 시각화
-            </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              세입에서 세출까지의 자금 흐름, 분야별 예산 비중,
-              국가채무 궤적을 인터랙티브 차트로 확인하세요.
-            </p>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span>11개 분야</span>
-              <span>·</span>
-              <span>Sankey · TreeMap · 스택드 에리어</span>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">AI 감사관</h3>
+            <p className="text-sm text-gray-500 mb-5">정부 계약에서 의심 패턴을 AI가 자동 탐지합니다.</p>
+            <div className="flex items-center gap-4 mb-4">
+              <div>
+                <div className="text-2xl font-black text-gray-900">{auditFlags.length}</div>
+                <div className="text-[10px] text-gray-400">탐지 건수</div>
+              </div>
+              <div>
+                <div className="text-2xl font-black text-red-500">{highFlags}</div>
+                <div className="text-[10px] text-gray-400">높은 심각도</div>
+              </div>
+              <div>
+                <div className="text-2xl font-black text-gray-900">{departmentScores.length}</div>
+                <div className="text-[10px] text-gray-400">부처 모니터링</div>
+              </div>
             </div>
-            <div className="mt-4">
-              <Sparkline data={debtTrend} width={200} height={32} color="#ef4444" showArea label="국가채무 추이" />
-            </div>
-          </a>
-
-          {/* AI 감사관 */}
-          <a href="/audit" className="card group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center mb-4">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
-            </div>
-            <h2 className="text-xl font-bold text-gray-900 group-hover:text-accent transition-colors mb-2">
-              AI 감사관
-            </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              나라장터 계약 데이터에서 AI가 연말 급증, 업체 집중,
-              계약 분할 등 의심 패턴을 자동으로 탐지합니다.
-            </p>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span>{auditFlags.length}건 탐지</span>
-              <span>·</span>
-              <span>{highSeverityFlags}건 높은 심각도</span>
-            </div>
-            <div className="mt-4 flex gap-1">
-              {departmentScores.slice(0, 8).map(d => (
+            {/* Mini heatmap */}
+            <div className="flex gap-1 flex-wrap">
+              {departmentScores.slice(0, 12).map(d => (
                 <div
                   key={d.department}
-                  className="w-6 h-6 rounded text-[6px] flex items-center justify-center text-white font-bold"
+                  className="w-5 h-5 rounded-sm"
                   style={{
                     backgroundColor: d.suspicion_score > 50 ? '#ef4444' :
                       d.suspicion_score > 30 ? '#f97316' :
                       d.suspicion_score > 15 ? '#eab308' : '#22c55e',
-                    opacity: Math.max(0.5, d.suspicion_score / 80),
+                    opacity: Math.max(0.4, d.suspicion_score / 80),
                   }}
-                  title={d.department}
-                >
-                  {d.suspicion_score}
-                </div>
+                  title={`${d.department}: ${d.suspicion_score}`}
+                />
               ))}
             </div>
           </a>
-        </div>
 
-        {/* Phase 2: 법안 + 뉴스 */}
-        <div className="grid md:grid-cols-2 gap-6 mt-6">
-          {/* 법안 추적 */}
-          <a href="/bills" className="card group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6M8 9h2"/></svg>
+          {/* 법안 */}
+          <a href="/bills" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-xs font-semibold text-violet-600 bg-violet-50 px-2.5 py-1 rounded-full">법안</span>
+              <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">법안 추적</h3>
+            <p className="text-sm text-gray-500 mb-5">국회 법안의 AI 요약, 투표 결과, 시민 영향 분석.</p>
+            <div className="flex items-center gap-6 mb-3">
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-green-600">{passedBills}</span>
+                <span className="text-xs text-gray-400">가결</span>
               </div>
-              <div className="flex-1 min-w-0">
-                <h2 className="text-xl font-bold text-gray-900 group-hover:text-accent transition-colors mb-2">
-                  법안 추적
-                </h2>
-                <p className="text-sm text-gray-500 mb-3">
-                  국회에서 발의된 법안의 현황, AI 요약, 투표 결과, 시민 영향 분석을 실시간으로 추적합니다.
-                </p>
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-700">{passedBills}건 가결</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">{bills.filter(b => b.status === '계류').length}건 계류</span>
-                  <span className="text-gray-400">총 {bills.length}건</span>
-                </div>
-                {/* Mini bill status bar */}
-                <div className="mt-3 flex h-2 rounded-full overflow-hidden bg-gray-100">
-                  <div className="bg-green-500" style={{ width: `${(passedBills / bills.length) * 100}%` }} />
-                  <div className="bg-amber-400" style={{ width: `${(bills.filter(b => b.status === '계류').length / bills.length) * 100}%` }} />
-                  <div className="bg-red-400" style={{ width: `${(bills.filter(b => b.status === '폐기').length / bills.length) * 100}%` }} />
-                </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-amber-500">{pendingBills}</span>
+                <span className="text-xs text-gray-400">계류</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-gray-400">{bills.length}</span>
+                <span className="text-xs text-gray-400">전체</span>
+              </div>
+            </div>
+            <div className="flex h-2.5 rounded-full overflow-hidden bg-gray-100">
+              <div className="bg-green-500 transition-all" style={{ width: `${(passedBills / bills.length) * 100}%` }} />
+              <div className="bg-amber-400 transition-all" style={{ width: `${(pendingBills / bills.length) * 100}%` }} />
+              <div className="bg-red-400 transition-all" style={{ width: `${(bills.filter(b => b.status === '폐기').length / bills.length) * 100}%` }} />
+            </div>
+          </a>
+
+          {/* 국회의원 */}
+          <a href="/legislators" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">국회의원</span>
+              <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">국회의원 성적표</h3>
+            <p className="text-sm text-gray-500 mb-5">출석, 발의, 발언, 말과 행동 일치도 종합 평가.</p>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="bg-gray-50 rounded-lg py-2.5">
+                <div className="text-base font-bold text-gray-900">{legislators.length}명</div>
+                <div className="text-[10px] text-gray-400">추적 중</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg py-2.5">
+                <div className="text-base font-bold text-gray-900">{avgAttendance}%</div>
+                <div className="text-[10px] text-gray-400">평균 출석률</div>
+              </div>
+              <div className="bg-gray-50 rounded-lg py-2.5">
+                <div className="text-base font-bold text-gray-900">5</div>
+                <div className="text-[10px] text-gray-400">정당</div>
               </div>
             </div>
           </a>
 
-          {/* 뉴스 프레임 비교 */}
-          <a href="/news" className="card group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="1.5"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M10 6h8M10 10h4M10 14h8M10 18h5"/></svg>
+          {/* 뉴스 프레임 */}
+          <a href="/news" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">뉴스</span>
+              <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">뉴스 프레임 비교</h3>
+            <p className="text-sm text-gray-500 mb-5">같은 사건, 다른 보도. {outlets.length}개 매체 프레임 분석.</p>
+            {/* Mini spectrum */}
+            <div className="mb-3">
+              <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+                <span>진보</span>
+                <span>중도</span>
+                <span>보수</span>
               </div>
-              <div className="flex-1 min-w-0">
-                <h2 className="text-xl font-bold text-gray-900 group-hover:text-accent transition-colors mb-2">
-                  뉴스 프레임 비교
-                </h2>
-                <p className="text-sm text-gray-500 mb-3">
-                  같은 사건을 진보와 보수 미디어가 어떻게 다르게 보도하는지 프레임을 비교합니다.
-                </p>
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="text-gray-400">{newsEvents.length}개 이벤트</span>
-                  <span className="text-gray-400">{totalArticles.toLocaleString()}건 기사</span>
-                  <span className="text-gray-400">{outlets.length}개 매체</span>
-                </div>
-                {/* Mini spectrum bar */}
-                <div className="mt-3 h-2 rounded-full bg-gradient-to-r from-blue-500 via-gray-300 to-red-500 relative">
-                  {outlets.slice(0, 6).map((o, i) => (
-                    <div
-                      key={o.id}
-                      className="absolute w-2 h-2 bg-white rounded-full border border-gray-400 -top-0"
-                      style={{ left: `${((o.spectrum_score - 1) / 4) * 100}%` }}
-                      title={o.name}
-                    />
-                  ))}
-                </div>
+              <div className="h-3 rounded-full bg-gradient-to-r from-blue-500 via-gray-300 to-red-500 relative">
+                {outlets.slice(0, 8).map(o => (
+                  <div
+                    key={o.id}
+                    className="absolute w-2.5 h-2.5 bg-white rounded-full border-2 border-gray-500 top-0.5"
+                    style={{ left: `${((o.spectrum_score - 1) / 4) * 100}%`, transform: 'translateX(-50%)' }}
+                    title={o.name}
+                  />
+                ))}
               </div>
+            </div>
+            <div className="flex items-center gap-4 text-xs text-gray-400">
+              <span>{newsEvents.length}개 이벤트</span>
+              <span>{newsEvents.reduce((s, e) => s + (e.article_count || 0), 0).toLocaleString()}건 기사</span>
             </div>
           </a>
         </div>
       </section>
 
-      {/* 데이터 출처 */}
-      <section className="bg-gray-50 py-10 border-t border-gray-100">
-        <div className="container-page text-center">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">공공데이터 기반</h2>
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-gray-500">
-            <span className="flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              기획재정부
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 20h20M5 20V10l4-6 4 4 4-7 3 3v16"/></svg>
-              한국은행 ECOS
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-              나라장터 (조달청)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6"/></svg>
-              열린국회정보
-            </span>
-            <span className="flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
-              공공데이터포털
-            </span>
+      {/* ━━━ DATA SOURCES ━━━ */}
+      <section className="border-t border-gray-100">
+        <div className="container-page py-10 sm:py-12">
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-gray-400">
+            <span>기획재정부</span>
+            <span className="hidden sm:inline text-gray-200">|</span>
+            <span>한국은행 ECOS</span>
+            <span className="hidden sm:inline text-gray-200">|</span>
+            <span>나라장터</span>
+            <span className="hidden sm:inline text-gray-200">|</span>
+            <span>열린국회정보</span>
+            <span className="hidden sm:inline text-gray-200">|</span>
+            <span>공공데이터포털</span>
           </div>
-          <p className="text-xs text-gray-400 mt-4 max-w-xl mx-auto">
-            모든 데이터는 대한민국 정부가 공개한 공공데이터를 기반으로 합니다.
-            미디어 분류는 학술 연구 기반 참고 분류이며, 감사 분석은 AI 기반 의심 패턴 탐지 결과입니다.
+          <p className="text-center text-[11px] text-gray-300 mt-4 max-w-lg mx-auto">
+            모든 수치는 정부 공개 데이터 기반. 미디어 분류는 학술 연구 참고 분류. AI 분석은 참고용이며 공식 판단이 아닙니다.
           </p>
         </div>
       </section>
