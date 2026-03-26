@@ -117,6 +117,7 @@ export interface AuditFlag {
   // 시민을 위한 상세 설명
   plain_explanation?: string;     // 이 패턴이 뭔지 쉽게 설명
   why_it_matters?: string;        // 왜 의심스러운지
+  innocent_explanation?: string;  // 비리가 아닐 수 있는 합리적 이유
   citizen_impact?: string;        // 세금이 어떻게 낭비될 수 있는지
   what_should_happen?: string;    // 어떤 조치가 필요한지
   real_case_example?: string;     // 실제 유사 감사원 적발 사례

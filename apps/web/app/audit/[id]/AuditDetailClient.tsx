@@ -85,6 +85,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const relatedLinks = flag.related_links || [];
   const plainExplanation = flag.plain_explanation || '';
   const whyItMatters = flag.why_it_matters || '';
+  const innocentExplanation = flag.innocent_explanation || '';
   const citizenImpact = flag.citizen_impact || '';
   const whatShouldHappen = flag.what_should_happen || '';
   const realCaseExample = flag.real_case_example || '';
@@ -163,6 +164,26 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                 <h3 className="text-sm font-bold text-amber-800 mb-1">왜 의심스러운가?</h3>
                 <p className="text-sm text-amber-700 leading-relaxed">{whyItMatters}</p>
               </div>
+            )}
+
+            {/* 비리가 아닐 수 있는 이유 (다른 해석) */}
+            {innocentExplanation && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 className="text-sm font-bold text-green-800 mb-1 flex items-center gap-1.5">
+                  <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  비리가 아닐 수 있는 이유
+                </h3>
+                <p className="text-sm text-green-700 leading-relaxed">{innocentExplanation}</p>
+              </div>
+            )}
+
+            {/* 양쪽 관점 안내 */}
+            {whyItMatters && innocentExplanation && (
+              <p className="text-xs text-gray-400 text-center">
+                양쪽 관점을 모두 고려하여 판단해 주세요.
+              </p>
             )}
 
             {/* 내 세금은? */}

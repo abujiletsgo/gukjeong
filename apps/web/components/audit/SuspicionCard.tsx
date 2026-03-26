@@ -68,6 +68,14 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
         </div>
       )}
 
+      {/* 다른 해석 (innocent_explanation) */}
+      {flag.innocent_explanation && (
+        <div className="mt-2 flex items-center gap-1.5 text-[10px] text-green-600 bg-green-50 rounded px-2 py-1">
+          <span className="inline-block w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0" />
+          <span className="line-clamp-1">{flag.innocent_explanation}</span>
+        </div>
+      )}
+
       {/* 증거 요약 */}
       {flag.evidence && typeof flag.evidence === 'object' && (flag.evidence as any).description && (
         <div className="mt-2 text-[10px] text-gray-400 bg-gray-50 rounded px-2 py-1">
