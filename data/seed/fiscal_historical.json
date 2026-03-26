@@ -1,0 +1,181 @@
+[
+  {
+    "year": 1998,
+    "total_spending": 104.0,
+    "national_debt": 80.0,
+    "president_id": "kdj"
+  },
+  {
+    "year": 1999,
+    "total_spending": 107.0,
+    "national_debt": 95.0,
+    "president_id": "kdj"
+  },
+  {
+    "year": 2000,
+    "total_spending": 111.0,
+    "national_debt": 111.0,
+    "debt_to_gdp": 19.2,
+    "president_id": "kdj"
+  },
+  {
+    "year": 2001,
+    "total_spending": 120.0,
+    "national_debt": 128.0,
+    "president_id": "kdj"
+  },
+  {
+    "year": 2002,
+    "total_spending": 130.0,
+    "national_debt": 134.0,
+    "president_id": "kdj"
+  },
+  {
+    "year": 2003,
+    "total_spending": 140.0,
+    "national_debt": 165.0,
+    "president_id": "nmh"
+  },
+  {
+    "year": 2004,
+    "total_spending": 148.0,
+    "national_debt": 204.0,
+    "president_id": "nmh"
+  },
+  {
+    "year": 2005,
+    "total_spending": 175.0,
+    "national_debt": 248.0,
+    "president_id": "nmh"
+  },
+  {
+    "year": 2006,
+    "total_spending": 185.0,
+    "national_debt": 283.0,
+    "president_id": "nmh"
+  },
+  {
+    "year": 2007,
+    "total_spending": 196.0,
+    "national_debt": 299.0,
+    "president_id": "nmh"
+  },
+  {
+    "year": 2008,
+    "total_spending": 220.0,
+    "national_debt": 309.0,
+    "president_id": "lmb"
+  },
+  {
+    "year": 2009,
+    "total_spending": 245.0,
+    "national_debt": 360.0,
+    "president_id": "lmb"
+  },
+  {
+    "year": 2010,
+    "total_spending": 268.0,
+    "national_debt": 393.0,
+    "debt_to_gdp": 37.6,
+    "president_id": "lmb"
+  },
+  {
+    "year": 2011,
+    "total_spending": 280.0,
+    "national_debt": 421.0,
+    "president_id": "lmb"
+  },
+  {
+    "year": 2012,
+    "total_spending": 295.0,
+    "national_debt": 443.0,
+    "president_id": "lmb"
+  },
+  {
+    "year": 2013,
+    "total_spending": 310.0,
+    "national_debt": 490.0,
+    "president_id": "pgh"
+  },
+  {
+    "year": 2014,
+    "total_spending": 320.0,
+    "national_debt": 534.0,
+    "president_id": "pgh"
+  },
+  {
+    "year": 2015,
+    "total_spending": 343.0,
+    "national_debt": 591.0,
+    "president_id": "pgh"
+  },
+  {
+    "year": 2016,
+    "total_spending": 360.0,
+    "national_debt": 627.0,
+    "president_id": "pgh"
+  },
+  {
+    "year": 2017,
+    "total_spending": 380.0,
+    "national_debt": 660.0,
+    "president_id": "mji"
+  },
+  {
+    "year": 2018,
+    "total_spending": 410.0,
+    "national_debt": 681.0,
+    "president_id": "mji"
+  },
+  {
+    "year": 2019,
+    "total_spending": 450.0,
+    "national_debt": 728.0,
+    "president_id": "mji"
+  },
+  {
+    "year": 2020,
+    "total_spending": 512.0,
+    "national_debt": 846.0,
+    "debt_to_gdp": 52.5,
+    "president_id": "mji"
+  },
+  {
+    "year": 2021,
+    "total_spending": 548.0,
+    "national_debt": 971.0,
+    "president_id": "mji"
+  },
+  {
+    "year": 2022,
+    "total_spending": 607.0,
+    "national_debt": 1068.0,
+    "president_id": "ysy"
+  },
+  {
+    "year": 2023,
+    "total_spending": 639.0,
+    "national_debt": 1093.0,
+    "tax_revenue": 344.1,
+    "president_id": "ysy"
+  },
+  {
+    "year": 2024,
+    "total_spending": 657.0,
+    "national_debt": 1175.0,
+    "debt_to_gdp": 46.8,
+    "tax_revenue": 336.5,
+    "president_id": "ysy"
+  },
+  {
+    "year": 2025,
+    "total_spending": 677.0,
+    "national_debt": 1222.0,
+    "president_id": "ysy"
+  },
+  {
+    "year": 2026,
+    "total_spending": 728.0,
+    "president_id": "ljm"
+  }
+]

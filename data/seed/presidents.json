@@ -1,0 +1,83 @@
+[
+  {
+    "id": "ysk",
+    "name": "김영삼",
+    "name_en": "Kim Young-sam",
+    "term_start": "1993-02-25",
+    "term_end": "1998-02-24",
+    "party": "민주자유당→신한국당",
+    "era": "문민정부",
+    "gdp_growth_avg": 5.7
+  },
+  {
+    "id": "kdj",
+    "name": "김대중",
+    "name_en": "Kim Dae-jung",
+    "term_start": "1998-02-25",
+    "term_end": "2003-02-24",
+    "party": "새정치국민회의→새천년민주당",
+    "era": "국민의 정부",
+    "gdp_growth_avg": 5.2
+  },
+  {
+    "id": "nmh",
+    "name": "노무현",
+    "name_en": "Roh Moo-hyun",
+    "term_start": "2003-02-25",
+    "term_end": "2008-02-24",
+    "party": "새천년민주당→열린우리당",
+    "era": "참여정부",
+    "gdp_growth_avg": 4.3
+  },
+  {
+    "id": "lmb",
+    "name": "이명박",
+    "name_en": "Lee Myung-bak",
+    "term_start": "2008-02-25",
+    "term_end": "2013-02-24",
+    "party": "한나라당→새누리당",
+    "era": "이명박 정부",
+    "gdp_growth_avg": 3.2
+  },
+  {
+    "id": "pgh",
+    "name": "박근혜",
+    "name_en": "Park Geun-hye",
+    "term_start": "2013-02-25",
+    "term_end": "2017-03-10",
+    "party": "새누리당",
+    "era": "박근혜 정부",
+    "gdp_growth_avg": 2.9,
+    "note": "탄핵 파면"
+  },
+  {
+    "id": "mji",
+    "name": "문재인",
+    "name_en": "Moon Jae-in",
+    "term_start": "2017-05-10",
+    "term_end": "2022-05-09",
+    "party": "더불어민주당",
+    "era": "문재인 정부",
+    "gdp_growth_avg": 2.3
+  },
+  {
+    "id": "ysy",
+    "name": "윤석열",
+    "name_en": "Yoon Suk-yeol",
+    "term_start": "2022-05-10",
+    "term_end": "2025-04-04",
+    "party": "국민의힘",
+    "era": "윤석열 정부",
+    "gdp_growth_avg": 1.8,
+    "note": "비상계엄→탄핵 파면"
+  },
+  {
+    "id": "ljm",
+    "name": "이재명",
+    "name_en": "Lee Jae-myung",
+    "term_start": "2025-06-04",
+    "term_end": null,
+    "party": "더불어민주당",
+    "era": "이재명 정부"
+  }
+]

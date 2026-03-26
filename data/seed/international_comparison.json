@@ -1,0 +1,133 @@
+{
+  "debt_to_gdp_2024": [
+    {
+      "country": "일본",
+      "country_en": "Japan",
+      "value": 260.0
+    },
+    {
+      "country": "그리스",
+      "country_en": "Greece",
+      "value": 162.0
+    },
+    {
+      "country": "이탈리아",
+      "country_en": "Italy",
+      "value": 137.0
+    },
+    {
+      "country": "미국",
+      "country_en": "USA",
+      "value": 121.0
+    },
+    {
+      "country": "프랑스",
+      "country_en": "France",
+      "value": 110.0
+    },
+    {
+      "country": "영국",
+      "country_en": "UK",
+      "value": 101.0
+    },
+    {
+      "country": "OECD 평균",
+      "country_en": "OECD avg",
+      "value": 112.3
+    },
+    {
+      "country": "독일",
+      "country_en": "Germany",
+      "value": 63.0
+    },
+    {
+      "country": "대한민국",
+      "country_en": "South Korea",
+      "value": 46.8
+    }
+  ],
+  "government_spending_gdp_2024": [
+    {
+      "country": "프랑스",
+      "country_en": "France",
+      "value": 57.0
+    },
+    {
+      "country": "이탈리아",
+      "country_en": "Italy",
+      "value": 50.0
+    },
+    {
+      "country": "독일",
+      "country_en": "Germany",
+      "value": 46.0
+    },
+    {
+      "country": "영국",
+      "country_en": "UK",
+      "value": 44.0
+    },
+    {
+      "country": "OECD 평균",
+      "country_en": "OECD avg",
+      "value": 40.0
+    },
+    {
+      "country": "미국",
+      "country_en": "USA",
+      "value": 37.0
+    },
+    {
+      "country": "일본",
+      "country_en": "Japan",
+      "value": 36.0
+    },
+    {
+      "country": "대한민국",
+      "country_en": "South Korea",
+      "value": 28.0
+    }
+  ],
+  "tax_burden_rate_2024": [
+    {
+      "country": "덴마크",
+      "country_en": "Denmark",
+      "value": 46.3
+    },
+    {
+      "country": "프랑스",
+      "country_en": "France",
+      "value": 43.0
+    },
+    {
+      "country": "독일",
+      "country_en": "Germany",
+      "value": 37.0
+    },
+    {
+      "country": "영국",
+      "country_en": "UK",
+      "value": 33.0
+    },
+    {
+      "country": "OECD 평균",
+      "country_en": "OECD avg",
+      "value": 33.5
+    },
+    {
+      "country": "미국",
+      "country_en": "USA",
+      "value": 26.0
+    },
+    {
+      "country": "일본",
+      "country_en": "Japan",
+      "value": 31.4
+    },
+    {
+      "country": "대한민국",
+      "country_en": "South Korea",
+      "value": 21.0
+    }
+  ]
+}

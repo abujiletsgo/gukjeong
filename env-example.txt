@@ -1,0 +1,46 @@
+# Database
+DATABASE_URL=postgresql+asyncpg://gukjeong:gukjeong@localhost:5432/gukjeong
+NEON_DATABASE_URL=postgres://user:pass@ep-xxx.neon.tech/gukjeong
+
+# AI
+ANTHROPIC_API_KEY=sk-ant-xxx
+
+# Government APIs
+DATA_GO_KR_API_KEY=xxx
+ECOS_API_KEY=xxx
+ASSEMBLY_API_KEY=xxx
+LAW_API_KEY=xxx
+
+# Auth (OAuth)
+KAKAO_CLIENT_ID=xxx
+KAKAO_CLIENT_SECRET=xxx
+NAVER_CLIENT_ID=xxx
+NAVER_CLIENT_SECRET=xxx
+NEXTAUTH_SECRET=change-this-to-random-string
+NEXTAUTH_URL=http://localhost:3000
+
+# Payments
+TOSS_CLIENT_KEY=xxx
+TOSS_SECRET_KEY=xxx
+
+# Infrastructure
+REDIS_URL=redis://localhost:6379
+MEILISEARCH_URL=http://localhost:7700
+MEILISEARCH_API_KEY=masterKey
+SENTRY_DSN=
+
+# Feature Flags
+ENABLE_PAID_TIERS=false
+ENABLE_SURVEYS=false
+ENABLE_AUDIT=true
+
+# Backend
+API_HOST=0.0.0.0
+API_PORT=8000
+DEBUG=true
+CORS_ORIGINS=http://localhost:3000
+
+# Frontend (Next.js)
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_NAVER_SITE_VERIFICATION=

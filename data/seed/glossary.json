@@ -1,0 +1,202 @@
+[
+  {
+    "term": "세출",
+    "simple_explanation": "정부가 쓰는 돈",
+    "detailed_explanation": "정부가 국민을 위해 지출하는 예산의 총액",
+    "category": "재정",
+    "related_terms": [
+      "세입",
+      "예산"
+    ]
+  },
+  {
+    "term": "세입",
+    "simple_explanation": "정부가 거두는 돈",
+    "detailed_explanation": "세금, 수수료, 국채 발행 등으로 정부가 모은 수입",
+    "category": "재정",
+    "related_terms": [
+      "세출",
+      "조세"
+    ]
+  },
+  {
+    "term": "국가채무",
+    "simple_explanation": "정부가 빌린 돈의 총합",
+    "detailed_explanation": "중앙정부가 갚아야 할 빚의 총액. D1 기준으로 국채, 차입금, 국고채무 부담행위를 포함",
+    "category": "재정",
+    "related_terms": [
+      "GDP 대비 채무비율",
+      "국채"
+    ]
+  },
+  {
+    "term": "GDP",
+    "simple_explanation": "나라 경제의 크기",
+    "detailed_explanation": "국내총생산(Gross Domestic Product). 한 나라 안에서 일정 기간 동안 생산된 모든 재화와 서비스의 가치 합계",
+    "category": "경제",
+    "related_terms": [
+      "경제성장률",
+      "1인당 GDP"
+    ]
+  },
+  {
+    "term": "수의계약",
+    "simple_explanation": "경쟁 입찰 없이 특정 업체와 직접 계약",
+    "detailed_explanation": "공개 경쟁 없이 정부가 특정 업체를 선정하여 체결하는 계약. 2000만원 이하 소액 등 법정 사유가 있어야 가능",
+    "category": "조달",
+    "related_terms": [
+      "나라장터",
+      "일반경쟁"
+    ]
+  },
+  {
+    "term": "나라장터",
+    "simple_explanation": "정부 물품/용역 구매 사이트",
+    "detailed_explanation": "조달청이 운영하는 국가종합전자조달시스템(G2B). 모든 공공기관의 계약 정보가 공개됨",
+    "category": "조달",
+    "related_terms": [
+      "수의계약",
+      "조달청"
+    ]
+  },
+  {
+    "term": "본예산",
+    "simple_explanation": "연초에 확정된 원래 예산",
+    "detailed_explanation": "정기국회에서 의결된 해당 연도의 원래 예산안. 추경예산과 구분됨",
+    "category": "재정",
+    "related_terms": [
+      "추경",
+      "예산안"
+    ]
+  },
+  {
+    "term": "추경",
+    "simple_explanation": "연중에 추가로 편성하는 예산",
+    "detailed_explanation": "추가경정예산. 경제 위기, 재난 등 긴급 상황에서 본예산 외에 추가로 편성하는 예산",
+    "category": "재정",
+    "related_terms": [
+      "본예산",
+      "보정예산"
+    ]
+  },
+  {
+    "term": "집행률",
+    "simple_explanation": "배정된 예산 중 실제 사용한 비율",
+    "detailed_explanation": "승인된 예산 대비 실제 집행된 금액의 비율. 100%에 가까울수록 계획대로 사업이 진행됨을 의미",
+    "category": "재정",
+    "related_terms": [
+      "예산",
+      "결산"
+    ]
+  },
+  {
+    "term": "교부세",
+    "simple_explanation": "중앙정부가 지방정부에 나눠주는 돈",
+    "detailed_explanation": "지방교부세. 국세 수입의 일정 비율을 지방자치단체에 교부하여 재정 균형을 도모하는 제도",
+    "category": "재정",
+    "related_terms": [
+      "지방세",
+      "국고보조금"
+    ]
+  },
+  {
+    "term": "감사원",
+    "simple_explanation": "정부 지출을 감시하는 기관",
+    "detailed_explanation": "대통령 직속 헌법기관으로, 국가 세입/세출의 결산을 검사하고 공무원의 직무를 감찰",
+    "category": "기관",
+    "related_terms": [
+      "감사",
+      "시정요구"
+    ]
+  },
+  {
+    "term": "의안",
+    "simple_explanation": "국회에서 논의하는 안건",
+    "detailed_explanation": "법률안, 예산안, 결의안 등 국회에서 심의/의결하는 모든 안건",
+    "category": "국회",
+    "related_terms": [
+      "법률안",
+      "발의"
+    ]
+  },
+  {
+    "term": "대정부질문",
+    "simple_explanation": "국회의원이 장관에게 질문하는 것",
+    "detailed_explanation": "국회 본회의에서 국회의원이 국무총리, 국무위원에게 정부 정책에 대해 질문하는 제도",
+    "category": "국회",
+    "related_terms": [
+      "국정감사",
+      "본회의"
+    ]
+  },
+  {
+    "term": "국정감사",
+    "simple_explanation": "국회가 정부 부처를 점검하는 것",
+    "detailed_explanation": "매년 9-10월 국회 상임위원회가 정부 기관의 업무를 감사하는 제도. 20일간 진행",
+    "category": "국회",
+    "related_terms": [
+      "대정부질문",
+      "상임위원회"
+    ]
+  },
+  {
+    "term": "교섭단체",
+    "simple_explanation": "국회 내 20석 이상 정당 그룹",
+    "detailed_explanation": "국회에서 20명 이상의 의원이 소속된 정당이 구성하는 단체. 원내대표 지정 등 의사운영 권한을 가짐",
+    "category": "국회",
+    "related_terms": [
+      "원내대표",
+      "상임위원회"
+    ]
+  },
+  {
+    "term": "조세부담률",
+    "simple_explanation": "GDP 대비 세금 비율",
+    "detailed_explanation": "조세수입을 GDP로 나눈 비율. 국민이 소득의 몇 %를 세금으로 내는지를 보여주는 지표",
+    "category": "재정",
+    "related_terms": [
+      "국민부담률",
+      "GDP"
+    ]
+  },
+  {
+    "term": "재정건전성",
+    "simple_explanation": "정부 살림살이의 건강 상태",
+    "detailed_explanation": "정부의 수입/지출 균형, 채무 수준 등을 종합적으로 평가한 재정 상태",
+    "category": "재정",
+    "related_terms": [
+      "국가채무",
+      "재정적자"
+    ]
+  },
+  {
+    "term": "프레임",
+    "simple_explanation": "같은 사실을 다른 관점에서 해석하는 것",
+    "detailed_explanation": "미디어가 같은 뉴스를 보도할 때 사용하는 해석의 틀. 어떤 측면을 강조하느냐에 따라 독자의 인식이 달라짐",
+    "category": "미디어",
+    "related_terms": [
+      "보도",
+      "논조"
+    ]
+  },
+  {
+    "term": "숙의",
+    "simple_explanation": "정보를 본 후 깊이 생각해서 판단하는 것",
+    "detailed_explanation": "일반 시민이 전문 정보와 다양한 의견을 접한 후 숙고하여 의사결정에 참여하는 민주주의 방식",
+    "category": "참여",
+    "related_terms": [
+      "숙의 민주주의",
+      "시민 참여"
+    ]
+  },
+  {
+    "term": "K-익명성",
+    "simple_explanation": "개인 식별을 막기 위한 최소 그룹 크기",
+    "detailed_explanation": "데이터에서 개인을 식별할 수 없도록 최소 K명 이상이 같은 그룹에 속하도록 보장하는 프라이버시 기법",
+    "category": "프라이버시",
+    "related_terms": [
+      "익명화",
+      "개인정보"
+    ]
+  }
+]

@@ -1,0 +1,226 @@
+[
+  {
+    "id": "chosun",
+    "name": "조선일보",
+    "type": "newspaper",
+    "spectrum_score": 4.5,
+    "category": "conservative",
+    "rss_url": "https://www.chosun.com/arc/outboundfeeds/rss/",
+    "website_url": "https://www.chosun.com",
+    "founded_year": 1920
+  },
+  {
+    "id": "joongang",
+    "name": "중앙일보",
+    "type": "newspaper",
+    "spectrum_score": 3.8,
+    "category": "conservative",
+    "rss_url": "https://rss.joins.com/joins_news_list.xml",
+    "website_url": "https://www.joongang.co.kr",
+    "founded_year": 1965
+  },
+  {
+    "id": "donga",
+    "name": "동아일보",
+    "type": "newspaper",
+    "spectrum_score": 4.0,
+    "category": "conservative",
+    "rss_url": "https://rss.donga.com/total.xml",
+    "website_url": "https://www.donga.com",
+    "founded_year": 1920
+  },
+  {
+    "id": "hankyoreh",
+    "name": "한겨레",
+    "type": "newspaper",
+    "spectrum_score": 1.2,
+    "category": "progressive",
+    "rss_url": "https://www.hani.co.kr/rss/",
+    "website_url": "https://www.hani.co.kr",
+    "founded_year": 1988
+  },
+  {
+    "id": "khan",
+    "name": "경향신문",
+    "type": "newspaper",
+    "spectrum_score": 1.5,
+    "category": "progressive",
+    "rss_url": "https://www.khan.co.kr/rss/rssdata/total_news.xml",
+    "website_url": "https://www.khan.co.kr",
+    "founded_year": 1946
+  },
+  {
+    "id": "hankookilbo",
+    "name": "한국일보",
+    "type": "newspaper",
+    "spectrum_score": 2.8,
+    "category": "center",
+    "website_url": "https://www.hankookilbo.com",
+    "founded_year": 1954
+  },
+  {
+    "id": "seoul",
+    "name": "서울신문",
+    "type": "newspaper",
+    "spectrum_score": 3.0,
+    "category": "center",
+    "website_url": "https://www.seoul.co.kr",
+    "founded_year": 1904
+  },
+  {
+    "id": "munhwa",
+    "name": "문화일보",
+    "type": "newspaper",
+    "spectrum_score": 4.3,
+    "category": "conservative",
+    "website_url": "https://www.munhwa.com",
+    "founded_year": 1991
+  },
+  {
+    "id": "hankyung",
+    "name": "한국경제",
+    "type": "newspaper",
+    "spectrum_score": 4.2,
+    "category": "conservative",
+    "rss_url": "https://rss.hankyung.com/feed/",
+    "website_url": "https://www.hankyung.com",
+    "founded_year": 1964
+  },
+  {
+    "id": "mk",
+    "name": "매일경제",
+    "type": "newspaper",
+    "spectrum_score": 3.5,
+    "category": "center-right",
+    "website_url": "https://www.mk.co.kr",
+    "founded_year": 1966
+  },
+  {
+    "id": "kbs",
+    "name": "KBS",
+    "type": "broadcast",
+    "spectrum_score": 3.0,
+    "category": "center",
+    "website_url": "https://news.kbs.co.kr",
+    "founded_year": 1927
+  },
+  {
+    "id": "mbc",
+    "name": "MBC",
+    "type": "broadcast",
+    "spectrum_score": 1.8,
+    "category": "progressive",
+    "website_url": "https://imnews.imbc.com",
+    "founded_year": 1961
+  },
+  {
+    "id": "sbs",
+    "name": "SBS",
+    "type": "broadcast",
+    "spectrum_score": 2.8,
+    "category": "center",
+    "website_url": "https://news.sbs.co.kr",
+    "founded_year": 1990
+  },
+  {
+    "id": "jtbc",
+    "name": "JTBC",
+    "type": "broadcast",
+    "spectrum_score": 2.2,
+    "category": "center-left",
+    "website_url": "https://news.jtbc.co.kr",
+    "founded_year": 2011
+  },
+  {
+    "id": "tvchosun",
+    "name": "TV조선",
+    "type": "broadcast",
+    "spectrum_score": 4.8,
+    "category": "strong conservative",
+    "website_url": "https://news.tvchosun.com",
+    "founded_year": 2011
+  },
+  {
+    "id": "channela",
+    "name": "채널A",
+    "type": "broadcast",
+    "spectrum_score": 4.0,
+    "category": "conservative",
+    "website_url": "https://www.channela.com",
+    "founded_year": 2011
+  },
+  {
+    "id": "mbn",
+    "name": "MBN",
+    "type": "broadcast",
+    "spectrum_score": 3.3,
+    "category": "center-right",
+    "website_url": "https://www.mbn.co.kr",
+    "founded_year": 1993
+  },
+  {
+    "id": "ytn",
+    "name": "YTN",
+    "type": "broadcast",
+    "spectrum_score": 2.8,
+    "category": "center",
+    "website_url": "https://www.ytn.co.kr",
+    "founded_year": 1993
+  },
+  {
+    "id": "yonhap",
+    "name": "연합뉴스",
+    "type": "broadcast",
+    "spectrum_score": 3.0,
+    "category": "center",
+    "website_url": "https://www.yna.co.kr",
+    "founded_year": 1980,
+    "description": "국가기간통신사"
+  },
+  {
+    "id": "ohmynews",
+    "name": "오마이뉴스",
+    "type": "online",
+    "spectrum_score": 1.3,
+    "category": "progressive",
+    "website_url": "https://www.ohmynews.com",
+    "founded_year": 2000
+  },
+  {
+    "id": "pressian",
+    "name": "프레시안",
+    "type": "online",
+    "spectrum_score": 1.0,
+    "category": "strong progressive",
+    "website_url": "https://www.pressian.com",
+    "founded_year": 2001
+  },
+  {
+    "id": "newstapa",
+    "name": "뉴스타파",
+    "type": "online",
+    "spectrum_score": 1.2,
+    "category": "progressive",
+    "website_url": "https://newstapa.org",
+    "founded_year": 2012,
+    "description": "탐사보도 전문"
+  },
+  {
+    "id": "mediatoday",
+    "name": "미디어오늘",
+    "type": "online",
+    "spectrum_score": 1.3,
+    "category": "progressive",
+    "website_url": "https://www.mediatoday.co.kr",
+    "founded_year": 1999
+  },
+  {
+    "id": "newdaily",
+    "name": "뉴데일리",
+    "type": "online",
+    "spectrum_score": 4.8,
+    "category": "strong conservative",
+    "website_url": "https://www.newdaily.co.kr",
+    "founded_year": 2008
+  }
+]
