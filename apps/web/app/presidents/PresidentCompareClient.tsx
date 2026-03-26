@@ -80,7 +80,10 @@ function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
 
 // ── Component ──────────────────────────────────────────
 export default function PresidentCompareClient({ metrics, fiscalData }: PresidentCompareClientProps) {
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(metrics.map(m => m.id)));
+  // 최근 4명만 기본 선택 (최대 4명 비교)
+  const MAX_COMPARE = 4;
+  const recentFour = metrics.slice(-MAX_COMPARE).map(m => m.id);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(recentFour));
   const [group, setGroup] = useState<MetricGroup>('economy');
   const [activeMetricIdx, setActiveMetricIdx] = useState(0);
 
@@ -145,14 +148,14 @@ export default function PresidentCompareClient({ metrics, fiscalData }: Presiden
       const next = new Set(prev);
       if (next.has(id)) {
         if (next.size > 2) next.delete(id);
-      } else {
+      } else if (next.size < MAX_COMPARE) {
         next.add(id);
       }
       return next;
     });
   };
-  const selectAll = () => setSelectedIds(new Set(metrics.map(m => m.id)));
-  const deselectAll = () => setSelectedIds(new Set(metrics.slice(0, 2).map(m => m.id)));
+  const selectRecent = () => setSelectedIds(new Set(recentFour));
+  const deselectAll = () => setSelectedIds(new Set(metrics.slice(-2).map(m => m.id)));
 
   // ── Render ──
   return (
@@ -160,10 +163,10 @@ export default function PresidentCompareClient({ metrics, fiscalData }: Presiden
       {/* A. President Selector Bar */}
       <div className="card p-4">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <span className="text-sm font-medium text-gray-600">비교 대상 선택 (2~8명)</span>
+          <span className="text-sm font-medium text-gray-600">비교 대상 선택 (최대 {MAX_COMPARE}명)</span>
           <div className="flex gap-2">
-            <button onClick={selectAll} className="text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
-              전체 선택
+            <button onClick={selectRecent} className="text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+              최근 4명
             </button>
             <button onClick={deselectAll} className="text-xs px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
               전체 해제

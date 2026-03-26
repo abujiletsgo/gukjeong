@@ -61,3 +61,18 @@
   apps/web/app/bills/[id]/page.tsx                   |  44 +-
   apps/web/app/bills/page.tsx                        |  13 +-
   ... and 25 more files
+
+## 2026-03-26 (08:08 UTC) · @Tom Kwon
+**Commit:** feat: In-depth citizen explanations for all president data + expandable UI (de450b4) by Tom Kwon
+**Changed:**
+  .claude/MEMORY.md                                  |  30 +
+  apps/web/.claude/MEMORY.md                         |  30 +
+  apps/web/.gitignore                                |   1 +
+  .../app/presidents/[id]/PresidentDetailClient.tsx  |   6 +
+  apps/web/components/presidents/AgendaProgress.tsx  |  84 ++-
+  apps/web/components/presidents/PledgeCard.tsx      |  87 ++-
+  apps/web/components/timeline/PolicyTimeline.tsx    | 150 ++++-
+  apps/web/lib/data.ts                               | 625 ++++++++++++++++-----
+  apps/web/lib/types.ts                              |  18 +
+  apps/web/tsconfig.tsbuildinfo                      |   2 +-
+  ... and 1 more files

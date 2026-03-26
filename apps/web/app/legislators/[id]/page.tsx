@@ -1,30 +1,29 @@
 import type { Metadata } from 'next';
+import { getLegislatorById, getLegislators } from '@/lib/data';
+import LegislatorDetailClient from './LegislatorDetailClient';
+import Link from 'next/link';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const legislator = getLegislatorById(id);
   return {
-    title: `국회의원 상세 성적표`,
-    description: `국회의원의 출석률, 법안 발의, 발언, 투표 기록 및 말과 행동 일치도를 분석합니다.`,
-    openGraph: {
-      title: `국회의원 성적표 | 국정투명`,
-      description: `공개 데이터 기반 국회의원 종합 평가`,
-    },
+    title: legislator ? `${legislator.name} 의원 성적표` : '국회의원 성적표',
+    description: legislator ? `${legislator.name} 의원의 활동 점수, 출석률, 말행일치도 분석` : '국회의원 성적표',
   };
 }
 
-export default function LegislatorDetailPage({ params }: { params: { id: string } }) {
-  return (
-    <div className="container-page py-8">
-      <h1 className="section-title">국회의원 상세 성적표</h1>
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="card">
-          <h2 className="font-bold text-lg mb-4">활동 점수</h2>
-          <p className="text-gray-400">레이더 차트 (출석, 발의, 발언, 투표) 준비 중</p>
-        </div>
-        <div className="card">
-          <h2 className="font-bold text-lg mb-4">말과 행동</h2>
-          <p className="text-gray-400">WordsVsActions 컴포넌트 준비 중</p>
-        </div>
+export default async function LegislatorDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const legislator = getLegislatorById(id);
+  const allLegislators = getLegislators();
+
+  if (!legislator) {
+    return (
+      <div className="container-page py-8">
+        <Link href="/legislators" className="text-accent hover:underline">&larr; 국회의원 목록</Link>
+        <p className="mt-8 text-gray-400">의원 정보를 찾을 수 없습니다.</p>
       </div>
-    </div>
-  );
+    );
+  }
+  return <LegislatorDetailClient legislator={legislator} allLegislators={allLegislators} />;
 }

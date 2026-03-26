@@ -68,14 +68,37 @@ export interface Bill {
 export interface Legislator {
   id: string;
   name: string;
+  name_en?: string;
   party?: string;
   district?: string;
+  region?: string;
+  elected_count?: number;         // 당선 횟수
+  committee?: string;             // 소속 위원회
+  // 성과 지표
   attendance_rate?: number;
   vote_participation_rate?: number;
   pledge_fulfillment_rate?: number;
   ai_activity_score?: number;
   consistency_score?: number;
   bills_proposed_count?: number;
+  bills_passed_count?: number;
+  speech_count?: number;          // 본회의 발언 수
+  asset_total?: number;           // 재산 총액 (억원)
+  // 말과 행동 분석
+  consistency_details?: ConsistencyItem[];
+  // 프로필
+  photo_url?: string;
+  age?: number;
+  gender?: string;
+  career_summary?: string;        // 약력 요약
+}
+
+export interface ConsistencyItem {
+  topic: string;
+  speech_stance: string;          // 발언에서의 입장
+  vote_stance: string;            // 실제 투표
+  is_consistent: boolean;
+  explanation?: string;
 }
 
 export interface AuditFlag {
