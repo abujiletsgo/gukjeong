@@ -120,7 +120,8 @@ export interface AuditFlag {
   innocent_explanation?: string;  // 비리가 아닐 수 있는 합리적 이유
   citizen_impact?: string;        // 세금이 어떻게 낭비될 수 있는지
   what_should_happen?: string;    // 어떤 조치가 필요한지
-  real_case_example?: string;     // 실제 유사 감사원 적발 사례
+  real_case_example?: string;     // 요약 (기존 호환)
+  similar_cases?: SimilarCase[];   // 상세 유사 사례 목록
   // 관련 링크
   related_links?: AuditLink[];
   // 관련 계약 정보
@@ -129,18 +130,42 @@ export interface AuditFlag {
   timeline?: AuditTimelineItem[];
 }
 
+export interface SimilarCase {
+  title: string;              // e.g., "2019년 한국도로공사 연말 밀어내기"
+  year: number;
+  source: string;             // e.g., "감사원 감사결과보고서"
+  department: string;
+  summary: string;            // 2-3 sentences
+  amount_involved: string;    // e.g., "287억원"
+  outcome: string;            // 어떤 조치가 내려졌는지
+  current_status: string;     // 현재 상태
+}
+
 export interface AuditLink {
   title: string;
   url: string;
-  source: string;  // e.g., '나라장터', '감사원', '국회'
+  source: string;
 }
 
 export interface AuditContract {
   title: string;
-  amount: number;         // 원
+  amount: number;            // 원
   vendor: string;
   date: string;
-  method: string;         // 일반경쟁, 수의계약 등
+  method: string;            // 일반경쟁, 수의계약, 제한경쟁 등
+  // 프로세스 상세
+  approver?: string;         // 승인자 직위
+  competitors?: ContractBid[];  // 경쟁 입찰 현황 (경쟁입찰인 경우)
+  justification?: string;    // 수의계약 사유 (수의계약인 경우)
+  budget_code?: string;      // 예산 항목 코드
+  execution_period?: string; // 계약 이행 기간
+}
+
+export interface ContractBid {
+  vendor: string;
+  bid_amount: number;    // 입찰 금액
+  selected: boolean;     // 낙찰 여부
+  note?: string;         // 비고 (e.g., "최저가", "기술평가 1위")
 }
 
 export interface AuditTimelineItem {

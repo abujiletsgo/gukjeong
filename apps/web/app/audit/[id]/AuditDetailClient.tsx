@@ -1,6 +1,7 @@
 'use client';
 // 감사 플래그 상세 — 클라이언트 컴포넌트
-import type { AuditFlag, AuditContract, AuditTimelineItem, AuditLink } from '@/lib/types';
+import { useState } from 'react';
+import type { AuditFlag, AuditContract, AuditTimelineItem, AuditLink, SimilarCase, ContractBid } from '@/lib/types';
 import { getSeverityColor, getSeverityLabel, formatKRW } from '@/lib/utils';
 import PatternBadge from '@/components/audit/PatternBadge';
 import ScoreBar from '@/components/common/ScoreBar';
@@ -69,7 +70,21 @@ function getSourceColor(source: string): string {
   return 'bg-gray-100 text-gray-700';
 }
 
+// 유사 사례 outcome 심각도 색상 (left border)
+function getOutcomeBorderColor(outcome: string): string {
+  if (outcome.includes('징계') || outcome.includes('고발') || outcome.includes('수사') || outcome.includes('기소'))
+    return 'border-l-red-500';
+  if (outcome.includes('시정') || outcome.includes('주의') || outcome.includes('경고') || outcome.includes('개선'))
+    return 'border-l-amber-500';
+  if (outcome.includes('환수') || outcome.includes('반환'))
+    return 'border-l-orange-500';
+  return 'border-l-gray-400';
+}
+
 export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
+  const [expandedContract, setExpandedContract] = useState<number | null>(null);
+  const [expandedCase, setExpandedCase] = useState<number | null>(0); // first case expanded by default
+
   const score = flag.suspicion_score;
   const patternType = flag.pattern_type;
   const targetId = flag.target_id || '';
@@ -89,8 +104,19 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const citizenImpact = flag.citizen_impact || '';
   const whatShouldHappen = flag.what_should_happen || '';
   const realCaseExample = flag.real_case_example || '';
+  const similarCases = flag.similar_cases || [];
 
   const contractTotal = contracts.reduce((sum, c) => sum + c.amount, 0);
+
+  // 입찰 스프레드 분석: 모든 입찰가가 5% 이내면 의심
+  function isBidSpreadSuspicious(competitors: ContractBid[]): boolean {
+    if (competitors.length < 2) return false;
+    const amounts = competitors.map(c => c.bid_amount);
+    const min = Math.min(...amounts);
+    const max = Math.max(...amounts);
+    if (min === 0) return false;
+    return ((max - min) / min) * 100 < 5;
+  }
 
   return (
     <div className="container-page py-6 sm:py-8">
@@ -304,7 +330,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
             )}
           </div>
 
-          {/* 관련 계약 */}
+          {/* ═══ 관련 계약 (Expandable) ═══ */}
           {contracts.length > 0 && (
             <div className="card">
               <div className="flex items-center justify-between mb-4">
@@ -313,34 +339,165 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
               </div>
 
               <div className="space-y-3">
-                {contracts.map((c, i) => (
-                  <div key={i} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h4 className="text-sm font-semibold text-gray-800 flex-1">{c.title}</h4>
-                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${getMethodColor(c.method)}`}>
-                        {c.method}
-                      </span>
+                {contracts.map((c, i) => {
+                  const isExpanded = expandedContract === i;
+                  const isSuui = c.method.includes('수의');
+                  const isCompetitive = c.method.includes('경쟁') || c.method.includes('제한');
+                  const hasCompetitors = (c.competitors?.length ?? 0) > 0;
+
+                  return (
+                    <div key={i} className="bg-gray-50 rounded-lg border border-gray-100 overflow-hidden">
+                      {/* Compact row (always visible, clickable) */}
+                      <button
+                        type="button"
+                        onClick={() => setExpandedContract(isExpanded ? null : i)}
+                        className="w-full text-left p-4 hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="flex items-start justify-between gap-3 mb-2">
+                          <h4 className="text-sm font-semibold text-gray-800 flex-1">{c.title}</h4>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${getMethodColor(c.method)}`}>
+                              {c.method}
+                            </span>
+                            <svg
+                              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                              fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                          <div>
+                            <span className="text-gray-400">금액</span>
+                            <p className="font-bold text-gray-900">{formatKRW(c.amount)}</p>
+                          </div>
+                          <div>
+                            <span className="text-gray-400">업체</span>
+                            <p className="text-gray-700 font-medium">{c.vendor}</p>
+                          </div>
+                          <div>
+                            <span className="text-gray-400">계약일</span>
+                            <p className="text-gray-700">{c.date.replace(/-/g, '.')}</p>
+                          </div>
+                          <div>
+                            <span className="text-gray-400">원가</span>
+                            <p className="text-gray-700">{c.amount.toLocaleString('ko-KR')}원</p>
+                          </div>
+                        </div>
+                      </button>
+
+                      {/* Expanded detail */}
+                      {isExpanded && (
+                        <div className="border-t border-gray-200 px-4 pb-4 pt-3 space-y-3">
+                          {/* 기본 상세 */}
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                            {c.approver && (
+                              <div>
+                                <span className="text-gray-400 block">승인</span>
+                                <p className="text-gray-800 font-medium">{c.approver}</p>
+                              </div>
+                            )}
+                            {c.budget_code && (
+                              <div>
+                                <span className="text-gray-400 block">예산 항목</span>
+                                <p className="text-gray-800 font-mono text-[11px]">{c.budget_code}</p>
+                              </div>
+                            )}
+                            {c.execution_period && (
+                              <div>
+                                <span className="text-gray-400 block">이행 기간</span>
+                                <p className="text-gray-800">{c.execution_period}</p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* 수의계약 사유 */}
+                          {isSuui && (
+                            <div>
+                              {c.justification && (
+                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                                  <h5 className="text-xs font-bold text-amber-800 mb-1">수의계약 사유</h5>
+                                  <p className="text-xs text-amber-700 leading-relaxed">{c.justification}</p>
+                                </div>
+                              )}
+                              <p className="text-[10px] text-gray-400 mt-2">
+                                수의계약은 경쟁 입찰 없이 특정 업체와 직접 계약하는 방식입니다
+                              </p>
+                            </div>
+                          )}
+
+                          {/* 경쟁입찰 / 제한경쟁 — 입찰 현황 */}
+                          {isCompetitive && hasCompetitors && c.competitors && (
+                            <div>
+                              <h5 className="text-xs font-bold text-gray-700 mb-2">입찰 현황</h5>
+                              <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                  <thead>
+                                    <tr className="border-b border-gray-200">
+                                      <th className="text-left py-1.5 pr-3 text-gray-500 font-semibold">업체명</th>
+                                      <th className="text-right py-1.5 pr-3 text-gray-500 font-semibold">입찰 금액</th>
+                                      <th className="text-center py-1.5 pr-3 text-gray-500 font-semibold">결과</th>
+                                      <th className="text-left py-1.5 text-gray-500 font-semibold">비고</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {c.competitors.map((bid, bi) => (
+                                      <tr
+                                        key={bi}
+                                        className={`border-b border-gray-50 ${bid.selected ? 'bg-green-50' : ''}`}
+                                      >
+                                        <td className={`py-1.5 pr-3 ${bid.selected ? 'font-bold text-green-800' : 'text-gray-700'}`}>
+                                          {bid.vendor}
+                                          {bid.selected && (
+                                            <span className="ml-1.5 inline-block text-[9px] px-1.5 py-0.5 rounded bg-green-200 text-green-800 font-semibold">낙찰</span>
+                                          )}
+                                        </td>
+                                        <td className="text-right py-1.5 pr-3 text-gray-800 font-medium">
+                                          {formatKRW(bid.bid_amount)}
+                                        </td>
+                                        <td className="text-center py-1.5 pr-3">
+                                          {bid.selected ? (
+                                            <span className="text-green-700 font-semibold">선정</span>
+                                          ) : (
+                                            <span className="text-gray-400">탈락</span>
+                                          )}
+                                        </td>
+                                        <td className="py-1.5 text-gray-500">{bid.note || '-'}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              {/* 가격 차이 분석 */}
+                              {c.competitors.length >= 2 && (() => {
+                                const amounts = c.competitors!.map(b => b.bid_amount);
+                                const min = Math.min(...amounts);
+                                const max = Math.max(...amounts);
+                                const spread = min > 0 ? ((max - min) / min) * 100 : 0;
+                                const suspicious = isBidSpreadSuspicious(c.competitors!);
+                                return (
+                                  <div className={`mt-2 text-[11px] px-3 py-2 rounded-lg ${suspicious ? 'bg-red-50 border border-red-200' : 'bg-gray-50'}`}>
+                                    <span className="text-gray-500">최저가-최고가 차이: </span>
+                                    <span className={`font-bold ${suspicious ? 'text-red-700' : 'text-gray-700'}`}>
+                                      {formatKRW(max - min)} ({spread.toFixed(1)}%)
+                                    </span>
+                                    {suspicious && (
+                                      <p className="text-red-600 mt-1 font-medium">
+                                        모든 입찰가가 5% 이내로 매우 유사합니다. 입찰 담합 가능성을 검토할 필요가 있습니다.
+                                      </p>
+                                    )}
+                                  </div>
+                                );
+                              })()}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                      <div>
-                        <span className="text-gray-400">금액</span>
-                        <p className="font-bold text-gray-900">{formatKRW(c.amount)}</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-400">업체</span>
-                        <p className="text-gray-700 font-medium">{c.vendor}</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-400">계약일</span>
-                        <p className="text-gray-700">{c.date.replace(/-/g, '.')}</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-400">원가</span>
-                        <p className="text-gray-700">{c.amount.toLocaleString('ko-KR')}원</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* 합계 */}
@@ -511,8 +668,96 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
         </div>
       )}
 
-      {/* ═══ 7. 유사 사례 ═══ */}
-      {realCaseExample && (
+      {/* ═══ 7. 유사 감사 사례 (Similar Cases) ═══ */}
+      {similarCases.length > 0 ? (
+        <div className="card mt-6">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="font-bold text-lg">유사 감사 사례</h2>
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">
+              {similarCases.length}건
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {similarCases.map((sc, i) => {
+              const isCaseExpanded = expandedCase === i;
+              return (
+                <div
+                  key={i}
+                  className={`border-l-4 ${getOutcomeBorderColor(sc.outcome)} rounded-r-lg border border-gray-100 overflow-hidden bg-white`}
+                >
+                  {/* Collapsed header (always visible) */}
+                  <button
+                    type="button"
+                    onClick={() => setExpandedCase(isCaseExpanded ? null : i)}
+                    className="w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-700">
+                            {sc.year}
+                          </span>
+                          <h4 className="text-sm font-bold text-gray-800 truncate">{sc.title}</h4>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">
+                            {sc.amount_involved}
+                          </span>
+                        </div>
+                      </div>
+                      <svg
+                        className={`w-4 h-4 text-gray-400 transition-transform duration-200 flex-shrink-0 mt-1 ${isCaseExpanded ? 'rotate-180' : ''}`}
+                        fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </div>
+                  </button>
+
+                  {/* Expanded detail */}
+                  {isCaseExpanded && (
+                    <div className="border-t border-gray-100 px-4 pb-4 pt-3 space-y-3">
+                      {/* Source + Department */}
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="italic text-gray-500">{sc.source}</span>
+                        <span className="text-gray-300">|</span>
+                        <span className="text-gray-600">{sc.department}</span>
+                      </div>
+
+                      {/* Summary */}
+                      <p className="text-sm text-gray-700 leading-relaxed">{sc.summary}</p>
+
+                      {/* Amount chip */}
+                      <div className="inline-block">
+                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200">
+                          관련 금액: {sc.amount_involved}
+                        </span>
+                      </div>
+
+                      {/* Outcome */}
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                        <h5 className="text-xs font-bold text-gray-600 mb-1">조치 결과</h5>
+                        <p className="text-sm text-gray-800 leading-relaxed">{sc.outcome}</p>
+                      </div>
+
+                      {/* Current status */}
+                      <p className="text-xs text-gray-500">
+                        <span className="font-semibold text-gray-600">현재 상태:</span> {sc.current_status}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="text-[10px] text-gray-400 mt-3">
+            실제 감사원에서 적발한 유사 패턴의 사례입니다. 본 건과 직접적 관련은 없으며, 패턴의 위험성을 이해하기 위한 참고 자료입니다.
+          </p>
+        </div>
+      ) : realCaseExample ? (
+        /* Fallback: 기존 real_case_example */
         <div className="card mt-6">
           <div className="flex items-center gap-2 mb-4">
             <h2 className="font-bold text-lg">유사 사례</h2>
@@ -525,7 +770,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
             실제 감사원에서 적발한 유사 패턴의 사례입니다. 본 건과 직접적 관련은 없으며, 패턴의 위험성을 이해하기 위한 참고 자료입니다.
           </p>
         </div>
-      )}
+      ) : null}
 
       {/* ═══ 8. 관련 정보 (메타) ═══ */}
       <div className="card mt-6">
