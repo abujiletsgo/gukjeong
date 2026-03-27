@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getBills } from '@/lib/data';
+
+// ISR: 법안 데이터는 6시간마다 재생성
+export const revalidate = 21600;
 import BillsPageClient from './BillsPageClient';
 
 export const metadata: Metadata = {

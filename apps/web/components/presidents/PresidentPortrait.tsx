@@ -1,6 +1,7 @@
 'use client';
 // 대통령 초상화 — 실제 사진 + SVG 폴백
 import { useState } from 'react';
+import Image from 'next/image';
 import { getPresidentColor, getPresidentBgColor } from '@/lib/utils';
 
 interface PresidentPortraitProps {
@@ -198,13 +199,14 @@ export default function PresidentPortrait({ id, name, party, size = 64, classNam
         className={`rounded-full overflow-hidden flex-shrink-0 ${className}`}
         style={{ width: size, height: size, boxShadow: `0 0 0 2px ${accentColor}` }}
       >
-        <img
+        <Image
           src={imgSrc}
           alt={`${name} 대통령 초상화`}
           width={size}
           height={size}
           className="w-full h-full object-cover object-top"
           onError={() => setImgError(true)}
+          priority={size >= 80}
         />
       </div>
     );

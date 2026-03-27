@@ -24,5 +24,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...presidentPages];
+  // 예산 분야 페이지
+  const sectorSlugs = [
+    'health-welfare', 'education', 'defense', 'general-admin',
+    'industry-energy', 'rd', 'public-safety', 'soc',
+    'agriculture', 'environment', 'culture-sports',
+  ];
+  const sectorPages = sectorSlugs.map((slug) => ({
+    url: `${baseUrl}/budget/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...presidentPages, ...sectorPages];
 }

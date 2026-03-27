@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getDepartmentScores, getAuditFlags } from '@/lib/data';
+
+// ISR: 감사 데이터는 6시간마다 재생성
+export const revalidate = 21600;
 import AuditPageClient from './AuditPageClient';
 
 export const metadata: Metadata = {

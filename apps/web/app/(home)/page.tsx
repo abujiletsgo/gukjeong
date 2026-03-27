@@ -1,4 +1,7 @@
 import { getPresidents, getFiscalData, getDepartmentScores, getAuditFlags, getBills, getNewsEvents, getMediaOutlets, getLegislators } from '@/lib/data';
+
+// ISR: 홈페이지는 1시간마다 재생성
+export const revalidate = 3600;
 import Sparkline from '@/components/charts/Sparkline';
 import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 

@@ -1,6 +1,13 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
 
+// Pretendard 폰트 최적화
+// 프로덕션에서는 next/font/local 사용 권장:
+//   1. public/fonts/PretendardVariable.woff2 다운로드
+//      https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/woff2/PretendardVariable.woff2
+//   2. layout.tsx에서 localFont({ src: '../public/fonts/PretendardVariable.woff2', ... }) 사용
+// 현재: preconnect + CDN 폴백 사용 (폰트 파일 설치 전까지)
+
 export const metadata: Metadata = {
   title: {
     default: '국정투명 — 수치로 보는 대한민국 정부',
@@ -112,6 +119,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* Pretendard 폰트 — CDN 폴백 (next/font/local 마이그레이션 시 제거) */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdApp) }}
@@ -128,7 +141,7 @@ export default function RootLayout({
             <a href="/" className="text-xl font-bold tracking-tight">
               국정투명
             </a>
-            <nav className="hidden md:flex items-center gap-6 text-sm">
+            <nav className="hidden md:flex items-center gap-6 text-sm" aria-label="주요 메뉴">
               <a href="/presidents" className="hover:text-accent transition-colors">대통령</a>
               <a href="/budget" className="hover:text-accent transition-colors">예산</a>
               <a href="/bills" className="hover:text-accent transition-colors">법안</a>
@@ -136,13 +149,13 @@ export default function RootLayout({
               <a href="/audit" className="hover:text-accent transition-colors">AI 감사</a>
               <a href="/news" className="hover:text-accent transition-colors">뉴스</a>
             </nav>
-            <a href="/search" className="text-gray-300 hover:text-white flex items-center gap-1.5 text-sm">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <a href="/search" className="text-gray-300 hover:text-white flex items-center gap-1.5 text-sm" aria-label="검색">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
               <span className="hidden sm:inline">검색</span>
             </a>
           </div>
           {/* 모바일 하단 네비게이션 */}
-          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-header border-t border-gray-700 z-50">
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-header border-t border-gray-700 z-50" aria-label="모바일 메뉴">
             <div className="flex justify-around py-2.5">
               <a href="/" className="flex flex-col items-center gap-0.5 text-[10px] text-gray-400">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h4v-6h6v6h4V10"/></svg>

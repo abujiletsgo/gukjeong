@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import { getAuditFlagById, getAuditFlags } from '@/lib/data';
 import AuditDetailClient from './AuditDetailClient';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const flag = getAuditFlagById(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const flag = getAuditFlagById(id);
   if (!flag) {
     return { title: '감사 플래그를 찾을 수 없습니다' };
   }
@@ -24,8 +25,9 @@ export function generateStaticParams() {
   return getAuditFlags().map(f => ({ id: f.id }));
 }
 
-export default function AuditDetailPage({ params }: { params: { id: string } }) {
-  const flag = getAuditFlagById(params.id);
+export default async function AuditDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const flag = getAuditFlagById(id);
   if (!flag) {
     notFound();
   }

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 
-export async function generateMetadata({ params }: { params: { region: string } }): Promise<Metadata> {
-  const decodedRegion = decodeURIComponent(params.region);
+export async function generateMetadata({ params }: { params: Promise<{ region: string }> }): Promise<Metadata> {
+  const { region } = await params;
+  const decodedRegion = decodeURIComponent(region);
   return {
     title: `지방정부 — ${decodedRegion}`,
     description: `${decodedRegion} 지방정부의 예산, 계약, 투명성 지표를 확인하세요.`,
@@ -12,10 +13,11 @@ export async function generateMetadata({ params }: { params: { region: string } 
   };
 }
 
-export default function LocalPage({ params }: { params: { region: string } }) {
+export default async function LocalPage({ params }: { params: Promise<{ region: string }> }) {
+  const { region } = await params;
   return (
     <div className="container-page py-8">
-      <h1 className="section-title">지방정부 — {params.region}</h1>
+      <h1 className="section-title">지방정부 — {region}</h1>
       <div className="card">
         <p className="text-gray-400 text-center py-12">지방정부 데이터 준비 중</p>
       </div>

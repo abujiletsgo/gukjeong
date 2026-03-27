@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getFiscalData, getSectorData, getSankeyData } from '@/lib/data';
+
+// ISR: 예산 데이터는 1일마다 재생성
+export const revalidate = 86400;
 import BudgetPageClient from './BudgetPageClient';
 
 export const metadata: Metadata = {

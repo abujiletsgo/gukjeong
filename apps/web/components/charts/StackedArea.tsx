@@ -96,6 +96,8 @@ export default function StackedArea({
             stroke={SECTOR_COLORS[key] || DEFAULT_COLORS[i % DEFAULT_COLORS.length]}
             fill={SECTOR_COLORS[key] || DEFAULT_COLORS[i % DEFAULT_COLORS.length]}
             fillOpacity={0.6}
+            animationDuration={1000}
+            animationEasing="ease-out"
           />
         ))}
       </AreaChart>

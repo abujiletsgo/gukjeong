@@ -111,6 +111,8 @@ export default function DebtChart({ data, height = 400 }: DebtChartProps) {
           fill="#3b82f6"
           fillOpacity={0.7}
           radius={[2, 2, 0, 0]}
+          animationDuration={1000}
+          animationEasing="ease-out"
         />
         <Line
           yAxisId="right"
@@ -120,6 +122,8 @@ export default function DebtChart({ data, height = 400 }: DebtChartProps) {
           strokeWidth={2}
           dot={{ r: 2 }}
           connectNulls
+          animationDuration={1200}
+          animationEasing="ease-out"
         />
       </ComposedChart>
     </ResponsiveContainer>
