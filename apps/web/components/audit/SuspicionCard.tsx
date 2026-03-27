@@ -85,7 +85,7 @@ export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
 
       {/* 자세히 보기 링크 */}
       <div className="mt-3 text-right">
-        <span className="text-xs text-blue-500 group-hover:text-blue-700 font-medium transition-colors">
+        <span className="text-xs text-accent group-hover:text-accent/80 font-medium transition-colors">
           자세히 보기 &rarr;
         </span>
       </div>

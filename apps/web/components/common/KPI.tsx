@@ -13,8 +13,8 @@ interface KPIProps {
 
 export default function KPI({ label, value, change, trend, source, icon, className = '' }: KPIProps) {
   const trendColor =
-    trend === 'up' ? 'text-red-500' :
-    trend === 'down' ? 'text-green-600' :
+    trend === 'up' ? 'text-rose-600' :
+    trend === 'down' ? 'text-emerald-600' :
     'text-gray-500';
 
   const trendArrow =

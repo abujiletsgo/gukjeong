@@ -17,15 +17,15 @@ import type {
 /* ------------------------------------------------------------------ */
 
 const STATUS_COLOR: Record<string, string> = {
-  '가결': 'bg-green-100 text-green-800 border-green-200',
+  '가결': 'bg-emerald-100 text-emerald-800 border-emerald-200',
   '계류': 'bg-amber-100 text-amber-800 border-amber-200',
-  '폐기': 'bg-red-100 text-red-800 border-red-200',
+  '폐기': 'bg-rose-100 text-rose-800 border-rose-200',
 };
 
 const STATUS_DOT: Record<string, string> = {
-  '가결': 'bg-green-500',
+  '가결': 'bg-emerald-500',
   '계류': 'bg-amber-500',
-  '폐기': 'bg-red-500',
+  '폐기': 'bg-rose-500',
 };
 
 const PARTY_COLORS: Record<string, string> = {
@@ -43,8 +43,8 @@ function getPartyColor(party?: string): string {
 }
 
 const STANCE_STYLE: Record<string, { bg: string; text: string; border: string }> = {
-  '찬성': { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
-  '반대': { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+  '찬성': { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+  '반대': { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200' },
   '조건부 찬성': { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
 };
 
@@ -163,7 +163,7 @@ function VoteDonutChart({ vote }: { vote: BillVoteResult }) {
 
   const segments: { label: string; value: number; color: string; tailwind: string }[] = [
     { label: '찬성', value: yes, color: '#22c55e', tailwind: 'bg-green-500' },
-    { label: '반대', value: no, color: '#ef4444', tailwind: 'bg-red-500' },
+    { label: '반대', value: no, color: '#e11d48', tailwind: 'bg-rose-500' },
     { label: '기권', value: abstain, color: '#f59e0b', tailwind: 'bg-amber-500' },
     { label: '불참', value: absent, color: '#94a3b8', tailwind: 'bg-gray-400' },
   ];
@@ -304,7 +304,7 @@ function BillStatusFlow({ bill }: { bill: Bill }) {
         const isFuture = i > currentIdx;
 
         const dotColor =
-          isCurrent && stage.key === '폐기' ? 'bg-red-500 ring-red-100' :
+          isCurrent && stage.key === '폐기' ? 'bg-rose-500 ring-rose-100' :
           isCurrent && stage.key === '가결' ? 'bg-green-500 ring-green-100' :
           isCurrent ? 'bg-amber-500 ring-amber-100' :
           isPast ? 'bg-green-500' :
@@ -450,7 +450,7 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
             </span>
           )}
           {bill.committee && (
-            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
               <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
@@ -636,7 +636,7 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
           }
           badge={
             <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-              controversyScore >= 70 ? 'bg-red-100 text-red-700' :
+              controversyScore >= 70 ? 'bg-rose-100 text-rose-700' :
               controversyScore >= 40 ? 'bg-amber-100 text-amber-700' :
               'bg-green-100 text-green-700'
             }`}>
@@ -668,24 +668,24 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
           {(bill.controversy_detail?.approval_reasons?.length || bill.controversy_detail?.disapproval_reasons?.length) && (
             <div className="grid sm:grid-cols-2 gap-4 mt-4">
               {/* 찬성 */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-blue-700 mb-2">찬성 이유</p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                <p className="text-sm font-semibold text-emerald-700 mb-2">찬성 이유</p>
                 <ul className="space-y-1.5">
                   {(bill.controversy_detail?.approval_reasons ?? []).map((r, i) => (
-                    <li key={i} className="text-sm text-blue-800 flex gap-2">
-                      <span className="text-blue-400 shrink-0">+</span>
+                    <li key={i} className="text-sm text-emerald-800 flex gap-2">
+                      <span className="text-emerald-400 shrink-0">+</span>
                       <span>{r}</span>
                     </li>
                   ))}
                 </ul>
               </div>
               {/* 반대 */}
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-red-700 mb-2">반대 이유</p>
+              <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
+                <p className="text-sm font-semibold text-rose-700 mb-2">반대 이유</p>
                 <ul className="space-y-1.5">
                   {(bill.controversy_detail?.disapproval_reasons ?? []).map((r, i) => (
-                    <li key={i} className="text-sm text-red-800 flex gap-2">
-                      <span className="text-red-400 shrink-0">-</span>
+                    <li key={i} className="text-sm text-rose-800 flex gap-2">
+                      <span className="text-rose-400 shrink-0">-</span>
                       <span>{r}</span>
                     </li>
                   ))}
@@ -779,7 +779,7 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
                     <div
                       key={i}
                       className={`rounded-lg border border-gray-200 p-3 text-center${
-                        cs.legislator_id ? ' hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group' : ''
+                        cs.legislator_id ? ' hover:border-gray-400 hover:shadow-md transition-all cursor-pointer group' : ''
                       }`}
                       style={{ borderTopWidth: '3px', borderTopColor: getPartyColor(cs.party) }}
                     >
@@ -796,7 +796,7 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
                         </span>
                       )}
                       {cs.legislator_id && (
-                        <p className="text-xs text-blue-500 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                        <p className="text-xs text-accent mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
                           <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -877,8 +877,8 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
               const isLast = i === bill.bill_timeline!.length - 1;
               const isFirst = i === 0;
               const dotColor = isLast
-                ? bill.status === '가결' ? 'bg-green-500' : bill.status === '폐기' ? 'bg-red-500' : 'bg-amber-500'
-                : isFirst ? 'bg-blue-500' : 'bg-gray-400';
+                ? bill.status === '가결' ? 'bg-emerald-500' : bill.status === '폐기' ? 'bg-rose-500' : 'bg-amber-500'
+                : isFirst ? 'bg-gray-500' : 'bg-gray-400';
 
               return (
                 <div key={i} className="relative pb-5 last:pb-0">

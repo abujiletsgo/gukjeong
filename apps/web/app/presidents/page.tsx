@@ -50,8 +50,8 @@ export default function PresidentsPage() {
       {/* 페이지 헤더 */}
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.5"><path d="M3 21V7l9-5 9 5v14"/><path d="M9 21V12h6v9"/><circle cx="12" cy="4" r="1" fill="#2563eb"/></svg>
+          <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="1.5"><path d="M3 21V7l9-5 9 5v14"/><path d="M9 21V12h6v9"/><circle cx="12" cy="4" r="1" fill="#6b7280"/></svg>
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -113,7 +113,7 @@ export default function PresidentsPage() {
                   </td>
                   <td className="py-3 px-2 text-right">
                     {p.spendingGrowth
-                      ? <span className={p.spendingGrowth > 50 ? 'text-red-500' : 'text-gray-600'}>
+                      ? <span className={p.spendingGrowth > 50 ? 'text-rose-600' : 'text-gray-600'}>
                           +{p.spendingGrowth.toFixed(0)}%
                         </span>
                       : <span className="text-gray-400">-</span>
@@ -121,7 +121,7 @@ export default function PresidentsPage() {
                   </td>
                   <td className="py-3 px-2 text-right">
                     {p.debtGrowth
-                      ? <span className={p.debtGrowth > 50 ? 'text-red-500' : 'text-gray-600'}>
+                      ? <span className={p.debtGrowth > 50 ? 'text-rose-600' : 'text-gray-600'}>
                           +{p.debtGrowth.toFixed(0)}%
                         </span>
                       : <span className="text-gray-400">-</span>

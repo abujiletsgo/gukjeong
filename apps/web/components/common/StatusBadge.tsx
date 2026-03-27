@@ -10,7 +10,7 @@ const statusStyles: Record<string, string> = {
   'detected': 'bg-yellow-50 text-yellow-700 border-yellow-200',
   'active': 'bg-green-50 text-green-700 border-green-200',
   'closed': 'bg-gray-50 text-gray-700 border-gray-200',
-  'pending': 'bg-blue-50 text-blue-700 border-blue-200',
+  'pending': 'bg-amber-50 text-amber-700 border-amber-200',
   'draft': 'bg-gray-50 text-gray-500 border-gray-200',
   'submitted': 'bg-purple-50 text-purple-700 border-purple-200',
 };

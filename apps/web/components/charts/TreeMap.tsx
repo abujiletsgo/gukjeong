@@ -101,7 +101,7 @@ function CustomTooltip({ active, payload }: any) {
         <p className="text-gray-600">비중: <span className="font-medium">{item.percentage?.toFixed(1)}%</span></p>
       )}
       {item.yoy_change != null && (
-        <p className={item.yoy_change >= 0 ? 'text-red-500' : 'text-blue-500'}>
+        <p className={item.yoy_change >= 0 ? 'text-rose-600' : 'text-emerald-600'}>
           전년 대비: <span className="font-medium">{item.yoy_change >= 0 ? '+' : ''}{item.yoy_change?.toFixed(1)}%</span>
         </p>
       )}

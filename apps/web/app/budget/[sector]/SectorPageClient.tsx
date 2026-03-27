@@ -69,8 +69,8 @@ export default function SectorPageClient({ sector }: SectorPageClientProps) {
           <span
             className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${
               sector.yoy_change >= 0
-                ? 'bg-red-50 text-red-600'
-                : 'bg-blue-50 text-blue-600'
+                ? 'bg-rose-50 text-rose-600'
+                : 'bg-emerald-50 text-emerald-600'
             }`}
           >
             전년 대비 {sector.yoy_change >= 0 ? '+' : ''}{sector.yoy_change.toFixed(1)}%

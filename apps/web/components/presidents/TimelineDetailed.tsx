@@ -10,8 +10,8 @@ interface TimelineDetailedProps {
 
 const IMPACT_COLORS: Record<string, { dot: string; bg: string; border: string; label: string }> = {
   positive: { dot: '#22c55e', bg: 'bg-green-50', border: 'border-green-200', label: '긍정' },
-  negative: { dot: '#ef4444', bg: 'bg-red-50', border: 'border-red-200', label: '부정' },
-  neutral: { dot: '#3b82f6', bg: 'bg-blue-50', border: 'border-blue-200', label: '중립' },
+  negative: { dot: '#e11d48', bg: 'bg-rose-50', border: 'border-rose-200', label: '부정' },
+  neutral: { dot: '#6b7280', bg: 'bg-gray-50', border: 'border-gray-200', label: '중립' },
 };
 
 const CATEGORIES = ['전체', '경제', '외교', '사회', '정치', '기타'] as const;

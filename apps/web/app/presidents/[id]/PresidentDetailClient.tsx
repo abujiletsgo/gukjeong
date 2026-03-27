@@ -197,7 +197,7 @@ export default function PresidentDetailClient({
                 </span>
               </div>
               {president.note && (
-                <div className="mt-2 text-xs text-red-500 bg-red-50 px-2 py-1 rounded inline-block font-medium">
+                <div className="mt-2 text-xs text-rose-600 bg-rose-50 px-2 py-1 rounded inline-block font-medium">
                   {president.note}
                 </div>
               )}
@@ -310,9 +310,9 @@ export default function PresidentDetailClient({
                   <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
                     <div className="flex-shrink-0 mt-0.5">
                       <span className={`inline-block w-2 h-2 rounded-full ${
-                        policy.status === '완료' ? 'bg-green-500' :
-                        policy.status === '진행중' || policy.status === '추진중' ? 'bg-blue-500' :
-                        policy.status === '중단' ? 'bg-red-500' :
+                        policy.status === '완료' ? 'bg-emerald-500' :
+                        policy.status === '진행중' || policy.status === '추진중' ? 'bg-amber-500' :
+                        policy.status === '중단' ? 'bg-rose-500' :
                         'bg-yellow-500'
                       }`} />
                     </div>
@@ -326,9 +326,9 @@ export default function PresidentDetailClient({
                           {policy.category}
                         </span>
                         <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                          policy.status === '완료' ? 'bg-green-100 text-green-700' :
-                          policy.status === '진행중' || policy.status === '추진중' ? 'bg-blue-100 text-blue-700' :
-                          policy.status === '중단' ? 'bg-red-100 text-red-700' :
+                          policy.status === '완료' ? 'bg-emerald-100 text-emerald-700' :
+                          policy.status === '진행중' || policy.status === '추진중' ? 'bg-amber-100 text-amber-700' :
+                          policy.status === '중단' ? 'bg-rose-100 text-rose-700' :
                           'bg-yellow-100 text-yellow-700'
                         }`}>
                           {policy.status}

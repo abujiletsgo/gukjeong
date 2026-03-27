@@ -28,9 +28,9 @@ export function getStatusColor(status: string): string {
 export function getStatusBgClass(status: string): string {
   switch (status) {
     case '이행완료': return 'bg-green-100 text-green-700';
-    case '추진중': return 'bg-blue-100 text-blue-700';
+    case '추진중': return 'bg-amber-100 text-amber-700';
     case '일부이행': return 'bg-yellow-100 text-yellow-700';
-    case '미이행': return 'bg-red-100 text-red-700';
+    case '미이행': return 'bg-rose-100 text-rose-700';
     case '폐기': return 'bg-gray-100 text-gray-600';
     case '보류': return 'bg-purple-100 text-purple-700';
     default: return 'bg-gray-100 text-gray-600';

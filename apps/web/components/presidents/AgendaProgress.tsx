@@ -192,7 +192,7 @@ export default function AgendaProgress({ agendas }: AgendaProgressProps) {
           <div className="text-xs text-gray-500">완료</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-blue-600">{avgCompletion}%</div>
+          <div className="text-2xl font-bold text-gray-700">{avgCompletion}%</div>
           <div className="text-xs text-gray-500">평균 이행률</div>
         </div>
       </div>

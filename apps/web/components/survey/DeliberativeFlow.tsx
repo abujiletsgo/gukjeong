@@ -7,8 +7,8 @@ export default function DeliberativeFlow({ surveyId }: { surveyId: string }) {
         <h3 className="font-bold">1단계: 사전 의견</h3>
         <p className="text-gray-400 text-sm mt-2">설문 문항 준비 중</p>
       </div>
-      <div className="card bg-blue-50">
-        <h3 className="font-bold text-blue-700">데이터 패널</h3>
+      <div className="card bg-gray-50">
+        <h3 className="font-bold text-gray-700">데이터 패널</h3>
         <p className="text-gray-600 text-sm mt-2">관련 데이터를 살펴보세요</p>
       </div>
       <div className="card">

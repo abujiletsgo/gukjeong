@@ -44,10 +44,10 @@ export default function BeforeAfterCard({ metric }: BeforeAfterCardProps) {
         {metric.grade && (
           <span className={`text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center ${
             metric.grade === 'A' ? 'bg-green-100 text-green-700' :
-            metric.grade === 'B' ? 'bg-blue-100 text-blue-700' :
+            metric.grade === 'B' ? 'bg-emerald-100 text-emerald-700' :
             metric.grade === 'C' ? 'bg-yellow-100 text-yellow-700' :
             metric.grade === 'D' ? 'bg-orange-100 text-orange-700' :
-            'bg-red-100 text-red-700'
+            'bg-rose-100 text-rose-700'
           }`}>
             {metric.grade}
           </span>

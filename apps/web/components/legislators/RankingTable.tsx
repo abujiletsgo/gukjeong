@@ -48,7 +48,7 @@ export default function LegislatorGrid({
                   {l.name.charAt(0)}
                 </div>
                 <div className="min-w-0">
-                  <span className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 group-hover:text-accent transition-colors text-sm sm:text-base">
                     {l.name}
                   </span>
                   <span

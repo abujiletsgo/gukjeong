@@ -122,7 +122,7 @@ export default function PledgeCard({ pledge }: PledgeCardProps) {
               <span className="text-[11px] font-medium text-gray-400 block mb-1">관련 법안</span>
               <div className="flex flex-wrap gap-1.5">
                 {pledge.related_bills.map((bill, i) => (
-                  <span key={i} className="text-[11px] px-2 py-1 bg-blue-50 text-blue-600 rounded">
+                  <span key={i} className="text-[11px] px-2 py-1 bg-gray-100 text-gray-600 rounded">
                     {bill}
                   </span>
                 ))}

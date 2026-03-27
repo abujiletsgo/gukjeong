@@ -162,7 +162,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                   </span>
                 )}
                 {event.article_count != null && (
-                  <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">
+                  <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
                     기사 {event.article_count.toLocaleString()}건
                   </span>
                 )}

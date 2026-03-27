@@ -56,8 +56,8 @@ export default function AuditPageClient({
       {/* 페이지 헤더 */}
       <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+          <div className="w-10 h-10 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI 감사관</h1>
@@ -124,7 +124,7 @@ export default function AuditPageClient({
             <span>41-60 주의</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-red-500" />
+            <div className="w-3 h-3 rounded bg-rose-500" />
             <span>61-80 경고</span>
           </div>
           <div className="flex items-center gap-1.5">

@@ -106,7 +106,7 @@ export default function NewsCluster({ coverage }: NewsClusterProps) {
                           href={article.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-sm text-gray-800 leading-snug hover:text-blue-700 transition-colors"
+                          className="block text-sm text-gray-800 leading-snug hover:text-accent transition-colors"
                         >
                           {article.headline}
                         </a>

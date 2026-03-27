@@ -138,3 +138,16 @@
   apps/web/package.json                      |   18 +-
   package-lock.json                          | 2863 +++++++++++++++-------------
   4 files changed, 1536 insertions(+), 1575 deletions(-)
+
+## 2026-03-27 (03:45 UTC) · @Tom Kwon
+**Commit:** feat: 국제 비교 + 지방자치단체 pages, fact-checked data (c1d9a50) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md                 |   9 +
+  apps/web/app/compare/ComparePageClient.tsx | 390 +++++++++++++++++++++++
+  apps/web/app/compare/page.tsx              |  18 +-
+  apps/web/app/local/[region]/page.tsx       | 329 +++++++++++++++++++-
+  apps/web/app/local/page.tsx                | 313 +++++++++++++++++++
+  apps/web/lib/data.ts                       | 479 ++++++++++++++++++++++++++++-
+  apps/web/lib/types.ts                      |  37 +++
+  apps/web/tsconfig.tsbuildinfo              |   2 +-
+  8 files changed, 1555 insertions(+), 22 deletions(-)

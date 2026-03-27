@@ -57,7 +57,7 @@ function getPartyLightBg(party: string): string {
 
 function getExtinctionBadgeStyle(risk: string): string {
   switch (risk) {
-    case '심각': return 'bg-red-100 text-red-800 border-red-200';
+    case '심각': return 'bg-rose-100 text-rose-800 border-rose-200';
     case '위험': return 'bg-orange-100 text-orange-800 border-orange-200';
     case '주의': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
     case '관심': return 'bg-gray-100 text-gray-700 border-gray-200';
@@ -233,10 +233,7 @@ export default async function LocalRegionPage({ params }: { params: Promise<{ re
           {gov.key_issues.map((issue, i) => (
             <div
               key={i}
-              className={`card ${getPartyLightBg(gov.governor_party)} border-l-4 ${
-                gov.governor_party === '더불어민주당' ? 'border-blue-400' :
-                gov.governor_party === '국민의힘' ? 'border-red-400' : 'border-gray-400'
-              }`}
+              className="card bg-gray-50 border-l-4 border-gray-300"
             >
               <div className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
@@ -272,14 +269,14 @@ export default async function LocalRegionPage({ params }: { params: Promise<{ re
                       key={g.id}
                       className={`
                         border-b border-gray-50 transition-colors
-                        ${isCurrent ? 'bg-blue-50/60 font-semibold' : 'hover:bg-gray-50'}
+                        ${isCurrent ? 'bg-gray-100 font-semibold' : 'hover:bg-gray-50'}
                       `}
                     >
                       <td className="py-2 px-2">
                         {isCurrent ? (
                           <span className="text-gray-900">{g.name_short}</span>
                         ) : (
-                          <Link href={`/local/${g.id}`} className="text-gray-700 hover:text-blue-600 transition-colors">
+                          <Link href={`/local/${g.id}`} className="text-gray-700 hover:text-accent transition-colors">
                             {g.name_short}
                           </Link>
                         )}

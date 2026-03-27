@@ -307,7 +307,7 @@ function ExternalLink({ href, children }: { href: string; children: React.ReactN
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+      className="inline-flex items-center gap-1 text-xs text-accent hover:text-accent/80 hover:underline"
     >
       {children}
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
@@ -380,7 +380,7 @@ function ExpandableList<T>({
       {hasMore && !showAll && (
         <button
           onClick={() => setShowAll(true)}
-          className="mt-3 text-sm text-blue-600 hover:text-blue-800 hover:underline font-medium"
+          className="mt-3 text-sm text-accent hover:text-accent/80 hover:underline font-medium"
         >
           더 보기 ({items.length - initialCount}건 더)
         </button>
@@ -400,8 +400,8 @@ function ExpandableList<T>({
 // ── Status badge for bills ──
 function BillStatusBadge({ status }: { status: string }) {
   let cls = 'bg-gray-100 text-gray-600';
-  if (status === '가결') cls = 'bg-green-100 text-green-700';
-  else if (status === '폐기') cls = 'bg-red-100 text-red-700';
+  if (status === '가결') cls = 'bg-emerald-100 text-emerald-700';
+  else if (status === '폐기') cls = 'bg-rose-100 text-rose-700';
   else if (status.includes('심사') || status.includes('계류') || status.includes('상정')) cls = 'bg-amber-100 text-amber-700';
   return (
     <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-medium ${cls}`}>
@@ -679,7 +679,7 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
                       {session.type}
                     </span>
                   </div>
-                  <span className={`text-sm font-medium ${session.attended ? 'text-green-600' : 'text-red-500'}`}>
+                  <span className={`text-sm font-medium ${session.attended ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {session.attended ? '\u2713 출석' : '\u2717 결석'}
                   </span>
                 </div>
@@ -738,7 +738,7 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
                       {bill.linkedBillId ? (
                         <Link
                           href={`/bills/${bill.linkedBillId}`}
-                          className="text-sm font-medium text-blue-700 hover:text-blue-900 hover:underline"
+                          className="text-sm font-medium text-accent hover:text-accent/80 hover:underline"
                         >
                           {bill.title}
                         </Link>
@@ -844,8 +844,8 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
               items={voteItems}
               initialCount={10}
               renderItem={(vote, i) => {
-                let voteCls = 'text-green-600';
-                if (vote.vote === '반대') voteCls = 'text-red-500';
+                let voteCls = 'text-emerald-600';
+                if (vote.vote === '반대') voteCls = 'text-rose-600';
                 else if (vote.vote === '기권') voteCls = 'text-gray-400';
 
                 return (
@@ -857,7 +857,7 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
                       {vote.linkedBillId ? (
                         <Link
                           href={`/bills/${vote.linkedBillId}`}
-                          className="text-sm font-medium text-blue-700 hover:text-blue-900 hover:underline"
+                          className="text-sm font-medium text-accent hover:text-accent/80 hover:underline"
                         >
                           {vote.billTitle}
                         </Link>

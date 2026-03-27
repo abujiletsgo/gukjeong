@@ -85,8 +85,8 @@ function VoteIcon() {
 
 function voteResultStyle(result?: string): string {
   if (!result) return 'bg-gray-100 text-gray-600';
-  if (result.includes('찬성')) return 'bg-blue-100 text-blue-700 border border-blue-200';
-  if (result.includes('반대')) return 'bg-red-100 text-red-700 border border-red-200';
+  if (result.includes('찬성')) return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+  if (result.includes('반대')) return 'bg-rose-100 text-rose-700 border border-rose-200';
   if (result.includes('기권')) return 'bg-gray-100 text-gray-600 border border-gray-200';
   if (result.includes('불참')) return 'bg-gray-200 text-gray-700 border border-gray-300';
   return 'bg-gray-100 text-gray-600';
@@ -152,8 +152,8 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
               <span
                 className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${
                   consistent
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-rose-50 text-rose-700 border border-rose-200'
                 }`}
               >
                 {consistent ? '일치' : '불일치'}
@@ -189,8 +189,8 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                 {/* Two columns on desktop, stacked on mobile */}
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-0 md:gap-4 mt-3">
                   {/* Left: speech record */}
-                  <div className="rounded-lg bg-blue-50/70 border border-blue-100 p-4">
-                    <div className="flex items-center gap-1.5 text-blue-700 font-semibold text-sm mb-3">
+                  <div className="rounded-lg bg-gray-50 border border-gray-200 p-4">
+                    <div className="flex items-center gap-1.5 text-gray-700 font-semibold text-sm mb-3">
                       <SpeechIcon />
                       발언 기록
                     </div>
@@ -198,7 +198,7 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                     {/* Speech date */}
                     {item.speech_date && (
                       <div className="mb-2">
-                        <span className="inline-block bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded">
+                        <span className="inline-block bg-gray-200 text-gray-700 text-xs font-medium px-2 py-0.5 rounded">
                           {item.speech_date}
                         </span>
                       </div>
@@ -216,14 +216,14 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
 
                     {/* Speech quote */}
                     {item.speech_quote && (
-                      <blockquote className="relative bg-blue-100/60 border-l-4 border-blue-300 rounded-r-lg px-3 py-2.5 my-2">
-                        <span className="absolute -top-1 left-1 text-blue-300 text-2xl leading-none select-none">
+                      <blockquote className="relative bg-gray-100 border-l-4 border-gray-300 rounded-r-lg px-3 py-2.5 my-2">
+                        <span className="absolute -top-1 left-1 text-gray-300 text-2xl leading-none select-none">
                           &#x300C;
                         </span>
                         <p className="text-sm text-gray-800 leading-relaxed pl-3 pr-1">
                           {item.speech_quote}
                         </p>
-                        <span className="absolute -bottom-1 right-2 text-blue-300 text-2xl leading-none select-none">
+                        <span className="absolute -bottom-1 right-2 text-gray-300 text-2xl leading-none select-none">
                           &#x300D;
                         </span>
                       </blockquote>
@@ -235,7 +235,7 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                         href={OPEN_ASSEMBLY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                        className="inline-flex items-center text-xs text-accent hover:text-accent/80 hover:underline font-medium"
                       >
                         발언 원문 확인
                         <ExternalLinkIcon />
@@ -247,22 +247,22 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                   <div className="hidden md:flex flex-col items-center justify-center py-4 min-w-[48px]">
                     {consistent ? (
                       <>
-                        <div className="w-0.5 flex-1 bg-green-300" />
-                        <div className="w-8 h-8 rounded-full bg-green-100 border-2 border-green-300 flex items-center justify-center my-1">
-                          <span className="text-green-600 text-sm font-bold">&#10003;</span>
+                        <div className="w-0.5 flex-1 bg-emerald-300" />
+                        <div className="w-8 h-8 rounded-full bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center my-1">
+                          <span className="text-emerald-600 text-sm font-bold">&#10003;</span>
                         </div>
-                        <div className="w-0.5 flex-1 bg-green-300" />
+                        <div className="w-0.5 flex-1 bg-emerald-300" />
                       </>
                     ) : (
                       <>
-                        <div className="w-0.5 flex-1 border-l-2 border-dashed border-red-300" />
-                        <div className="w-8 h-8 rounded-full bg-red-100 border-2 border-red-300 flex items-center justify-center my-1">
-                          <span className="text-red-600 text-sm font-bold">&#10007;</span>
+                        <div className="w-0.5 flex-1 border-l-2 border-dashed border-rose-300" />
+                        <div className="w-8 h-8 rounded-full bg-rose-100 border-2 border-rose-300 flex items-center justify-center my-1">
+                          <span className="text-rose-600 text-sm font-bold">&#10007;</span>
                         </div>
-                        <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded mt-1">
+                        <span className="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded mt-1">
                           불일치
                         </span>
-                        <div className="w-0.5 flex-1 border-l-2 border-dashed border-red-300" />
+                        <div className="w-0.5 flex-1 border-l-2 border-dashed border-rose-300" />
                       </>
                     )}
                   </div>
@@ -272,29 +272,29 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                     <div
                       className={`flex-1 h-0.5 ${
                         consistent
-                          ? 'bg-green-300'
-                          : 'border-t-2 border-dashed border-red-300'
+                          ? 'bg-emerald-300'
+                          : 'border-t-2 border-dashed border-rose-300'
                       }`}
                     />
                     <div
                       className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold ${
                         consistent
-                          ? 'bg-green-100 border-2 border-green-300 text-green-600'
-                          : 'bg-red-100 border-2 border-red-300 text-red-600'
+                          ? 'bg-emerald-100 border-2 border-emerald-300 text-emerald-600'
+                          : 'bg-rose-100 border-2 border-rose-300 text-rose-600'
                       }`}
                     >
                       {consistent ? '\u2713' : '\u2717'}
                     </div>
                     {!consistent && (
-                      <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-1.5 py-0.5 rounded">
                         불일치
                       </span>
                     )}
                     <div
                       className={`flex-1 h-0.5 ${
                         consistent
-                          ? 'bg-green-300'
-                          : 'border-t-2 border-dashed border-red-300'
+                          ? 'bg-emerald-300'
+                          : 'border-t-2 border-dashed border-rose-300'
                       }`}
                     />
                   </div>
@@ -303,13 +303,13 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                   <div
                     className={`rounded-lg border p-4 ${
                       consistent
-                        ? 'bg-green-50/70 border-green-100'
-                        : 'bg-red-50/40 border-red-100'
+                        ? 'bg-emerald-50/70 border-emerald-100'
+                        : 'bg-rose-50/40 border-rose-100'
                     }`}
                   >
                     <div
                       className={`flex items-center gap-1.5 font-semibold text-sm mb-3 ${
-                        consistent ? 'text-green-700' : 'text-red-700'
+                        consistent ? 'text-emerald-700' : 'text-rose-700'
                       }`}
                     >
                       <VoteIcon />
@@ -322,8 +322,8 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                         <span
                           className={`inline-block text-xs font-medium px-2 py-0.5 rounded ${
                             consistent
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-red-100 text-red-700'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-rose-100 text-rose-700'
                           }`}
                         >
                           {item.vote_date}
@@ -371,8 +371,8 @@ export default function WordsVsActions({ items, partyColor }: WordsVsActionsProp
                         rel="noopener noreferrer"
                         className={`inline-flex items-center text-xs hover:underline font-medium ${
                           consistent
-                            ? 'text-green-600 hover:text-green-800'
-                            : 'text-red-600 hover:text-red-800'
+                            ? 'text-emerald-600 hover:text-emerald-800'
+                            : 'text-rose-600 hover:text-rose-800'
                         }`}
                       >
                         투표 기록 확인

@@ -252,7 +252,7 @@ export default function PresidentCompareClient({ metrics, fiscalData }: Presiden
             // Color bar by quality
             const isBest = idx === 0;
             const isWorst = idx === sorted.length - 1;
-            const barBg = isBest ? 'bg-emerald-100' : isWorst ? 'bg-red-50' : 'bg-gray-50';
+            const barBg = isBest ? 'bg-emerald-100' : isWorst ? 'bg-rose-50' : 'bg-gray-50';
 
             return (
               <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg ${barBg} transition-colors`}>
@@ -320,12 +320,12 @@ export default function PresidentCompareClient({ metrics, fiscalData }: Presiden
                 <div className="flex items-center gap-1.5">
                   <div>
                     <p className="text-xs font-semibold text-gray-800 text-right">{r.worst.name}</p>
-                    <p className="text-[10px] text-red-500 font-mono text-right">
+                    <p className="text-[10px] text-rose-600 font-mono text-right">
                       {typeof r.worstVal === 'number' ? (Number.isInteger(r.worstVal) ? r.worstVal : r.worstVal.toFixed(1)) : r.worstVal}{r.unit}
                     </p>
                   </div>
                   <PresidentPortrait id={r.worst.id} name={r.worst.name} party={r.worst.party} size={22} />
-                  <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center text-[10px] text-red-500 font-bold">
+                  <div className="w-5 h-5 rounded-full bg-rose-100 flex items-center justify-center text-[10px] text-rose-600 font-bold">
                     {selected.length}
                   </div>
                 </div>

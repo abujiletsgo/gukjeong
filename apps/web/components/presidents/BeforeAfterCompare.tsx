@@ -14,7 +14,7 @@ function getChangeColor(trend: 'improved' | 'worsened' | 'stable'): string {
 
 function getChangeBg(trend: 'improved' | 'worsened' | 'stable'): string {
   if (trend === 'improved') return 'bg-green-50 border-green-200';
-  if (trend === 'worsened') return 'bg-red-50 border-red-200';
+  if (trend === 'worsened') return 'bg-rose-50 border-rose-200';
   return 'bg-gray-50 border-gray-200';
 }
 

@@ -19,10 +19,10 @@ function getTrendArrow(trend: string): { icon: string; color: string } {
 function getGradeBg(grade: string | undefined): string {
   switch (grade) {
     case 'A': return 'bg-green-100 text-green-700';
-    case 'B': return 'bg-blue-100 text-blue-700';
+    case 'B': return 'bg-emerald-100 text-emerald-700';
     case 'C': return 'bg-yellow-100 text-yellow-700';
     case 'D': return 'bg-orange-100 text-orange-700';
-    case 'F': return 'bg-red-100 text-red-700';
+    case 'F': return 'bg-rose-100 text-rose-700';
     default: return 'bg-gray-100 text-gray-600';
   }
 }
@@ -73,7 +73,7 @@ export default function MetricComparisonRow({ metric }: MetricComparisonRowProps
               <span className="text-gray-300">→</span>
               <div className="text-center min-w-[40px]">
                 <div className="text-gray-400 text-[9px]">목표</div>
-                <div className="font-medium text-blue-600">{formatValue(metric.target_value, metric.unit)}</div>
+                <div className="font-medium text-gray-600">{formatValue(metric.target_value, metric.unit)}</div>
               </div>
             </>
           )}

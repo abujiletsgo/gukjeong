@@ -34,7 +34,7 @@ const patternDescriptions: Record<string, string> = {
 
 // 계약 방법 라벨 색상
 function getMethodColor(method: string): string {
-  if (method.includes('수의')) return 'bg-red-100 text-red-700';
+  if (method.includes('수의')) return 'bg-rose-100 text-rose-700';
   if (method.includes('일반')) return 'bg-green-100 text-green-700';
   if (method.includes('제한')) return 'bg-amber-100 text-amber-700';
   return 'bg-gray-100 text-gray-700';
@@ -43,7 +43,7 @@ function getMethodColor(method: string): string {
 // 타임라인 도트 색상
 function getTimelineDotColor(type: AuditTimelineItem['type']): string {
   switch (type) {
-    case 'detection': return 'bg-red-500';
+    case 'detection': return 'bg-rose-500';
     case 'investigation': return 'bg-amber-500';
     case 'resolution': return 'bg-green-500';
     case 'info':
@@ -53,7 +53,7 @@ function getTimelineDotColor(type: AuditTimelineItem['type']): string {
 
 function getTimelineDotRing(type: AuditTimelineItem['type']): string {
   switch (type) {
-    case 'detection': return 'ring-red-100';
+    case 'detection': return 'ring-rose-100';
     case 'investigation': return 'ring-amber-100';
     case 'resolution': return 'ring-green-100';
     case 'info':
@@ -63,8 +63,8 @@ function getTimelineDotRing(type: AuditTimelineItem['type']): string {
 
 // 출처 뱃지 색상
 function getSourceColor(source: string): string {
-  if (source.includes('나라장터') || source.includes('조달청')) return 'bg-blue-100 text-blue-700';
-  if (source.includes('감사원')) return 'bg-red-100 text-red-700';
+  if (source.includes('나라장터') || source.includes('조달청')) return 'bg-gray-100 text-gray-700';
+  if (source.includes('감사원')) return 'bg-rose-100 text-rose-700';
   if (source.includes('국회')) return 'bg-purple-100 text-purple-700';
   if (source.includes('기획재정부') || source.includes('재정')) return 'bg-emerald-100 text-emerald-700';
   return 'bg-gray-100 text-gray-700';
@@ -186,9 +186,9 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
       {/* ═══ 2. "쉽게 말하면" Section ═══ */}
       {(plainExplanation || whyItMatters || citizenImpact) && (
         <div className="card mb-6 p-0 overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-5 sm:px-6 py-4">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-5 sm:px-6 py-4">
             <h2 className="text-white font-bold text-lg">쉽게 말하면</h2>
-            <p className="text-blue-100 text-xs mt-0.5">복잡한 감사 데이터를 알기 쉽게 설명합니다</p>
+            <p className="text-gray-300 text-xs mt-0.5">복잡한 감사 데이터를 알기 쉽게 설명합니다</p>
           </div>
           <div className="p-5 sm:p-6 space-y-5">
             {/* 쉬운 설명 */}
@@ -228,14 +228,14 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
 
             {/* 내 세금은? */}
             {citizenImpact && (
-              <div className="bg-red-50 border border-red-100 rounded-lg p-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-lg">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-lg">
                     <span aria-hidden="true">&#x20A9;</span>
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-red-800 mb-1">내 세금은?</h3>
-                    <p className="text-sm text-red-700 leading-relaxed">{citizenImpact}</p>
+                    <h3 className="text-sm font-bold text-amber-800 mb-1">내 세금은?</h3>
+                    <p className="text-sm text-amber-700 leading-relaxed">{citizenImpact}</p>
                   </div>
                 </div>
               </div>
@@ -316,13 +316,13 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
 
             {/* 기준 초과 */}
             {evidence && typeof evidence === 'object' && Object.keys(evidence).length > 0 && (
-              <div className="mt-4 bg-red-50 rounded-lg p-4">
-                <h3 className="font-semibold text-sm text-red-700 mb-2">기준 초과</h3>
+              <div className="mt-4 bg-rose-50 rounded-lg p-4">
+                <h3 className="font-semibold text-sm text-rose-700 mb-2">기준 초과</h3>
                 <div className="space-y-1">
                   {Object.entries(evidence).map(([key, value]) => (
                     <div key={key} className="flex justify-between text-xs">
-                      <span className="text-red-600">{formatKeyLabel(key)}</span>
-                      <span className="font-medium text-red-800">
+                      <span className="text-rose-600">{formatKeyLabel(key)}</span>
+                      <span className="font-medium text-rose-800">
                         {typeof value === 'number' ? formatNumber(value, key) : String(value)}
                       </span>
                     </div>
@@ -480,13 +480,13 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                                 const spread = min > 0 ? ((max - min) / min) * 100 : 0;
                                 const suspicious = isBidSpreadSuspicious(c.competitors!);
                                 return (
-                                  <div className={`mt-2 text-[11px] px-3 py-2 rounded-lg ${suspicious ? 'bg-red-50 border border-red-200' : 'bg-gray-50'}`}>
+                                  <div className={`mt-2 text-[11px] px-3 py-2 rounded-lg ${suspicious ? 'bg-rose-50 border border-rose-200' : 'bg-gray-50'}`}>
                                     <span className="text-gray-500">최저가-최고가 차이: </span>
-                                    <span className={`font-bold ${suspicious ? 'text-red-700' : 'text-gray-700'}`}>
+                                    <span className={`font-bold ${suspicious ? 'text-rose-700' : 'text-gray-700'}`}>
                                       {formatKRW(max - min)} ({spread.toFixed(1)}%)
                                     </span>
                                     {suspicious && (
-                                      <p className="text-red-600 mt-1 font-medium">
+                                      <p className="text-rose-700 mt-1 font-medium">
                                         모든 입찰가가 5% 이내로 매우 유사합니다. 입찰 담합 가능성을 검토할 필요가 있습니다.
                                       </p>
                                     )}
@@ -542,12 +542,12 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
 
         {/* Evidence as key-value */}
         {evidence && typeof evidence === 'object' && Object.keys(evidence).length > 0 && (
-          <div className="bg-red-50 rounded-lg p-4 mb-4 font-mono text-xs">
-            <div className="text-red-400 mb-2">// 기준 초과 증거</div>
+          <div className="bg-rose-50 rounded-lg p-4 mb-4 font-mono text-xs">
+            <div className="text-rose-400 mb-2">// 기준 초과 증거</div>
             {Object.entries(evidence).map(([key, value]) => (
               <div key={key} className="flex gap-2 py-1">
-                <span className="text-red-500 w-32 shrink-0">{formatKeyLabel(key)}:</span>
-                <span className="text-red-800">
+                <span className="text-rose-500 w-32 shrink-0">{formatKeyLabel(key)}:</span>
+                <span className="text-rose-800">
                   {typeof value === 'number' ? formatNumber(value, key) :
                    typeof value === 'object' ? JSON.stringify(value) :
                    String(value)}
@@ -558,42 +558,42 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
         )}
 
         {/* Direct verification links */}
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h3 className="font-semibold text-sm text-blue-800 mb-2">직접 확인하기</h3>
-          <p className="text-xs text-blue-700 mb-3">
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h3 className="font-semibold text-sm text-gray-800 mb-2">직접 확인하기</h3>
+          <p className="text-xs text-gray-600 mb-3">
             아래 정부 공식 사이트에서 원본 데이터를 직접 조회할 수 있습니다.
             검색어 힌트를 참고하여 관련 계약을 찾아보세요.
           </p>
           <div className="space-y-2">
             <div className="flex items-start gap-2">
-              <span className="text-blue-600 shrink-0">1.</span>
+              <span className="text-gray-500 shrink-0">1.</span>
               <div>
-                <a href="https://www.g2b.go.kr:8081/ep/tbid/tbidList.do" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">
+                <a href="https://www.g2b.go.kr:8081/ep/tbid/tbidList.do" target="_blank" rel="noopener noreferrer" className="text-accent underline font-medium">
                   나라장터 계약 검색 ↗
                 </a>
-                <p className="text-[11px] text-blue-600 mt-0.5">
+                <p className="text-[11px] text-gray-500 mt-0.5">
                   검색어: &quot;{targetId}&quot; 입력 → 계약 현황 탭에서 해당 부처 계약 확인
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-blue-600 shrink-0">2.</span>
+              <span className="text-gray-500 shrink-0">2.</span>
               <div>
-                <a href="https://www.bai.go.kr/bai/result/list" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">
+                <a href="https://www.bai.go.kr/bai/result/list" target="_blank" rel="noopener noreferrer" className="text-accent underline font-medium">
                   감사원 감사결과 검색 ↗
                 </a>
-                <p className="text-[11px] text-blue-600 mt-0.5">
+                <p className="text-[11px] text-gray-500 mt-0.5">
                   검색어: &quot;{targetId}&quot; 또는 &quot;{patternLabels[patternType]}&quot; 입력
                 </p>
               </div>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-blue-600 shrink-0">3.</span>
+              <span className="text-gray-500 shrink-0">3.</span>
               <div>
-                <a href="https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline font-medium">
+                <a href="https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01" target="_blank" rel="noopener noreferrer" className="text-accent underline font-medium">
                   열린재정 세출 현황 ↗
                 </a>
-                <p className="text-[11px] text-blue-600 mt-0.5">
+                <p className="text-[11px] text-gray-500 mt-0.5">
                   부처명 &quot;{targetId}&quot; 선택 → 분기별 세출 확인
                 </p>
               </div>

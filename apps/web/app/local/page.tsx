@@ -196,7 +196,7 @@ export default function LocalGovernmentsPage() {
               {governments.map(g => (
                 <tr key={g.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="py-3 px-2">
-                    <Link href={`/local/${g.id}`} className="font-medium text-gray-900 hover:text-blue-600 transition-colors">
+                    <Link href={`/local/${g.id}`} className="font-medium text-gray-900 hover:text-accent transition-colors">
                       {g.name}
                     </Link>
                   </td>
@@ -227,7 +227,7 @@ export default function LocalGovernmentsPage() {
                     {g.extinction_risk ? (
                       <span className={`
                         inline-block px-2 py-0.5 rounded-full text-xs font-medium
-                        ${g.extinction_risk === '심각' ? 'bg-red-100 text-red-700' :
+                        ${g.extinction_risk === '심각' ? 'bg-rose-100 text-rose-700' :
                           g.extinction_risk === '위험' ? 'bg-orange-100 text-orange-700' :
                           g.extinction_risk === '주의' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-gray-100 text-gray-600'}
@@ -260,7 +260,7 @@ export default function LocalGovernmentsPage() {
                 {g.extinction_risk && (
                   <span className={`
                     px-2 py-0.5 rounded-full text-xs font-medium
-                    ${g.extinction_risk === '심각' ? 'bg-red-100 text-red-700' :
+                    ${g.extinction_risk === '심각' ? 'bg-rose-100 text-rose-700' :
                       g.extinction_risk === '위험' ? 'bg-orange-100 text-orange-700' :
                       g.extinction_risk === '주의' ? 'bg-yellow-100 text-yellow-700' :
                       'bg-gray-100 text-gray-600'}

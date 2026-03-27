@@ -503,7 +503,7 @@ export default function BudgetPageClient({
                   <td className="py-2.5 px-2 text-right text-gray-700">{row.amount.toFixed(1)}</td>
                   <td className="py-2.5 px-2 text-right text-gray-500">{row.percentage.toFixed(1)}%</td>
                   <td className={`py-2.5 px-2 text-right font-medium ${
-                    row.yoyChange > 0 ? 'text-red-500' : row.yoyChange < 0 ? 'text-blue-500' : 'text-gray-500'
+                    row.yoyChange > 0 ? 'text-rose-600' : row.yoyChange < 0 ? 'text-emerald-600' : 'text-gray-500'
                   }`}>
                     {row.yoyChange > 0 ? '+' : ''}{row.yoyChange.toFixed(1)}%
                   </td>

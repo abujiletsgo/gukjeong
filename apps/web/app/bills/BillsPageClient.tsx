@@ -10,15 +10,15 @@ import KPI from '@/components/common/KPI';
 /* ------------------------------------------------------------------ */
 
 const STATUS_COLOR: Record<string, string> = {
-  '가결': 'bg-green-100 text-green-800 border-green-200',
+  '가결': 'bg-emerald-100 text-emerald-800 border-emerald-200',
   '계류': 'bg-amber-100 text-amber-800 border-amber-200',
-  '폐기': 'bg-red-100 text-red-800 border-red-200',
+  '폐기': 'bg-rose-100 text-rose-800 border-rose-200',
 };
 
 const STATUS_DOT: Record<string, string> = {
-  '가결': 'bg-green-500',
+  '가결': 'bg-emerald-500',
   '계류': 'bg-amber-500',
-  '폐기': 'bg-red-500',
+  '폐기': 'bg-rose-500',
 };
 
 /* ------------------------------------------------------------------ */
@@ -117,7 +117,7 @@ function MiniVoteDonut({ yes, no, abstain, absent }: { yes: number; no: number; 
 function ControversyMeter({ score }: { score: number }) {
   const pct = Math.max(0, Math.min(100, score));
   const color =
-    pct >= 70 ? 'from-red-500 to-red-600' :
+    pct >= 70 ? 'from-rose-500 to-rose-600' :
     pct >= 40 ? 'from-amber-400 to-orange-500' :
     'from-green-400 to-green-500';
 
@@ -155,11 +155,11 @@ function billToStage(bill: Bill): PipelineStage {
 
 function StatusPipeline({ bills }: { bills: Bill[] }) {
   const stages: { label: string; key: PipelineStage; color: string; bgColor: string }[] = [
-    { label: '접수', key: '접수', color: 'bg-blue-500', bgColor: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { label: '접수', key: '접수', color: 'bg-gray-400', bgColor: 'bg-gray-50 text-gray-700 border-gray-200' },
     { label: '위원회', key: '위원회', color: 'bg-indigo-500', bgColor: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
     { label: '본회의', key: '본회의', color: 'bg-purple-500', bgColor: 'bg-purple-50 text-purple-700 border-purple-200' },
-    { label: '가결', key: '가결', color: 'bg-green-500', bgColor: 'bg-green-50 text-green-700 border-green-200' },
-    { label: '폐기', key: '폐기', color: 'bg-red-500', bgColor: 'bg-red-50 text-red-700 border-red-200' },
+    { label: '가결', key: '가결', color: 'bg-emerald-500', bgColor: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    { label: '폐기', key: '폐기', color: 'bg-rose-500', bgColor: 'bg-rose-50 text-rose-700 border-rose-200' },
   ];
 
   const counts: Record<PipelineStage, number> = { '접수': 0, '위원회': 0, '본회의': 0, '가결': 0, '폐기': 0 };

@@ -86,7 +86,7 @@ export default function HomePage() {
           {/* 대통령 비교 */}
           <a href="/presidents" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
-              <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">대통령</span>
+              <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">대통령</span>
               <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">역대 대통령 비교</h3>
@@ -98,7 +98,7 @@ export default function HomePage() {
               ))}
               <span className="text-xs text-gray-400 ml-3">외 {presidents.length - 4}명</span>
             </div>
-            <Sparkline data={spendingTrend} width={280} height={36} color="#3b82f6" showArea />
+            <Sparkline data={spendingTrend} width={280} height={36} color="#ff6b35" showArea />
           </a>
 
           {/* 예산 */}
@@ -119,19 +119,19 @@ export default function HomePage() {
                 <div className="text-[10px] text-gray-400">연도</div>
               </div>
               <div className="bg-gray-50 rounded-lg py-2.5">
-                <div className="text-base font-bold text-red-500">46.8%</div>
+                <div className="text-base font-bold text-gray-900">46.8%</div>
                 <div className="text-[10px] text-gray-400">채무/GDP</div>
               </div>
             </div>
             <div className="mt-4">
-              <Sparkline data={debtTrend} width={280} height={36} color="#ef4444" showArea />
+              <Sparkline data={debtTrend} width={280} height={36} color="#6b7280" showArea />
             </div>
           </a>
 
           {/* AI 감사 */}
           <a href="/audit" className="group relative bg-white rounded-2xl border border-gray-100 p-6 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
-              <span className="text-xs font-semibold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">AI 감사</span>
+              <span className="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full">AI 감사</span>
               <svg className="w-4 h-4 text-gray-300 group-hover:text-accent group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2">AI 감사관</h3>
@@ -142,7 +142,7 @@ export default function HomePage() {
                 <div className="text-[10px] text-gray-400">탐지 건수</div>
               </div>
               <div>
-                <div className="text-2xl font-black text-red-500">{highFlags}</div>
+                <div className="text-2xl font-black text-rose-500">{highFlags}</div>
                 <div className="text-[10px] text-gray-400">높은 심각도</div>
               </div>
               <div>
@@ -178,7 +178,7 @@ export default function HomePage() {
             <p className="text-sm text-gray-500 mb-5">국회 법안의 AI 요약, 투표 결과, 시민 영향 분석.</p>
             <div className="flex items-center gap-6 mb-3">
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black text-green-600">{passedBills}</span>
+                <span className="text-2xl font-black text-emerald-600">{passedBills}</span>
                 <span className="text-xs text-gray-400">가결</span>
               </div>
               <div className="flex items-baseline gap-1">
@@ -191,9 +191,9 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex h-2.5 rounded-full overflow-hidden bg-gray-100">
-              <div className="bg-green-500 transition-all" style={{ width: `${(passedBills / bills.length) * 100}%` }} />
+              <div className="bg-emerald-500 transition-all" style={{ width: `${(passedBills / bills.length) * 100}%` }} />
               <div className="bg-amber-400 transition-all" style={{ width: `${(pendingBills / bills.length) * 100}%` }} />
-              <div className="bg-red-400 transition-all" style={{ width: `${(bills.filter(b => b.status === '폐기').length / bills.length) * 100}%` }} />
+              <div className="bg-rose-400 transition-all" style={{ width: `${(bills.filter(b => b.status === '폐기').length / bills.length) * 100}%` }} />
             </div>
           </a>
 
