@@ -122,3 +122,10 @@
   apps/web/lib/data.ts                          | 28 ++++++++--------
   apps/web/tsconfig.tsbuildinfo                 |  2 +-
   5 files changed, 41 insertions(+), 41 deletions(-)
+
+## 2026-03-26 (17:02 UTC) · @Tom Kwon
+**Commit:** fix: Merge duplicate audit link sections into single "직접 확인하기" (de1c20e) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/[id]/AuditDetailClient.tsx | 30 +--------------------------
+  apps/web/tsconfig.tsbuildinfo                 |  2 +-
+  2 files changed, 2 insertions(+), 30 deletions(-)
