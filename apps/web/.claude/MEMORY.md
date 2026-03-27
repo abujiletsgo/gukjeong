@@ -129,3 +129,12 @@
   apps/web/app/audit/[id]/AuditDetailClient.tsx | 30 +--------------------------
   apps/web/tsconfig.tsbuildinfo                 |  2 +-
   2 files changed, 2 insertions(+), 30 deletions(-)
+
+## 2026-03-27 (03:26 UTC) · @Tom Kwon
+**Commit:** fix: Pin Next.js 14, React 18, recharts 2.12 — revert mobile session version bumps (4e86df2) by Tom Kwon
+**Changed:**
+  apps/web/components/charts/BubbleChart.tsx |  119 +-
+  apps/web/components/charts/RadarChart.tsx  |  111 +-
+  apps/web/package.json                      |   18 +-
+  package-lock.json                          | 2863 +++++++++++++++-------------
+  4 files changed, 1536 insertions(+), 1575 deletions(-)

@@ -493,6 +493,43 @@ export interface BudgetBreakdownItem {
   recipient?: string;                // 수혜 대상
 }
 
+export interface CountryMetric {
+  country: string;
+  country_en: string;
+  value: number;
+  is_korea?: boolean;
+}
+
+export interface InternationalComparison {
+  metric_id: string;
+  metric_name: string;
+  unit: string;
+  year: number;
+  description: string;
+  why_it_matters: string;
+  korea_position: string;
+  countries: CountryMetric[];
+  lower_is_better: boolean;
+}
+
+export interface LocalGovernment {
+  id: string;                    // URL-safe (e.g., 'seoul', 'busan')
+  name: string;                  // 서울특별시
+  name_short: string;            // 서울
+  population: number;            // 만명
+  budget: number;                // 조원
+  debt: number;                  // 조원
+  debt_ratio: number;            // 채무비율 %
+  fiscal_independence: number;   // 재정자립도 %
+  fiscal_self_reliance: number;  // 재정자주도 %
+  governor: string;              // 시장/도지사
+  governor_party: string;        // 정당
+  key_issues: string[];          // 주요 현안
+  description: string;           // 지역 설명
+  sub_regions_count: number;     // 시/군/구 수
+  extinction_risk?: string;      // 소멸위험 등급 (if applicable)
+}
+
 export interface ApiResponse<T> {
   data: T;
   total?: number;
