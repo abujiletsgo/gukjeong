@@ -19,14 +19,21 @@ export default function ScoreBar({ score, maxScore = 100, label, color }: ScoreB
 
   return (
     <div>
-      {label && <div className="text-xs text-gray-600 mb-1">{label}</div>}
-      <div className="w-full bg-gray-100 rounded-full h-3">
+      {label && <div className="text-xs text-gray-600 mb-1" id={`scorebar-label-${label}`}>{label}</div>}
+      <div
+        className="w-full bg-gray-100 rounded-full h-3"
+        role="progressbar"
+        aria-valuenow={score}
+        aria-valuemin={0}
+        aria-valuemax={maxScore}
+        aria-label={label ? `${label}: ${score}/${maxScore}` : `${score}/${maxScore}`}
+      >
         <div
           className="h-3 rounded-full transition-all duration-500"
           style={{ width: `${percentage}%`, backgroundColor: barColor }}
         />
       </div>
-      <div className="text-xs text-gray-500 text-right mt-0.5">{score}/{maxScore}</div>
+      <div className="text-xs text-gray-500 text-right mt-0.5" aria-hidden="true">{score}/{maxScore}</div>
     </div>
   );
 }

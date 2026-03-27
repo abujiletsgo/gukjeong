@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getLegislators } from '@/lib/data';
+
+// ISR: 국회의원 데이터는 1일마다 재생성
+export const revalidate = 86400;
 import LegislatorsPageClient from './LegislatorsPageClient';
 
 export const metadata: Metadata = {

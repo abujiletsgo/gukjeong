@@ -15,8 +15,9 @@ import {
 } from '@/lib/data';
 import PresidentDetailClient from './PresidentDetailClient';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const president = getPresidentById(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const president = getPresidentById(id);
   if (!president) {
     return { title: '대통령을 찾을 수 없습니다' };
   }
@@ -35,23 +36,24 @@ export function generateStaticParams() {
   return presidents.map(p => ({ id: p.id }));
 }
 
-export default function PresidentDetailPage({ params }: { params: { id: string } }) {
-  const president = getPresidentById(params.id);
+export default async function PresidentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const president = getPresidentById(id);
   if (!president) {
     notFound();
   }
 
-  const fiscalData = getFiscalByPresident(params.id);
+  const fiscalData = getFiscalByPresident(id);
   const allFiscal = getFiscalData();
-  const policies = getPoliciesByPresident(params.id);
-  const events = getEventsByPresident(params.id);
+  const policies = getPoliciesByPresident(id);
+  const events = getEventsByPresident(id);
 
   // 새로운 데이터 소스
-  const pledges = getCampaignPledgesByPresident(params.id);
-  const agendas = getNationalAgendaByPresident(params.id);
-  const reportCard = getReportCardByPresident(params.id);
-  const keyEvents = getKeyEventsByPresident(params.id);
-  const budgetComparison = getBudgetComparisonByPresident(params.id);
+  const pledges = getCampaignPledgesByPresident(id);
+  const agendas = getNationalAgendaByPresident(id);
+  const reportCard = getReportCardByPresident(id);
+  const keyEvents = getKeyEventsByPresident(id);
+  const budgetComparison = getBudgetComparisonByPresident(id);
 
   // 경제 KPI 계산
   const spending = fiscalData.map(f => f.total_spending || 0).filter(v => v > 0);

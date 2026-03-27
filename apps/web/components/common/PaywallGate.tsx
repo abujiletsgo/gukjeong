@@ -21,10 +21,10 @@ export default function PaywallGate({ requiredTier, currentTier, children, featu
   }
 
   return (
-    <div className="relative">
-      <div className="blur-sm pointer-events-none">{children}</div>
+    <div className="relative" role="region" aria-label={`${featureName} — 유료 기능`}>
+      <div className="blur-sm pointer-events-none" aria-hidden="true">{children}</div>
       <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center rounded-xl">
-        <div className="text-4xl mb-3">🔒</div>
+        <div className="text-4xl mb-3" aria-hidden="true">🔒</div>
         <p className="font-semibold text-gray-900 mb-1">{tierLabels[requiredTier]} 전용 기능</p>
         <p className="text-sm text-gray-500 mb-4">{featureName}을(를) 이용하려면 업그레이드하세요.</p>
         <a href="/pricing" className="btn-primary text-sm">

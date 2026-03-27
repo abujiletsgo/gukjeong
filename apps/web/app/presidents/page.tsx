@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import { getPresidents, getFiscalData, getPresidentComparisonMetrics } from '@/lib/data';
+
+// ISR: 대통령 데이터는 1일마다 재생성
+export const revalidate = 86400;
 import PresidentTimeline from '@/components/timeline/PresidentTimeline';
 import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 import PresidentCompareClient from './PresidentCompareClient';

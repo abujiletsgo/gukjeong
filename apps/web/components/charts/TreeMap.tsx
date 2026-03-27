@@ -135,6 +135,9 @@ export default function TreeMapChart({ data, height = 400, onSectorClick }: Tree
         dataKey="value"
         aspectRatio={4 / 3}
         content={<CustomContent onSectorClick={onSectorClick} />}
+        isAnimationActive={true}
+        animationDuration={800}
+        animationEasing="ease-out"
       >
         <Tooltip content={<CustomTooltip />} />
       </Treemap>
