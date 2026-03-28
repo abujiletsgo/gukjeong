@@ -166,3 +166,13 @@
   .../legislators/[id]/LegislatorDetailClient.tsx    | 18 +++---
   apps/web/app/local/[region]/page.tsx               | 11 ++--
   ... and 23 more files
+
+## 2026-03-28 (09:13 UTC) · @Tom Kwon
+**Commit:** feat: Real data pipeline — 열린국회정보 295 legislators + 나라장터 38K contracts (f79358d) by Tom Kwon
+**Changed:**
+  apps/web/app/api/legislators/real/bills/route.ts |  70 +++
+  apps/web/app/api/legislators/real/route.ts       | 130 ++++
+  apps/web/app/legislators/real/page.tsx           | 732 +++++++++++++++++++++++
+  apps/web/lib/assembly/client.ts                  | 279 +++++++++
+  apps/web/tsconfig.tsbuildinfo                    |   2 +-
+  5 files changed, 1212 insertions(+), 1 deletion(-)
