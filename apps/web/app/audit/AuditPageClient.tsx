@@ -69,13 +69,18 @@ interface AuditPageClientProps {
 }
 
 // ── Pattern category definitions ───────────────────────────────────────
-type PatternCategory = 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
+type PatternCategory = 'high_value_sole_source' | 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
 
 const PATTERN_CATEGORIES: {
   key: PatternCategory;
   label: string;
   description: string;
 }[] = [
+  {
+    key: 'high_value_sole_source',
+    label: '고액 수의계약',
+    description: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결된 건',
+  },
   {
     key: 'vendor_concentration',
     label: '업체 집중',
@@ -696,7 +701,7 @@ export default function AuditPageClient({
   const [error, setError] = useState<string | null>(null);
 
   // Filter state
-  const [activeCategory, setActiveCategory] = useState<PatternCategory>('repeated_sole_source');
+  const [activeCategory, setActiveCategory] = useState<PatternCategory>('high_value_sole_source');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -769,7 +774,7 @@ export default function AuditPageClient({
 
   // Reset filters on mode change
   useEffect(() => {
-    setActiveCategory('repeated_sole_source');
+    setActiveCategory('high_value_sole_source');
     setSeverityFilter('all');
     setSearchQuery('');
   }, [isDemo]);
