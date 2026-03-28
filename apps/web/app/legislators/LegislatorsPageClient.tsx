@@ -8,6 +8,16 @@ import { useDataMode } from '@/lib/context/DataModeContext';
 import type { Legislator } from '@/lib/types';
 
 // ── Raw API legislator type (from 열린국회정보) ──
+interface RecentBill {
+  id: string;
+  no: string;
+  name: string;
+  committee: string | null;
+  date: string;
+  result: string | null;
+  link: string;
+}
+
 interface RawLegislator {
   HG_NM: string;
   HJ_NM?: string;
@@ -28,12 +38,17 @@ interface RawLegislator {
   MEM_TITLE?: string;
   ASSEM_ADDR?: string;
   JOB_RES_NM?: string;
+  bills_proposed?: number;
+  bills_passed?: number;
+  recent_bills?: RecentBill[];
 }
 
 interface RealLegislatorData {
   timestamp: string;
   total: number;
   source: string;
+  total_bills_22nd?: number;
+  plenary_bills?: number;
   legislators: RawLegislator[];
 }
 
@@ -201,89 +216,237 @@ function DistributionBar({
   );
 }
 
-// ── Real legislator card (with photo) ──
-function RealLegislatorCard({ raw }: { raw: RawLegislator }) {
+// ── Sort options for live mode ──
+type SortOption = 'bills_desc' | 'bills_asc' | 'name_asc' | 'passed_desc';
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'bills_desc', label: '발의 법안 많은순' },
+  { value: 'bills_asc', label: '발의 법안 적은순' },
+  { value: 'name_asc', label: '이름순' },
+];
+
+// ── Real legislator card (with photo, bills, expand/collapse) ──
+function RealLegislatorCard({ raw, maxBills }: { raw: RawLegislator; maxBills: number }) {
+  const [expanded, setExpanded] = useState(false);
   const partyColor = getPartyColor(raw.POLY_NM);
   const termCount = parseTermCount(raw.REELE_GBN_NM);
   const electedLabel = getElectedLabel(termCount);
-  const careerLine = getCareerFirstLine(raw.MEM_TITLE);
+  const billsProposed = raw.bills_proposed ?? 0;
+  const billsPassed = raw.bills_passed ?? 0;
+  const recentBills = raw.recent_bills ?? [];
+  const billBarPct = maxBills > 0 ? Math.min((billsProposed / maxBills) * 100, 100) : 0;
+
+  // Parse career lines
+  const careerLines = (raw.MEM_TITLE || '')
+    .split('\r\n')
+    .filter(l => l.trim() && !l.trim().startsWith('['));
 
   return (
-    <div className="card hover:shadow-md transition-shadow h-full flex flex-col">
+    <div className="card hover:shadow-md transition-all h-full flex flex-col">
+      {/* Header: photo + name + party */}
       <div className="mb-3">
         <div className="flex items-center gap-3 mb-1">
-          {/* Circular photo */}
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center shrink-0 ring-2 ring-gray-200">
             <img
               src={`/legislators/${raw.MONA_CD}.jpg`}
               alt={raw.HG_NM}
-              className="w-10 h-10 rounded-full object-cover"
+              className="w-12 h-12 rounded-full object-cover"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
-                // Show initial instead
                 const parent = e.currentTarget.parentElement;
                 if (parent && !parent.querySelector('.fallback-initial')) {
                   const span = document.createElement('span');
-                  span.className = 'fallback-initial text-sm font-bold text-gray-400';
+                  span.className = 'fallback-initial text-lg font-bold text-gray-400';
                   span.textContent = raw.HG_NM.charAt(0);
                   parent.appendChild(span);
                 }
               }}
             />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span
                 className="w-2.5 h-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: partyColor }}
               />
-              <h3 className="font-bold text-base text-gray-900">
+              <h3 className="font-bold text-base text-gray-900 truncate">
                 {raw.HG_NM}
               </h3>
+              {electedLabel && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 shrink-0 font-medium">
+                  {electedLabel}
+                </span>
+              )}
             </div>
-            <p className="text-sm text-gray-500 leading-snug">
+            <p className="text-sm text-gray-500 leading-snug truncate">
               {raw.POLY_NM || '무소속'}
               {raw.ORIG_NM && <> &middot; {raw.ORIG_NM}</>}
             </p>
+            <p className="text-xs text-gray-400 leading-snug mt-0.5 truncate">
+              {raw.CMIT_NM || '위원회 미배정'}
+            </p>
           </div>
         </div>
-        <p className="text-xs text-gray-400 leading-snug mt-1">
-          {raw.CMIT_NM || '위원회 미배정'}
-          {electedLabel && <> &middot; {electedLabel}</>}
-          {raw.SEX_GBN_NM && <> &middot; {raw.SEX_GBN_NM}</>}
-        </p>
       </div>
 
-      {/* Career summary (first line) */}
-      {careerLine && (
-        <div className="border-t border-gray-100 pt-3 flex-1">
-          <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{careerLine}</p>
+      {/* Bills proposed — KEY metric */}
+      <div className="border-t border-gray-100 pt-3 flex-1">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-xs font-semibold text-gray-600">법안 발의</span>
+          <span className="text-lg font-bold text-gray-900">
+            {billsProposed}<span className="text-sm font-normal text-gray-400 ml-0.5">건</span>
+          </span>
         </div>
-      )}
+        {/* Bill bar */}
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${billBarPct}%`,
+              backgroundColor: billsProposed === 0 ? '#E5E7EB' : partyColor,
+              opacity: billsProposed === 0 ? 0.3 : 0.7,
+            }}
+          />
+        </div>
 
-      {/* Contact info */}
-      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {raw.E_MAIL && (
-            <a
-              href={`mailto:${raw.E_MAIL}`}
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-              title={raw.E_MAIL}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="2" y="4" width="20" height="16" rx="2" />
-                <polyline points="22,7 12,13 2,7" />
-              </svg>
-            </a>
-          )}
-          {raw.TEL_NO && (
-            <span className="text-[10px] text-gray-300">{raw.TEL_NO}</span>
-          )}
-        </div>
-        {raw.ASSEM_ADDR && (
-          <span className="text-[10px] text-gray-300">{raw.ASSEM_ADDR}</span>
+        {/* Status line */}
+        {billsProposed === 0 ? (
+          <p className="text-xs text-gray-400 italic">
+            아직 발의한 법안이 없습니다
+          </p>
+        ) : (
+          <p className="text-xs text-gray-500 leading-relaxed">
+            이 의원은 22대 국회에서 {billsProposed}건의 법안을 발의했습니다
+            {billsPassed > 0 && <>, 이 중 {billsPassed}건이 통과되었습니다</>}
+          </p>
+        )}
+
+        {/* Recent bills preview (1-2 bills) */}
+        {recentBills.length > 0 && (
+          <div className="mt-2.5 space-y-1">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">최근 발의 법안</span>
+            {recentBills.slice(0, 2).map((bill) => (
+              <a
+                key={bill.id}
+                href={bill.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-xs text-gray-600 hover:text-blue-600 transition-colors leading-snug truncate"
+                title={bill.name}
+              >
+                <span className="text-gray-300 mr-1">&bull;</span>
+                {bill.name}
+              </a>
+            ))}
+            {recentBills.length > 2 && !expanded && (
+              <span className="text-[10px] text-gray-400">외 {recentBills.length - 2}건</span>
+            )}
+          </div>
         )}
       </div>
+
+      {/* Expand/collapse button */}
+      <div className="mt-3 pt-3 border-t border-gray-100">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="w-full flex items-center justify-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors py-1"
+        >
+          {expanded ? '접기' : '상세 보기'}
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Expanded detail panel */}
+      {expanded && (
+        <div className="border-t border-gray-100 pt-3 mt-1 space-y-4 animate-in fade-in duration-200">
+          {/* Full bills list */}
+          {recentBills.length > 0 && (
+            <div>
+              <h4 className="text-xs font-bold text-gray-700 mb-2">
+                발의 법안 목록 ({recentBills.length}건{recentBills.length < billsProposed ? ` / 전체 ${billsProposed}건` : ''})
+              </h4>
+              <div className="space-y-1.5 max-h-60 overflow-y-auto">
+                {recentBills.map((bill) => (
+                  <a
+                    key={bill.id}
+                    href={bill.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-2 p-2 rounded-md hover:bg-gray-50 transition-colors group"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 mt-0.5 text-gray-300 group-hover:text-blue-400">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-gray-700 group-hover:text-blue-600 leading-snug line-clamp-2">{bill.name}</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        {bill.date}
+                        {bill.committee && <> &middot; {bill.committee}</>}
+                        {bill.result && <> &middot; <span className="font-semibold">{bill.result}</span></>}
+                      </p>
+                    </div>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 mt-1 text-gray-200 group-hover:text-blue-400">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Career summary */}
+          {careerLines.length > 0 && (
+            <div>
+              <h4 className="text-xs font-bold text-gray-700 mb-2">주요 경력</h4>
+              <div className="space-y-0.5 max-h-32 overflow-y-auto">
+                {careerLines.slice(0, 8).map((line, i) => (
+                  <p key={i} className="text-[11px] text-gray-500 leading-relaxed">{line.trim()}</p>
+                ))}
+                {careerLines.length > 8 && (
+                  <p className="text-[10px] text-gray-400">외 {careerLines.length - 8}건</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Contact info */}
+          <div className="flex items-center gap-3 flex-wrap">
+            {raw.E_MAIL && (
+              <a
+                href={`mailto:${raw.E_MAIL}`}
+                className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="2" y="4" width="20" height="16" rx="2" />
+                  <polyline points="22,7 12,13 2,7" />
+                </svg>
+                {raw.E_MAIL}
+              </a>
+            )}
+            {raw.TEL_NO && (
+              <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                {raw.TEL_NO}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -373,6 +536,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
   const [committeeFilter, setCommitteeFilter] = useState('전체');
   const [regionFilter, setRegionFilter] = useState('전체');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('bills_desc');
 
   // Fetch real data
   useEffect(() => {
@@ -393,6 +557,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
     setCommitteeFilter('전체');
     setRegionFilter('전체');
     setSearchQuery('');
+    setSortBy('bills_desc');
   }, [isDemo]);
 
   const rawLegislators = realData?.legislators ?? [];
@@ -497,6 +662,33 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
     return counts;
   }, [rawLegislators]);
 
+  // ── Bill statistics for real data ──
+  const realBillStats = useMemo(() => {
+    const totalProposed = rawLegislators.reduce((s, l) => s + (l.bills_proposed ?? 0), 0);
+    const totalPassed = rawLegislators.reduce((s, l) => s + (l.bills_passed ?? 0), 0);
+    const maxBills = rawLegislators.reduce((m, l) => Math.max(m, l.bills_proposed ?? 0), 0);
+    const avgBills = rawLegislators.length > 0 ? totalProposed / rawLegislators.length : 0;
+    const zeroBills = rawLegislators.filter(l => (l.bills_proposed ?? 0) === 0).length;
+    return { totalProposed, totalPassed, maxBills, avgBills, zeroBills };
+  }, [rawLegislators]);
+
+  const realBillsBrackets = useMemo(() => {
+    const b = [
+      { label: '0건', count: 0 },
+      { label: '1-5건', count: 0 },
+      { label: '6-15건', count: 0 },
+      { label: '16건+', count: 0 },
+    ];
+    for (const l of rawLegislators) {
+      const c = l.bills_proposed ?? 0;
+      if (c === 0) b[0].count++;
+      else if (c <= 5) b[1].count++;
+      else if (c <= 15) b[2].count++;
+      else b[3].count++;
+    }
+    return b;
+  }, [rawLegislators]);
+
   const filteredRealLegislators = useMemo(() => {
     let list = [...rawLegislators];
 
@@ -527,8 +719,21 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
       );
     }
 
+    // Sort
+    switch (sortBy) {
+      case 'bills_desc':
+        list.sort((a, b) => (b.bills_proposed ?? 0) - (a.bills_proposed ?? 0));
+        break;
+      case 'bills_asc':
+        list.sort((a, b) => (a.bills_proposed ?? 0) - (b.bills_proposed ?? 0));
+        break;
+      case 'name_asc':
+        list.sort((a, b) => a.HG_NM.localeCompare(b.HG_NM, 'ko'));
+        break;
+    }
+
     return list;
-  }, [rawLegislators, partyFilter, committeeFilter, regionFilter, searchQuery]);
+  }, [rawLegislators, partyFilter, committeeFilter, regionFilter, searchQuery, sortBy]);
 
   // ── DEMO data computations (unchanged logic) ──
   const partyDistribution = useMemo(() => {
@@ -689,7 +894,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
             국회의원 활동 현황
           </h1>
           <p className="text-sm sm:text-base text-gray-500 mt-1.5 leading-relaxed">
-            22대 국회 {rawLegislators.length}명의 실제 의원 데이터를 열린국회정보 기반으로 표시합니다.
+            22대 국회 {rawLegislators.length}명의 의원이 실제로 무엇을 하고 있는지 공개 데이터로 확인합니다.
           </p>
         </div>
 
@@ -700,7 +905,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
             <p className="text-sm font-semibold text-emerald-800">실제 국회 데이터</p>
           </div>
           <p className="text-xs text-emerald-600 mt-1">
-            {realData?.timestamp} 기준 | 출처: 열린국회정보 | {rawLegislators.length}명 의원 | 272장 공식 사진 포함
+            {realData?.timestamp} 기준 | 출처: 열린국회정보 | {rawLegislators.length}명 의원
           </p>
         </div>
 
@@ -718,16 +923,18 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
         {/* Key stats grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           <div className="card">
-            <div className="text-xs text-gray-500 mb-1">총 의원 수</div>
-            <div className="text-xl sm:text-2xl font-bold text-gray-900">{rawLegislators.length}명</div>
-            <div className="text-xs text-gray-400 mt-1">22대 국회</div>
+            <div className="text-xs text-gray-500 mb-1">총 발의 법안</div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{realBillStats.totalProposed.toLocaleString()}건</div>
+            <div className="text-xs text-gray-400 mt-1">
+              의원 평균 {realBillStats.avgBills.toFixed(1)}건
+            </div>
           </div>
           <div className="card">
             <div className="text-xs text-gray-500 mb-1">성별 구성</div>
             <div className="text-xl sm:text-2xl font-bold text-gray-900">
-              {realGenderDistribution.male + realGenderDistribution.female}명
+              {rawLegislators.length}명
             </div>
-            <div className="text-xs text-gray-400 mt-1">남 {realGenderDistribution.male}명 · 여 {realGenderDistribution.female}명</div>
+            <div className="text-xs text-gray-400 mt-1">남 {realGenderDistribution.male}명 &middot; 여 {realGenderDistribution.female}명</div>
           </div>
           <div className="card">
             <div className="text-xs text-gray-500 mb-1">초선 의원</div>
@@ -737,14 +944,23 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
             </div>
           </div>
           <div className="card">
-            <div className="text-xs text-gray-500 mb-1">위원회 수</div>
-            <div className="text-xl sm:text-2xl font-bold text-gray-900">{realCommitteeNames.length}개</div>
-            <div className="text-xs text-gray-400 mt-1">소속 위원회</div>
+            <div className="text-xs text-gray-500 mb-1">법안 미발의 의원</div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{realBillStats.zeroBills}명</div>
+            <div className="text-xs text-gray-400 mt-1">
+              {rawLegislators.length > 0 ? ((realBillStats.zeroBills / rawLegislators.length) * 100).toFixed(1) : 0}%
+            </div>
           </div>
         </div>
 
-        {/* Term + Gender distribution */}
+        {/* Distribution charts: bills + terms */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+          <div className="card">
+            <h3 className="text-sm font-bold text-gray-700 mb-3">법안 발의 분포</h3>
+            <DistributionBar
+              brackets={realBillsBrackets}
+              colorScale={['#D1D5DB', '#9CA3AF', '#6B7280', '#374151']}
+            />
+          </div>
           <div className="card">
             <h3 className="text-sm font-bold text-gray-700 mb-3">당선 횟수 분포</h3>
             <DistributionBar
@@ -752,16 +968,18 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
               colorScale={['#D1D5DB', '#9CA3AF', '#6B7280', '#374151']}
             />
           </div>
-          <div className="card">
-            <h3 className="text-sm font-bold text-gray-700 mb-3">성별 분포</h3>
-            <DistributionBar
-              brackets={[
-                { label: '남성', count: realGenderDistribution.male },
-                { label: '여성', count: realGenderDistribution.female },
-              ]}
-              colorScale={['#6B7280', '#EC4899']}
-            />
-          </div>
+        </div>
+
+        {/* Gender distribution */}
+        <div className="card mb-4">
+          <h3 className="text-sm font-bold text-gray-700 mb-3">성별 분포</h3>
+          <DistributionBar
+            brackets={[
+              { label: '남성', count: realGenderDistribution.male },
+              { label: '여성', count: realGenderDistribution.female },
+            ]}
+            colorScale={['#6B7280', '#EC4899']}
+          />
         </div>
 
         {/* Committee distribution */}
@@ -790,7 +1008,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
 
         {/* Legislator list */}
         <div id="legislator-list">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">의원 목록</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">의원 활동 카드</h2>
 
           {/* Search + filters */}
           <div className="card mb-6 space-y-4">
@@ -800,12 +1018,12 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="이름, 지역구, 정당으로 검색"
+                placeholder="이름, 지역구, 위원회, 정당으로 검색"
                 className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-400"
               />
             </div>
 
-            {/* Party filter */}
+            {/* Party filter pills */}
             <div className="flex flex-wrap gap-2">
               {PARTY_FILTERS.map(pf => {
                 const isActive = partyFilter === pf.value;
@@ -833,7 +1051,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
               })}
             </div>
 
-            {/* Committee + region dropdowns */}
+            {/* Committee + region + sort dropdowns */}
             <div className="flex flex-col sm:flex-row gap-3">
               <select
                 value={committeeFilter}
@@ -855,15 +1073,31 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
                   <option key={r} value={r}>{r}</option>
                 ))}
               </select>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-400"
+              >
+                {SORT_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
             </div>
           </div>
 
           {/* Result count */}
-          {filteredRealLegislators.length !== rawLegislators.length && (
-            <div className="mb-4 text-sm text-gray-500">
-              검색 결과: <span className="font-semibold text-gray-700">{filteredRealLegislators.length}명</span>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="text-sm text-gray-500">
+              {filteredRealLegislators.length !== rawLegislators.length ? (
+                <>검색 결과: <span className="font-semibold text-gray-700">{filteredRealLegislators.length}명</span></>
+              ) : (
+                <>전체 <span className="font-semibold text-gray-700">{rawLegislators.length}명</span></>
+              )}
             </div>
-          )}
+            <div className="text-xs text-gray-400">
+              정렬: {SORT_OPTIONS.find(o => o.value === sortBy)?.label}
+            </div>
+          </div>
 
           {/* Legislator card grid */}
           {filteredRealLegislators.length === 0 ? (
@@ -878,7 +1112,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredRealLegislators.map(l => (
-                <RealLegislatorCard key={l.MONA_CD} raw={l} />
+                <RealLegislatorCard key={l.MONA_CD} raw={l} maxBills={realBillStats.maxBills} />
               ))}
             </div>
           )}
@@ -887,7 +1121,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
         {/* Source */}
         <p className="text-xs text-gray-400 mt-8 text-center leading-relaxed">
           이 페이지의 모든 데이터는 열린국회정보 공개 API 기반입니다.<br />
-          사진 출처: 대한민국 국회 공식 의원 프로필
+          법안 발의 현황은 22대 국회 기준이며 실시간 업데이트됩니다.
         </p>
       </div>
     );
