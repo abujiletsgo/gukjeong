@@ -217,3 +217,18 @@
   apps/web/public/legislators/3ZR4438W.jpg |  Bin 0 -> 5560717 bytes
   apps/web/public/legislators/4T026790.jpg |  Bin 0 -> 1103197 bytes
   ... and 53 more files
+
+## 2026-03-28 (10:15 UTC) · @Tom Kwon
+**Commit:** feat: Real data is now DEFAULT — audit, legislators, news all show live data (b062b71) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md                         |  15 +
+  apps/web/app/(home)/HomeRealDataOverlay.tsx        |  65 ++
+  apps/web/app/(home)/page.tsx                       |   7 +
+  apps/web/app/audit/AuditPageClient.tsx             | 659 ++++++++++++++++----
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 661 ++++++++++++++++++---
+  apps/web/app/news/NewsPageClient.tsx               | 176 +++++-
+  apps/web/components/audit/PatternBadge.tsx         |   1 +
+  apps/web/public/legislators/1S05899F.jpg           | Bin 0 -> 273486 bytes
+  apps/web/public/legislators/3C23171A.jpg           | Bin 0 -> 106405 bytes
+  apps/web/public/legislators/3NI5978A.jpg           | Bin 0 -> 680297 bytes
+  ... and 31 more files

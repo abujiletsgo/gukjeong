@@ -723,11 +723,11 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
             <div className="text-xs text-gray-400 mt-1">22대 국회</div>
           </div>
           <div className="card">
-            <div className="text-xs text-gray-500 mb-1">여성 의원 비율</div>
+            <div className="text-xs text-gray-500 mb-1">성별 구성</div>
             <div className="text-xl sm:text-2xl font-bold text-gray-900">
-              {rawLegislators.length > 0 ? ((realGenderDistribution.female / rawLegislators.length) * 100).toFixed(1) : 0}%
+              {realGenderDistribution.male + realGenderDistribution.female}명
             </div>
-            <div className="text-xs text-gray-400 mt-1">{realGenderDistribution.female}명 / {rawLegislators.length}명</div>
+            <div className="text-xs text-gray-400 mt-1">남 {realGenderDistribution.male}명 · 여 {realGenderDistribution.female}명</div>
           </div>
           <div className="card">
             <div className="text-xs text-gray-500 mb-1">초선 의원</div>

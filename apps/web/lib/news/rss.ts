@@ -203,14 +203,31 @@ export async function fetchAllRSSFeeds(): Promise<RealNewsArticle[]> {
     }
   }
 
+  // 정치/경제/정부 관련 기사만 필터링
+  const RELEVANT_KEYWORDS = [
+    '국회', '의원', '법안', '예산', '재정', '세금', '세수', '감사', '비리', '부정', '횡령',
+    '수의계약', '입찰', '담합', '대통령', '정부', '장관', '부처', '청와대', '용산',
+    '더불어민주당', '민주당', '국민의힘', '조국혁신당', '진보당',
+    '검찰', '경찰', '수사', '기소', '재판', '판결', '탄핵', '계엄',
+    '지자체', '시장', '도지사', '군수', '구청장',
+    '경제', 'GDP', '물가', '고용', '실업', '부동산', '금리', '환율', '국채', '주가',
+    '복지', '연금', '보험', '교육', '국방', '외교', '통일', '북한', '남북',
+    '개혁', '규제', '공정', '부패', '투명', '청문회', '국정감사', '인사', '임명',
+    '조달', '나라장터', '계약', '공사', '용역',
+  ];
+
+  const filtered = articles.filter(a =>
+    RELEVANT_KEYWORDS.some(kw => a.title.includes(kw) || (a.description || '').includes(kw))
+  );
+
   // 최신순 정렬
-  articles.sort((a, b) => {
+  filtered.sort((a, b) => {
     const dateA = new Date(a.pubDate).getTime();
     const dateB = new Date(b.pubDate).getTime();
     return dateB - dateA;
   });
 
-  return articles;
+  return filtered;
 }
 
 /**

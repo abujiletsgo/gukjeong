@@ -4,16 +4,8 @@ import { useDataMode } from '@/lib/context/DataModeContext';
 export default function DataModeBanner() {
   const { mode } = useDataMode();
 
-  if (mode === 'live') {
-    return (
-      <div className="bg-emerald-50 border-b border-emerald-200">
-        <div className="container-page flex items-center justify-center gap-2 py-1.5 text-xs text-emerald-800">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>실시간 데이터 — 나라장터, 열린국회정보, 한국은행 API 연동 중</span>
-        </div>
-      </div>
-    );
-  }
+  // Only show banner in demo mode — live mode needs no banner
+  if (mode === 'live') return null;
 
   return (
     <div className="bg-amber-50 border-b border-amber-200">
@@ -23,7 +15,6 @@ export default function DataModeBanner() {
           <path d="M12 9v4M12 17h.01" />
         </svg>
         <span><strong>데모 모드</strong> — 시범 데이터를 보고 있습니다</span>
-        <a href="/about#data" className="underline font-semibold ml-1">데이터 출처 →</a>
       </div>
     </div>
   );
