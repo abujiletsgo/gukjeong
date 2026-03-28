@@ -107,3 +107,12 @@
 **Changed:**
   apps/web/app/audit/AuditPageClient.tsx | 11 ++++++++---
   1 file changed, 8 insertions(+), 3 deletions(-)
+
+## 2026-03-28 (15:56 UTC) · @Tom Kwon
+**Commit:** fix: audit PatternCategory type error — replace high_value_sole_source with all (209ce51) by Tom Kwon
+**Changed:**
+  .claude/MEMORY.md                      | 15 +++++++++++++++
+  apps/web/.claude/MEMORY.md             |  9 +++++++++
+  apps/web/app/audit/AuditPageClient.tsx | 16 ++++++++--------
+  apps/web/tsconfig.tsbuildinfo          |  2 +-
+  4 files changed, 33 insertions(+), 9 deletions(-)

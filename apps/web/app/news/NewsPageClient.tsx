@@ -100,10 +100,7 @@ function extractKeywords(title: string): string[] {
 
 /** Find a representative topic label from a group of articles */
 function findCommonTopic(articles: RealRSSArticle[]): string {
-  if (articles.length === 1) {
-    const t = articles[0].title;
-    return t.length > 40 ? t.slice(0, 40) + '...' : t;
-  }
+  if (articles.length === 1) return articles[0].title;
   const freq: Record<string, number> = {};
   for (const article of articles) {
     const kws = extractKeywords(article.title);
@@ -114,10 +111,9 @@ function findCommonTopic(articles: RealRSSArticle[]): string {
   const sorted = Object.entries(freq)
     .filter(([, c]) => c >= 2)
     .sort(([, a], [, b]) => b - a);
-  if (sorted.length >= 2) return sorted.slice(0, 3).map(([w]) => w).join(' ');
-  if (sorted.length === 1) return sorted[0][0];
-  const t = articles[0].title;
-  return t.length > 40 ? t.slice(0, 40) + '...' : t;
+  if (sorted.length >= 3) return sorted.slice(0, 4).map(([w]) => w).join(' ');
+  if (sorted.length >= 1) return sorted.slice(0, 3).map(([w]) => w).join(' ');
+  return articles[0].title;
 }
 
 /** Group articles by topic similarity (shared 2+ keywords) */
@@ -168,7 +164,7 @@ function groupArticlesByTopic(articles: RealRSSArticle[]): TopicGroup[] {
       articles: sorted,
       isMultiOutlet: uniqueOutlets.size >= 2,
       outletCount: uniqueOutlets.size,
-      summary: cleanDesc.length > 10 ? cleanDesc.slice(0, 200) : undefined,
+      summary: cleanDesc.length > 10 ? cleanDesc : undefined,
       progressiveTake: progTake,
       conservativeTake: consTake,
       whyItMatters: uniqueOutlets.size >= 2
@@ -485,7 +481,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                     {heroGroup.articles
                       .filter(a => classifySpectrum(a.spectrum_score) === 'progressive')
                       .map((article, i) => (
-                        <div key={`hero-p-${i}`}>
+                        <div key={`hero-p-${i}`} className="pb-3 border-b border-blue-100 last:border-0 last:pb-0">
                           <OutletBadge outletId={article.outlet_id} outletName={article.outlet_name} />
                           {article.link ? (
                             <a
@@ -501,12 +497,17 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                               {article.title}
                             </p>
                           )}
+                          {article.description && (
+                            <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                              {article.description.replace(/<[^>]*>/g, '').replace(/&[a-z]+;/gi, ' ').trim()}
+                            </p>
+                          )}
                           {article.link && (
                             <a
                               href={article.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-block mt-1 text-[10px] text-blue-500 hover:text-blue-700 font-medium"
+                              className="inline-block mt-1.5 text-[10px] text-blue-500 hover:text-blue-700 font-medium"
                             >
                               원문 보기 &#x2197;
                             </a>
@@ -530,7 +531,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                     {heroGroup.articles
                       .filter(a => classifySpectrum(a.spectrum_score) === 'conservative')
                       .map((article, i) => (
-                        <div key={`hero-c-${i}`}>
+                        <div key={`hero-c-${i}`} className="pb-3 border-b border-rose-100 last:border-0 last:pb-0">
                           <OutletBadge outletId={article.outlet_id} outletName={article.outlet_name} />
                           {article.link ? (
                             <a
@@ -546,12 +547,17 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                               {article.title}
                             </p>
                           )}
+                          {article.description && (
+                            <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                              {article.description.replace(/<[^>]*>/g, '').replace(/&[a-z]+;/gi, ' ').trim()}
+                            </p>
+                          )}
                           {article.link && (
                             <a
                               href={article.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-block mt-1 text-[10px] text-rose-500 hover:text-rose-700 font-medium"
+                              className="inline-block mt-1.5 text-[10px] text-rose-500 hover:text-rose-700 font-medium"
                             >
                               원문 보기 &#x2197;
                             </a>
@@ -587,14 +593,12 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                               className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
                             >
                               {article.title.length > 50
-                                ? article.title.slice(0, 50) + '...'
-                                : article.title}
+                                {article.title}}
                             </a>
                           ) : (
                             <span className="text-sm text-gray-700">
                               {article.title.length > 50
-                                ? article.title.slice(0, 50) + '...'
-                                : article.title}
+                                {article.title}}
                             </span>
                           )}
                           {article.link && (
@@ -613,24 +617,59 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                 </div>
               )}
 
-              {/* "시민이 주목해야 할 점" box */}
+              {/* "이 이슈를 읽는 법" — analysis section */}
               <div className="px-5 py-4 bg-amber-50/80 border-t border-amber-200">
-                <h3 className="text-sm font-bold text-amber-900 mb-2">이 이슈를 읽는 법</h3>
-                <div className="space-y-2 text-xs text-amber-800">
-                  <p>같은 사건을 {heroGroup.outletCount}개 매체가 서로 다른 제목으로 보도하고 있습니다. 제목만 봐도 각 매체가 무엇을 강조하는지 알 수 있습니다.</p>
+                <h3 className="text-sm font-bold text-amber-900 mb-3">이 이슈를 읽는 법</h3>
+                <div className="space-y-3 text-xs">
+                  {/* What this is about (neutral) */}
+                  <div className="bg-white rounded-lg p-3 border border-amber-100">
+                    <p className="font-semibold text-gray-800 mb-1">무슨 일이 일어나고 있나요?</p>
+                    <p className="text-gray-600 leading-relaxed">
+                      같은 사건을 {heroGroup.outletCount}개 매체가 보도하고 있습니다.
+                      {heroGroup.summary && ` ${heroGroup.summary}`}
+                      {!heroGroup.summary && ' 각 매체의 제목과 내용을 비교하면 어떤 측면을 강조하는지 알 수 있습니다.'}
+                    </p>
+                  </div>
+
+                  {/* Two perspectives side by side */}
                   {heroGroup.progressiveTake && heroGroup.conservativeTake && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
-                        <p className="font-semibold text-blue-800 mb-1">진보 매체가 강조하는 것</p>
-                        <p className="text-blue-700 text-[11px] leading-relaxed">{heroGroup.progressiveTake}</p>
+                    <>
+                      <p className="text-gray-500 font-medium">각 매체가 강조하는 관점:</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                          <p className="font-semibold text-blue-800 mb-1.5">진보 매체의 관점</p>
+                          <p className="text-blue-700 text-[11px] leading-relaxed mb-2">{heroGroup.progressiveTake}</p>
+                          <p className="text-blue-600 text-[10px] leading-relaxed">
+                            이 관점은 사회적 약자 보호, 제도 개혁, 정부의 적극적 역할을 강조하는 경향이 있습니다.
+                            비판적으로 읽되, 어떤 사실관계에 기반하는지 확인해 보세요.
+                          </p>
+                        </div>
+                        <div className="bg-rose-50 rounded-lg p-3 border border-rose-100">
+                          <p className="font-semibold text-rose-800 mb-1.5">보수 매체의 관점</p>
+                          <p className="text-rose-700 text-[11px] leading-relaxed mb-2">{heroGroup.conservativeTake}</p>
+                          <p className="text-rose-600 text-[10px] leading-relaxed">
+                            이 관점은 경제적 효율성, 안보, 기존 질서 유지를 강조하는 경향이 있습니다.
+                            마찬가지로 어떤 사실에 기반하는지 확인해 보세요.
+                          </p>
+                        </div>
                       </div>
-                      <div className="bg-rose-50 rounded-lg p-3 border border-rose-100">
-                        <p className="font-semibold text-rose-800 mb-1">보수 매체가 강조하는 것</p>
-                        <p className="text-rose-700 text-[11px] leading-relaxed">{heroGroup.conservativeTake}</p>
-                      </div>
-                    </div>
+                    </>
                   )}
-                  <p className="text-amber-600 mt-2">두 시각을 모두 읽고 직접 판단해 보세요. 원문 링크를 클릭하면 각 매체의 기사를 확인할 수 있습니다.</p>
+
+                  {/* Citizen impact */}
+                  <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <p className="font-semibold text-gray-800 mb-1">시민에게 미치는 영향</p>
+                    <p className="text-gray-600 leading-relaxed">
+                      이 이슈는 {heroGroup.articles.length}건의 기사로 보도되고 있어 사회적 관심이 높은 사안입니다.
+                      두 관점 모두 나름의 근거를 가지고 있으므로, 원문을 직접 읽고 사실과 의견을 구분하는 것이 중요합니다.
+                      뉴스의 제목만으로 판단하지 말고, 기사 본문의 사실관계를 확인해 보세요.
+                    </p>
+                  </div>
+
+                  {/* How to read */}
+                  <p className="text-amber-600 font-medium mt-1">
+                    두 시각을 모두 읽고 직접 판단해 보세요. 원문 링크를 클릭하면 각 매체의 전체 기사를 확인할 수 있습니다.
+                  </p>
                 </div>
               </div>
             </div>
@@ -776,7 +815,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                           )}
                         </div>
                         {article.description && (
-                          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-2">
+                          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
                             {article.description.replace(/<[^>]*>/g, '').replace(/&[a-z]+;/gi, ' ').trim()}
                           </p>
                         )}
