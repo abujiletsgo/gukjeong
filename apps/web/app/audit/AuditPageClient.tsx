@@ -1,6 +1,6 @@
 'use client';
 // AI 감사관 대시보드 — 클라이언트 컴포넌트
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { AuditFlag, DepartmentScore } from '@/lib/types';
 import KPI from '@/components/common/KPI';
 import DepartmentHeatmap from '@/components/audit/DepartmentHeatmap';
@@ -40,6 +40,21 @@ export default function AuditPageClient({
   const [patternFilter, setPatternFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [departmentFilter, setDepartmentFilter] = useState('all');
+  const [realApiAvailable, setRealApiAvailable] = useState(false);
+
+  // 실시간 분석 API 연결 여부 확인
+  useEffect(() => {
+    fetch('/api/audit/analyze')
+      .then(r => r.json())
+      .then(d => {
+        if (d && !d.demo && !d.error) {
+          setRealApiAvailable(true);
+        }
+      })
+      .catch(() => {
+        // API 미연결 — 배너 표시하지 않음
+      });
+  }, []);
 
   // 필터링
   const filteredFlags = auditFlags.filter(f => {
@@ -71,6 +86,24 @@ export default function AuditPageClient({
           모든 부처에 동일한 기준이 적용됩니다.
         </div>
       </div>
+
+      {/* 실시간 분석 배너 */}
+      {realApiAvailable && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-emerald-800">실시간 분석 사용 가능</p>
+              <p className="text-xs text-emerald-600">나라장터 API가 연결되었습니다. 실제 데이터 기반 분석을 확인하세요.</p>
+            </div>
+            <a
+              href="/audit/real"
+              className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors whitespace-nowrap"
+            >
+              실시간 분석 보기 →
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* KPI 카드 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">

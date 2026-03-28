@@ -151,3 +151,18 @@
   apps/web/lib/types.ts                      |  37 +++
   apps/web/tsconfig.tsbuildinfo              |   2 +-
   8 files changed, 1555 insertions(+), 22 deletions(-)
+
+## 2026-03-28 (08:48 UTC) · @Tom Kwon
+**Commit:** fix: Consistent neutral color scheme — blue/red only for political parties (5514260) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md                         | 13 +++++
+  apps/web/app/(home)/page.tsx                       | 18 +++---
+  apps/web/app/audit/AuditPageClient.tsx             |  6 +-
+  apps/web/app/audit/[id]/AuditDetailClient.tsx      | 68 +++++++++++-----------
+  apps/web/app/bills/BillsPageClient.tsx             | 16 ++---
+  apps/web/app/bills/[id]/BillDetailClient.tsx       | 44 +++++++-------
+  apps/web/app/budget/BudgetPageClient.tsx           |  2 +-
+  apps/web/app/budget/[sector]/SectorPageClient.tsx  |  4 +-
+  .../legislators/[id]/LegislatorDetailClient.tsx    | 18 +++---
+  apps/web/app/local/[region]/page.tsx               | 11 ++--
+  ... and 23 more files
