@@ -1,36 +1,29 @@
 import { NextResponse } from 'next/server';
-import { fetchAllRSSFeeds, WORKING_FEEDS } from '@/lib/news/rss';
+import { getLocalNews } from '@/lib/local-data';
 
-export const revalidate = 300; // 5분 ISR
+export const dynamic = 'force-static';
 
 export async function GET() {
   try {
-    const articles = await fetchAllRSSFeeds();
+    const { items: articles, outlets, fetched_at } = getLocalNews();
 
-    // 언론사별 기사 수 집계
     const outletCounts: Record<string, number> = {};
-    for (const article of articles) {
+    for (const article of articles as any[]) {
       outletCounts[article.outlet_id] = (outletCounts[article.outlet_id] || 0) + 1;
     }
 
     return NextResponse.json({
       total: articles.length,
-      outlets: WORKING_FEEDS.length,
+      outlets: outlets || Object.keys(outletCounts).length,
       outlet_counts: outletCounts,
+      fetched_at,
       timestamp: new Date().toISOString(),
-      articles: articles.slice(0, 100), // 최신 100건
+      articles: (articles as any[]).slice(0, 100),
     });
   } catch (error) {
     console.error('[API /news/live] Error:', error);
     return NextResponse.json(
-      {
-        total: 0,
-        outlets: 0,
-        outlet_counts: {},
-        timestamp: new Date().toISOString(),
-        articles: [],
-        error: '뉴스 피드를 불러오는 데 실패했습니다.',
-      },
+      { total: 0, outlets: 0, outlet_counts: {}, timestamp: new Date().toISOString(), articles: [], error: '뉴스 데이터를 불러오는 데 실패했습니다.' },
       { status: 500 },
     );
   }

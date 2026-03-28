@@ -76,3 +76,19 @@
   apps/web/lib/types.ts                              |  18 +
   apps/web/tsconfig.tsbuildinfo                      |   2 +-
   ... and 1 more files
+
+## 2026-03-28 (13:44 UTC) · @Tom Kwon
+**Commit:** feat: Voting participation data wired into legislator cards (9208242) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 211 +++++++++++++++++++--
+  apps/web/tsconfig.tsbuildinfo                      |   2 +-
+  2 files changed, 199 insertions(+), 14 deletions(-)
+
+## 2026-03-28 (15:21 UTC) · @Tom Kwon
+**Commit:** feat: Context-aware AI audit — stop flagging LPG as corruption (1ac2afd) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 394 +++++++++++------
+  apps/web/lib/audit/context.ts          | 779 +++++++++++++++++++++++++++++++++
+  apps/web/lib/audit/patterns.ts         |  42 +-
+  docs/audit-patterns.md                 |  97 +++-
+  4 files changed, 1143 insertions(+), 169 deletions(-)

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회의원 - 이슈 트래커</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+body { font-family: 'Pretendard', sans-serif; }
+.issue-card { transition: all 0.2s; }
+.issue-card:hover { transform: translateY(-1px); }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<header class="bg-white border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 py-5">
+    <h1 class="text-xl font-bold text-gray-900">이슈 트래커</h1>
+    <p class="text-sm text-gray-500 mt-1">국회에서 다루는 주요 이슈별로 관련 의원과 법안을 확인하세요</p>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+
+  <!-- Issue Grid (default) -->
+  <div id="view-issues">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="issue-grid"></div>
+  </div>
+
+  <!-- Issue Detail (hidden) -->
+  <div id="view-detail" class="hidden">
+    <button onclick="showIssues()" class="mb-6 flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      전체 이슈로 돌아가기
+    </button>
+    <div id="detail-content"></div>
+  </div>
+
+</main>
+
+<script>
+const issues = [
+  {
+    name: "경제·재정",
+    icon: "💰",
+    color: "#F59E0B",
+    desc: "세제, 예산, 금융, 경제성장 관련 이슈",
+    billCount: 87,
+    activeLegislators: 42,
+    bills: [
+      { name: "조세특례제한법 개정안", summary: "중소기업 투자 세액공제 기한을 2028년까지 연장하는 법", status: "위원회 심사 중" },
+      { name: "국가재정법 개정안", summary: "재정준칙을 법제화하여 국가채무 비율을 관리하는 법", status: "소위 회부" }
+    ],
+    legislators: [
+      { name: "추경호", party: "국민의힘", district: "대구 달성", role: "기획재정위 위원", bills: 23, education: "서울대 경제학과, 미국 위스콘신대 경제학 박사", career: "기획재정부 장관, 국무조정실장" },
+      { name: "윤준병", party: "더불어민주당", district: "전북 정읍·고창", role: "기획재정위 위원", bills: 31, education: "서울대 수의학과, 서울대 보건대학원 석사", career: "농림축산식품부 차관, 수의사" }
+    ]
+  },
+  {
+    name: "사법·인권",
+    icon: "⚖️",
+    color: "#6366F1",
+    desc: "법치, 인권, 사법제도 관련 이슈",
+    billCount: 123,
+    activeLegislators: 38,
+    bills: [
+      { name: "형사소송법 개정안", summary: "피의자의 변호인 접견권을 24시간 보장하는 법", status: "본회의 상정 예정" },
+      { name: "공익신고자 보호법", summary: "내부 비리를 신고한 사람을 보복으로부터 보호하는 법", status: "위원회 심사 중" },
+      { name: "민법 개정안", summary: "성년후견제도의 절차를 간소화하여 접근성을 높이는 법", status: "소위 회부" },
+      { name: "정보공개법 개정안", summary: "공공기관의 정보공개 범위를 넓히고 비공개 사유를 축소하는 법", status: "위원회 심사 중" }
+    ],
+    legislators: [
+      { name: "김승원", party: "더불어민주당", district: "경기 수원시을", role: "법사위 위원", bills: 45, education: "서울대 법학과, 사법시험 합격", career: "변호사, 수원시 법률자문위원" },
+      { name: "주진우", party: "더불어민주당", district: "서울 영등포구을", role: "법사위 위원", bills: 28, education: "고려대 법학과, 고려대 법학대학원", career: "변호사, 시민단체 활동가" }
+    ]
+  },
+  {
+    name: "보건·복지",
+    icon: "🏥",
+    color: "#EC4899",
+    desc: "건강보험, 의료, 복지, 연금 관련 이슈",
+    billCount: 98,
+    activeLegislators: 35,
+    bills: [
+      { name: "국민건강보험법 개정안", summary: "비급여 진료 항목을 단계적으로 급여화하는 법", status: "소위 심사 중" },
+      { name: "의료법 개정안", summary: "비대면 진료의 법적 근거를 마련하고 요건을 정하는 법", status: "위원회 상정" },
+      { name: "감염병예방법 개정안", summary: "감염병 위기 시 의료 인력 동원 체계를 정비하는 법", status: "소위 회부" }
+    ],
+    legislators: [
+      { name: "서영석", party: "더불어민주당", district: "경기 부천시갑", role: "보건복지위 위원", bills: 38, education: "연세대 의학과, 의학박사", career: "의사, 부천시의사회장" }
+    ]
+  },
+  {
+    name: "국방·안보",
+    icon: "🛡️",
+    color: "#14B8A6",
+    desc: "국방, 군사, 안보, 병역 관련 이슈",
+    billCount: 43,
+    activeLegislators: 22,
+    bills: [
+      { name: "군인복지법 개정안", summary: "병사 월급을 200만원으로 단계적으로 인상하는 법", status: "본회의 가결" }
+    ],
+    legislators: [
+      { name: "신원식", party: "국민의힘", district: "비례대표", role: "국방위 위원", bills: 15, education: "육군사관학교, 국방대학원", career: "국방부 장관, 합참 작전본부장" }
+    ]
+  },
+  {
+    name: "교육",
+    icon: "📚",
+    color: "#8B5CF6",
+    desc: "초중고, 대학, 평생교육 관련 이슈",
+    billCount: 76,
+    activeLegislators: 29,
+    bills: [
+      { name: "교육기본법 개정안", summary: "학생의 디지털 리터러시 교육을 의무화하는 법", status: "소위 심사 중" },
+      { name: "사립학교법 개정안", summary: "사학 비리 방지를 위해 이사회 구성을 개편하는 법", status: "위원회 심사 중" }
+    ],
+    legislators: [
+      { name: "이태규", party: "국민의힘", district: "부산 사하구을", role: "교육위 위원", bills: 27, education: "부산대 교육학과, 부산대 교육대학원", career: "교원, 부산시교육청 장학사" }
+    ]
+  },
+  {
+    name: "과학기술·ICT",
+    icon: "🔬",
+    color: "#0EA5E9",
+    desc: "AI, 데이터, 방송통신, R&D 관련 이슈",
+    billCount: 54,
+    activeLegislators: 24,
+    bills: [
+      { name: "인공지능산업법", summary: "AI 개발 및 활용에 대한 기본 원칙과 지원 체계를 마련하는 법", status: "위원회 심사 중" },
+      { name: "데이터기본법 개정안", summary: "공공데이터의 민간 개방 범위를 확대하는 법", status: "소위 회부" }
+    ],
+    legislators: [
+      { name: "박충권", party: "국민의힘", district: "대전 유성구갑", role: "과방위 위원", bills: 22, education: "KAIST 전산학과, MIT 컴퓨터과학 석사", career: "IT 기업 대표, 과기부 자문위원" },
+      { name: "김현정", party: "더불어민주당", district: "비례대표", role: "과방위 위원", bills: 33, education: "이화여대 정치외교학과", career: "KBS 앵커, 시사프로그램 진행자" }
+    ]
+  },
+  {
+    name: "언론·미디어",
+    icon: "📺",
+    color: "#F97316",
+    desc: "방송, 언론자유, 미디어 관련 이슈",
+    billCount: 31,
+    activeLegislators: 18,
+    bills: [
+      { name: "방송법 개정안", summary: "공영방송의 독립성을 보장하기 위해 이사회 구성을 개편하는 법", status: "위원회 심사 중" },
+      { name: "언론중재법 개정안", summary: "허위 보도 피해자의 정정보도 청구를 신속하게 처리하는 법", status: "소위 회부" },
+      { name: "미디어다양성법", summary: "지역 언론사에 대한 재정 지원을 확대하는 법", status: "위원회 상정" }
+    ],
+    legislators: [
+      { name: "김현정", party: "더불어민주당", district: "비례대표", role: "과방위 위원", bills: 33, education: "이화여대 정치외교학과", career: "KBS 앵커, 시사프로그램 진행자" }
+    ]
+  },
+  {
+    name: "농업·식품",
+    icon: "🌾",
+    color: "#84CC16",
+    desc: "농업, 축산, 식품안전 관련 이슈",
+    billCount: 45,
+    activeLegislators: 21,
+    bills: [
+      { name: "농업인안전보험법", summary: "농업인의 산재 보험 가입을 국가가 지원하는 법", status: "위원회 심사 중" },
+      { name: "축산법 개정안", summary: "축산 농가의 방역 체계를 강화하고 지원금을 확대하는 법", status: "소위 회부" },
+      { name: "식품안전기본법 개정안", summary: "수입 식품의 안전 검사 기준을 강화하는 법", status: "위원회 상정" }
+    ],
+    legislators: [
+      { name: "윤준병", party: "더불어민주당", district: "전북 정읍·고창", role: "농해수위 위원", bills: 31, education: "서울대 수의학과, 서울대 보건대학원 석사", career: "농림축산식품부 차관, 수의사" }
+    ]
+  },
+  {
+    name: "지역균형발전",
+    icon: "🗺️",
+    color: "#10B981",
+    desc: "수도권 집중 완화, 지방분권, 균형발전 관련 이슈",
+    billCount: 38,
+    activeLegislators: 27,
+    bills: [
+      { name: "지방자치법 개정안", summary: "지방의회의 자치입법권을 강화하여 지역 맞춤 정책을 가능하게 하는 법", status: "위원회 심사 중" },
+      { name: "국가균형발전특별법 개정안", summary: "수도권 집중을 완화하기 위한 지방 투자 인센티브를 확대하는 법", status: "소위 회부" }
+    ],
+    legislators: [
+      { name: "강대식", party: "국민의힘", district: "대구 동구·군위", role: "행안위 위원", bills: 18, education: "영남대 정치외교학과, 영남대 대학원 박사", career: "영남대 교수, 대구시 정무부시장" }
+    ]
+  }
+];
+
+function statusBadge(status) {
+  const colors = {
+    '본회의 가결': 'bg-green-100 text-green-700',
+    '본회의 상정 예정': 'bg-blue-100 text-blue-700',
+    '소위 심사 중': 'bg-amber-100 text-amber-700',
+    '소위 회부': 'bg-amber-50 text-amber-600',
+    '위원회 심사 중': 'bg-gray-100 text-gray-600',
+    '위원회 상정': 'bg-gray-50 text-gray-500'
+  };
+  return `<span class="text-xs px-2 py-0.5 rounded-full ${colors[status] || 'bg-gray-100 text-gray-500'}">${status}</span>`;
+}
+
+function renderIssues() {
+  const grid = document.getElementById('issue-grid');
+  grid.innerHTML = issues.map((issue, idx) => `
+    <div class="issue-card bg-white rounded-xl border border-gray-200 p-6 cursor-pointer hover:shadow-md" onclick="showDetail(${idx})">
+      <div class="flex items-start justify-between mb-3">
+        <span class="text-3xl">${issue.icon}</span>
+        <div class="w-3 h-3 rounded-full" style="background:${issue.color}"></div>
+      </div>
+      <h3 class="text-lg font-bold text-gray-900 mb-1">${issue.name}</h3>
+      <p class="text-sm text-gray-500 mb-4">${issue.desc}</p>
+      <div class="flex gap-4 text-sm">
+        <div>
+          <span class="font-bold text-gray-900">${issue.billCount}</span>
+          <span class="text-gray-400">건 법안</span>
+        </div>
+        <div>
+          <span class="font-bold text-gray-900">${issue.activeLegislators}</span>
+          <span class="text-gray-400">명 참여</span>
+        </div>
+      </div>
+      <div class="mt-4 flex -space-x-2">
+        ${issue.legislators.slice(0, 4).map(l => `
+          <div class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold" style="background:${l.party === '더불어민주당' ? '#1A56DB' : '#E5243B'}">${l.name[0]}</div>
+        `).join('')}
+        ${issue.legislators.length > 4 ? `<div class="w-8 h-8 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-xs text-gray-500">+${issue.legislators.length - 4}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function showIssues() {
+  document.getElementById('view-issues').classList.remove('hidden');
+  document.getElementById('view-detail').classList.add('hidden');
+}
+
+function showDetail(idx) {
+  const issue = issues[idx];
+  document.getElementById('view-issues').classList.add('hidden');
+  document.getElementById('view-detail').classList.remove('hidden');
+
+  const content = document.getElementById('detail-content');
+  content.innerHTML = `
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="text-4xl">${issue.icon}</span>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">${issue.name}</h2>
+          <p class="text-gray-500">${issue.desc}</p>
+        </div>
+      </div>
+      <div class="flex gap-6 mt-4">
+        <div class="bg-white rounded-lg border border-gray-200 px-5 py-3 text-center">
+          <div class="text-2xl font-bold text-gray-900">${issue.billCount}</div>
+          <div class="text-sm text-gray-500">관련 법안</div>
+        </div>
+        <div class="bg-white rounded-lg border border-gray-200 px-5 py-3 text-center">
+          <div class="text-2xl font-bold text-gray-900">${issue.activeLegislators}</div>
+          <div class="text-sm text-gray-500">참여 의원</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bills -->
+    <div class="mb-8">
+      <h3 class="text-lg font-bold text-gray-900 mb-4">관련 법안</h3>
+      <div class="space-y-3">
+        ${issue.bills.map(b => `
+          <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <div class="flex items-start justify-between gap-3 flex-wrap">
+              <div class="flex-1">
+                <div class="font-semibold text-gray-900 mb-1">${b.name}</div>
+                <div class="text-sm text-gray-500">${b.summary}</div>
+              </div>
+              ${statusBadge(b.status)}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Legislators -->
+    <div>
+      <h3 class="text-lg font-bold text-gray-900 mb-4">이 이슈를 다루는 의원</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        ${issue.legislators.map(l => {
+          const pc = l.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+          const pbg = l.party === '더불어민주당' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700';
+          return `
+            <div class="bg-white rounded-xl border border-gray-200 p-5">
+              <div class="flex items-center gap-4 mb-3">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold" style="background:${pc}">${l.name[0]}</div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-gray-900">${l.name}</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full ${pbg}">${l.party}</span>
+                  </div>
+                  <div class="text-sm text-gray-500">${l.district} | ${l.role}</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <div class="text-xs text-gray-400">학력</div>
+                  <div class="text-sm text-gray-700 mt-0.5">${l.education}</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <div class="text-xs text-gray-400">경력</div>
+                  <div class="text-sm text-gray-700 mt-0.5">${l.career}</div>
+                </div>
+              </div>
+              <div class="text-sm text-gray-500">이 이슈 관련 발의 법안: <span class="font-bold text-gray-900">${l.bills}건</span></div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+renderIssues();
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { fetchBillsByLegislator } from '@/lib/assembly/client';
+import { getLocalBills } from '@/lib/local-data';
 
-export const revalidate = 21600; // 6시간
+export const dynamic = 'force-static';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -19,10 +19,21 @@ export async function GET(request: Request) {
   const startTime = Date.now();
 
   try {
-    const { bills, totalCount } = await fetchBillsByLegislator(name, page, size);
+    const { items: allBills, fetched_at } = getLocalBills();
 
-    // Map to a cleaner format
-    const formattedBills = bills.map((b) => ({
+    // Filter bills where this legislator is proposer or co-proposer
+    const matched = (allBills as any[]).filter(
+      (b) =>
+        b.RST_PROPOSER === name ||
+        (b.PROPOSER && b.PROPOSER.includes(name)) ||
+        (b.PUBL_PROPOSER && b.PUBL_PROPOSER.includes(name))
+    );
+
+    const totalCount = matched.length;
+    const startIdx = (page - 1) * size;
+    const bills = matched.slice(startIdx, startIdx + size);
+
+    const formattedBills = bills.map((b: any) => ({
       id: b.BILL_ID,
       billNo: b.BILL_NO,
       name: b.BILL_NAME,
@@ -49,7 +60,8 @@ export async function GET(request: Request) {
       size,
       totalCount,
       totalPages: Math.ceil(totalCount / size),
-      source: '열린국회정보 API (nzmimeepazxkubdpn)',
+      source: '로컬 데이터 (열린국회정보 스냅샷)',
+      fetched_at,
       timestamp: new Date().toISOString(),
       elapsed_ms: Date.now() - startTime,
       bills: formattedBills,
@@ -64,7 +76,7 @@ export async function GET(request: Request) {
         timestamp: new Date().toISOString(),
         elapsed_ms: Date.now() - startTime,
       },
-      { status: 502 },
+      { status: 500 },
     );
   }
 }

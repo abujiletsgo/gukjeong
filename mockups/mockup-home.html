@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국정투명 — 숫자로 보는 대한민국 정부</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .fade-in { animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .section-card { transition: all 0.2s ease; }
+  .section-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        guk: { 50:'#eff6ff', 100:'#dbeafe', 200:'#bfdbfe', 500:'#3b82f6', 600:'#2563eb', 700:'#1d4ed8', 800:'#1e40af', 900:'#1e3a5f' }
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Navigation -->
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-guk-600 rounded-lg flex items-center justify-center">
+        <span class="text-white font-bold text-sm">국</span>
+      </div>
+      <span class="font-bold text-lg text-guk-900">국정투명</span>
+    </div>
+    <div class="hidden md:flex gap-6 text-sm text-gray-600">
+      <a href="mockup-budget.html" class="hover:text-guk-600">예산</a>
+      <a href="mockup-legislators.html" class="hover:text-guk-600">국회의원</a>
+      <a href="mockup-bills.html" class="hover:text-guk-600">법안</a>
+      <a href="mockup-audit.html" class="hover:text-guk-600">AI 감사</a>
+      <a href="mockup-news.html" class="hover:text-guk-600">뉴스</a>
+    </div>
+    <button class="md:hidden text-gray-500" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 px-4 py-2 space-y-2">
+    <a href="mockup-budget.html" class="block py-2 text-sm text-gray-600">예산</a>
+    <a href="mockup-legislators.html" class="block py-2 text-sm text-gray-600">국회의원</a>
+    <a href="mockup-bills.html" class="block py-2 text-sm text-gray-600">법안</a>
+    <a href="mockup-audit.html" class="block py-2 text-sm text-gray-600">AI 감사</a>
+    <a href="mockup-news.html" class="block py-2 text-sm text-gray-600">뉴스</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="bg-gradient-to-br from-guk-800 via-guk-700 to-guk-900 text-white">
+  <div class="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
+    <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">숫자로 보는<br class="md:hidden"> 대한민국 정부</h1>
+    <p class="text-lg md:text-xl text-blue-200 mb-10 max-w-2xl mx-auto">
+      정부 예산, 국회 활동, 공공계약을 시민이 이해할 수 있는 언어로 보여줍니다.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="mockup-budget.html" class="bg-white text-guk-700 font-semibold px-8 py-3 rounded-xl hover:bg-blue-50 transition">
+        728조원은 어디에 쓰이나요?
+      </a>
+      <a href="mockup-legislators.html" class="border-2 border-white/40 text-white font-semibold px-8 py-3 rounded-xl hover:bg-white/10 transition">
+        내 지역구 의원 찾기
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Number Bar -->
+<section class="bg-white border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 text-center">
+      <div class="py-2">
+        <div class="text-2xl md:text-3xl font-bold text-guk-700">728조</div>
+        <div class="text-xs text-gray-500 mt-1">2026 총예산</div>
+      </div>
+      <div class="py-2">
+        <div class="text-2xl md:text-3xl font-bold text-guk-700">295명</div>
+        <div class="text-xs text-gray-500 mt-1">국회의원</div>
+      </div>
+      <div class="py-2">
+        <div class="text-2xl md:text-3xl font-bold text-guk-700">16,289</div>
+        <div class="text-xs text-gray-500 mt-1">발의 법안</div>
+      </div>
+      <div class="py-2">
+        <div class="text-2xl md:text-3xl font-bold text-guk-700">3,200</div>
+        <div class="text-xs text-gray-500 mt-1">분석된 계약</div>
+      </div>
+      <div class="py-2">
+        <div class="text-2xl md:text-3xl font-bold text-guk-700">76건</div>
+        <div class="text-xs text-gray-500 mt-1">AI 패턴 탐지</div>
+      </div>
+      <div class="py-2">
+        <div class="text-2xl md:text-3xl font-bold text-guk-700">5개</div>
+        <div class="text-xs text-gray-500 mt-1">원내 정당</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Cards -->
+<section class="max-w-6xl mx-auto px-4 py-12 md:py-16">
+  <h2 class="text-xl md:text-2xl font-bold mb-8 text-center text-gray-800">무엇이 궁금하세요?</h2>
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Budget -->
+    <a href="mockup-budget.html" class="section-card bg-white rounded-2xl p-6 border border-gray-100 shadow-sm cursor-pointer block">
+      <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-1">예산</h3>
+      <div class="text-2xl font-bold text-guk-700 mb-2">728조원</div>
+      <p class="text-sm text-gray-500 mb-3">정부가 올해 어디에, 왜 돈을 쓰는지 한눈에 보세요.</p>
+      <span class="text-sm text-guk-600 font-medium flex items-center gap-1">
+        자세히 보기 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+
+    <!-- Legislators -->
+    <a href="mockup-legislators.html" class="section-card bg-white rounded-2xl p-6 border border-gray-100 shadow-sm cursor-pointer block">
+      <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-1">국회의원</h3>
+      <div class="text-2xl font-bold text-purple-700 mb-2">295명</div>
+      <p class="text-sm text-gray-500 mb-3">내 지역 의원이 누구인지, 무엇을 하고 있는지 확인하세요.</p>
+      <span class="text-sm text-purple-600 font-medium flex items-center gap-1">
+        의원 찾기 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+
+    <!-- Bills -->
+    <a href="mockup-bills.html" class="section-card bg-white rounded-2xl p-6 border border-gray-100 shadow-sm cursor-pointer block">
+      <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-1">법안</h3>
+      <div class="text-2xl font-bold text-green-700 mb-2">16,289건</div>
+      <p class="text-sm text-gray-500 mb-3">국회에서 어떤 법안이 논의되고 있는지 쉬운 말로 읽어보세요.</p>
+      <span class="text-sm text-green-600 font-medium flex items-center gap-1">
+        법안 보기 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+
+    <!-- Audit -->
+    <a href="mockup-audit.html" class="section-card bg-white rounded-2xl p-6 border border-gray-100 shadow-sm cursor-pointer block">
+      <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-1">AI 감사</h3>
+      <div class="text-2xl font-bold text-amber-700 mb-2">76건</div>
+      <p class="text-sm text-gray-500 mb-3">AI가 공공계약에서 찾아낸 특이 패턴을 투명하게 공개합니다.</p>
+      <span class="text-sm text-amber-600 font-medium flex items-center gap-1">
+        감사 결과 보기 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+
+    <!-- News -->
+    <a href="mockup-news.html" class="section-card bg-white rounded-2xl p-6 border border-gray-100 shadow-sm cursor-pointer block">
+      <div class="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-1">뉴스</h3>
+      <div class="text-2xl font-bold text-rose-700 mb-2">양쪽 시각</div>
+      <p class="text-sm text-gray-500 mb-3">같은 사안을 진보와 보수 매체가 어떻게 다르게 보도하는지 비교하세요.</p>
+      <span class="text-sm text-rose-600 font-medium flex items-center gap-1">
+        오늘의 뉴스 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+
+    <!-- Region Quick Entry -->
+    <div class="section-card bg-gradient-to-br from-guk-50 to-blue-50 rounded-2xl p-6 border border-blue-100 shadow-sm">
+      <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 shadow-sm">
+        <svg class="w-6 h-6 text-guk-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-3">내 지역구로 바로 가기</h3>
+      <select class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-guk-500 mb-3" onchange="if(this.value) alert('mockup-legislators.html 에서 ' + this.value + ' 지역 의원을 확인하세요.')">
+        <option value="">시/도를 선택하세요</option>
+        <option value="서울">서울특별시</option>
+        <option value="부산">부산광역시</option>
+        <option value="대구">대구광역시</option>
+        <option value="인천">인천광역시</option>
+        <option value="광주">광주광역시</option>
+        <option value="대전">대전광역시</option>
+        <option value="울산">울산광역시</option>
+        <option value="세종">세종특별자치시</option>
+        <option value="경기">경기도</option>
+        <option value="강원">강원특별자치도</option>
+        <option value="충북">충청북도</option>
+        <option value="충남">충청남도</option>
+        <option value="전북">전북특별자치도</option>
+        <option value="전남">전라남도</option>
+        <option value="경북">경상북도</option>
+        <option value="경남">경상남도</option>
+        <option value="제주">제주특별자치도</option>
+      </select>
+      <p class="text-xs text-gray-500">선택하면 해당 지역 의원, 예산, 계약 정보를 바로 볼 수 있습니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-400">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-6 h-6 bg-guk-600 rounded flex items-center justify-center">
+            <span class="text-white font-bold text-xs">국</span>
+          </div>
+          <span class="font-bold text-white">국정투명</span>
+        </div>
+        <p class="text-sm">대한민국 정부의 활동을 시민이 이해할 수 있는 언어로 보여주는 비영리 프로젝트입니다.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-3 text-sm">데이터 출처</h4>
+        <ul class="text-sm space-y-1.5">
+          <li>열린재정 (기획재정부)</li>
+          <li>국회 의안정보시스템</li>
+          <li>나라장터 (조달청)</li>
+          <li>국회 회의록</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-3 text-sm">원칙</h4>
+        <ul class="text-sm space-y-1.5">
+          <li>모든 데이터에 출처 명시</li>
+          <li>평가나 순위 없음</li>
+          <li>편향 없는 중립적 정보</li>
+          <li>100% 오픈소스</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 pt-6 text-xs text-center text-gray-500">
+      데이터 기준일: 2026년 3월 &middot; 출처: 열린재정, 국회 의안정보시스템, 나라장터
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

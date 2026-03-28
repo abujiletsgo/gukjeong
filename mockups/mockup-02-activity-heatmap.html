@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회의원 - 활동 히트맵</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+body { font-family: 'Pretendard', sans-serif; }
+.heatmap-cell { width: 12px; height: 12px; border-radius: 2px; }
+.tooltip { pointer-events: none; }
+@media (max-width: 768px) { .heatmap-cell { width: 10px; height: 10px; } }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<header class="bg-white border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 py-5">
+    <h1 class="text-xl font-bold text-gray-900">국회의원 활동 히트맵</h1>
+    <p class="text-sm text-gray-500 mt-1">지난 1년간 의정활동을 한눈에 확인하세요</p>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+
+  <!-- Legend -->
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+    <div class="flex items-center gap-3 text-sm text-gray-500">
+      <span>활동 강도:</span>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-3 rounded-sm bg-gray-200"></div>
+        <span>없음</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-3 rounded-sm bg-green-200"></div>
+        <span>1-2건</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-3 rounded-sm bg-green-400"></div>
+        <span>3-4건</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-3 h-3 rounded-sm bg-green-600"></div>
+        <span>5건+</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#1A56DB]"></span> 더불어민주당</span>
+      <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#E5243B]"></span> 국민의힘</span>
+    </div>
+  </div>
+
+  <div id="legislators-grid" class="space-y-4"></div>
+
+</main>
+
+<script>
+const legislators = [
+  { name: "윤준병", party: "더불어민주당", district: "전북 정읍·고창", bills: 31, participation: 91, education: "서울대 수의학과, 서울대 보건대학원 석사", career: "농림축산식품부 차관, 수의사",
+    recentBills: [
+      { name: "농업인안전보험법", summary: "농업인의 산재 보험 가입을 국가가 지원하는 법" },
+      { name: "축산법 개정안", summary: "축산 농가의 방역 체계를 강화하고 지원금을 확대하는 법" },
+      { name: "식품안전기본법 개정안", summary: "수입 식품의 안전 검사 기준을 강화하는 법" }
+    ]},
+  { name: "강대식", party: "국민의힘", district: "대구 동구·군위", bills: 18, participation: 87, education: "영남대 정치외교학과, 영남대 대학원 박사", career: "영남대 교수, 대구시 정무부시장",
+    recentBills: [
+      { name: "지방자치법 개정안", summary: "지방의회의 자치입법권을 강화하여 지역 맞춤 정책을 가능하게 하는 법" },
+      { name: "국가균형발전특별법 개정안", summary: "수도권 집중을 완화하기 위한 지방 투자 인센티브를 확대하는 법" }
+    ]},
+  { name: "김승원", party: "더불어민주당", district: "경기 수원시을", bills: 45, participation: 96, education: "서울대 법학과, 사법시험 합격", career: "변호사, 수원시 법률자문위원",
+    recentBills: [
+      { name: "형사소송법 개정안", summary: "피의자의 변호인 접견권을 24시간 보장하는 법" },
+      { name: "법률구조법 개정안", summary: "저소득층의 법률 서비스 접근성을 높이는 법" },
+      { name: "민법 개정안", summary: "성년후견제도의 절차를 간소화하여 접근성을 높이는 법" },
+      { name: "소비자기본법 개정안", summary: "온라인 거래에서 소비자 피해 구제를 강화하는 법" }
+    ]},
+  { name: "주진우", party: "더불어민주당", district: "서울 영등포구을", bills: 28, participation: 89, education: "고려대 법학과, 고려대 법학대학원", career: "변호사, 시민단체 활동가",
+    recentBills: [
+      { name: "공익신고자 보호법", summary: "내부 비리를 신고한 사람을 보복으로부터 보호하는 법" },
+      { name: "정보공개법 개정안", summary: "공공기관의 정보공개 범위를 넓히고 비공개 사유를 축소하는 법" }
+    ]},
+  { name: "추경호", party: "국민의힘", district: "대구 달성", bills: 23, participation: 94, education: "서울대 경제학과, 미국 위스콘신대 경제학 박사", career: "기획재정부 장관, 국무조정실장",
+    recentBills: [
+      { name: "조세특례제한법 개정안", summary: "중소기업 투자 세액공제 기한을 2028년까지 연장하는 법" },
+      { name: "국가재정법 개정안", summary: "재정준칙을 법제화하여 국가채무 비율을 관리하는 법" }
+    ]},
+  { name: "김현정", party: "더불어민주당", district: "비례대표", bills: 33, participation: 93, education: "이화여대 정치외교학과", career: "KBS 앵커, 시사프로그램 진행자",
+    recentBills: [
+      { name: "방송법 개정안", summary: "공영방송의 독립성을 보장하기 위해 이사회 구성을 개편하는 법" },
+      { name: "언론중재법 개정안", summary: "허위 보도 피해자의 정정보도 청구를 신속하게 처리하는 법" },
+      { name: "미디어다양성법", summary: "지역 언론사에 대한 재정 지원을 확대하는 법" }
+    ]},
+  { name: "신원식", party: "국민의힘", district: "비례대표", bills: 15, participation: 85, education: "육군사관학교, 국방대학원", career: "국방부 장관, 합참 작전본부장",
+    recentBills: [
+      { name: "군인복지법 개정안", summary: "병사 월급을 200만원으로 단계적으로 인상하는 법" }
+    ]},
+  { name: "서영석", party: "더불어민주당", district: "경기 부천시갑", bills: 38, participation: 95, education: "연세대 의학과, 의학박사", career: "의사, 부천시의사회장",
+    recentBills: [
+      { name: "국민건강보험법 개정안", summary: "비급여 진료 항목을 단계적으로 급여화하는 법" },
+      { name: "의료법 개정안", summary: "비대면 진료의 법적 근거를 마련하고 요건을 정하는 법" },
+      { name: "감염병예방법 개정안", summary: "감염병 위기 시 의료 인력 동원 체계를 정비하는 법" }
+    ]},
+  { name: "이태규", party: "국민의힘", district: "부산 사하구을", bills: 27, participation: 88, education: "부산대 교육학과, 부산대 교육대학원", career: "교원, 부산시교육청 장학사",
+    recentBills: [
+      { name: "교육기본법 개정안", summary: "학생의 디지털 리터러시 교육을 의무화하는 법" },
+      { name: "사립학교법 개정안", summary: "사학 비리 방지를 위해 이사회 구성을 개편하는 법" }
+    ]},
+  { name: "박충권", party: "국민의힘", district: "대전 유성구갑", bills: 22, participation: 90, education: "KAIST 전산학과, MIT 컴퓨터과학 석사", career: "IT 기업 대표, 과기부 자문위원",
+    recentBills: [
+      { name: "인공지능산업법", summary: "AI 개발 및 활용에 대한 기본 원칙과 지원 체계를 마련하는 법" },
+      { name: "데이터기본법 개정안", summary: "공공데이터의 민간 개방 범위를 확대하는 법" }
+    ]}
+];
+
+function generateHeatmapData(bills) {
+  const data = [];
+  const today = new Date(2026, 2, 26);
+  const oneYearAgo = new Date(2025, 2, 26);
+  const dayMs = 86400000;
+  const totalDays = Math.floor((today - oneYearAgo) / dayMs);
+
+  // Generate activity based on bill count (more bills = more active days)
+  const activityRate = Math.min(bills / 50, 0.8);
+  const seed = bills * 7 + bills;
+
+  for (let i = 0; i < totalDays; i++) {
+    const date = new Date(oneYearAgo.getTime() + i * dayMs);
+    const dayOfWeek = date.getDay();
+
+    // No weekend activity (mostly)
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      data.push({ date, count: Math.random() < 0.1 ? 1 : 0 });
+      continue;
+    }
+
+    // Pseudo-random based on position
+    const pseudoRand = Math.sin(seed + i * 0.7) * 0.5 + 0.5;
+    if (pseudoRand < activityRate) {
+      const intensity = Math.floor(pseudoRand * 7) + 1;
+      data.push({ date, count: Math.min(intensity, 6) });
+    } else {
+      data.push({ date, count: 0 });
+    }
+  }
+  return data;
+}
+
+function getHeatColor(count) {
+  if (count === 0) return 'bg-gray-200';
+  if (count <= 2) return 'bg-green-200';
+  if (count <= 4) return 'bg-green-400';
+  return 'bg-green-600';
+}
+
+function renderHeatmap(data) {
+  const weeks = [];
+  let currentWeek = [];
+
+  // Pad start
+  const startDay = data[0].date.getDay();
+  for (let i = 0; i < startDay; i++) {
+    currentWeek.push(null);
+  }
+
+  data.forEach(d => {
+    currentWeek.push(d);
+    if (currentWeek.length === 7) {
+      weeks.push(currentWeek);
+      currentWeek = [];
+    }
+  });
+  if (currentWeek.length > 0) weeks.push(currentWeek);
+
+  const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+  let html = '<div class="overflow-x-auto"><div class="inline-flex gap-[2px]">';
+  weeks.forEach((week, wi) => {
+    html += '<div class="flex flex-col gap-[2px]">';
+    week.forEach(day => {
+      if (day === null) {
+        html += '<div class="heatmap-cell"></div>';
+      } else {
+        const dateStr = `${day.date.getFullYear()}-${String(day.date.getMonth()+1).padStart(2,'0')}-${String(day.date.getDate()).padStart(2,'0')}`;
+        const label = day.count > 0 ? `${dateStr}: ${day.count}건 활동` : `${dateStr}: 활동 없음`;
+        html += `<div class="heatmap-cell ${getHeatColor(day.count)}" title="${label}"></div>`;
+      }
+    });
+    html += '</div>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function renderLegislators() {
+  const container = document.getElementById('legislators-grid');
+  container.innerHTML = legislators.map(leg => {
+    const heatData = generateHeatmapData(leg.bills);
+    const activeDays = heatData.filter(d => d.count > 0).length;
+    const totalActivity = heatData.reduce((s, d) => s + d.count, 0);
+    const partyColor = leg.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+    const partyBg = leg.party === '더불어민주당' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700';
+
+    return `
+      <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold" style="background: ${partyColor}">
+              ${leg.name[0]}
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-gray-900 text-lg">${leg.name}</span>
+                <span class="text-xs px-2 py-0.5 rounded-full ${partyBg}">${leg.party}</span>
+              </div>
+              <div class="text-sm text-gray-500">${leg.district}</div>
+            </div>
+          </div>
+          <div class="flex gap-4 text-center">
+            <div>
+              <div class="text-xl font-bold text-gray-900">${leg.bills}</div>
+              <div class="text-xs text-gray-400">발의</div>
+            </div>
+            <div>
+              <div class="text-xl font-bold text-gray-900">${leg.participation}%</div>
+              <div class="text-xs text-gray-400">출석</div>
+            </div>
+            <div>
+              <div class="text-xl font-bold text-green-600">${activeDays}</div>
+              <div class="text-xs text-gray-400">활동일</div>
+            </div>
+          </div>
+        </div>
+
+        ${renderHeatmap(heatData)}
+
+        <details class="mt-4">
+          <summary class="text-sm text-gray-500 cursor-pointer hover:text-gray-700">프로필 및 대표 법안 보기</summary>
+          <div class="mt-3 space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400 mb-1">학력</div>
+                <div class="text-sm text-gray-700">${leg.education}</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400 mb-1">경력</div>
+                <div class="text-sm text-gray-700">${leg.career}</div>
+              </div>
+            </div>
+            <div class="text-xs text-gray-400 mt-2">대표 발의 법안</div>
+            ${leg.recentBills.map(b => `
+              <div class="border-l-2 border-green-400 pl-3 py-1">
+                <div class="text-sm font-medium text-gray-900">${b.name}</div>
+                <div class="text-xs text-gray-500">${b.summary}</div>
+              </div>
+            `).join('')}
+          </div>
+        </details>
+      </div>
+    `;
+  }).join('');
+}
+
+renderLegislators();
+</script>
+</body>
+</html>

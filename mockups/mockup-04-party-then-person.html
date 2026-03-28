@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회의원 - 정당별 탐색</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+  body { font-family: 'Pretendard', sans-serif; }
+  .layer { display: none; }
+  .layer.active { display: block; }
+  .party-dp { color: #1A56DB; }
+  .party-ppp { color: #E5243B; }
+  .party-jh { color: #6B21A8; }
+  .bg-dp { background-color: #1A56DB; }
+  .bg-ppp { background-color: #E5243B; }
+  .bg-jh { background-color: #6B21A8; }
+  .border-dp { border-color: #1A56DB; }
+  .border-ppp { border-color: #E5243B; }
+  .border-jh { border-color: #6B21A8; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- Header -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <h1 class="text-lg font-bold text-gray-900">정당별 국회의원</h1>
+    <span class="text-xs text-gray-400">mockup-04</span>
+  </div>
+  <div id="breadcrumb" class="max-w-5xl mx-auto px-4 pb-2">
+    <nav class="flex items-center gap-1 text-sm text-gray-500">
+      <button onclick="showLayer('parties')" class="hover:text-blue-600 font-medium">정당 현황</button>
+      <span id="bc-sep1" class="hidden">›</span>
+      <button id="bc-party" class="hidden hover:text-blue-600"></button>
+      <span id="bc-sep2" class="hidden">›</span>
+      <button id="bc-person" class="hidden hover:text-blue-600"></button>
+    </nav>
+  </div>
+</header>
+
+<!-- LAYER 1: Parties Overview -->
+<div id="layer-parties" class="layer active">
+  <div class="max-w-5xl mx-auto px-4 py-6">
+    <!-- Seat Map -->
+    <div class="bg-white rounded-xl p-5 shadow-sm mb-5">
+      <h2 class="text-sm font-bold text-gray-700 mb-3">22대 국회 의석 현황</h2>
+      <div class="flex rounded-full overflow-hidden h-8 mb-3">
+        <div class="bg-dp flex items-center justify-center" style="width:56%">
+          <span class="text-xs text-white font-bold">170</span>
+        </div>
+        <div class="bg-ppp flex items-center justify-center" style="width:35%">
+          <span class="text-xs text-white font-bold">108</span>
+        </div>
+        <div class="bg-jh flex items-center justify-center" style="width:4%">
+          <span class="text-xs text-white font-bold" style="font-size:9px">12</span>
+        </div>
+        <div class="bg-gray-400 flex items-center justify-center" style="width:5%">
+          <span class="text-xs text-white font-bold" style="font-size:9px">10</span>
+        </div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-dp inline-block"></span>민주당 170석</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-ppp inline-block"></span>국민의힘 108석</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-jh inline-block"></span>조국혁신당 12석</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-gray-400 inline-block"></span>기타 10석</span>
+      </div>
+    </div>
+
+    <!-- Visual semicircle seats (simplified) -->
+    <div class="bg-white rounded-xl p-5 shadow-sm mb-5">
+      <h2 class="text-sm font-bold text-gray-700 mb-3">의석 배치도</h2>
+      <div class="flex flex-wrap gap-1 justify-center px-4">
+        <!-- Generate seats visually using repeating small dots -->
+        <script>
+          // Will be replaced with actual dots below
+        </script>
+      </div>
+      <div id="seat-visual" class="flex flex-wrap gap-0.5 justify-center"></div>
+    </div>
+
+    <!-- Party Cards -->
+    <div class="space-y-3">
+      <!-- 민주당 -->
+      <button onclick="showParty('dp')" class="w-full bg-white rounded-xl p-5 shadow-sm text-left hover:shadow-md transition border-l-4 border-dp">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-lg font-bold text-gray-900">더불어민주당</h3>
+            <p class="text-xs text-gray-500">170석 · 원내 제1당</p>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-dp flex items-center justify-center">
+            <span class="text-white font-bold text-sm">170</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+          <div class="text-center bg-blue-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">847</div>
+            <div class="text-xs text-gray-400">발의 법안</div>
+          </div>
+          <div class="text-center bg-blue-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">81%</div>
+            <div class="text-xs text-gray-400">평균 출석</div>
+          </div>
+          <div class="text-center bg-blue-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">78%</div>
+            <div class="text-xs text-gray-400">표결 참여</div>
+          </div>
+        </div>
+        <div class="text-xs text-gray-500">
+          <span class="font-medium text-gray-700">주요 관심사:</span> 민생경제, 복지 확대, 주거 안정, 노동권 보호
+        </div>
+      </button>
+
+      <!-- 국민의힘 -->
+      <button onclick="showParty('ppp')" class="w-full bg-white rounded-xl p-5 shadow-sm text-left hover:shadow-md transition border-l-4 border-ppp">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-lg font-bold text-gray-900">국민의힘</h3>
+            <p class="text-xs text-gray-500">108석 · 원내 제2당</p>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-ppp flex items-center justify-center">
+            <span class="text-white font-bold text-sm">108</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+          <div class="text-center bg-red-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">623</div>
+            <div class="text-xs text-gray-400">발의 법안</div>
+          </div>
+          <div class="text-center bg-red-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">76%</div>
+            <div class="text-xs text-gray-400">평균 출석</div>
+          </div>
+          <div class="text-center bg-red-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">74%</div>
+            <div class="text-xs text-gray-400">표결 참여</div>
+          </div>
+        </div>
+        <div class="text-xs text-gray-500">
+          <span class="font-medium text-gray-700">주요 관심사:</span> 감세, 규제 완화, 안보 강화, 경제 성장
+        </div>
+      </button>
+
+      <!-- 조국혁신당 -->
+      <button onclick="showParty('jh')" class="w-full bg-white rounded-xl p-5 shadow-sm text-left hover:shadow-md transition border-l-4 border-jh">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-lg font-bold text-gray-900">조국혁신당</h3>
+            <p class="text-xs text-gray-500">12석 · 원내 제3당</p>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-jh flex items-center justify-center">
+            <span class="text-white font-bold text-sm">12</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">
+          <div class="text-center bg-purple-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">94</div>
+            <div class="text-xs text-gray-400">발의 법안</div>
+          </div>
+          <div class="text-center bg-purple-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">89%</div>
+            <div class="text-xs text-gray-400">평균 출석</div>
+          </div>
+          <div class="text-center bg-purple-50 rounded-lg py-2">
+            <div class="text-sm font-bold text-gray-900">86%</div>
+            <div class="text-xs text-gray-400">표결 참여</div>
+          </div>
+        </div>
+        <div class="text-xs text-gray-500">
+          <span class="font-medium text-gray-700">주요 관심사:</span> 검찰 개혁, 언론 개혁, 디지털 권리, 사회 정의
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- LAYER 2: Party Members -->
+<div id="layer-party-members" class="layer">
+  <div class="max-w-5xl mx-auto px-4 py-6">
+    <!-- Party header -->
+    <div id="party-header" class="bg-white rounded-xl p-5 shadow-sm mb-5 border-l-4 border-dp">
+      <div class="flex items-center justify-between mb-2">
+        <h2 id="party-name" class="text-xl font-bold text-gray-900">더불어민주당</h2>
+        <span id="party-seats" class="text-sm font-bold party-dp">170석</span>
+      </div>
+      <div id="party-stats" class="grid grid-cols-3 gap-3">
+        <div class="text-center">
+          <div class="text-lg font-bold text-gray-900">847</div>
+          <div class="text-xs text-gray-400">발의 법안</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-bold text-gray-900">81%</div>
+          <div class="text-xs text-gray-400">평균 출석</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-bold text-gray-900">78%</div>
+          <div class="text-xs text-gray-400">표결 참여</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex gap-2 mb-4 overflow-x-auto">
+      <button class="member-filter text-xs px-3 py-1.5 rounded-full bg-gray-900 text-white font-medium" onclick="filterMembers('all', this)">전체</button>
+      <button class="member-filter text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600" onclick="filterMembers('committee', this)">위원회별</button>
+      <button class="member-filter text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600" onclick="filterMembers('region', this)">지역별</button>
+    </div>
+
+    <!-- Members grid - DP -->
+    <div id="members-dp" class="members-list">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <button onclick="showPerson('윤준병', 'dp')" class="bg-white rounded-xl p-3 shadow-sm text-left hover:shadow-md transition">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-200">
+              <span class="text-lg font-bold text-blue-400">윤</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-gray-900">윤준병</div>
+              <div class="text-xs text-gray-400">전북 정읍·고창</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">기획재정위원회</div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">법안 11건</span>
+            <div class="flex items-center gap-1">
+              <div class="w-12 bg-gray-100 rounded-full h-1.5"><div class="bg-blue-500 h-1.5 rounded-full" style="width:85%"></div></div>
+              <span class="text-gray-400">85%</span>
+            </div>
+          </div>
+          <div class="mt-2 bg-gray-50 rounded p-2">
+            <p class="text-xs text-gray-500 line-clamp-2">최근: 조세특례제한법 개정안 — 중소기업에 투자하면 세금 혜택을 받을 수 있게 하는 법안</p>
+          </div>
+        </button>
+
+        <button onclick="showPerson('김승원', 'dp')" class="bg-white rounded-xl p-3 shadow-sm text-left hover:shadow-md transition">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-200">
+              <span class="text-lg font-bold text-blue-400">김</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-gray-900">김승원</div>
+              <div class="text-xs text-gray-400">경기 수원시갑</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">법제사법위원회</div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">법안 16건</span>
+            <div class="flex items-center gap-1">
+              <div class="w-12 bg-gray-100 rounded-full h-1.5"><div class="bg-blue-500 h-1.5 rounded-full" style="width:88%"></div></div>
+              <span class="text-gray-400">88%</span>
+            </div>
+          </div>
+          <div class="mt-2 bg-gray-50 rounded p-2">
+            <p class="text-xs text-gray-500 line-clamp-2">최근: 주택임대차보호법 개정안 — 전세 사기 피해자를 보호하고 보증금 반환을 보장하는 법안</p>
+          </div>
+        </button>
+
+        <button onclick="showPerson('주진우', 'dp')" class="bg-white rounded-xl p-3 shadow-sm text-left hover:shadow-md transition">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-200">
+              <span class="text-lg font-bold text-blue-400">주</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-gray-900">주진우</div>
+              <div class="text-xs text-gray-400">경기 용인시갑</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">보건복지위원회</div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">법안 12건</span>
+            <div class="flex items-center gap-1">
+              <div class="w-12 bg-gray-100 rounded-full h-1.5"><div class="bg-blue-500 h-1.5 rounded-full" style="width:82%"></div></div>
+              <span class="text-gray-400">82%</span>
+            </div>
+          </div>
+          <div class="mt-2 bg-gray-50 rounded p-2">
+            <p class="text-xs text-gray-500 line-clamp-2">최근: 청년 주거안정 지원법안 — 만 19~34세 청년에게 월 30만원의 주거비를 지원하는 법안</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Members grid - PPP -->
+    <div id="members-ppp" class="members-list hidden">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <button onclick="showPerson('추경호', 'ppp')" class="bg-white rounded-xl p-3 shadow-sm text-left hover:shadow-md transition">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center border-2 border-red-200">
+              <span class="text-lg font-bold text-red-400">추</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-gray-900">추경호</div>
+              <div class="text-xs text-gray-400">대구 달성군</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">기획재정위원회</div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">법안 14건</span>
+            <div class="flex items-center gap-1">
+              <div class="w-12 bg-gray-100 rounded-full h-1.5"><div class="bg-red-500 h-1.5 rounded-full" style="width:91%"></div></div>
+              <span class="text-gray-400">91%</span>
+            </div>
+          </div>
+          <div class="mt-2 bg-gray-50 rounded p-2">
+            <p class="text-xs text-gray-500 line-clamp-2">최근: 소득세법 개정안 — 연봉 5천만원 이하 직장인의 세금 부담을 줄여주는 법안</p>
+          </div>
+        </button>
+
+        <button onclick="showPerson('강대식', 'ppp')" class="bg-white rounded-xl p-3 shadow-sm text-left hover:shadow-md transition">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center border-2 border-red-200">
+              <span class="text-lg font-bold text-red-400">강</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-gray-900">강대식</div>
+              <div class="text-xs text-gray-400">대구 동구·군위</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">행정안전위원회</div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">법안 9건</span>
+            <div class="flex items-center gap-1">
+              <div class="w-12 bg-gray-100 rounded-full h-1.5"><div class="bg-red-500 h-1.5 rounded-full" style="width:79%"></div></div>
+              <span class="text-gray-400">79%</span>
+            </div>
+          </div>
+          <div class="mt-2 bg-gray-50 rounded p-2">
+            <p class="text-xs text-gray-500 line-clamp-2">최근: 국가재정법 개정안 — 정부가 예산을 쓸 때 국민에게 더 자세히 공개하도록 하는 법안</p>
+          </div>
+        </button>
+
+        <button onclick="showPerson('김미애', 'ppp')" class="bg-white rounded-xl p-3 shadow-sm text-left hover:shadow-md transition">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center border-2 border-red-200">
+              <span class="text-lg font-bold text-red-400">김</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-gray-900">김미애</div>
+              <div class="text-xs text-gray-400">부산 해운대구갑</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">보건복지위원회</div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">법안 7건</span>
+            <div class="flex items-center gap-1">
+              <div class="w-12 bg-gray-100 rounded-full h-1.5"><div class="bg-red-500 h-1.5 rounded-full" style="width:76%"></div></div>
+              <span class="text-gray-400">76%</span>
+            </div>
+          </div>
+          <div class="mt-2 bg-gray-50 rounded p-2">
+            <p class="text-xs text-gray-500 line-clamp-2">최근: 아동복지법 개정안 — 어린이집 CCTV 열람 절차를 간소화하는 법안</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Members grid - JH -->
+    <div id="members-jh" class="members-list hidden">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <button onclick="showPerson('전진숙', 'jh')" class="bg-white rounded-xl p-3 shadow-sm text-left hover:shadow-md transition">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center border-2 border-purple-200">
+              <span class="text-lg font-bold text-purple-400">전</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-gray-900">전진숙</div>
+              <div class="text-xs text-gray-400">비례대표</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">과학기술정보방송통신위원회</div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">법안 8건</span>
+            <div class="flex items-center gap-1">
+              <div class="w-12 bg-gray-100 rounded-full h-1.5"><div class="bg-purple-500 h-1.5 rounded-full" style="width:93%"></div></div>
+              <span class="text-gray-400">93%</span>
+            </div>
+          </div>
+          <div class="mt-2 bg-gray-50 rounded p-2">
+            <p class="text-xs text-gray-500 line-clamp-2">최근: AI 기본법안 — 인공지능 개발과 활용에 대한 기본 원칙을 정하는 법안</p>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYER 3: Person Detail -->
+<div id="layer-person" class="layer">
+  <div class="max-w-5xl mx-auto px-4 py-6">
+    <div id="person-header" class="bg-white rounded-xl p-5 shadow-sm mb-5 border-l-4 border-dp">
+      <div class="flex items-start gap-4">
+        <div id="person-avatar" class="w-20 h-20 rounded-full bg-blue-100 flex-shrink-0 flex items-center justify-center border-2 border-blue-200">
+          <span class="text-2xl font-bold text-blue-400" id="person-initial">윤</span>
+        </div>
+        <div class="flex-1">
+          <h2 id="person-name" class="text-xl font-bold text-gray-900">윤준병</h2>
+          <div id="person-party" class="text-sm party-dp font-medium">더불어민주당</div>
+          <div id="person-district" class="text-xs text-gray-400 mt-1">전북 정읍·고창 · 22대 국회의원</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-gray-100">
+        <div class="text-center">
+          <div class="text-lg font-bold text-gray-900">11</div>
+          <div class="text-xs text-gray-400">발의 법안</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-bold text-blue-600">85%</div>
+          <div class="text-xs text-gray-400">출석률</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-bold text-green-600">82%</div>
+          <div class="text-xs text-gray-400">표결 참여</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-bold text-orange-600">5</div>
+          <div class="text-xs text-gray-400">발언</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-1 mb-4 bg-white rounded-lg p-1 shadow-sm">
+      <button onclick="showTab('bills')" class="ptab flex-1 text-xs py-2 rounded-md bg-gray-900 text-white font-medium" data-tab="bills">법안</button>
+      <button onclick="showTab('votes')" class="ptab flex-1 text-xs py-2 rounded-md text-gray-500" data-tab="votes">표결</button>
+      <button onclick="showTab('profile')" class="ptab flex-1 text-xs py-2 rounded-md text-gray-500" data-tab="profile">프로필</button>
+      <button onclick="showTab('participation')" class="ptab flex-1 text-xs py-2 rounded-md text-gray-500" data-tab="participation">출석</button>
+    </div>
+
+    <!-- Bills -->
+    <div id="tab-bills" class="tab-content">
+      <div class="space-y-2">
+        <div class="bg-white rounded-lg p-4 shadow-sm">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">심사중</span>
+            <span class="text-xs text-gray-400">2026.02.28</span>
+          </div>
+          <p class="text-sm font-medium text-gray-900">조세특례제한법 일부개정법률안</p>
+          <p class="text-xs text-gray-500 mt-1">중소기업에 투자하면 세금 혜택을 받을 수 있게 하는 법안입니다</p>
+        </div>
+        <div class="bg-white rounded-lg p-4 shadow-sm">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">가결</span>
+            <span class="text-xs text-gray-400">2026.01.15</span>
+          </div>
+          <p class="text-sm font-medium text-gray-900">농업인 안전보험법 일부개정법률안</p>
+          <p class="text-xs text-gray-500 mt-1">농사 중 다친 농민에게 더 많은 보험금을 지급하도록 하는 법안입니다</p>
+        </div>
+        <div class="bg-white rounded-lg p-4 shadow-sm">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">심사중</span>
+            <span class="text-xs text-gray-400">2025.12.20</span>
+          </div>
+          <p class="text-sm font-medium text-gray-900">지방세특례제한법 일부개정법률안</p>
+          <p class="text-xs text-gray-500 mt-1">농촌 지역에 이주하는 가구에게 취득세를 면제해주는 법안입니다</p>
+        </div>
+        <div class="bg-white rounded-lg p-4 shadow-sm">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">가결</span>
+            <span class="text-xs text-gray-400">2025.11.08</span>
+          </div>
+          <p class="text-sm font-medium text-gray-900">식품안전기본법 일부개정법률안</p>
+          <p class="text-xs text-gray-500 mt-1">가공식품의 원산지 표시를 더 크고 명확하게 하도록 하는 법안입니다</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Votes -->
+    <div id="tab-votes" class="tab-content hidden">
+      <div class="space-y-2">
+        <div class="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-900">국민건강보험법 개정안</p>
+            <p class="text-xs text-gray-400">2026.03.26</p>
+          </div>
+          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">찬성</span>
+        </div>
+        <div class="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-900">지방재정법 개정안</p>
+            <p class="text-xs text-gray-400">2026.03.25</p>
+          </div>
+          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">찬성</span>
+        </div>
+        <div class="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-900">종합부동산세법 개정안</p>
+            <p class="text-xs text-gray-400">2026.03.18</p>
+          </div>
+          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">찬성</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div id="tab-profile" class="tab-content hidden">
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <h3 class="text-sm font-bold text-gray-700 mb-3">학력</h3>
+        <ul class="space-y-1 text-sm text-gray-600 mb-5">
+          <li class="flex items-start gap-2"><span class="text-gray-300">•</span>전북대학교 행정학과 졸업</li>
+          <li class="flex items-start gap-2"><span class="text-gray-300">•</span>서울대학교 행정대학원 수료</li>
+        </ul>
+        <h3 class="text-sm font-bold text-gray-700 mb-3">경력</h3>
+        <ul class="space-y-1 text-sm text-gray-600 mb-5">
+          <li class="flex items-start gap-2"><span class="text-gray-300">•</span>제21대 국회의원 (전북 정읍·고창)</li>
+          <li class="flex items-start gap-2"><span class="text-gray-300">•</span>농림축산식품해양수산위원회 위원</li>
+          <li class="flex items-start gap-2"><span class="text-gray-300">•</span>환경부 차관</li>
+          <li class="flex items-start gap-2"><span class="text-gray-300">•</span>전라북도 정무부지사</li>
+        </ul>
+        <h3 class="text-sm font-bold text-gray-700 mb-3">소속 위원회</h3>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">기획재정위원회</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Participation -->
+    <div id="tab-participation" class="tab-content hidden">
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <h3 class="text-sm font-bold text-gray-700 mb-4">월별 출석 현황</h3>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-600">2026년 3월</span>
+              <span class="text-gray-400">8/9회 (89%)</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:89%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-600">2026년 2월</span>
+              <span class="text-gray-400">10/12회 (83%)</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:83%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-600">2026년 1월</span>
+              <span class="text-gray-400">7/8회 (88%)</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:88%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-gray-600">2025년 12월</span>
+              <span class="text-gray-400">9/11회 (82%)</span>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:82%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Generate seat visual
+(function() {
+  const container = document.getElementById('seat-visual');
+  const seats = [
+    { count: 170, color: '#1A56DB' },
+    { count: 108, color: '#E5243B' },
+    { count: 12, color: '#6B21A8' },
+    { count: 10, color: '#9CA3AF' },
+  ];
+  seats.forEach(s => {
+    for (let i = 0; i < s.count; i++) {
+      const dot = document.createElement('div');
+      dot.style.cssText = `width:6px;height:6px;border-radius:50%;background:${s.color};`;
+      container.appendChild(dot);
+    }
+  });
+})();
+
+const partyInfo = {
+  dp: { name: '더불어민주당', seats: '170석', color: 'dp', border: 'border-dp' },
+  ppp: { name: '국민의힘', seats: '108석', color: 'ppp', border: 'border-ppp' },
+  jh: { name: '조국혁신당', seats: '12석', color: 'jh', border: 'border-jh' },
+};
+
+function showLayer(layer) {
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+  document.getElementById('layer-' + layer).classList.add('active');
+  if (layer === 'parties') {
+    document.getElementById('bc-sep1').classList.add('hidden');
+    document.getElementById('bc-party').classList.add('hidden');
+    document.getElementById('bc-sep2').classList.add('hidden');
+    document.getElementById('bc-person').classList.add('hidden');
+  }
+  window.scrollTo(0, 0);
+}
+
+let currentParty = 'dp';
+
+function showParty(party) {
+  currentParty = party;
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+  document.getElementById('layer-party-members').classList.add('active');
+
+  const p = partyInfo[party];
+  document.getElementById('party-name').textContent = p.name;
+  document.getElementById('party-seats').textContent = p.seats;
+  document.getElementById('party-seats').className = 'text-sm font-bold party-' + party;
+  document.getElementById('party-header').className = 'bg-white rounded-xl p-5 shadow-sm mb-5 border-l-4 ' + p.border;
+
+  document.querySelectorAll('.members-list').forEach(m => m.classList.add('hidden'));
+  document.getElementById('members-' + party).classList.remove('hidden');
+
+  document.getElementById('bc-sep1').classList.remove('hidden');
+  document.getElementById('bc-party').classList.remove('hidden');
+  document.getElementById('bc-party').textContent = p.name;
+  document.getElementById('bc-sep2').classList.add('hidden');
+  document.getElementById('bc-person').classList.add('hidden');
+  window.scrollTo(0, 0);
+}
+
+function showPerson(name, party) {
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+  document.getElementById('layer-person').classList.add('active');
+  const p = partyInfo[party];
+
+  document.getElementById('person-name').textContent = name;
+  document.getElementById('person-initial').textContent = name[0];
+  document.getElementById('person-party').textContent = p.name;
+  document.getElementById('person-party').className = 'text-sm font-medium party-' + party;
+  document.getElementById('person-header').className = 'bg-white rounded-xl p-5 shadow-sm mb-5 border-l-4 ' + p.border;
+
+  const colorMap = { dp: ['bg-blue-100','border-blue-200','text-blue-400'], ppp: ['bg-red-100','border-red-200','text-red-400'], jh: ['bg-purple-100','border-purple-200','text-purple-400'] };
+  const c = colorMap[party];
+  document.getElementById('person-avatar').className = 'w-20 h-20 rounded-full flex-shrink-0 flex items-center justify-center border-2 ' + c[0] + ' ' + c[1];
+  document.getElementById('person-initial').className = 'text-2xl font-bold ' + c[2];
+
+  document.getElementById('bc-sep2').classList.remove('hidden');
+  document.getElementById('bc-person').classList.remove('hidden');
+  document.getElementById('bc-person').textContent = name;
+
+  showTab('bills');
+  window.scrollTo(0, 0);
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  document.querySelectorAll('.ptab').forEach(t => {
+    t.className = t.dataset.tab === tab
+      ? 'ptab flex-1 text-xs py-2 rounded-md bg-gray-900 text-white font-medium'
+      : 'ptab flex-1 text-xs py-2 rounded-md text-gray-500 hover:bg-gray-50';
+  });
+}
+
+function filterMembers(type, btn) {
+  document.querySelectorAll('.member-filter').forEach(f => {
+    f.className = 'member-filter text-xs px-3 py-1.5 rounded-full bg-gray-100 text-gray-600';
+  });
+  btn.className = 'member-filter text-xs px-3 py-1.5 rounded-full bg-gray-900 text-white font-medium';
+}
+</script>
+</body>
+</html>

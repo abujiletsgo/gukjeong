@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회의원 - 정당별 대시보드</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+body { font-family: 'Pretendard', sans-serif; }
+.party-section { transition: all 0.3s; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<header class="bg-white border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">정당별 대시보드</h1>
+      <p class="text-sm text-gray-500">제22대 국회 교섭단체별 의정활동 현황</p>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="scrollToParty('minjoo')" class="px-4 py-2 rounded-lg text-sm font-medium text-white" style="background:#1A56DB">더불어민주당</button>
+      <button onclick="scrollToParty('ppp')" class="px-4 py-2 rounded-lg text-sm font-medium text-white" style="background:#E5243B">국민의힘</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Overview Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <div class="text-sm text-gray-500">전체 의석</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">300</div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <div class="text-sm text-gray-500">전체 발의 법안</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">2,847</div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <div class="text-sm text-gray-500">평균 출석률</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">89.4%</div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <div class="text-sm text-gray-500">본회의 가결</div>
+      <div class="text-3xl font-bold text-gray-900 mt-1">412</div>
+    </div>
+  </div>
+
+  <!-- Seat Distribution Bar -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6 mb-10">
+    <h3 class="text-sm font-medium text-gray-500 mb-3">의석 분포</h3>
+    <div class="flex h-10 rounded-full overflow-hidden gap-0.5">
+      <div class="flex items-center justify-center text-white text-xs font-bold" style="width:56.7%;background:#1A56DB">170석</div>
+      <div class="flex items-center justify-center text-white text-xs font-bold" style="width:36%;background:#E5243B">108석</div>
+      <div class="flex items-center justify-center text-white text-xs font-bold bg-gray-500" style="width:7.3%">22</div>
+    </div>
+    <div class="flex justify-between text-xs text-gray-400 mt-2">
+      <span>더불어민주당 56.7%</span>
+      <span>국민의힘 36%</span>
+      <span>기타 7.3%</span>
+    </div>
+  </div>
+
+  <!-- 더불어민주당 Section -->
+  <section id="minjoo" class="party-section mb-12">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-1.5 h-10 rounded-full" style="background:#1A56DB"></div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">더불어민주당</h2>
+        <p class="text-sm text-gray-500">170석 | 원내 제1당</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="rounded-xl p-5 border" style="background:#1A56DB10;border-color:#1A56DB30">
+        <div class="text-sm" style="color:#1A56DB">발의 법안</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">1,623</div>
+      </div>
+      <div class="rounded-xl p-5 border" style="background:#1A56DB10;border-color:#1A56DB30">
+        <div class="text-sm" style="color:#1A56DB">가결</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">248</div>
+      </div>
+      <div class="rounded-xl p-5 border" style="background:#1A56DB10;border-color:#1A56DB30">
+        <div class="text-sm" style="color:#1A56DB">평균 출석률</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">91.2%</div>
+      </div>
+      <div class="rounded-xl p-5 border" style="background:#1A56DB10;border-color:#1A56DB30">
+        <div class="text-sm" style="color:#1A56DB">평균 발의</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">9.5건</div>
+      </div>
+    </div>
+
+    <!-- Priority Issues -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <h3 class="font-bold text-gray-900 mb-4">주요 추진 법안</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">공익신고자 보호법</div>
+          <div class="text-sm text-gray-500 mt-1">내부 비리를 신고한 사람을 보복으로부터 보호하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 주진우</div>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">국민건강보험법 개정안</div>
+          <div class="text-sm text-gray-500 mt-1">비급여 진료 항목을 단계적으로 급여화하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 서영석</div>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">방송법 개정안</div>
+          <div class="text-sm text-gray-500 mt-1">공영방송의 독립성을 보장하기 위해 이사회 구성을 개편하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 김현정</div>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">형사소송법 개정안</div>
+          <div class="text-sm text-gray-500 mt-1">피의자의 변호인 접견권을 24시간 보장하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 김승원</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Legislators -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h3 class="font-bold text-gray-900 mb-4">주요 의원</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        ${renderPartyMembers([
+          { name: "김승원", district: "경기 수원시을", bills: 45, participation: 96, education: "서울대 법학과, 사법시험 합격", career: "변호사, 수원시 법률자문위원", committee: "법제사법위원회" },
+          { name: "서영석", district: "경기 부천시갑", bills: 38, participation: 95, education: "연세대 의학과, 의학박사", career: "의사, 부천시의사회장", committee: "보건복지위원회" },
+          { name: "김현정", district: "비례대표", bills: 33, participation: 93, education: "이화여대 정치외교학과", career: "KBS 앵커, 시사프로그램 진행자", committee: "과학기술정보방송통신위원회" },
+          { name: "윤준병", district: "전북 정읍·고창", bills: 31, participation: 91, education: "서울대 수의학과, 서울대 보건대학원 석사", career: "농림축산식품부 차관, 수의사", committee: "농림축산식품해양수산위원회" },
+          { name: "주진우", district: "서울 영등포구을", bills: 28, participation: 89, education: "고려대 법학과, 고려대 법학대학원", career: "변호사, 시민단체 활동가", committee: "법제사법위원회" }
+        ], '#1A56DB')}
+      </div>
+    </div>
+  </section>
+
+  <!-- 국민의힘 Section -->
+  <section id="ppp" class="party-section mb-12">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-1.5 h-10 rounded-full" style="background:#E5243B"></div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">국민의힘</h2>
+        <p class="text-sm text-gray-500">108석 | 원내 제2당</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="rounded-xl p-5 border" style="background:#E5243B10;border-color:#E5243B30">
+        <div class="text-sm" style="color:#E5243B">발의 법안</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">1,024</div>
+      </div>
+      <div class="rounded-xl p-5 border" style="background:#E5243B10;border-color:#E5243B30">
+        <div class="text-sm" style="color:#E5243B">가결</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">142</div>
+      </div>
+      <div class="rounded-xl p-5 border" style="background:#E5243B10;border-color:#E5243B30">
+        <div class="text-sm" style="color:#E5243B">평균 출석률</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">87.6%</div>
+      </div>
+      <div class="rounded-xl p-5 border" style="background:#E5243B10;border-color:#E5243B30">
+        <div class="text-sm" style="color:#E5243B">평균 발의</div>
+        <div class="text-2xl font-bold text-gray-900 mt-1">9.5건</div>
+      </div>
+    </div>
+
+    <!-- Priority Issues -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <h3 class="font-bold text-gray-900 mb-4">주요 추진 법안</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">조세특례제한법 개정안</div>
+          <div class="text-sm text-gray-500 mt-1">중소기업 투자 세액공제 기한을 2028년까지 연장하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 추경호</div>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">군인복지법 개정안</div>
+          <div class="text-sm text-gray-500 mt-1">병사 월급을 200만원으로 단계적으로 인상하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 신원식</div>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">인공지능산업법</div>
+          <div class="text-sm text-gray-500 mt-1">AI 개발 및 활용에 대한 기본 원칙과 지원 체계를 마련하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 박충권</div>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-medium text-gray-900">교육기본법 개정안</div>
+          <div class="text-sm text-gray-500 mt-1">학생의 디지털 리터러시 교육을 의무화하는 법</div>
+          <div class="text-xs text-gray-400 mt-2">대표발의: 이태규</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Legislators -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h3 class="font-bold text-gray-900 mb-4">주요 의원</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        ${renderPartyMembers([
+          { name: "추경호", district: "대구 달성", bills: 23, participation: 94, education: "서울대 경제학과, 미국 위스콘신대 경제학 박사", career: "기획재정부 장관, 국무조정실장", committee: "기획재정위원회" },
+          { name: "이태규", district: "부산 사하구을", bills: 27, participation: 88, education: "부산대 교육학과, 부산대 교육대학원", career: "교원, 부산시교육청 장학사", committee: "교육위원회" },
+          { name: "박충권", district: "대전 유성구갑", bills: 22, participation: 90, education: "KAIST 전산학과, MIT 컴퓨터과학 석사", career: "IT 기업 대표, 과기부 자문위원", committee: "과학기술정보방송통신위원회" },
+          { name: "강대식", district: "대구 동구·군위", bills: 18, participation: 87, education: "영남대 정치외교학과, 영남대 대학원 박사", career: "영남대 교수, 대구시 정무부시장", committee: "행정안전위원회" },
+          { name: "신원식", district: "비례대표", bills: 15, participation: 85, education: "육군사관학교, 국방대학원", career: "국방부 장관, 합참 작전본부장", committee: "국방위원회" }
+        ], '#E5243B')}
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function renderPartyMembers(members, color) {
+  return members.map(m => `
+    <div class="border border-gray-100 rounded-xl p-4">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style="background:${color}">${m.name[0]}</div>
+        <div>
+          <div class="font-bold text-gray-900">${m.name}</div>
+          <div class="text-xs text-gray-500">${m.district}</div>
+        </div>
+      </div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-gray-500">발의 법안</span>
+          <span class="font-semibold text-gray-900">${m.bills}건</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">출석률</span>
+          <span class="font-semibold text-gray-900">${m.participation}%</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">소속 위원회</span>
+          <span class="font-semibold text-gray-900 text-right text-xs">${m.committee}</span>
+        </div>
+      </div>
+      <details class="mt-3">
+        <summary class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">프로필 보기</summary>
+        <div class="mt-2 space-y-1 text-xs text-gray-600 bg-gray-50 rounded-lg p-3">
+          <div><span class="text-gray-400">학력:</span> ${m.education}</div>
+          <div><span class="text-gray-400">경력:</span> ${m.career}</div>
+        </div>
+      </details>
+    </div>
+  `).join('');
+}
+
+function scrollToParty(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+document.querySelector('main').innerHTML = document.querySelector('main').innerHTML;
+</script>
+</body>
+</html>

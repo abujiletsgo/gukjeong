@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회의원 - 비교하기</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+body { font-family: 'Pretendard', sans-serif; }
+.selected-ring { box-shadow: 0 0 0 3px #1A56DB; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">의원 비교</h1>
+      <p class="text-sm text-gray-500">최대 3명까지 선택하여 비교하세요</p>
+    </div>
+    <button onclick="clearSelection()" class="text-sm text-gray-500 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-400 transition-colors">초기화</button>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+
+  <!-- Legislator Selector -->
+  <div class="mb-8">
+    <h3 class="text-sm font-medium text-gray-500 mb-3">비교할 의원을 선택하세요 (최대 3명)</h3>
+    <div class="flex flex-wrap gap-2" id="selector"></div>
+  </div>
+
+  <!-- Comparison Area -->
+  <div id="comparison" class="hidden">
+    <!-- Comparison Grid -->
+    <div id="comparison-grid"></div>
+  </div>
+
+  <div id="empty-state" class="text-center py-20">
+    <div class="text-6xl mb-4">⚖️</div>
+    <h3 class="text-lg font-bold text-gray-900 mb-2">의원을 선택해 주세요</h3>
+    <p class="text-gray-500">위에서 2~3명의 의원을 클릭하면 비교 결과가 나타납니다</p>
+  </div>
+
+</main>
+
+<script>
+const legislators = [
+  {
+    name: "윤준병", party: "더불어민주당", district: "전북 정읍·고창",
+    education: "서울대 수의학과, 서울대 보건대학원 석사", career: "농림축산식품부 차관, 수의사",
+    bills: 31, passed: 8, participation: 91, speeches: 47, committees: ["농림축산식품해양수산위원회"],
+    recentBills: [
+      { name: "농업인안전보험법", summary: "농업인의 산재 보험 가입을 국가가 지원하는 법" },
+      { name: "축산법 개정안", summary: "축산 농가의 방역 체계를 강화하고 지원금을 확대하는 법" },
+      { name: "식품안전기본법 개정안", summary: "수입 식품의 안전 검사 기준을 강화하는 법" }
+    ],
+    votes: { total: 156, yes: 132, no: 18, abstain: 6 }
+  },
+  {
+    name: "강대식", party: "국민의힘", district: "대구 동구·군위",
+    education: "영남대 정치외교학과, 영남대 대학원 박사", career: "영남대 교수, 대구시 정무부시장",
+    bills: 18, passed: 4, participation: 87, speeches: 29, committees: ["행정안전위원회"],
+    recentBills: [
+      { name: "지방자치법 개정안", summary: "지방의회의 자치입법권을 강화하여 지역 맞춤 정책을 가능하게 하는 법" },
+      { name: "국가균형발전특별법 개정안", summary: "수도권 집중을 완화하기 위한 지방 투자 인센티브를 확대하는 법" }
+    ],
+    votes: { total: 148, yes: 119, no: 24, abstain: 5 }
+  },
+  {
+    name: "김승원", party: "더불어민주당", district: "경기 수원시을",
+    education: "서울대 법학과, 사법시험 합격", career: "변호사, 수원시 법률자문위원",
+    bills: 45, passed: 12, participation: 96, speeches: 63, committees: ["법제사법위원회"],
+    recentBills: [
+      { name: "형사소송법 개정안", summary: "피의자의 변호인 접견권을 24시간 보장하는 법" },
+      { name: "법률구조법 개정안", summary: "저소득층의 법률 서비스 접근성을 높이는 법" },
+      { name: "민법 개정안", summary: "성년후견제도의 절차를 간소화하여 접근성을 높이는 법" },
+      { name: "소비자기본법 개정안", summary: "온라인 거래에서 소비자 피해 구제를 강화하는 법" }
+    ],
+    votes: { total: 162, yes: 141, no: 15, abstain: 6 }
+  },
+  {
+    name: "주진우", party: "더불어민주당", district: "서울 영등포구을",
+    education: "고려대 법학과, 고려대 법학대학원", career: "변호사, 시민단체 활동가",
+    bills: 28, passed: 7, participation: 89, speeches: 52, committees: ["법제사법위원회", "정무위원회"],
+    recentBills: [
+      { name: "공익신고자 보호법", summary: "내부 비리를 신고한 사람을 보복으로부터 보호하는 법" },
+      { name: "정보공개법 개정안", summary: "공공기관의 정보공개 범위를 넓히고 비공개 사유를 축소하는 법" }
+    ],
+    votes: { total: 150, yes: 126, no: 19, abstain: 5 }
+  },
+  {
+    name: "추경호", party: "국민의힘", district: "대구 달성",
+    education: "서울대 경제학과, 미국 위스콘신대 경제학 박사", career: "기획재정부 장관, 국무조정실장",
+    bills: 23, passed: 9, participation: 94, speeches: 38, committees: ["기획재정위원회"],
+    recentBills: [
+      { name: "조세특례제한법 개정안", summary: "중소기업 투자 세액공제 기한을 2028년까지 연장하는 법" },
+      { name: "국가재정법 개정안", summary: "재정준칙을 법제화하여 국가채무 비율을 관리하는 법" }
+    ],
+    votes: { total: 159, yes: 138, no: 16, abstain: 5 }
+  },
+  {
+    name: "김현정", party: "더불어민주당", district: "비례대표",
+    education: "이화여대 정치외교학과", career: "KBS 앵커, 시사프로그램 진행자",
+    bills: 33, passed: 6, participation: 93, speeches: 58, committees: ["과학기술정보방송통신위원회"],
+    recentBills: [
+      { name: "방송법 개정안", summary: "공영방송의 독립성을 보장하기 위해 이사회 구성을 개편하는 법" },
+      { name: "언론중재법 개정안", summary: "허위 보도 피해자의 정정보도 청구를 신속하게 처리하는 법" },
+      { name: "미디어다양성법", summary: "지역 언론사에 대한 재정 지원을 확대하는 법" }
+    ],
+    votes: { total: 155, yes: 133, no: 17, abstain: 5 }
+  },
+  {
+    name: "신원식", party: "국민의힘", district: "비례대표",
+    education: "육군사관학교, 국방대학원", career: "국방부 장관, 합참 작전본부장",
+    bills: 15, passed: 3, participation: 85, speeches: 21, committees: ["국방위원회"],
+    recentBills: [
+      { name: "군인복지법 개정안", summary: "병사 월급을 200만원으로 단계적으로 인상하는 법" }
+    ],
+    votes: { total: 140, yes: 112, no: 22, abstain: 6 }
+  },
+  {
+    name: "서영석", party: "더불어민주당", district: "경기 부천시갑",
+    education: "연세대 의학과, 의학박사", career: "의사, 부천시의사회장",
+    bills: 38, passed: 10, participation: 95, speeches: 44, committees: ["보건복지위원회"],
+    recentBills: [
+      { name: "국민건강보험법 개정안", summary: "비급여 진료 항목을 단계적으로 급여화하는 법" },
+      { name: "의료법 개정안", summary: "비대면 진료의 법적 근거를 마련하고 요건을 정하는 법" },
+      { name: "감염병예방법 개정안", summary: "감염병 위기 시 의료 인력 동원 체계를 정비하는 법" }
+    ],
+    votes: { total: 158, yes: 140, no: 13, abstain: 5 }
+  },
+  {
+    name: "이태규", party: "국민의힘", district: "부산 사하구을",
+    education: "부산대 교육학과, 부산대 교육대학원", career: "교원, 부산시교육청 장학사",
+    bills: 27, passed: 5, participation: 88, speeches: 35, committees: ["교육위원회"],
+    recentBills: [
+      { name: "교육기본법 개정안", summary: "학생의 디지털 리터러시 교육을 의무화하는 법" },
+      { name: "사립학교법 개정안", summary: "사학 비리 방지를 위해 이사회 구성을 개편하는 법" }
+    ],
+    votes: { total: 145, yes: 120, no: 20, abstain: 5 }
+  },
+  {
+    name: "박충권", party: "국민의힘", district: "대전 유성구갑",
+    education: "KAIST 전산학과, MIT 컴퓨터과학 석사", career: "IT 기업 대표, 과기부 자문위원",
+    bills: 22, passed: 5, participation: 90, speeches: 31, committees: ["과학기술정보방송통신위원회"],
+    recentBills: [
+      { name: "인공지능산업법", summary: "AI 개발 및 활용에 대한 기본 원칙과 지원 체계를 마련하는 법" },
+      { name: "데이터기본법 개정안", summary: "공공데이터의 민간 개방 범위를 확대하는 법" }
+    ],
+    votes: { total: 150, yes: 128, no: 17, abstain: 5 }
+  }
+];
+
+let selected = [];
+
+function toggleSelect(idx) {
+  const pos = selected.indexOf(idx);
+  if (pos >= 0) {
+    selected.splice(pos, 1);
+  } else if (selected.length < 3) {
+    selected.push(idx);
+  }
+  renderSelector();
+  renderComparison();
+}
+
+function clearSelection() {
+  selected = [];
+  renderSelector();
+  renderComparison();
+}
+
+function renderSelector() {
+  const container = document.getElementById('selector');
+  container.innerHTML = legislators.map((leg, idx) => {
+    const isSelected = selected.includes(idx);
+    const partyColor = leg.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+    return `
+      <button onclick="toggleSelect(${idx})" class="flex items-center gap-2 px-3 py-2 rounded-lg border ${isSelected ? 'border-blue-500 bg-blue-50 selected-ring' : 'border-gray-200 bg-white hover:border-gray-400'} transition-all text-sm">
+        <span class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style="background:${partyColor}">${leg.name[0]}</span>
+        <span class="${isSelected ? 'font-bold text-gray-900' : 'text-gray-600'}">${leg.name}</span>
+      </button>
+    `;
+  }).join('');
+}
+
+function bar(value, max, color) {
+  const pct = (value / max) * 100;
+  return `<div class="w-full bg-gray-100 rounded-full h-3 mt-1"><div class="h-3 rounded-full" style="width:${pct}%;background:${color}"></div></div>`;
+}
+
+function renderComparison() {
+  const compDiv = document.getElementById('comparison');
+  const emptyDiv = document.getElementById('empty-state');
+  const grid = document.getElementById('comparison-grid');
+
+  if (selected.length < 2) {
+    compDiv.classList.add('hidden');
+    emptyDiv.classList.remove('hidden');
+    return;
+  }
+
+  compDiv.classList.remove('hidden');
+  emptyDiv.classList.add('hidden');
+
+  const legs = selected.map(i => legislators[i]);
+  const colClass = legs.length === 2 ? 'grid-cols-2' : 'grid-cols-3';
+  const maxBills = Math.max(...legs.map(l => l.bills));
+  const maxPassed = Math.max(...legs.map(l => l.passed));
+  const maxSpeeches = Math.max(...legs.map(l => l.speeches));
+
+  grid.innerHTML = `
+    <!-- Profile Row -->
+    <div class="grid ${colClass} gap-4 mb-6">
+      ${legs.map(leg => {
+        const pc = leg.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+        const pbg = leg.party === '더불어민주당' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700';
+        return `
+          <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
+            <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-2xl font-bold text-white mb-3" style="background:${pc}">${leg.name[0]}</div>
+            <h3 class="text-xl font-bold text-gray-900">${leg.name}</h3>
+            <span class="inline-block text-xs px-2 py-0.5 rounded-full mt-1 ${pbg}">${leg.party}</span>
+            <div class="text-sm text-gray-500 mt-1">${leg.district}</div>
+            <div class="mt-4 space-y-2 text-left">
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400">학력</div>
+                <div class="text-sm text-gray-700 mt-0.5">${leg.education}</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400">경력</div>
+                <div class="text-sm text-gray-700 mt-0.5">${leg.career}</div>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-xs text-gray-400">소속 위원회</div>
+                <div class="text-sm text-gray-700 mt-0.5">${leg.committees.join(', ')}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <!-- Metrics Comparison -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <h3 class="font-bold text-gray-900 mb-6">활동 지표 비교</h3>
+
+      <!-- Bills -->
+      <div class="mb-6">
+        <div class="text-sm text-gray-500 mb-3">발의 법안</div>
+        <div class="grid ${colClass} gap-4">
+          ${legs.map(leg => {
+            const pc = leg.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+            return `<div><div class="text-2xl font-bold text-gray-900">${leg.bills}건</div>${bar(leg.bills, maxBills, pc)}</div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Passed -->
+      <div class="mb-6">
+        <div class="text-sm text-gray-500 mb-3">가결 법안</div>
+        <div class="grid ${colClass} gap-4">
+          ${legs.map(leg => {
+            const pc = leg.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+            return `<div><div class="text-2xl font-bold text-gray-900">${leg.passed}건</div>${bar(leg.passed, maxPassed, pc)}</div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Participation -->
+      <div class="mb-6">
+        <div class="text-sm text-gray-500 mb-3">본회의 출석률</div>
+        <div class="grid ${colClass} gap-4">
+          ${legs.map(leg => {
+            const pc = leg.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+            return `<div><div class="text-2xl font-bold text-gray-900">${leg.participation}%</div>${bar(leg.participation, 100, pc)}</div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Speeches -->
+      <div class="mb-6">
+        <div class="text-sm text-gray-500 mb-3">발언 횟수</div>
+        <div class="grid ${colClass} gap-4">
+          ${legs.map(leg => {
+            const pc = leg.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+            return `<div><div class="text-2xl font-bold text-gray-900">${leg.speeches}회</div>${bar(leg.speeches, maxSpeeches, pc)}</div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Votes -->
+      <div>
+        <div class="text-sm text-gray-500 mb-3">본회의 투표</div>
+        <div class="grid ${colClass} gap-4">
+          ${legs.map(leg => `
+            <div>
+              <div class="flex gap-1 h-6 rounded-full overflow-hidden">
+                <div class="bg-blue-500" style="width:${(leg.votes.yes/leg.votes.total)*100}%" title="찬성 ${leg.votes.yes}"></div>
+                <div class="bg-red-500" style="width:${(leg.votes.no/leg.votes.total)*100}%" title="반대 ${leg.votes.no}"></div>
+                <div class="bg-gray-300" style="width:${(leg.votes.abstain/leg.votes.total)*100}%" title="기권 ${leg.votes.abstain}"></div>
+              </div>
+              <div class="flex justify-between text-xs text-gray-400 mt-1">
+                <span>찬성 ${leg.votes.yes}</span><span>반대 ${leg.votes.no}</span><span>기권 ${leg.votes.abstain}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bills Comparison -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h3 class="font-bold text-gray-900 mb-4">대표 발의 법안</h3>
+      <div class="grid ${colClass} gap-4">
+        ${legs.map(leg => `
+          <div class="space-y-3">
+            ${leg.recentBills.map(b => `
+              <div class="border border-gray-100 rounded-lg p-3">
+                <div class="text-sm font-medium text-gray-900">${b.name}</div>
+                <div class="text-xs text-gray-500 mt-1">${b.summary}</div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+renderSelector();
+</script>
+</body>
+</html>

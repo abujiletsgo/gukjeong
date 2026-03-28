@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회의원 - 의정활동 피드</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+body { font-family: 'Pretendard', sans-serif; }
+.feed-item { animation: slideIn 0.3s ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.timeline-line { position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px; background: #e5e7eb; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-2xl mx-auto px-4 py-4">
+    <h1 class="text-xl font-bold text-gray-900">의정활동 피드</h1>
+    <p class="text-sm text-gray-500">국회에서 무슨 일이 일어나고 있는지 실시간으로 확인하세요</p>
+  </div>
+</header>
+
+<!-- Filter tabs -->
+<div class="bg-white border-b border-gray-200 sticky top-[73px] z-40">
+  <div class="max-w-2xl mx-auto px-4">
+    <div class="flex gap-1 overflow-x-auto py-2">
+      <button onclick="filterFeed('all')" class="filter-btn active px-4 py-2 text-sm rounded-full bg-gray-900 text-white whitespace-nowrap" data-filter="all">전체</button>
+      <button onclick="filterFeed('bill')" class="filter-btn px-4 py-2 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-filter="bill">법안 발의</button>
+      <button onclick="filterFeed('vote')" class="filter-btn px-4 py-2 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-filter="vote">표결</button>
+      <button onclick="filterFeed('speech')" class="filter-btn px-4 py-2 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-filter="speech">발언</button>
+      <button onclick="filterFeed('committee')" class="filter-btn px-4 py-2 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap" data-filter="committee">위원회</button>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-2xl mx-auto px-4 py-6">
+  <div id="feed" class="space-y-0"></div>
+  <div class="text-center py-8">
+    <button onclick="loadMore()" class="px-6 py-3 bg-gray-900 text-white rounded-full text-sm hover:bg-gray-800 transition-colors">더 보기</button>
+  </div>
+</main>
+
+<script>
+const feedData = [
+  {
+    type: 'bill',
+    date: '2026-03-25',
+    time: '16:42',
+    legislator: { name: '김승원', party: '더불어민주당', district: '경기 수원시을' },
+    content: '소비자기본법 개정안을 발의했습니다',
+    detail: '온라인 거래에서 소비자 피해 구제를 강화하는 법',
+    billName: '소비자기본법 개정안'
+  },
+  {
+    type: 'vote',
+    date: '2026-03-25',
+    time: '15:30',
+    legislator: { name: '추경호', party: '국민의힘', district: '대구 달성' },
+    content: '국가재정법 개정안에 대해 본회의에서 찬성 투표했습니다',
+    detail: '재정준칙을 법제화하여 국가채무 비율을 관리하는 법',
+    billName: '국가재정법 개정안',
+    vote: '찬성'
+  },
+  {
+    type: 'speech',
+    date: '2026-03-25',
+    time: '14:15',
+    legislator: { name: '주진우', party: '더불어민주당', district: '서울 영등포구을' },
+    content: '본회의 대정부질문에서 발언했습니다',
+    detail: '공익신고자 보호 실태에 대해 정부에 질의',
+    topic: '공익신고자 보호'
+  },
+  {
+    type: 'committee',
+    date: '2026-03-25',
+    time: '10:00',
+    legislator: { name: '서영석', party: '더불어민주당', district: '경기 부천시갑' },
+    content: '보건복지위원회 전체회의에 출석했습니다',
+    detail: '국민건강보험법 개정안에 대한 전문가 의견 청취',
+    committee: '보건복지위원회'
+  },
+  {
+    type: 'bill',
+    date: '2026-03-24',
+    time: '17:20',
+    legislator: { name: '박충권', party: '국민의힘', district: '대전 유성구갑' },
+    content: '데이터기본법 개정안을 발의했습니다',
+    detail: '공공데이터의 민간 개방 범위를 확대하는 법',
+    billName: '데이터기본법 개정안'
+  },
+  {
+    type: 'vote',
+    date: '2026-03-24',
+    time: '15:45',
+    legislator: { name: '윤준병', party: '더불어민주당', district: '전북 정읍·고창' },
+    content: '축산법 개정안에 대해 본회의에서 찬성 투표했습니다',
+    detail: '축산 농가의 방역 체계를 강화하고 지원금을 확대하는 법',
+    billName: '축산법 개정안',
+    vote: '찬성'
+  },
+  {
+    type: 'bill',
+    date: '2026-03-24',
+    time: '11:30',
+    legislator: { name: '김현정', party: '더불어민주당', district: '비례대표' },
+    content: '미디어다양성법을 발의했습니다',
+    detail: '지역 언론사에 대한 재정 지원을 확대하는 법',
+    billName: '미디어다양성법'
+  },
+  {
+    type: 'speech',
+    date: '2026-03-23',
+    time: '16:00',
+    legislator: { name: '강대식', party: '국민의힘', district: '대구 동구·군위' },
+    content: '행정안전위원회에서 발언했습니다',
+    detail: '지방 균형발전을 위한 특별교부세 배분 기준에 대해 질의',
+    topic: '지방균형발전'
+  },
+  {
+    type: 'committee',
+    date: '2026-03-23',
+    time: '10:30',
+    legislator: { name: '이태규', party: '국민의힘', district: '부산 사하구을' },
+    content: '교육위원회 법안심사소위에 출석했습니다',
+    detail: '교육기본법 개정안 축조심사 진행',
+    committee: '교육위원회'
+  },
+  {
+    type: 'bill',
+    date: '2026-03-22',
+    time: '14:50',
+    legislator: { name: '서영석', party: '더불어민주당', district: '경기 부천시갑' },
+    content: '감염병예방법 개정안을 발의했습니다',
+    detail: '감염병 위기 시 의료 인력 동원 체계를 정비하는 법',
+    billName: '감염병예방법 개정안'
+  },
+  {
+    type: 'vote',
+    date: '2026-03-22',
+    time: '15:20',
+    legislator: { name: '신원식', party: '국민의힘', district: '비례대표' },
+    content: '군인복지법 개정안에 대해 본회의에서 찬성 투표했습니다',
+    detail: '병사 월급을 200만원으로 단계적으로 인상하는 법',
+    billName: '군인복지법 개정안',
+    vote: '찬성'
+  },
+  {
+    type: 'bill',
+    date: '2026-03-21',
+    time: '13:10',
+    legislator: { name: '김승원', party: '더불어민주당', district: '경기 수원시을' },
+    content: '민법 개정안을 발의했습니다',
+    detail: '성년후견제도의 절차를 간소화하여 접근성을 높이는 법',
+    billName: '민법 개정안'
+  },
+  {
+    type: 'speech',
+    date: '2026-03-21',
+    time: '11:00',
+    legislator: { name: '추경호', party: '국민의힘', district: '대구 달성' },
+    content: '기획재정위원회에서 발언했습니다',
+    detail: '2027년도 예산안 편성 기본방향에 대해 정부에 질의',
+    topic: '예산편성'
+  },
+  {
+    type: 'committee',
+    date: '2026-03-20',
+    time: '14:00',
+    legislator: { name: '주진우', party: '더불어민주당', district: '서울 영등포구을' },
+    content: '법제사법위원회 전체회의에 출석했습니다',
+    detail: '정보공개법 개정안에 대한 소위원회 회부 결정',
+    committee: '법제사법위원회'
+  },
+  {
+    type: 'bill',
+    date: '2026-03-20',
+    time: '10:30',
+    legislator: { name: '윤준병', party: '더불어민주당', district: '전북 정읍·고창' },
+    content: '식품안전기본법 개정안을 발의했습니다',
+    detail: '수입 식품의 안전 검사 기준을 강화하는 법',
+    billName: '식품안전기본법 개정안'
+  },
+  {
+    type: 'vote',
+    date: '2026-03-19',
+    time: '15:00',
+    legislator: { name: '김현정', party: '더불어민주당', district: '비례대표' },
+    content: '방송법 개정안에 대해 본회의에서 찬성 투표했습니다',
+    detail: '공영방송의 독립성을 보장하기 위해 이사회 구성을 개편하는 법',
+    billName: '방송법 개정안',
+    vote: '찬성'
+  },
+  {
+    type: 'bill',
+    date: '2026-03-18',
+    time: '16:30',
+    legislator: { name: '강대식', party: '국민의힘', district: '대구 동구·군위' },
+    content: '국가균형발전특별법 개정안을 발의했습니다',
+    detail: '수도권 집중을 완화하기 위한 지방 투자 인센티브를 확대하는 법',
+    billName: '국가균형발전특별법 개정안'
+  },
+  {
+    type: 'speech',
+    date: '2026-03-18',
+    time: '14:20',
+    legislator: { name: '박충권', party: '국민의힘', district: '대전 유성구갑' },
+    content: '과학기술정보방송통신위원회에서 발언했습니다',
+    detail: 'AI 산업 규제 체계에 대한 정부 입장을 질의',
+    topic: 'AI 규제'
+  },
+  {
+    type: 'committee',
+    date: '2026-03-17',
+    time: '10:00',
+    legislator: { name: '신원식', party: '국민의힘', district: '비례대표' },
+    content: '국방위원회 법안심사소위에 출석했습니다',
+    detail: '군인복지법 개정안 조문별 심사 진행',
+    committee: '국방위원회'
+  },
+  {
+    type: 'bill',
+    date: '2026-03-17',
+    time: '09:30',
+    legislator: { name: '이태규', party: '국민의힘', district: '부산 사하구을' },
+    content: '사립학교법 개정안을 발의했습니다',
+    detail: '사학 비리 방지를 위해 이사회 구성을 개편하는 법',
+    billName: '사립학교법 개정안'
+  }
+];
+
+const typeIcons = {
+  bill: { icon: '📋', label: '법안 발의', color: 'bg-blue-100 text-blue-700' },
+  vote: { icon: '🗳️', label: '표결', color: 'bg-purple-100 text-purple-700' },
+  speech: { icon: '🎙️', label: '발언', color: 'bg-amber-100 text-amber-700' },
+  committee: { icon: '🏛️', label: '위원회', color: 'bg-green-100 text-green-700' }
+};
+
+let currentFilter = 'all';
+let visibleCount = 10;
+
+function filterFeed(type) {
+  currentFilter = type;
+  visibleCount = 10;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    if (btn.dataset.filter === type) {
+      btn.className = 'filter-btn active px-4 py-2 text-sm rounded-full bg-gray-900 text-white whitespace-nowrap';
+    } else {
+      btn.className = 'filter-btn px-4 py-2 text-sm rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap';
+    }
+  });
+  renderFeed();
+}
+
+function loadMore() {
+  visibleCount += 10;
+  renderFeed();
+}
+
+function getRelativeDate(dateStr) {
+  const date = new Date(dateStr);
+  const now = new Date('2026-03-26');
+  const diffDays = Math.floor((now - date) / 86400000);
+  if (diffDays === 0) return '오늘';
+  if (diffDays === 1) return '어제';
+  if (diffDays < 7) return `${diffDays}일 전`;
+  return dateStr;
+}
+
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  const filtered = currentFilter === 'all' ? feedData : feedData.filter(f => f.type === currentFilter);
+  const visible = filtered.slice(0, visibleCount);
+
+  let lastDate = '';
+  feed.innerHTML = visible.map((item, idx) => {
+    const ti = typeIcons[item.type];
+    const partyColor = item.legislator.party === '더불어민주당' ? '#1A56DB' : '#E5243B';
+    const partyBg = item.legislator.party === '더불어민주당' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700';
+
+    let dateHeader = '';
+    if (item.date !== lastDate) {
+      lastDate = item.date;
+      dateHeader = `<div class="py-3 flex items-center gap-3"><div class="h-px flex-1 bg-gray-200"></div><span class="text-xs text-gray-400 font-medium">${getRelativeDate(item.date)} &middot; ${item.date}</span><div class="h-px flex-1 bg-gray-200"></div></div>`;
+    }
+
+    return `
+      ${dateHeader}
+      <div class="feed-item relative pl-12 pb-6">
+        <div class="timeline-line"></div>
+        <div class="absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center text-lg z-10" style="background: ${partyColor}22">
+          ${ti.icon}
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow">
+          <div class="flex items-start justify-between mb-3 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-gray-900">${item.legislator.name}</span>
+              <span class="text-xs px-2 py-0.5 rounded-full ${partyBg}">${item.legislator.party}</span>
+              <span class="text-xs text-gray-400">${item.legislator.district}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-2 py-0.5 rounded-full ${ti.color}">${ti.label}</span>
+              <span class="text-xs text-gray-400">${item.time}</span>
+            </div>
+          </div>
+          <p class="text-gray-700 mb-2">${item.content}</p>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-sm text-gray-600">${item.detail}</p>
+          </div>
+          ${item.vote ? `<div class="mt-2 inline-flex items-center gap-1 text-sm ${item.vote === '찬성' ? 'text-blue-600' : 'text-red-600'}"><span>${item.vote === '찬성' ? '👍' : '👎'}</span> ${item.vote}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+renderFeed();
+</script>
+</body>
+</html>

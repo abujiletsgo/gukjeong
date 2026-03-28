@@ -3,8 +3,8 @@
 // Live mode: /data/audit-results.json (76 real findings from 나라장터)
 // Demo mode: seed data passed as props
 //
-// v2: 컨텍스트 인식 감사 시스템 — 단순 패턴 매칭이 아닌 맥락을 이해하는 분석
-import { useState, useEffect, useMemo } from 'react';
+// v3: Production rebuild — full rich features in both modes
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useDataMode } from '@/lib/context/DataModeContext';
 import {
   enrichAllFindings,
@@ -69,18 +69,13 @@ interface AuditPageClientProps {
 }
 
 // ── Pattern category definitions ───────────────────────────────────────
-type PatternCategory = 'high_value_sole_source' | 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
+type PatternCategory = 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
 
 const PATTERN_CATEGORIES: {
   key: PatternCategory;
   label: string;
   description: string;
 }[] = [
-  {
-    key: 'high_value_sole_source',
-    label: '고액 수의계약',
-    description: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결된 건',
-  },
   {
     key: 'vendor_concentration',
     label: '업체 집중',
@@ -106,23 +101,17 @@ const RISK_FILTER_OPTIONS = [
   { value: 'NORMAL', label: '정상' },
 ];
 
-// ── Utility: method color ──────────────────────────────────────────────
-function getMethodColor(method: string): string {
-  if (method.includes('수의')) return 'bg-rose-100 text-rose-700';
-  if (method.includes('일반')) return 'bg-emerald-100 text-emerald-700';
-  if (method.includes('제한')) return 'bg-amber-100 text-amber-700';
-  return 'bg-gray-100 text-gray-700';
+// ── Utility: method badge color ──────────────────────────────────────
+function getMethodBadge(method: string): { bg: string; label: string } {
+  if (method.includes('수의')) return { bg: 'bg-amber-100 text-amber-700', label: method };
+  if (method.includes('경쟁') || method.includes('일반')) return { bg: 'bg-emerald-100 text-emerald-700', label: method };
+  if (method.includes('제한')) return { bg: 'bg-gray-100 text-gray-600', label: method };
+  return { bg: 'bg-gray-100 text-gray-600', label: method };
 }
 
-// ── Utility: extract key stat for collapsed view ───────────────────────
+// ── Utility: extract key stat for collapsed view ─────────────────────
 function getKeyStat(finding: RealFinding | EnrichedFinding): string {
   const d = finding.detail;
-  if (finding.pattern_type === 'high_value_sole_source') {
-    const amt = d['계약금액'] as number;
-    if (amt >= 1_000_000_000) return `${(amt / 100_000_000).toFixed(1)}억원 수의계약`;
-    if (amt >= 100_000_000) return `${(amt / 100_000_000).toFixed(1)}억원 수의계약`;
-    return '고액 수의계약';
-  }
   if (finding.pattern_type === 'vendor_concentration') {
     return (d['집중도'] as string) || `${d['업체_계약건수']}/${d['기관_전체건수']}건`;
   }
@@ -141,24 +130,24 @@ function getKeyStat(finding: RealFinding | EnrichedFinding): string {
   return '';
 }
 
-// ── Utility: plain Korean explanation per finding ──────────────────────
-function getPlainExplanation(finding: RealFinding): string {
+// ── Utility: plain Korean explanation per finding ────────────────────
+function getPlainExplanation(finding: RealFinding | EnrichedFinding): string {
   const d = finding.detail;
   const inst = finding.target_institution;
 
   if (finding.pattern_type === 'vendor_concentration') {
-    const vendor = d['업체'] as string || '';
-    const pct = d['집중도'] as string || '';
+    const vendor = (d['업체'] as string) || '';
+    const pct = (d['집중도'] as string) || '';
     const cnt = d['업체_계약건수'] || '';
     const total = d['기관_전체건수'] || '';
     return `${inst}에서 ${vendor}라는 업체가 전체 ${total}건 중 ${cnt}건(${pct})의 계약을 가져갔습니다. 한 업체가 이렇게 많은 비중을 차지하면, 다른 업체가 공정하게 참여할 기회가 있었는지 점검이 필요합니다.`;
   }
   if (finding.pattern_type === 'repeated_sole_source') {
-    const ratio = d['수의계약_비율'] as string || '';
+    const ratio = (d['수의계약_비율'] as string) || '';
     return `${inst}이(가) 체결한 계약의 ${ratio || '대부분'}이 수의계약입니다. 수의계약 자체가 불법은 아니지만, 비율이 지나치게 높으면 경쟁 입찰 절차를 의도적으로 회피하고 있는 것은 아닌지 살펴볼 필요가 있습니다.`;
   }
   if (finding.pattern_type === 'contract_splitting') {
-    const vendor = d['업체'] as string || '';
+    const vendor = (d['업체'] as string) || '';
     const cnt = d['한도근처_계약수'] || '';
     return `${inst}에서 ${vendor}에게 수의계약 한도(2천만원) 바로 아래 금액으로 ${cnt}건을 발주했습니다. 원래 한 건으로 발주해야 할 사업을 여러 건으로 쪼개서 입찰을 피하려는 것 아닌지 의심됩니다.`;
   }
@@ -166,7 +155,120 @@ function getPlainExplanation(finding: RealFinding): string {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+// Chevron SVG (shared)
+// ══════════════════════════════════════════════════════════════════════
+function ChevronDown({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ExternalLinkIcon (shared)
+// ══════════════════════════════════════════════════════════════════════
+function ExternalLinkIcon({ size = 12 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
+    </svg>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ContractList — shared contract evidence table
+// ══════════════════════════════════════════════════════════════════════
+function ContractList({ contracts }: { contracts: RealEvidenceContract[] }) {
+  if (contracts.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      {contracts.map((contract, ci) => {
+        const badge = getMethodBadge(contract.method);
+        return (
+          <div key={`${contract.no}-${ci}`} className="bg-white border border-gray-100 rounded-lg p-3 sm:p-4">
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h5 className="text-sm font-semibold text-gray-800 flex-1 leading-snug">
+                {contract.name}
+              </h5>
+              <a
+                href={contract.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-gray-500 hover:text-gray-800 whitespace-nowrap flex-shrink-0 flex items-center gap-1 border border-gray-200 rounded-lg px-2.5 py-1 hover:bg-gray-50 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                나라장터에서 확인
+                <ExternalLinkIcon />
+              </a>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-xs">
+              <div>
+                <span className="text-gray-400 block">금액</span>
+                <p className="font-bold text-gray-900">{formatKRW(contract.amount)}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 block">업체</span>
+                <p className="text-gray-700 font-medium">{contract.vendor}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 block">계약일</span>
+                <p className="text-gray-700">{contract.date}</p>
+              </div>
+              <div>
+                <span className="text-gray-400 block">계약 방식</span>
+                <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full ${badge.bg}`}>
+                  {badge.label}
+                </span>
+              </div>
+            </div>
+
+            {contract.reason && (
+              <div className="mt-2 text-[11px] text-gray-500 bg-gray-50 rounded px-3 py-1.5">
+                <span className="text-gray-400">법적 근거: </span>
+                {contract.reason}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// DetailTable — raw detail key-value pairs
+// ══════════════════════════════════════════════════════════════════════
+function DetailTable({ detail }: { detail: Record<string, unknown> }) {
+  const entries = Object.entries(detail);
+  if (entries.length === 0) return null;
+
+  return (
+    <div className="bg-gray-50 rounded-lg p-4 font-mono text-xs space-y-1">
+      {entries.map(([key, value]) => (
+        <div key={key} className="flex justify-between gap-4 py-1 border-b border-gray-100 last:border-0">
+          <span className="text-gray-500">{formatKeyLabel(key)}</span>
+          <span className="font-medium text-gray-800 text-right">
+            {typeof value === 'number' ? formatNumber(value, key) :
+             typeof value === 'object' ? JSON.stringify(value) :
+             String(value)}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
 // FindingCard — enriched expandable card with contextual analysis
+// Full-feature card with all 4 sections
 // ══════════════════════════════════════════════════════════════════════
 function FindingCard({ finding }: { finding: EnrichedFinding }) {
   const [expanded, setExpanded] = useState(false);
@@ -190,7 +292,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-2">
-              {/* Risk level badge (replaces raw severity) */}
+              {/* Risk level badge */}
               <span
                 className="text-[10px] font-bold px-2.5 py-0.5 rounded-full"
                 style={{ backgroundColor: riskBg, color: riskColor }}
@@ -227,12 +329,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
               </div>
               <div className="text-[10px] text-gray-400">{finding.risk_label}</div>
             </div>
-            <svg
-              className={`w-5 h-5 text-gray-300 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
-              fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
+            <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
           </div>
         </div>
       </button>
@@ -241,7 +338,20 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
       {expanded && (
         <div className="border-t border-gray-100 px-4 sm:px-5 pb-5 pt-4 space-y-4">
 
-          {/* Section A: 맥락 분석 (Contextual Analysis) */}
+          {/* Section 1: 쉽게 말하면 — plain explanation */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+              </svg>
+              쉽게 말하면
+            </h4>
+            <p className="text-sm text-gray-800 leading-relaxed">
+              {getPlainExplanation(finding)}
+            </p>
+          </div>
+
+          {/* Contextual analysis (from enrichment engine) */}
           <div className="bg-gray-50 rounded-lg p-4">
             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">맥락 분석</h4>
             <p className="text-sm text-gray-800 leading-relaxed">
@@ -268,7 +378,22 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
             </div>
           )}
 
-          {/* Section B: Mitigating Factors (정상 사유) */}
+          {/* Section 2: 비리가 아닐 수 있는 이유 — innocent explanation (green box) */}
+          {finding.innocent_explanation && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+              <h4 className="text-xs font-bold text-emerald-700 flex items-center gap-1.5 mb-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                비리가 아닐 수 있는 이유
+              </h4>
+              <p className="text-sm text-emerald-700 leading-relaxed">
+                {finding.innocent_explanation}
+              </p>
+            </div>
+          )}
+
+          {/* Mitigating Factors (정상 사유) */}
           {hasMitigation && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
               <h4 className="text-xs font-bold text-emerald-700 flex items-center gap-1.5 mb-3">
@@ -286,14 +411,14 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                         -{factor.score_reduction}점
                       </span>
                     </div>
-                    <p className="text-xs text-emerald-700 leading-relaxed pl-0">{factor.explanation}</p>
+                    <p className="text-xs text-emerald-700 leading-relaxed">{factor.explanation}</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Section C: Aggravating Factors (주의 요인) */}
+          {/* Aggravating Factors (주의 요인) */}
           {hasAggravation && (
             <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
               <h4 className="text-xs font-bold text-rose-700 flex items-center gap-1.5 mb-3">
@@ -318,25 +443,27 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
             </div>
           )}
 
-          {/* Section D: 확인 포인트 (What to watch for) */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <h4 className="text-xs font-bold text-amber-700 flex items-center gap-1.5 mb-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-              </svg>
-              이것까지 확인하면 더 정확합니다
-            </h4>
-            <ul className="text-xs text-amber-800 space-y-1.5 leading-relaxed">
-              {finding.what_to_watch_for.split('\n').filter(Boolean).map((item, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="text-amber-500 shrink-0 mt-0.5">&#x2022;</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* 확인 포인트 (What to watch for) */}
+          {finding.what_to_watch_for && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h4 className="text-xs font-bold text-amber-700 flex items-center gap-1.5 mb-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+                이것까지 확인하면 더 정확합니다
+              </h4>
+              <ul className="text-xs text-amber-800 space-y-1.5 leading-relaxed">
+                {finding.what_to_watch_for.split('\n').filter(Boolean).map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-amber-500 shrink-0 mt-0.5">&#x2022;</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          {/* Section E: 실제 계약 내역 (Collapsible) */}
+          {/* Section 3: 실제 계약 내역 (Collapsible) */}
           {uniqueContracts.length > 0 && (
             <div>
               <button
@@ -348,73 +475,18 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                 </svg>
                 실제 계약 내역 ({uniqueContracts.length}건)
-                <svg
-                  className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${contractsOpen ? 'rotate-180' : ''}`}
-                  fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
+                <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${contractsOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {contractsOpen && (
-                <div className="mt-3 space-y-2">
-                  {uniqueContracts.map((contract, ci) => (
-                    <div key={`${contract.no}-${ci}`} className="bg-white border border-gray-100 rounded-lg p-3 sm:p-4">
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <h5 className="text-sm font-semibold text-gray-800 flex-1 leading-snug">
-                          {contract.name}
-                        </h5>
-                        <a
-                          href={contract.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-gray-500 hover:text-gray-800 whitespace-nowrap flex-shrink-0 flex items-center gap-1 border border-gray-200 rounded-lg px-2.5 py-1 hover:bg-gray-50 transition-colors"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          나라장터
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-                            <polyline points="15 3 21 3 21 9" />
-                            <line x1="10" y1="14" x2="21" y2="3" />
-                          </svg>
-                        </a>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-xs">
-                        <div>
-                          <span className="text-gray-400 block">금액</span>
-                          <p className="font-bold text-gray-900">{formatKRW(contract.amount)}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-400 block">업체</span>
-                          <p className="text-gray-700 font-medium">{contract.vendor}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-400 block">계약일</span>
-                          <p className="text-gray-700">{contract.date}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-400 block">계약 방식</span>
-                          <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full ${getMethodColor(contract.method)}`}>
-                            {contract.method}
-                          </span>
-                        </div>
-                      </div>
-
-                      {contract.reason && (
-                        <div className="mt-2 text-[11px] text-gray-500 bg-gray-50 rounded px-3 py-1.5">
-                          <span className="text-gray-400">법적 근거: </span>
-                          {contract.reason}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                <div className="mt-3">
+                  <ContractList contracts={uniqueContracts} />
                 </div>
               )}
             </div>
           )}
 
-          {/* Section F: 상세 데이터 (collapsible) */}
+          {/* Section 4: 상세 데이터 (collapsible) */}
           {Object.keys(finding.detail).length > 0 && (
             <div>
               <button
@@ -428,31 +500,182 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
-                원본 데이터
+                상세 데이터
               </button>
 
               {detailOpen && (
-                <div className="mt-2 bg-gray-50 rounded-lg p-4 font-mono text-xs space-y-1">
-                  {Object.entries(finding.detail).map(([key, value]) => (
-                    <div key={key} className="flex justify-between gap-4 py-1 border-b border-gray-100 last:border-0">
-                      <span className="text-gray-500">{formatKeyLabel(key)}</span>
-                      <span className="font-medium text-gray-800 text-right">
-                        {typeof value === 'number' ? formatNumber(value, key) :
-                         typeof value === 'object' ? JSON.stringify(value) :
-                         String(value)}
-                      </span>
-                    </div>
-                  ))}
+                <div className="mt-2">
+                  <DetailTable detail={finding.detail} />
                 </div>
               )}
             </div>
           )}
 
-          <p className="text-[10px] text-gray-400 text-center">
+          <p className="text-[10px] text-gray-400 text-center pt-1">
             AI 분석은 참고용입니다. 의심 패턴 &ne; 비리 확정. 모든 기관에 동일한 기준이 적용됩니다.
           </p>
         </div>
       )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// SoleSourceExplainer — expandable 수의계약 설명 card
+// ══════════════════════════════════════════════════════════════════════
+function SoleSourceExplainer({ ratio }: { ratio: number }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="card mb-8 p-0 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full text-left px-4 sm:px-6 py-4 flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+          </div>
+          <div>
+            <h2 className="font-bold text-sm sm:text-base text-gray-900">수의계약이란?</h2>
+            <p className="text-xs text-gray-500 mt-0.5">분석된 계약의 {ratio}%가 수의계약 -- 이것이 왜 중요한지 알아보세요</p>
+          </div>
+        </div>
+        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 shrink-0 ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="px-4 sm:px-6 pb-5 space-y-4 border-t border-gray-100 pt-4">
+          {/* Definition */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-800 mb-1">수의계약이란?</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              <strong>경쟁 입찰 없이</strong> 특정 업체와 직접 계약하는 방식입니다.
+              일반적으로 정부 조달은 공개 경쟁 입찰을 원칙으로 하지만, 법에서 정한 예외 사유에 해당하면 수의계약이 가능합니다.
+            </p>
+          </div>
+
+          {/* When it's legal */}
+          <div className="bg-emerald-50 rounded-lg p-4">
+            <h3 className="text-sm font-bold text-emerald-800 mb-2">수의계약이 합법인 경우</h3>
+            <ul className="text-xs text-emerald-700 space-y-1.5 leading-relaxed">
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
+                <span><strong>추정가격 2천만원 이하</strong> (지방계약법 제25조, 국가계약법 시행령 제26조)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
+                <span>특수한 설비, 기술이 필요한 경우 (특정 업체만 가능)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
+                <span>긴급한 재해 복구 등 시급한 상황</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
+                <span>입찰에 참여한 업체가 없거나 유찰된 경우</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Why the number matters */}
+          <div className="bg-amber-50 rounded-lg p-4">
+            <h3 className="text-sm font-bold text-amber-800 mb-1">{ratio}%는 높은 수치인가?</h3>
+            <p className="text-xs text-amber-700 leading-relaxed">
+              분석된 3,200건의 계약 중 약 {Math.round(3200 * ratio / 100).toLocaleString()}건이 수의계약입니다.
+              소액 계약이 많은 지방자치단체/교육기관 특성상 수의계약 비율이 높을 수 있지만,
+              개별 기관 단위로 100%에 가까운 수의계약 비율은 경쟁 원리가 작동하지 않을 가능성을 시사합니다.
+            </p>
+          </div>
+
+          {/* What this analysis does */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-800 mb-1">이 분석이 찾는 것</h3>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              개별 수의계약의 적법성을 판단하는 것이 아니라, <strong>기관 단위의 패턴</strong>을 분석합니다.
+              특정 업체에 대한 반복 발주, 한도 금액 근처 계약 반복, 업체 집중도 이상 등
+              통계적으로 이상한 패턴을 탐지하여 검토가 필요한 사례를 선별합니다.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// MethodologyFooter — shared methodology section
+// ══════════════════════════════════════════════════════════════════════
+function MethodologyFooter({ timestamp }: { timestamp?: string }) {
+  return (
+    <div className="mt-10 border-t border-gray-100 pt-8 pb-4">
+      <h2 className="font-bold text-sm text-gray-700 mb-4">분석 방법론</h2>
+      <div className="grid sm:grid-cols-3 gap-4">
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+            </svg>
+            <h3 className="text-xs font-bold text-gray-700">데이터 출처</h3>
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            나라장터(조달청) 공공데이터 API에서 수집한 실제 계약 데이터.
+            {timestamp && ` ${timestamp} 기준.`}
+          </p>
+        </div>
+
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
+            </svg>
+            <h3 className="text-xs font-bold text-gray-700">2단계 분석</h3>
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            1단계: 통계적 패턴 탐지 (업체 집중, 수의계약 반복, 금액 분포). 2단계: 맥락 분석 (상품 특성, 경쟁 입찰 여부, 법적 근거, 기관 특성, 금액 규모)으로 점수를 보정합니다.
+          </p>
+        </div>
+
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+            <h3 className="text-xs font-bold text-gray-700">한계 및 원칙</h3>
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            의심 수준을 제시하며 의도는 판단하지 않습니다.
+            에너지/교과서/연구장비 등 구조적으로 공급업체가 한정된 분야는 자동 감점 처리합니다.
+            경쟁입찰로 동일 업체가 수주한 경우도 별도 가중됩니다.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-3 text-[10px] text-gray-400">
+        <a
+          href="https://www.g2b.go.kr"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-gray-600 transition-colors flex items-center gap-1"
+        >
+          나라장터 <ExternalLinkIcon size={10} />
+        </a>
+        <span>|</span>
+        <a
+          href="https://www.bai.go.kr"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-gray-600 transition-colors flex items-center gap-1"
+        >
+          감사원 <ExternalLinkIcon size={10} />
+        </a>
+        <span>|</span>
+        <span>AI 분석: 통계적 패턴 탐지 (의심 &#8800; 확정)</span>
+      </div>
     </div>
   );
 }
@@ -470,28 +693,34 @@ export default function AuditPageClient({
   // Real data state
   const [realData, setRealData] = useState<RealAuditData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Filter state
-  const [activeCategory, setActiveCategory] = useState<PatternCategory>('high_value_sole_source');
+  const [activeCategory, setActiveCategory] = useState<PatternCategory>('repeated_sole_source');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [soleSourceInfoOpen, setSoleSourceInfoOpen] = useState(false);
 
   // Fetch real data on mount (only in live mode)
   useEffect(() => {
     if (isDemo) return;
     setLoading(true);
+    setError(null);
     fetch('/data/audit-results.json')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data: RealAuditData) => {
         setRealData(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        setError(err.message || 'Failed to load data');
+        setLoading(false);
+      });
   }, [isDemo]);
 
   // ── Enriched data computations ──
-  // Apply context analysis to raw findings (dedup, re-score, add mitigating factors)
   const enrichedFindings = useMemo(() => {
     const raw = realData?.findings ?? [];
     if (raw.length === 0) return [];
@@ -506,9 +735,6 @@ export default function AuditPageClient({
     }
     return counts;
   }, [enrichedFindings]);
-
-  // Risk level filter options (replacing severity)
-  type RiskFilterValue = 'all' | 'CONCERN' | 'WATCH' | 'LOW_RISK' | 'NORMAL';
 
   // Filtered findings
   const filteredFindings = useMemo(() => {
@@ -543,10 +769,15 @@ export default function AuditPageClient({
 
   // Reset filters on mode change
   useEffect(() => {
-    setActiveCategory('high_value_sole_source');
+    setActiveCategory('repeated_sole_source');
     setSeverityFilter('all');
     setSearchQuery('');
   }, [isDemo]);
+
+  const resetFilters = useCallback(() => {
+    setSearchQuery('');
+    setSeverityFilter('all');
+  }, []);
 
   // ══════════════════════════════════════════════════════════════════
   // DEMO MODE — existing seed data rendering
@@ -610,8 +841,24 @@ export default function AuditPageClient({
     return (
       <div className="container-page py-6 sm:py-8">
         <div className="text-center py-24 text-gray-400">
-          <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-emerald-500 rounded-full mx-auto mb-4" />
+          <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-gray-700 rounded-full mx-auto mb-4" />
           <p className="text-sm">실제 나라장터 데이터를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container-page py-6 sm:py-8">
+        <div className="text-center py-24">
+          <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-6 h-6 text-rose-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+          </div>
+          <p className="text-sm text-gray-500 mb-2">데이터를 불러오지 못했습니다</p>
+          <p className="text-xs text-gray-400">{error}</p>
         </div>
       </div>
     );
@@ -646,7 +893,7 @@ export default function AuditPageClient({
           </div>
         </div>
 
-        {/* Methodology explanation */}
+        {/* Disclaimer banner */}
         <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2.5">
           <svg className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -709,96 +956,15 @@ export default function AuditPageClient({
       </div>
 
       {/* ═══════════════════════════════════════════════════════════
-           3. 수의계약 설명 (Context Card)
+           3. 수의계약 설명 (Expandable Context Card)
          ═══════════════════════════════════════════════════════════ */}
-      <div className="card mb-8 p-0 overflow-hidden">
-        <button
-          type="button"
-          onClick={() => setSoleSourceInfoOpen(!soleSourceInfoOpen)}
-          className="w-full text-left px-4 sm:px-6 py-4 flex items-center justify-between gap-3 hover:bg-gray-50 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 16v-4M12 8h.01"/>
-              </svg>
-            </div>
-            <div>
-              <h2 className="font-bold text-sm sm:text-base text-gray-900">수의계약이란?</h2>
-              <p className="text-xs text-gray-500 mt-0.5">분석된 계약의 79.9%가 수의계약 -- 이것이 왜 중요한지 알아보세요</p>
-            </div>
-          </div>
-          <svg
-            className={`w-5 h-5 text-gray-400 transition-transform duration-200 shrink-0 ${soleSourceInfoOpen ? 'rotate-180' : ''}`}
-            fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-          </svg>
-        </button>
-
-        {soleSourceInfoOpen && (
-          <div className="px-4 sm:px-6 pb-5 space-y-4 border-t border-gray-100 pt-4">
-            {/* Definition */}
-            <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-1">수의계약이란?</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                <strong>경쟁 입찰 없이</strong> 특정 업체와 직접 계약하는 방식입니다.
-                일반적으로 정부 조달은 공개 경쟁 입찰을 원칙으로 하지만, 법에서 정한 예외 사유에 해당하면 수의계약이 가능합니다.
-              </p>
-            </div>
-
-            {/* When it's legal */}
-            <div className="bg-emerald-50 rounded-lg p-4">
-              <h3 className="text-sm font-bold text-emerald-800 mb-2">수의계약이 합법인 경우</h3>
-              <ul className="text-xs text-emerald-700 space-y-1.5 leading-relaxed">
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
-                  <span><strong>추정가격 2천만원 이하</strong> (지방계약법 제25조, 국가계약법 시행령 제26조)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
-                  <span>특수한 설비, 기술이 필요한 경우 (특정 업체만 가능)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
-                  <span>긴급한 재해 복구 등 시급한 상황</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500 shrink-0 mt-0.5">&#x2022;</span>
-                  <span>입찰에 참여한 업체가 없거나 유찰된 경우</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Why the number matters */}
-            <div className="bg-amber-50 rounded-lg p-4">
-              <h3 className="text-sm font-bold text-amber-800 mb-1">79.9%는 높은 수치인가?</h3>
-              <p className="text-xs text-amber-700 leading-relaxed">
-                분석된 3,200건의 계약 중 약 2,557건이 수의계약입니다.
-                소액 계약이 많은 지방자치단체/교육기관 특성상 수의계약 비율이 높을 수 있지만,
-                개별 기관 단위로 100%에 가까운 수의계약 비율은 경쟁 원리가 작동하지 않을 가능성을 시사합니다.
-              </p>
-            </div>
-
-            {/* What this analysis does */}
-            <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-1">이 분석이 찾는 것</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                개별 수의계약의 적법성을 판단하는 것이 아니라, <strong>기관 단위의 패턴</strong>을 분석합니다.
-                특정 업체에 대한 반복 발주, 한도 금액 근처 계약 반복, 업체 집중도 이상 등
-                통계적으로 이상한 패턴을 탐지하여 검토가 필요한 사례를 선별합니다.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+      <SoleSourceExplainer ratio={realData?.summary.sole_source_ratio ?? 79.9} />
 
       {/* ═══════════════════════════════════════════════════════════
            4. PATTERN CATEGORY TABS
          ═══════════════════════════════════════════════════════════ */}
       <div className="mb-6">
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
           {PATTERN_CATEGORIES.map(cat => {
             const isActive = activeCategory === cat.key;
             const count = categoryCounts[cat.key] || 0;
@@ -894,7 +1060,7 @@ export default function AuditPageClient({
           {(searchQuery.trim() || severityFilter !== 'all') && (
             <button
               type="button"
-              onClick={() => { setSearchQuery(''); setSeverityFilter('all'); }}
+              onClick={resetFilters}
               className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
             >
               필터 초기화
@@ -923,7 +1089,7 @@ export default function AuditPageClient({
           <p className="text-sm text-gray-400">조건에 맞는 패턴이 없습니다.</p>
           <button
             type="button"
-            onClick={() => { setSearchQuery(''); setSeverityFilter('all'); }}
+            onClick={resetFilters}
             className="mt-2 text-xs text-gray-500 hover:text-gray-700 underline transition-colors"
           >
             필터 초기화
@@ -934,81 +1100,7 @@ export default function AuditPageClient({
       {/* ═══════════════════════════════════════════════════════════
            7. METHODOLOGY FOOTER
          ═══════════════════════════════════════════════════════════ */}
-      <div className="mt-10 border-t border-gray-100 pt-8 pb-4">
-        <h2 className="font-bold text-sm text-gray-700 mb-4">분석 방법론</h2>
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-              </svg>
-              <h3 className="text-xs font-bold text-gray-700">데이터 출처</h3>
-            </div>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              나라장터(조달청) 공공데이터 API에서 수집한 실제 계약 데이터.
-              {realData?.timestamp && ` ${realData.timestamp} 기준.`}
-            </p>
-          </div>
-
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
-              </svg>
-              <h3 className="text-xs font-bold text-gray-700">2단계 분석</h3>
-            </div>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              1단계: 통계적 패턴 탐지 (업체 집중, 수의계약 반복, 금액 분포). 2단계: 맥락 분석 (상품 특성, 경쟁 입찰 여부, 법적 근거, 기관 특성, 금액 규모)으로 점수를 보정합니다.
-            </p>
-          </div>
-
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-              </svg>
-              <h3 className="text-xs font-bold text-gray-700">한계 및 원칙</h3>
-            </div>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              의심 수준을 제시하며 의도는 판단하지 않습니다.
-              에너지/교과서/연구장비 등 구조적으로 공급업체가 한정된 분야는 자동 감점 처리합니다.
-              경쟁입찰로 동일 업체가 수주한 경우도 별도 가중됩니다.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-4 flex flex-wrap gap-3 text-[10px] text-gray-400">
-          <a
-            href="https://www.g2b.go.kr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-gray-600 transition-colors flex items-center gap-1"
-          >
-            나라장터
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-          </a>
-          <span>|</span>
-          <a
-            href="https://www.bai.go.kr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-gray-600 transition-colors flex items-center gap-1"
-          >
-            감사원
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-          </a>
-          <span>|</span>
-          <span>AI 분석: 통계적 패턴 탐지 (의심 &#8800; 확정)</span>
-        </div>
-      </div>
+      <MethodologyFooter timestamp={realData?.timestamp} />
     </div>
   );
 }

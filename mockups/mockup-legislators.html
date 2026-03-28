@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회의원 — 국정투명</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .fade-in { animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .layer { display: none; }
+  .layer.active { display: block; }
+  .region-btn { transition: all 0.15s; }
+  .region-btn:hover { transform: scale(1.05); }
+  .tab-btn { transition: all 0.15s; }
+  .tab-btn.active-tab { color: #2563eb; border-bottom: 2px solid #2563eb; }
+</style>
+<script>
+tailwind.config = { theme: { extend: { colors: { guk: { 50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a5f' } } } } }
+</script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Nav -->
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="mockup-home.html" class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-guk-600 rounded-lg flex items-center justify-center"><span class="text-white font-bold text-sm">국</span></div>
+      <span class="font-bold text-lg text-guk-900">국정투명</span>
+    </a>
+    <div class="hidden md:flex gap-6 text-sm text-gray-600">
+      <a href="mockup-budget.html" class="hover:text-guk-600">예산</a>
+      <a href="mockup-legislators.html" class="text-guk-600 font-semibold">국회의원</a>
+      <a href="mockup-bills.html" class="hover:text-guk-600">법안</a>
+      <a href="mockup-audit.html" class="hover:text-guk-600">AI 감사</a>
+      <a href="mockup-news.html" class="hover:text-guk-600">뉴스</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Breadcrumb -->
+<div class="max-w-6xl mx-auto px-4 py-3">
+  <div class="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
+    <a href="mockup-home.html" class="hover:text-guk-600">홈</a>
+    <span>/</span>
+    <span id="bc-current" class="text-gray-800 font-medium">국회의원</span>
+  </div>
+</div>
+
+<!-- ===== LAYER 1: 내 지역구 의원 찾기 ===== -->
+<div id="layer1" class="layer active fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-3xl md:text-4xl font-bold mb-2">내 지역구 의원 찾기</h1>
+    <p class="text-gray-500 text-lg mb-8">어디 사세요? 지역을 선택하면 해당 지역의 국회의원을 볼 수 있습니다.</p>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
+        <div class="text-2xl font-bold text-purple-700">295명</div>
+        <div class="text-xs text-gray-500">현직 국회의원</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
+        <div class="text-2xl font-bold text-purple-700">5개</div>
+        <div class="text-xs text-gray-500">원내 정당</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
+        <div class="text-2xl font-bold text-purple-700">16,289건</div>
+        <div class="text-xs text-gray-500">발의된 법안</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm text-center">
+        <div class="text-2xl font-bold text-purple-700">18개</div>
+        <div class="text-xs text-gray-500">상임위원회</div>
+      </div>
+    </div>
+
+    <!-- Region Map -->
+    <h2 class="font-bold text-xl mb-4">시/도를 선택하세요</h2>
+    <div class="grid grid-cols-3 md:grid-cols-6 gap-3 mb-10">
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">서울</div>
+        <div class="text-xs text-gray-500">50명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">경기</div>
+        <div class="text-xs text-gray-500">60명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">부산</div>
+        <div class="text-xs text-gray-500">18명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">인천</div>
+        <div class="text-xs text-gray-500">13명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">대구</div>
+        <div class="text-xs text-gray-500">12명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">광주</div>
+        <div class="text-xs text-gray-500">8명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">대전</div>
+        <div class="text-xs text-gray-500">7명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">울산</div>
+        <div class="text-xs text-gray-500">6명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">세종</div>
+        <div class="text-xs text-gray-500">1명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">강원</div>
+        <div class="text-xs text-gray-500">9명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">충북</div>
+        <div class="text-xs text-gray-500">8명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">충남</div>
+        <div class="text-xs text-gray-500">11명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">전북</div>
+        <div class="text-xs text-gray-500">10명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">전남</div>
+        <div class="text-xs text-gray-500">10명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">경북</div>
+        <div class="text-xs text-gray-500">13명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">경남</div>
+        <div class="text-xs text-gray-500">16명</div>
+      </button>
+      <button onclick="goLayer(2)" class="region-btn bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:border-purple-300 hover:bg-purple-50 text-center">
+        <div class="text-lg font-bold mb-0.5">제주</div>
+        <div class="text-xs text-gray-500">3명</div>
+      </button>
+    </div>
+
+    <!-- Trending -->
+    <h2 class="font-bold text-xl mb-4">이번 주 가장 활발한 위원회</h2>
+    <div class="grid md:grid-cols-3 gap-4 mb-4">
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="text-sm text-purple-600 font-semibold mb-1">법제사법위원회</div>
+        <p class="text-sm text-gray-600">검찰 수사권 조정 관련 법안 3건 심사. 여야 의원 간 격론이 이어짐.</p>
+        <p class="text-xs text-gray-400 mt-2">출처: 국회 회의록 (2026.3.24)</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="text-sm text-purple-600 font-semibold mb-1">보건복지위원회</div>
+        <p class="text-sm text-gray-600">간호법 재발의안 논의. 의료계와 간호계 의견 청취 진행.</p>
+        <p class="text-xs text-gray-400 mt-2">출처: 국회 회의록 (2026.3.25)</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="text-sm text-purple-600 font-semibold mb-1">기획재정위원회</div>
+        <p class="text-sm text-gray-600">2026 추경 예산안 논의 시작. 재해복구 추경 필요성 검토.</p>
+        <p class="text-xs text-gray-400 mt-2">출처: 국회 회의록 (2026.3.25)</p>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400">출처: 국회 의안정보시스템, 국회 회의록</p>
+  </div>
+</div>
+
+<!-- ===== LAYER 2: 지역 의원 목록 ===== -->
+<div id="layer2" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <button onclick="goLayer(1)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      전체 지역으로 돌아가기
+    </button>
+
+    <h2 class="text-3xl font-bold mb-1">서울 의원</h2>
+    <p class="text-gray-500 mb-6">서울특별시 지역구 국회의원 50명</p>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-3 mb-6">
+      <select class="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
+        <option>전체 구/군</option>
+        <option>종로구</option>
+        <option>중구·성동구</option>
+        <option>강남구 갑</option>
+        <option>강남구 을</option>
+        <option>서초구 갑</option>
+        <option>마포구 갑</option>
+        <option>영등포구 갑</option>
+      </select>
+      <select class="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
+        <option>전체 정당</option>
+        <option>국민의힘</option>
+        <option>더불어민주당</option>
+        <option>조국혁신당</option>
+      </select>
+      <select class="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
+        <option>전체 위원회</option>
+        <option>법제사법위원회</option>
+        <option>기획재정위원회</option>
+        <option>보건복지위원회</option>
+      </select>
+    </div>
+
+    <!-- Legislator Cards -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm cursor-pointer hover:border-purple-200 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-700">박</div>
+          <div>
+            <div class="font-bold text-lg">박영수</div>
+            <div class="text-sm text-blue-600">더불어민주당</div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-500 mb-2">종로구 &middot; 법제사법위원회</div>
+        <div class="flex gap-3 text-xs text-gray-500">
+          <span>발의 법안 <strong class="text-gray-800">38건</strong></span>
+          <span>본회의 출석 <strong class="text-gray-800">92%</strong></span>
+        </div>
+      </div>
+
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm cursor-pointer hover:border-purple-200 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center text-lg font-bold text-red-700">김</div>
+          <div>
+            <div class="font-bold text-lg">김서현</div>
+            <div class="text-sm text-red-600">국민의힘</div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-500 mb-2">강남구 갑 &middot; 기획재정위원회</div>
+        <div class="flex gap-3 text-xs text-gray-500">
+          <span>발의 법안 <strong class="text-gray-800">52건</strong></span>
+          <span>본회의 출석 <strong class="text-gray-800">88%</strong></span>
+        </div>
+      </div>
+
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm cursor-pointer hover:border-purple-200 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-700">이</div>
+          <div>
+            <div class="font-bold text-lg">이정민</div>
+            <div class="text-sm text-blue-600">더불어민주당</div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-500 mb-2">마포구 갑 &middot; 보건복지위원회</div>
+        <div class="flex gap-3 text-xs text-gray-500">
+          <span>발의 법안 <strong class="text-gray-800">45건</strong></span>
+          <span>본회의 출석 <strong class="text-gray-800">95%</strong></span>
+        </div>
+      </div>
+
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm cursor-pointer hover:border-purple-200 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center text-lg font-bold text-red-700">최</div>
+          <div>
+            <div class="font-bold text-lg">최재영</div>
+            <div class="text-sm text-red-600">국민의힘</div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-500 mb-2">서초구 갑 &middot; 국방위원회</div>
+        <div class="flex gap-3 text-xs text-gray-500">
+          <span>발의 법안 <strong class="text-gray-800">29건</strong></span>
+          <span>본회의 출석 <strong class="text-gray-800">90%</strong></span>
+        </div>
+      </div>
+
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm cursor-pointer hover:border-purple-200 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center text-lg font-bold text-orange-700">정</div>
+          <div>
+            <div class="font-bold text-lg">정하나</div>
+            <div class="text-sm text-orange-600">조국혁신당</div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-500 mb-2">영등포구 갑 &middot; 환경노동위원회</div>
+        <div class="flex gap-3 text-xs text-gray-500">
+          <span>발의 법안 <strong class="text-gray-800">61건</strong></span>
+          <span>본회의 출석 <strong class="text-gray-800">97%</strong></span>
+        </div>
+      </div>
+
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm cursor-pointer hover:border-purple-200 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-700">한</div>
+          <div>
+            <div class="font-bold text-lg">한수진</div>
+            <div class="text-sm text-blue-600">더불어민주당</div>
+          </div>
+        </div>
+        <div class="text-sm text-gray-500 mb-2">중구·성동구 &middot; 교육위원회</div>
+        <div class="flex gap-3 text-xs text-gray-500">
+          <span>발의 법안 <strong class="text-gray-800">33건</strong></span>
+          <span>본회의 출석 <strong class="text-gray-800">91%</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <p class="text-sm text-gray-400">서울 지역 전체 50명 중 6명 표시 &middot; 출처: 국회 의원정보</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 3: 의원 프로필 ===== -->
+<div id="layer3" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <button onclick="goLayer(2)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      서울 의원 목록으로 돌아가기
+    </button>
+
+    <!-- Profile Header -->
+    <div class="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm mb-6">
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+        <div class="w-24 h-24 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl font-bold text-blue-700 shrink-0">박</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2 flex-wrap">
+            <h2 class="text-3xl font-bold">박영수</h2>
+            <span class="bg-blue-100 text-blue-700 px-3 py-0.5 rounded-full text-sm font-medium">더불어민주당</span>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm text-gray-600 mb-3">
+            <div><span class="text-gray-400">지역구</span><br><strong>서울 종로구</strong></div>
+            <div><span class="text-gray-400">위원회</span><br><strong>법제사법위원회</strong></div>
+            <div><span class="text-gray-400">당선 횟수</span><br><strong>3선</strong></div>
+            <div><span class="text-gray-400">발의 법안</span><br><strong>38건</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white rounded-t-2xl border border-gray-100 border-b-0">
+      <div class="flex overflow-x-auto">
+        <button onclick="showTab('profile')" id="tab-profile" class="tab-btn active-tab px-6 py-3 text-sm font-medium whitespace-nowrap">프로필</button>
+        <button onclick="showTab('activity')" id="tab-activity" class="tab-btn px-6 py-3 text-sm font-medium whitespace-nowrap text-gray-500">활동</button>
+        <button onclick="showTab('attendance')" id="tab-attendance" class="tab-btn px-6 py-3 text-sm font-medium whitespace-nowrap text-gray-500">참여</button>
+        <button onclick="showTab('timeline')" id="tab-timeline" class="tab-btn px-6 py-3 text-sm font-medium whitespace-nowrap text-gray-500">최근 활동</button>
+      </div>
+    </div>
+
+    <!-- Tab: 프로필 -->
+    <div id="panel-profile" class="tab-panel bg-white rounded-b-2xl border border-gray-100 border-t-0 p-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-3">학력</h3>
+          <ul class="space-y-1.5 text-sm text-gray-600">
+            <li>서울대학교 법학과 졸업</li>
+            <li>서울대학교 대학원 법학 석사</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-3">주요 경력</h3>
+          <ul class="space-y-1.5 text-sm text-gray-600">
+            <li>제21대 국회의원 (종로구)</li>
+            <li>제20대 국회의원 (종로구)</li>
+            <li>법무법인 세종 변호사 (2008-2016)</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-3">연락처</h3>
+          <ul class="space-y-1.5 text-sm text-gray-600">
+            <li>의원실: 02-784-XXXX</li>
+            <li>지역사무소: 서울 종로구 삼봉로 XX</li>
+          </ul>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-4">출처: 국회 의원정보</p>
+    </div>
+
+    <!-- Tab: 활동 -->
+    <div id="panel-activity" class="tab-panel bg-white rounded-b-2xl border border-gray-100 border-t-0 p-6" style="display:none">
+      <h3 class="font-bold mb-4">발의 법안 (최근 10건)</h3>
+      <div class="space-y-3 mb-6">
+        <div onclick="goLayer(4)" class="p-4 rounded-xl border border-gray-100 cursor-pointer hover:border-purple-200 transition">
+          <div class="flex justify-between items-start gap-2 mb-1">
+            <span class="font-medium">간호법안</span>
+            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full whitespace-nowrap">위원회 심사 중</span>
+          </div>
+          <p class="text-sm text-gray-500">간호사의 업무 범위를 법적으로 명확히 규정하여 의료 서비스를 개선하려는 법안</p>
+        </div>
+        <div onclick="goLayer(4)" class="p-4 rounded-xl border border-gray-100 cursor-pointer hover:border-purple-200 transition">
+          <div class="flex justify-between items-start gap-2 mb-1">
+            <span class="font-medium">형사소송법 일부개정법률안</span>
+            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full whitespace-nowrap">본회의 가결</span>
+          </div>
+          <p class="text-sm text-gray-500">피의자의 변호인 접견 권리를 강화하여 수사 과정의 인권을 보호하려는 법안</p>
+        </div>
+        <div onclick="goLayer(4)" class="p-4 rounded-xl border border-gray-100 cursor-pointer hover:border-purple-200 transition">
+          <div class="flex justify-between items-start gap-2 mb-1">
+            <span class="font-medium">공익신고자 보호법 일부개정법률안</span>
+            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full whitespace-nowrap">소위 심사 중</span>
+          </div>
+          <p class="text-sm text-gray-500">내부 고발자에 대한 보호를 강화하고 보상금을 현실화하려는 법안</p>
+        </div>
+      </div>
+
+      <h3 class="font-bold mb-4">정책 입장 (투표 기록 기반)</h3>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="bg-blue-50 rounded-xl p-4">
+          <div class="font-medium text-blue-800 mb-1">복지 법안</div>
+          <p class="text-sm text-gray-600">찬성 12회, 반대 2회, 기권 1회</p>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-4">
+          <div class="font-medium text-blue-800 mb-1">경제 법안</div>
+          <p class="text-sm text-gray-600">찬성 8회, 반대 5회, 기권 0회</p>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-4">
+          <div class="font-medium text-blue-800 mb-1">사법 개혁 법안</div>
+          <p class="text-sm text-gray-600">찬성 15회, 반대 1회, 기권 0회</p>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-4">
+          <div class="font-medium text-blue-800 mb-1">안보 법안</div>
+          <p class="text-sm text-gray-600">찬성 6회, 반대 3회, 기권 2회</p>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-4">출처: 국회 의안정보시스템 투표 기록</p>
+    </div>
+
+    <!-- Tab: 참여 -->
+    <div id="panel-attendance" class="tab-panel bg-white rounded-b-2xl border border-gray-100 border-t-0 p-6" style="display:none">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-bold mb-3">본회의 출석률</h3>
+          <div class="flex items-end gap-1 mb-2">
+            <span class="text-4xl font-bold text-purple-700">92</span>
+            <span class="text-xl text-gray-400 mb-1">%</span>
+          </div>
+          <p class="text-sm text-gray-500">전체 본회의 120회 중 110회 출석</p>
+          <div class="w-full bg-gray-100 rounded-full h-3 mt-3">
+            <div class="bg-purple-500 h-3 rounded-full" style="width:92%"></div>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-bold mb-3">위원회 출석률</h3>
+          <div class="flex items-end gap-1 mb-2">
+            <span class="text-4xl font-bold text-purple-700">87</span>
+            <span class="text-xl text-gray-400 mb-1">%</span>
+          </div>
+          <p class="text-sm text-gray-500">법제사법위원회 45회 중 39회 출석</p>
+          <div class="w-full bg-gray-100 rounded-full h-3 mt-3">
+            <div class="bg-purple-400 h-3 rounded-full" style="width:87%"></div>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-4">출처: 국회 회의록 출석 기록 (22대 국회 기준)</p>
+    </div>
+
+    <!-- Tab: 최근 활동 -->
+    <div id="panel-timeline" class="tab-panel bg-white rounded-b-2xl border border-gray-100 border-t-0 p-6" style="display:none">
+      <h3 class="font-bold mb-4">이 의원이 최근 한 일</h3>
+      <div class="space-y-4">
+        <div class="flex gap-4">
+          <div class="text-sm text-gray-400 w-20 shrink-0 text-right">3월 25일</div>
+          <div class="flex-1 border-l-2 border-purple-200 pl-4 pb-4">
+            <div class="font-medium">법제사법위원회 출석</div>
+            <p class="text-sm text-gray-500">검찰 수사권 조정 법안 관련 질의. 법무부 장관에게 수사 지휘권 범위에 대해 질문.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-sm text-gray-400 w-20 shrink-0 text-right">3월 22일</div>
+          <div class="flex-1 border-l-2 border-purple-200 pl-4 pb-4">
+            <div class="font-medium">법안 발의</div>
+            <p class="text-sm text-gray-500">공익신고자 보호법 일부개정법률안 대표 발의 (공동발의자 12명)</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-sm text-gray-400 w-20 shrink-0 text-right">3월 19일</div>
+          <div class="flex-1 border-l-2 border-purple-200 pl-4 pb-4">
+            <div class="font-medium">본회의 표결 참여</div>
+            <p class="text-sm text-gray-500">형사소송법 일부개정법률안 찬성 투표</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-sm text-gray-400 w-20 shrink-0 text-right">3월 15일</div>
+          <div class="flex-1 border-l-2 border-purple-200 pl-4">
+            <div class="font-medium">지역구 간담회</div>
+            <p class="text-sm text-gray-500">종로구 주민센터에서 지역 현안 간담회 개최 (주차 문제, 소음 민원 등)</p>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-4">출처: 국회 의안정보시스템, 국회 회의록, 의원실 보도자료</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 4: 법안 상세 ===== -->
+<div id="layer4" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <button onclick="goLayer(3)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      박영수 의원 프로필로 돌아가기
+    </button>
+
+    <h2 class="text-2xl md:text-3xl font-bold mb-2">간호법안</h2>
+    <div class="flex flex-wrap gap-2 mb-6">
+      <span class="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">위원회 심사 중</span>
+      <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">대표발의: 박영수</span>
+      <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">2026.02.15 발의</span>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold text-lg mb-2">이 법안은 무엇인가요?</h3>
+      <p class="text-gray-600">현재 의료법 안에 포함된 간호사의 업무 범위와 역할을 별도의 법률로 분리하여 명확하게 규정하려는 법안입니다. 간호사가 독자적으로 수행할 수 있는 업무를 법적으로 정하고, 이를 통해 의료 서비스의 질을 높이려는 취지입니다.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold text-lg mb-2">왜 이 법안을 발의했나요?</h3>
+      <p class="text-gray-600">간호사 수는 약 50만명으로 의료인 중 가장 많지만, 업무 범위가 법적으로 모호합니다. 이로 인해 현장에서 역할 충돌이 발생하고, 간호사의 전문성이 충분히 활용되지 못하고 있다는 지적이 있었습니다.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 mb-6">
+      <div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
+        <h3 class="font-bold text-blue-800 mb-2">찬성 측 의견</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>"간호사 업무를 명확히 해야 환자 안전이 높아집니다"</li>
+          <li>"간호 인력 부족 해소를 위해 독자적 역할 인정이 필요합니다"</li>
+          <li>"OECD 주요국은 이미 간호사법을 별도로 두고 있습니다"</li>
+        </ul>
+      </div>
+      <div class="bg-red-50 rounded-xl p-5 border border-red-100">
+        <h3 class="font-bold text-red-800 mb-2">반대 측 의견</h3>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li>"의사의 지도 없이 간호 행위를 하면 환자 안전에 문제가 될 수 있습니다"</li>
+          <li>"의료 체계 전체를 먼저 개편한 후에 논의해야 합니다"</li>
+          <li>"직종 간 갈등을 법으로 해결하기 어렵습니다"</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold mb-4">진행 상황</h3>
+      <div class="flex items-center gap-1 mb-2 overflow-x-auto">
+        <div class="flex flex-col items-center min-w-[60px]">
+          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">1</div>
+          <span class="text-xs text-gray-500 mt-1 text-center">발의</span>
+        </div>
+        <div class="h-0.5 bg-green-300 flex-1 min-w-[20px]"></div>
+        <div class="flex flex-col items-center min-w-[60px]">
+          <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">2</div>
+          <span class="text-xs text-gray-500 mt-1 text-center">위원회<br>회부</span>
+        </div>
+        <div class="h-0.5 bg-yellow-300 flex-1 min-w-[20px]"></div>
+        <div class="flex flex-col items-center min-w-[60px]">
+          <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xs font-bold">3</div>
+          <span class="text-xs text-yellow-700 mt-1 font-medium text-center">소위<br>심사 중</span>
+        </div>
+        <div class="h-0.5 bg-gray-200 flex-1 min-w-[20px]"></div>
+        <div class="flex flex-col items-center min-w-[60px]">
+          <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 text-xs font-bold">4</div>
+          <span class="text-xs text-gray-400 mt-1 text-center">본회의<br>상정</span>
+        </div>
+        <div class="h-0.5 bg-gray-200 flex-1 min-w-[20px]"></div>
+        <div class="flex flex-col items-center min-w-[60px]">
+          <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 text-xs font-bold">5</div>
+          <span class="text-xs text-gray-400 mt-1 text-center">의결</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold mb-3">공동발의 의원 (12명)</h3>
+      <div class="flex flex-wrap gap-2">
+        <span class="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">이정민 (서울 마포구)</span>
+        <span class="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">한수진 (서울 중구)</span>
+        <span class="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">정하나 (서울 영등포구)</span>
+        <span class="text-sm bg-gray-50 text-gray-600 px-3 py-1 rounded-full">외 9명</span>
+      </div>
+    </div>
+
+    <div class="text-center py-4">
+      <button onclick="goLayer(5)" class="bg-guk-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-guk-700 transition">투표 상세 보기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 5: 투표 상세 ===== -->
+<div id="layer5" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <button onclick="goLayer(4)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      간호법안으로 돌아가기
+    </button>
+
+    <h2 class="text-2xl md:text-3xl font-bold mb-2">간호법 본회의 표결</h2>
+    <p class="text-gray-500 mb-6">2023년 5월 25일 제21대 국회 본회의 (참고: 이전 국회에서의 표결 기록)</p>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-lg font-bold text-blue-700">박</div>
+        <div>
+          <span class="font-bold">박영수 의원의 투표:</span>
+          <span class="bg-green-100 text-green-700 px-3 py-0.5 rounded-full text-sm font-medium ml-2">찬성</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold mb-4">전체 투표 결과</h3>
+      <!-- Donut-like display -->
+      <div class="flex gap-8 items-center justify-center mb-6 flex-wrap">
+        <div class="text-center">
+          <div class="text-4xl font-bold text-green-600">163</div>
+          <div class="text-sm text-gray-500">찬성</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold text-red-500">105</div>
+          <div class="text-sm text-gray-500">반대</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold text-gray-400">18</div>
+          <div class="text-sm text-gray-500">기권</div>
+        </div>
+      </div>
+      <div class="flex rounded-full h-4 overflow-hidden mb-2">
+        <div class="bg-green-500" style="width:57%"></div>
+        <div class="bg-red-400" style="width:37%"></div>
+        <div class="bg-gray-300" style="width:6%"></div>
+      </div>
+      <div class="flex justify-between text-xs text-gray-500">
+        <span>찬성 57%</span>
+        <span>반대 37%</span>
+        <span>기권 6%</span>
+      </div>
+      <p class="text-sm text-green-700 font-medium mt-3">과반수(150명) 이상 찬성으로 가결</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold mb-4">정당별 투표 현황</h3>
+      <div class="space-y-4">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-medium text-blue-700">더불어민주당 (168석)</span>
+            <span class="text-sm text-gray-500">찬성 156, 반대 4, 기권 8</span>
+          </div>
+          <div class="flex rounded-full h-3 overflow-hidden">
+            <div class="bg-green-500" style="width:92.9%"></div>
+            <div class="bg-red-400" style="width:2.4%"></div>
+            <div class="bg-gray-300" style="width:4.8%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-medium text-red-600">국민의힘 (113석)</span>
+            <span class="text-sm text-gray-500">찬성 3, 반대 100, 기권 10</span>
+          </div>
+          <div class="flex rounded-full h-3 overflow-hidden">
+            <div class="bg-green-500" style="width:2.7%"></div>
+            <div class="bg-red-400" style="width:88.5%"></div>
+            <div class="bg-gray-300" style="width:8.8%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-medium text-orange-600">조국혁신당 (12석)</span>
+            <span class="text-sm text-gray-500">찬성 4, 반대 1, 기권 0</span>
+          </div>
+          <div class="flex rounded-full h-3 overflow-hidden">
+            <div class="bg-green-500" style="width:80%"></div>
+            <div class="bg-red-400" style="width:20%"></div>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-4">출처: 국회 의안정보시스템 본회의 표결 기록</p>
+    </div>
+
+    <div class="bg-purple-50 rounded-xl p-5 border border-purple-100">
+      <h3 class="font-bold text-purple-800 mb-2">같은 당 의원들은 어떻게 투표했나요?</h3>
+      <p class="text-sm text-gray-600">박영수 의원이 속한 더불어민주당 의원 168명 중 156명(92.9%)이 찬성했습니다. 같은 당 내에서도 4명이 반대, 8명이 기권하여 일부 이견이 있었습니다.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-400 mt-12">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 bg-guk-600 rounded flex items-center justify-center"><span class="text-white font-bold text-xs">국</span></div>
+        <span class="font-bold text-white">국정투명</span>
+      </div>
+      <p class="text-xs">데이터 기준일: 2026년 3월 &middot; 출처: 국회 의안정보시스템, 국회 회의록</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const breadcrumbLabels = {
+  1: '국회의원',
+  2: '국회의원 / 서울',
+  3: '국회의원 / 서울 / 박영수',
+  4: '국회의원 / ... / 박영수 / 간호법안',
+  5: '국회의원 / ... / 간호법안 / 투표 상세'
+};
+
+function goLayer(n) {
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+  document.getElementById('layer' + n).classList.add('active');
+  document.getElementById('bc-current').textContent = breadcrumbLabels[n];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active-tab'); b.classList.add('text-gray-500'); });
+  document.getElementById('panel-' + name).style.display = 'block';
+  document.getElementById('tab-' + name).classList.add('active-tab');
+  document.getElementById('tab-' + name).classList.remove('text-gray-500');
+}
+</script>
+</body>
+</html>

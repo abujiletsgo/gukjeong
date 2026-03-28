@@ -1,32 +1,21 @@
 import { NextResponse } from 'next/server';
-import { fetchContracts, fetchAllPages, type G2BContractInfo } from '@/lib/g2b/client';
+import { getLocalG2BContracts } from '@/lib/local-data';
 import { runAuditAnalysis } from '@/lib/audit/patterns';
+import type { G2BContractInfo } from '@/lib/g2b/client';
 
-export const runtime = 'nodejs';
-export const maxDuration = 60;
+export const dynamic = 'force-static';
 
 export async function GET() {
-  const apiKey = process.env.DATA_GO_KR_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({
-      error: 'API 키가 설정되지 않았습니다. DATA_GO_KR_API_KEY 환경변수를 설정해주세요.',
-      demo: true,
-    }, { status: 200 });
-  }
-
   try {
-    // 최근 계약 데이터 수집 (최대 1000건, 10페이지)
-    const { items: contracts, totalCount } = await fetchAllPages<G2BContractInfo>(
-      fetchContracts,
-      { numOfRows: 100, maxPages: 10 },
-    );
+    const { items, totalCount, fetched_at } = getLocalG2BContracts();
+    const contracts = items as unknown as G2BContractInfo[];
 
-    // 패턴 탐지 실행
     const findings = await runAuditAnalysis(contracts);
 
     return NextResponse.json({
       demo: false,
       timestamp: new Date().toISOString(),
+      fetched_at,
       contracts_analyzed: contracts.length,
       total_available: totalCount,
       findings_count: findings.length,

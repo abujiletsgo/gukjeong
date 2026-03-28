@@ -1,33 +1,24 @@
 import { NextResponse } from 'next/server';
-import { fetchBidAnnouncements } from '@/lib/g2b/client';
+import { getLocalG2BBids } from '@/lib/local-data';
 
-export const runtime = 'nodejs';
+export const dynamic = 'force-static';
 
 export async function GET(request: Request) {
-  const apiKey = process.env.DATA_GO_KR_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({
-      error: 'API 키가 설정되지 않았습니다',
-      items: [],
-      totalCount: 0,
-    }, { status: 200 });
-  }
-
   const { searchParams } = new URL(request.url);
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
   const size = Math.min(100, Math.max(1, parseInt(searchParams.get('size') || '20', 10)));
 
   try {
-    const { items, totalCount } = await fetchBidAnnouncements({
-      numOfRows: size,
-      pageNo: page,
-    });
+    const { items, totalCount, fetched_at } = getLocalG2BBids();
+    const startIdx = (page - 1) * size;
+    const pageItems = (items as any[]).slice(startIdx, startIdx + size);
 
     return NextResponse.json({
-      items,
+      items: pageItems,
       totalCount,
       page,
       size,
+      fetched_at,
     });
   } catch (error) {
     console.error('[audit/contracts] Error:', error);

@@ -11,6 +11,10 @@ import MediaSpectrum from '@/components/news/MediaSpectrum';
 import FrameComparison from '@/components/news/FrameComparison';
 import NewsCluster from '@/components/news/NewsCluster';
 
+/* ================================================================
+   Shared constants / types
+   ================================================================ */
+
 const CATEGORIES = ['전체', '경제', '정치', '사회', '과학기술', '복지'] as const;
 type CategoryFilter = (typeof CATEGORIES)[number];
 
@@ -20,7 +24,10 @@ const SORT_OPTIONS = [
 ] as const;
 type SortOption = (typeof SORT_OPTIONS)[number]['value'];
 
-// ── Real RSS article type ──
+/* ================================================================
+   Real RSS article types
+   ================================================================ */
+
 interface RealRSSArticle {
   outlet_id: string;
   outlet_name: string;
@@ -41,37 +48,48 @@ interface RealNewsData {
   error?: string;
 }
 
-// ── Topic grouping types ──
+/* ================================================================
+   Topic grouping types
+   ================================================================ */
+
 interface TopicGroup {
   topic: string;
   articles: RealRSSArticle[];
   isMultiOutlet: boolean;
+  outletCount: number;
 }
 
-// ── Outlet metadata for spectrum coloring ──
-const OUTLET_META: Record<string, { name: string; spectrum: number; category: string; color: string; bgColor: string; borderColor: string }> = {
-  hankyoreh: { name: '한겨레', spectrum: 1.2, category: 'progressive', color: 'text-blue-700', bgColor: 'bg-blue-50', borderColor: 'border-blue-200' },
-  khan:      { name: '경향신문', spectrum: 1.5, category: 'progressive', color: 'text-blue-700', bgColor: 'bg-blue-50', borderColor: 'border-blue-200' },
-  jtbc:      { name: 'JTBC', spectrum: 2.2, category: 'progressive', color: 'text-sky-700', bgColor: 'bg-sky-50', borderColor: 'border-sky-200' },
-  sbs:       { name: 'SBS', spectrum: 2.8, category: 'center', color: 'text-gray-700', bgColor: 'bg-gray-50', borderColor: 'border-gray-200' },
-  segye:     { name: '세계일보', spectrum: 3.2, category: 'conservative', color: 'text-rose-700', bgColor: 'bg-rose-50', borderColor: 'border-rose-200' },
-  donga:     { name: '동아일보', spectrum: 4.0, category: 'conservative', color: 'text-red-700', bgColor: 'bg-red-50', borderColor: 'border-red-200' },
+/* ================================================================
+   Outlet metadata for spectrum coloring
+   ================================================================ */
+
+const OUTLET_META: Record<
+  string,
+  { name: string; spectrum: number; category: string; color: string; bgColor: string; borderColor: string }
+> = {
+  hankyoreh: { name: '한겨레',   spectrum: 1.2, category: 'progressive',  color: 'text-blue-700', bgColor: 'bg-blue-50',  borderColor: 'border-blue-200' },
+  khan:      { name: '경향신문', spectrum: 1.5, category: 'progressive',  color: 'text-blue-700', bgColor: 'bg-blue-50',  borderColor: 'border-blue-200' },
+  jtbc:      { name: 'JTBC',     spectrum: 2.2, category: 'progressive',  color: 'text-blue-700', bgColor: 'bg-sky-50',   borderColor: 'border-sky-200' },
+  sbs:       { name: 'SBS',      spectrum: 2.8, category: 'center',       color: 'text-gray-700', bgColor: 'bg-gray-50',  borderColor: 'border-gray-200' },
+  segye:     { name: '세계일보', spectrum: 3.2, category: 'conservative', color: 'text-rose-700', bgColor: 'bg-rose-50',  borderColor: 'border-rose-200' },
+  donga:     { name: '동아일보', spectrum: 4.0, category: 'conservative', color: 'text-rose-700', bgColor: 'bg-rose-50',  borderColor: 'border-rose-200' },
 };
 
 const ALL_OUTLETS = ['전체', '한겨레', '경향신문', 'JTBC', 'SBS', '세계일보', '동아일보'] as const;
 
-// ── Topic grouping utilities ──
+/* ================================================================
+   Topic-grouping utilities
+   ================================================================ */
 
 /** Extract meaningful Korean keywords (2+ chars, no particles/common words) */
 function extractKeywords(title: string): string[] {
   const STOP_WORDS = new Set([
     '대한', '통해', '위해', '관련', '대해', '이번', '하는', '있는', '없는', '되는',
-    '에서', '으로', '에게', '부터', '까지', '이다', '한다', '했다', '된다', '한다',
+    '에서', '으로', '에게', '부터', '까지', '이다', '한다', '했다', '된다',
     '것으로', '가능', '필요', '주요', '오늘', '내일', '어제', '올해', '내년', '지난',
     '하며', '했으며', '라며', '있다', '없다', '됐다', '밝혔', '전했', '보도', '속보',
-    '뉴스', '기자', '특파원', '취재', '단독',
+    '뉴스', '기자', '특파원', '취재', '단독', '종합', '사진', '영상',
   ]);
-  // Match Korean character sequences of 2+ chars
   const matches = title.match(/[가-힣]{2,}/g) || [];
   return matches.filter(w => !STOP_WORDS.has(w) && w.length >= 2);
 }
@@ -79,11 +97,9 @@ function extractKeywords(title: string): string[] {
 /** Find a representative topic label from a group of articles */
 function findCommonTopic(articles: RealRSSArticle[]): string {
   if (articles.length === 1) {
-    // Truncate single article title
     const t = articles[0].title;
     return t.length > 40 ? t.slice(0, 40) + '...' : t;
   }
-  // Find the most frequently shared keywords
   const freq: Record<string, number> = {};
   for (const article of articles) {
     const kws = extractKeywords(article.title);
@@ -94,13 +110,8 @@ function findCommonTopic(articles: RealRSSArticle[]): string {
   const sorted = Object.entries(freq)
     .filter(([, c]) => c >= 2)
     .sort(([, a], [, b]) => b - a);
-  if (sorted.length >= 2) {
-    return sorted.slice(0, 3).map(([w]) => w).join(' ');
-  }
-  if (sorted.length === 1) {
-    return sorted[0][0];
-  }
-  // Fallback: first article title
+  if (sorted.length >= 2) return sorted.slice(0, 3).map(([w]) => w).join(' ');
+  if (sorted.length === 1) return sorted[0][0];
   const t = articles[0].title;
   return t.length > 40 ? t.slice(0, 40) + '...' : t;
 }
@@ -132,10 +143,23 @@ function groupArticlesByTopic(articles: RealRSSArticle[]): TopicGroup[] {
       topic: findCommonTopic(group),
       articles: group.sort((a, b) => (a.spectrum_score ?? 3) - (b.spectrum_score ?? 3)),
       isMultiOutlet: uniqueOutlets.size >= 2,
+      outletCount: uniqueOutlets.size,
     });
   }
 
-  return groups.sort((a, b) => b.articles.length - a.articles.length);
+  // Multi-outlet groups first, then by article count
+  return groups.sort((a, b) => {
+    if (a.isMultiOutlet !== b.isMultiOutlet) return a.isMultiOutlet ? -1 : 1;
+    return b.articles.length - a.articles.length;
+  });
+}
+
+/** Classify spectrum score into progressive / center / conservative */
+function classifySpectrum(score: number | undefined): 'progressive' | 'center' | 'conservative' {
+  const s = score ?? 3;
+  if (s < 2.5) return 'progressive';
+  if (s < 3.5) return 'center';
+  return 'conservative';
 }
 
 function getOutletBadge(outletId: string) {
@@ -143,6 +167,105 @@ function getOutletBadge(outletId: string) {
   if (!meta) return { color: 'text-gray-700', bgColor: 'bg-gray-100', borderColor: 'border-gray-200', name: outletId };
   return meta;
 }
+
+/** Find the best "hero" group -- the multi-outlet group with the most outlets */
+function findHeroGroup(groups: TopicGroup[]): TopicGroup | null {
+  const multi = groups.filter(g => g.isMultiOutlet);
+  if (multi.length === 0) return null;
+  return multi.reduce((best, g) => (g.outletCount > best.outletCount ? g : best), multi[0]);
+}
+
+/* ================================================================
+   Inline sub-components for LIVE mode
+   ================================================================ */
+
+/** Outlet badge pill */
+function OutletBadge({ outletId, outletName }: { outletId: string; outletName?: string }) {
+  const badge = getOutletBadge(outletId);
+  return (
+    <span
+      className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${badge.bgColor} ${badge.color} ${badge.borderColor}`}
+    >
+      {outletName || badge.name}
+    </span>
+  );
+}
+
+/** Single article row with linked title + "원문 보기" */
+function ArticleRow({ article, hoverColor }: { article: RealRSSArticle; hoverColor: string }) {
+  return (
+    <div className="px-3 py-2.5">
+      <div className="mb-1.5">
+        <OutletBadge outletId={article.outlet_id} outletName={article.outlet_name} />
+      </div>
+      {article.link ? (
+        <a
+          href={article.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`block text-sm text-gray-800 leading-snug hover:${hoverColor} transition-colors`}
+        >
+          {article.title}
+        </a>
+      ) : (
+        <p className="text-sm text-gray-800 leading-snug">{article.title}</p>
+      )}
+      {article.link && (
+        <a
+          href={article.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block mt-1 text-[10px] text-blue-500 hover:text-blue-700 font-medium"
+        >
+          원문 보기 &#x2197;
+        </a>
+      )}
+    </div>
+  );
+}
+
+/** Spectrum column (진보 / 중도 / 보수) inside a topic group card */
+function SpectrumColumn({
+  label,
+  articles,
+  headerBg,
+  headerText,
+  headerBorder,
+  divideColor,
+  borderColor,
+  hoverColor,
+}: {
+  label: string;
+  articles: RealRSSArticle[];
+  headerBg: string;
+  headerText: string;
+  headerBorder: string;
+  divideColor: string;
+  borderColor: string;
+  hoverColor: string;
+}) {
+  return (
+    <div className={`rounded-lg border ${borderColor} overflow-hidden`}>
+      <div className={`px-3 py-2 ${headerBg} border-b ${headerBorder}`}>
+        <span className={`text-sm font-semibold ${headerText}`}>{label}</span>
+        <span className={`ml-1.5 text-xs opacity-70 ${headerText}`}>({articles.length})</span>
+      </div>
+      <div className={`divide-y ${divideColor}`}>
+        {articles.length === 0 ? (
+          <p className="text-xs text-gray-400 text-center py-4">해당 매체 보도 없음</p>
+        ) : (
+          articles.map((article, ai) => (
+            <ArticleRow key={`${article.outlet_id}-${ai}`} article={article} hoverColor={hoverColor} />
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   Main component
+   ================================================================ */
 
 interface NewsPageClientProps {
   events: NewsEvent[];
@@ -152,12 +275,12 @@ interface NewsPageClientProps {
 export default function NewsPageClient({ events, outlets }: NewsPageClientProps) {
   const { isDemo } = useDataMode();
 
-  // Real data state
+  // ── Real data state ──
   const [realNews, setRealNews] = useState<RealNewsData | null>(null);
   const [liveLoading, setLiveLoading] = useState(false);
   const [outletFilter, setOutletFilter] = useState<string>('전체');
 
-  // Shared filter state
+  // ── Demo filter state ──
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('전체');
   const [sortBy, setSortBy] = useState<SortOption>('latest');
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
@@ -175,20 +298,29 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
       .catch(() => setLiveLoading(false));
   }, [isDemo]);
 
-  // ── LIVE MODE rendering ──
+  /* ================================================================
+     LIVE MODE
+     ================================================================ */
   if (!isDemo) {
     const allArticles = realNews?.articles ?? [];
-    const filteredArticles = outletFilter === '전체'
-      ? allArticles
-      : allArticles.filter(a => (a.outlet_name || OUTLET_META[a.outlet_id]?.name) === outletFilter);
+    const filteredArticles =
+      outletFilter === '전체'
+        ? allArticles
+        : allArticles.filter(a => (a.outlet_name || OUTLET_META[a.outlet_id]?.name) === outletFilter);
 
     const totalArticles = allArticles.length;
     const outletCount = realNews?.outlets ?? 0;
     const outletCounts = realNews?.outlet_counts ?? {};
 
-    // Group by topic
+    // Topic grouping
     const topicGroups = groupArticlesByTopic(filteredArticles);
-    const multiOutletGroups = topicGroups.filter(g => g.isMultiOutlet).length;
+    const multiOutletGroups = topicGroups.filter(g => g.isMultiOutlet);
+    const singleGroups = topicGroups.filter(g => !g.isMultiOutlet);
+
+    // Hero: the best multi-outlet topic
+    const heroGroup = findHeroGroup(topicGroups);
+    // Remaining multi-outlet groups (excluding hero)
+    const remainingMulti = multiOutletGroups.filter(g => g !== heroGroup);
 
     return (
       <div className="container-page py-8">
@@ -205,7 +337,10 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
             <p className="text-sm font-semibold text-emerald-800">실시간 RSS 피드</p>
           </div>
           <p className="text-xs text-emerald-600 mt-1">
-            {realNews?.timestamp ? new Date(realNews.timestamp).toLocaleString('ko-KR') : ''} 기준 | {outletCount}개 언론사 모니터링 중
+            {realNews?.timestamp
+              ? new Date(realNews.timestamp).toLocaleString('ko-KR')
+              : ''}{' '}
+            기준 | {outletCount}개 언론사 모니터링 중
           </p>
         </div>
 
@@ -213,11 +348,21 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <KPI label="수집된 기사" value={totalArticles.toLocaleString()} />
           <KPI label="모니터링 매체" value={String(outletCount)} />
-          <KPI label="다른 시각 주제" value={`${multiOutletGroups}건`} />
-          <KPI label="최신 수집" value={realNews?.timestamp ? new Date(realNews.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '-'} />
+          <KPI label="다른 시각 주제" value={`${multiOutletGroups.length}건`} />
+          <KPI
+            label="최신 수집"
+            value={
+              realNews?.timestamp
+                ? new Date(realNews.timestamp).toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : '-'
+            }
+          />
         </div>
 
-        {/* ── Media Spectrum ── */}
+        {/* ── Media Spectrum Bar ── */}
         <div className="card mb-8">
           <h2 className="font-bold text-lg mb-2">미디어 스펙트럼</h2>
           <p className="text-sm text-gray-500 mb-4">
@@ -226,15 +371,18 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
           <MediaSpectrum outlets={outlets} />
         </div>
 
-        {/* ── Outlet Filter ── */}
+        {/* ── Outlet Filter Pills ── */}
         <div className="mb-6">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium text-gray-700 mr-1">매체:</span>
-            {ALL_OUTLETS.map((name) => {
+            {ALL_OUTLETS.map(name => {
               const isActive = outletFilter === name;
-              const count = name === '전체' ? totalArticles : Object.entries(outletCounts).find(
-                ([id]) => OUTLET_META[id]?.name === name
-              )?.[1] ?? 0;
+              const count =
+                name === '전체'
+                  ? totalArticles
+                  : Object.entries(outletCounts).find(
+                      ([id]) => OUTLET_META[id]?.name === name,
+                    )?.[1] ?? 0;
               return (
                 <button
                   key={name}
@@ -263,196 +411,310 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
           </div>
         )}
 
-        {/* ── Topic Groups ── */}
-        {!liveLoading && topicGroups.length > 0 && (
-          <div className="space-y-6">
-            {/* Section header: multi-outlet topics first */}
-            {topicGroups.some(g => g.isMultiOutlet) && (
-              <div className="flex items-center gap-3 mb-2">
-                <h2 className="font-bold text-lg text-gray-900">같은 사건, 다른 보도</h2>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
-                  다른 시각 {multiOutletGroups}건
-                </span>
+        {/* ── Hero: Today's Top Story ── */}
+        {!liveLoading && heroGroup && (
+          <div className="mb-8">
+            <div className="rounded-xl border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 overflow-hidden shadow-sm">
+              {/* Hero header */}
+              <div className="px-5 py-4 bg-amber-100/60 border-b border-amber-200">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-white">
+                    오늘의 주요 이슈
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/80 text-amber-800 border border-amber-300">
+                    같은 사건, 다른 보도
+                  </span>
+                  <span className="text-xs text-amber-600 ml-auto">
+                    {heroGroup.articles.length}개 기사 · {heroGroup.outletCount}개 매체
+                  </span>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mt-3">{heroGroup.topic}</h2>
               </div>
-            )}
 
-            {topicGroups.map((group, gi) => {
-              // ── Multi-outlet topic card ──
-              if (group.isMultiOutlet) {
-                const progressiveArticles = group.articles.filter(a => (a.spectrum_score ?? 3) < 2.5);
-                const centerArticles = group.articles.filter(a => (a.spectrum_score ?? 3) >= 2.5 && (a.spectrum_score ?? 3) < 3.5);
-                const conservativeArticles = group.articles.filter(a => (a.spectrum_score ?? 3) >= 3.5);
+              {/* Hero split: progressive vs conservative */}
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-amber-200">
+                {/* Left: Progressive */}
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-3 h-3 rounded-full bg-blue-600" />
+                    <span className="text-sm font-bold text-blue-700">진보 시각</span>
+                  </div>
+                  <div className="space-y-3">
+                    {heroGroup.articles
+                      .filter(a => classifySpectrum(a.spectrum_score) === 'progressive')
+                      .map((article, i) => (
+                        <div key={`hero-p-${i}`}>
+                          <OutletBadge outletId={article.outlet_id} outletName={article.outlet_name} />
+                          {article.link ? (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-sm text-gray-800 leading-snug mt-1 hover:text-blue-600 transition-colors font-medium"
+                            >
+                              {article.title}
+                            </a>
+                          ) : (
+                            <p className="text-sm text-gray-800 leading-snug mt-1 font-medium">
+                              {article.title}
+                            </p>
+                          )}
+                          {article.link && (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block mt-1 text-[10px] text-blue-500 hover:text-blue-700 font-medium"
+                            >
+                              원문 보기 &#x2197;
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    {heroGroup.articles.filter(a => classifySpectrum(a.spectrum_score) === 'progressive')
+                      .length === 0 && (
+                      <p className="text-xs text-gray-400 py-2">진보 매체 보도 없음</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: Conservative */}
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-3 h-3 rounded-full bg-rose-600" />
+                    <span className="text-sm font-bold text-rose-700">보수 시각</span>
+                  </div>
+                  <div className="space-y-3">
+                    {heroGroup.articles
+                      .filter(a => classifySpectrum(a.spectrum_score) === 'conservative')
+                      .map((article, i) => (
+                        <div key={`hero-c-${i}`}>
+                          <OutletBadge outletId={article.outlet_id} outletName={article.outlet_name} />
+                          {article.link ? (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block text-sm text-gray-800 leading-snug mt-1 hover:text-rose-600 transition-colors font-medium"
+                            >
+                              {article.title}
+                            </a>
+                          ) : (
+                            <p className="text-sm text-gray-800 leading-snug mt-1 font-medium">
+                              {article.title}
+                            </p>
+                          )}
+                          {article.link && (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block mt-1 text-[10px] text-rose-500 hover:text-rose-700 font-medium"
+                            >
+                              원문 보기 &#x2197;
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    {heroGroup.articles.filter(a => classifySpectrum(a.spectrum_score) === 'conservative')
+                      .length === 0 && (
+                      <p className="text-xs text-gray-400 py-2">보수 매체 보도 없음</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Center articles if any */}
+              {heroGroup.articles.filter(a => classifySpectrum(a.spectrum_score) === 'center').length > 0 && (
+                <div className="px-5 py-3 bg-gray-50/60 border-t border-amber-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-gray-500" />
+                    <span className="text-xs font-semibold text-gray-600">중도 시각</span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {heroGroup.articles
+                      .filter(a => classifySpectrum(a.spectrum_score) === 'center')
+                      .map((article, i) => (
+                        <div key={`hero-m-${i}`} className="flex items-center gap-2">
+                          <OutletBadge outletId={article.outlet_id} outletName={article.outlet_name} />
+                          {article.link ? (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
+                            >
+                              {article.title.length > 50
+                                ? article.title.slice(0, 50) + '...'
+                                : article.title}
+                            </a>
+                          ) : (
+                            <span className="text-sm text-gray-700">
+                              {article.title.length > 50
+                                ? article.title.slice(0, 50) + '...'
+                                : article.title}
+                            </span>
+                          )}
+                          {article.link && (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-gray-500 hover:text-gray-700 font-medium shrink-0"
+                            >
+                              원문 보기 &#x2197;
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Topic-grouped articles (multi-outlet, excluding hero) ── */}
+        {!liveLoading && remainingMulti.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <h2 className="font-bold text-lg text-gray-900">같은 사건, 다른 보도</h2>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                다른 시각 {remainingMulti.length}건
+              </span>
+            </div>
+
+            <div className="space-y-6">
+              {remainingMulti.map((group, gi) => {
+                const progressive = group.articles.filter(
+                  a => classifySpectrum(a.spectrum_score) === 'progressive',
+                );
+                const center = group.articles.filter(
+                  a => classifySpectrum(a.spectrum_score) === 'center',
+                );
+                const conservative = group.articles.filter(
+                  a => classifySpectrum(a.spectrum_score) === 'conservative',
+                );
 
                 return (
-                  <article key={`topic-${gi}`} className="card border-l-4 border-l-amber-400">
+                  <article key={`multi-${gi}`} className="card border-l-4 border-l-amber-400">
                     {/* Topic header */}
                     <div className="flex flex-wrap items-center gap-2 mb-4">
                       <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
                         다른 시각
                       </span>
                       <span className="text-xs text-gray-400">
-                        {group.articles.length}개 기사 · {new Set(group.articles.map(a => a.outlet_id)).size}개 매체
+                        {group.articles.length}개 기사 · {group.outletCount}개 매체
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">
-                      {group.topic}
-                    </h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">{group.topic}</h3>
 
-                    {/* Side-by-side comparison: progressive | center | conservative */}
+                    {/* 3-column: 진보 | 중도 | 보수 */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {/* Progressive column */}
-                      <div className="rounded-lg border border-blue-100 overflow-hidden">
-                        <div className="px-3 py-2 bg-blue-50 border-b border-blue-100">
-                          <span className="text-sm font-semibold text-blue-700">진보</span>
-                          <span className="ml-1.5 text-xs text-blue-500">({progressiveArticles.length})</span>
-                        </div>
-                        <div className="divide-y divide-blue-50">
-                          {progressiveArticles.length === 0 ? (
-                            <p className="text-xs text-gray-400 text-center py-4">해당 매체 보도 없음</p>
-                          ) : progressiveArticles.map((article, ai) => {
-                            const badge = getOutletBadge(article.outlet_id);
-                            return (
-                              <div key={`p-${ai}`} className="px-3 py-2.5">
-                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-1.5 ${badge.bgColor} ${badge.color} ${badge.borderColor}`}>
-                                  {article.outlet_name || badge.name}
-                                </span>
-                                {article.link ? (
-                                  <a href={article.link} target="_blank" rel="noopener noreferrer"
-                                    className="block text-sm text-gray-800 leading-snug hover:text-blue-600 transition-colors">
-                                    {article.title}
-                                  </a>
-                                ) : (
-                                  <p className="text-sm text-gray-800 leading-snug">{article.title}</p>
-                                )}
-                                {article.link && (
-                                  <a href={article.link} target="_blank" rel="noopener noreferrer"
-                                    className="inline-block mt-1 text-[10px] text-blue-500 hover:text-blue-700">
-                                    원문 보기 &#x2197;
-                                  </a>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
+                      <SpectrumColumn
+                        label="진보"
+                        articles={progressive}
+                        headerBg="bg-blue-50"
+                        headerText="text-blue-700"
+                        headerBorder="border-blue-100"
+                        divideColor="divide-blue-50"
+                        borderColor="border-blue-100"
+                        hoverColor="text-blue-600"
+                      />
+                      <SpectrumColumn
+                        label="중도"
+                        articles={center}
+                        headerBg="bg-gray-50"
+                        headerText="text-gray-700"
+                        headerBorder="border-gray-200"
+                        divideColor="divide-gray-100"
+                        borderColor="border-gray-200"
+                        hoverColor="text-gray-600"
+                      />
+                      <SpectrumColumn
+                        label="보수"
+                        articles={conservative}
+                        headerBg="bg-rose-50"
+                        headerText="text-rose-700"
+                        headerBorder="border-rose-100"
+                        divideColor="divide-rose-50"
+                        borderColor="border-rose-100"
+                        hoverColor="text-rose-600"
+                      />
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-                      {/* Center column */}
-                      <div className="rounded-lg border border-gray-200 overflow-hidden">
-                        <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
-                          <span className="text-sm font-semibold text-gray-700">중도</span>
-                          <span className="ml-1.5 text-xs text-gray-500">({centerArticles.length})</span>
+        {/* ── Single articles (not in any multi-outlet group) ── */}
+        {!liveLoading && singleGroups.length > 0 && (
+          <div className="mb-8">
+            {(multiOutletGroups.length > 0) && (
+              <h2 className="font-bold text-lg text-gray-900 mb-4">개별 기사</h2>
+            )}
+            <div className="space-y-3">
+              {singleGroups.map((group, gi) => {
+                const article = group.articles[0];
+                const badge = getOutletBadge(article.outlet_id);
+                return (
+                  <article key={`single-${gi}`} className="card">
+                    <div className="flex items-start gap-3">
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 mt-0.5 ${badge.bgColor} ${badge.color} ${badge.borderColor}`}
+                      >
+                        {article.outlet_name || badge.name}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        {article.link ? (
+                          <a
+                            href={article.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-medium text-gray-800 hover:text-blue-600 transition-colors leading-snug"
+                          >
+                            {article.title}
+                          </a>
+                        ) : (
+                          <p className="text-sm font-medium text-gray-800 leading-snug">
+                            {article.title}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                          {article.pubDate && (
+                            <time className="text-[10px] text-gray-400">
+                              {new Date(article.pubDate).toLocaleString('ko-KR', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </time>
+                          )}
+                          {article.link && (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-blue-500 hover:text-blue-700 font-medium"
+                            >
+                              원문 보기 &#x2197;
+                            </a>
+                          )}
                         </div>
-                        <div className="divide-y divide-gray-100">
-                          {centerArticles.length === 0 ? (
-                            <p className="text-xs text-gray-400 text-center py-4">해당 매체 보도 없음</p>
-                          ) : centerArticles.map((article, ai) => {
-                            const badge = getOutletBadge(article.outlet_id);
-                            return (
-                              <div key={`c-${ai}`} className="px-3 py-2.5">
-                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-1.5 ${badge.bgColor} ${badge.color} ${badge.borderColor}`}>
-                                  {article.outlet_name || badge.name}
-                                </span>
-                                {article.link ? (
-                                  <a href={article.link} target="_blank" rel="noopener noreferrer"
-                                    className="block text-sm text-gray-800 leading-snug hover:text-gray-600 transition-colors">
-                                    {article.title}
-                                  </a>
-                                ) : (
-                                  <p className="text-sm text-gray-800 leading-snug">{article.title}</p>
-                                )}
-                                {article.link && (
-                                  <a href={article.link} target="_blank" rel="noopener noreferrer"
-                                    className="inline-block mt-1 text-[10px] text-gray-500 hover:text-gray-700">
-                                    원문 보기 &#x2197;
-                                  </a>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Conservative column */}
-                      <div className="rounded-lg border border-red-100 overflow-hidden">
-                        <div className="px-3 py-2 bg-red-50 border-b border-red-100">
-                          <span className="text-sm font-semibold text-red-700">보수</span>
-                          <span className="ml-1.5 text-xs text-red-500">({conservativeArticles.length})</span>
-                        </div>
-                        <div className="divide-y divide-red-50">
-                          {conservativeArticles.length === 0 ? (
-                            <p className="text-xs text-gray-400 text-center py-4">해당 매체 보도 없음</p>
-                          ) : conservativeArticles.map((article, ai) => {
-                            const badge = getOutletBadge(article.outlet_id);
-                            return (
-                              <div key={`v-${ai}`} className="px-3 py-2.5">
-                                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border mb-1.5 ${badge.bgColor} ${badge.color} ${badge.borderColor}`}>
-                                  {article.outlet_name || badge.name}
-                                </span>
-                                {article.link ? (
-                                  <a href={article.link} target="_blank" rel="noopener noreferrer"
-                                    className="block text-sm text-gray-800 leading-snug hover:text-red-600 transition-colors">
-                                    {article.title}
-                                  </a>
-                                ) : (
-                                  <p className="text-sm text-gray-800 leading-snug">{article.title}</p>
-                                )}
-                                {article.link && (
-                                  <a href={article.link} target="_blank" rel="noopener noreferrer"
-                                    className="inline-block mt-1 text-[10px] text-red-500 hover:text-red-700">
-                                    원문 보기 &#x2197;
-                                  </a>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
+                        {article.description && (
+                          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-2">
+                            {article.description}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </article>
                 );
-              }
-
-              // ── Single-article card ──
-              const article = group.articles[0];
-              const badge = getOutletBadge(article.outlet_id);
-              return (
-                <article key={`single-${gi}`} className="card">
-                  <div className="flex items-start gap-3">
-                    <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 mt-0.5 ${badge.bgColor} ${badge.color} ${badge.borderColor}`}>
-                      {article.outlet_name || badge.name}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      {article.link ? (
-                        <a href={article.link} target="_blank" rel="noopener noreferrer"
-                          className="text-sm font-medium text-gray-800 hover:text-blue-600 transition-colors leading-snug">
-                          {article.title}
-                        </a>
-                      ) : (
-                        <p className="text-sm font-medium text-gray-800 leading-snug">{article.title}</p>
-                      )}
-                      <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                        {article.pubDate && (
-                          <time className="text-[10px] text-gray-400">
-                            {new Date(article.pubDate).toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                          </time>
-                        )}
-                        {article.link && (
-                          <a href={article.link} target="_blank" rel="noopener noreferrer"
-                            className="text-[10px] text-blue-500 hover:text-blue-700 font-medium">
-                            원문 보기 &#x2197;
-                          </a>
-                        )}
-                      </div>
-                      {article.description && (
-                        <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-2">
-                          {article.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+              })}
+            </div>
           </div>
         )}
 
@@ -475,7 +737,10 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
     );
   }
 
-  // ── DEMO MODE (original code) ──
+  /* ================================================================
+     DEMO MODE (original full experience preserved)
+     ================================================================ */
+
   const totalArticles = useMemo(
     () => events.reduce((sum, e) => sum + (e.article_count ?? 0), 0),
     [events],
@@ -494,7 +759,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
     let result = [...events];
 
     if (categoryFilter !== '전체') {
-      result = result.filter((e) => e.category === categoryFilter);
+      result = result.filter(e => e.category === categoryFilter);
     }
 
     if (sortBy === 'latest') {
@@ -507,7 +772,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
   }, [events, categoryFilter, sortBy]);
 
   const toggleExpand = (eventId: string) => {
-    setExpandedEvents((prev) => {
+    setExpandedEvents(prev => {
       const next = new Set(prev);
       if (next.has(eventId)) {
         next.delete(eventId);
@@ -532,10 +797,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
       {/* KPI Section */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <KPI label="분석된 이벤트" value={String(events.length)} />
-        <KPI
-          label="총 기사 수"
-          value={totalArticles.toLocaleString()}
-        />
+        <KPI label="총 기사 수" value={totalArticles.toLocaleString()} />
         <KPI label="모니터링 매체 수" value={String(uniqueOutletCount)} />
         <KPI
           label="오늘의 주요 이슈"
@@ -558,7 +820,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
         {/* Category Filter */}
         <div className="flex flex-wrap gap-2">
           <span className="text-sm font-medium text-gray-700 self-center mr-1">분야:</span>
-          {CATEGORIES.map((cat) => (
+          {CATEGORIES.map(cat => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
@@ -578,10 +840,10 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
           <span className="text-sm font-medium text-gray-700">정렬:</span>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortOption)}
+            onChange={e => setSortBy(e.target.value as SortOption)}
             className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {SORT_OPTIONS.map((opt) => (
+            {SORT_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
@@ -591,13 +853,11 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
       </div>
 
       {/* Results count */}
-      <p className="text-sm text-gray-400 mb-4">
-        {filteredEvents.length}건의 뉴스 이벤트
-      </p>
+      <p className="text-sm text-gray-400 mb-4">{filteredEvents.length}건의 뉴스 이벤트</p>
 
       {/* News Event Cards */}
       <div className="space-y-8">
-        {filteredEvents.map((event) => {
+        {filteredEvents.map(event => {
           const isExpanded = expandedEvents.has(event.id);
           return (
             <article key={event.id} className="card">
@@ -619,26 +879,20 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
               </div>
 
               {/* Title */}
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
-                {event.title}
-              </h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">{event.title}</h2>
 
               {/* AI Summary */}
               {event.ai_summary && (
                 <div className="flex items-start gap-2 mb-4">
                   <span className="ai-badge shrink-0 mt-0.5">AI 요약</span>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    {event.ai_summary}
-                  </p>
+                  <p className="text-sm text-gray-700 leading-relaxed">{event.ai_summary}</p>
                 </div>
               )}
 
               {/* Key Facts */}
               {event.key_facts && event.key_facts.length > 0 && (
                 <div className="bg-gray-50 rounded-lg p-4 mb-5">
-                  <h3 className="font-semibold text-sm text-gray-700 mb-2">
-                    핵심 사실
-                  </h3>
+                  <h3 className="font-semibold text-sm text-gray-700 mb-2">핵심 사실</h3>
                   <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
                     {event.key_facts.map((fact, i) => (
                       <li key={i}>{fact}</li>

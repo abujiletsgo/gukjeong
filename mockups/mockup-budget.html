@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>예산 — 국정투명</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  * { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; }
+  .fade-in { animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .layer { display: none; }
+  .layer.active { display: block; }
+  .treemap-cell { transition: all 0.2s; cursor: pointer; }
+  .treemap-cell:hover { filter: brightness(1.1); transform: scale(1.02); }
+  .bar-fill { transition: width 0.6s ease; }
+</style>
+<script>
+tailwind.config = { theme: { extend: { colors: { guk: { 50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a5f' } } } } }
+</script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- Nav -->
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <a href="mockup-home.html" class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-guk-600 rounded-lg flex items-center justify-center"><span class="text-white font-bold text-sm">국</span></div>
+        <span class="font-bold text-lg text-guk-900">국정투명</span>
+      </a>
+    </div>
+    <div class="hidden md:flex gap-6 text-sm text-gray-600">
+      <a href="mockup-budget.html" class="text-guk-600 font-semibold">예산</a>
+      <a href="mockup-legislators.html" class="hover:text-guk-600">국회의원</a>
+      <a href="mockup-bills.html" class="hover:text-guk-600">법안</a>
+      <a href="mockup-audit.html" class="hover:text-guk-600">AI 감사</a>
+      <a href="mockup-news.html" class="hover:text-guk-600">뉴스</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Breadcrumb -->
+<div class="max-w-6xl mx-auto px-4 py-3" id="breadcrumb">
+  <div class="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
+    <a href="mockup-home.html" class="hover:text-guk-600">홈</a>
+    <span>/</span>
+    <span id="bc-current" class="text-gray-800 font-medium">예산 개요</span>
+  </div>
+</div>
+
+<!-- ===== LAYER 1: 예산 개요 ===== -->
+<div id="layer1" class="layer active fade-in">
+  <!-- Hero -->
+  <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+    <div class="max-w-6xl mx-auto px-4 py-12 md:py-16">
+      <p class="text-blue-200 text-sm mb-2">2026년 대한민국 총예산</p>
+      <h1 class="text-5xl md:text-7xl font-bold mb-3">728조원</h1>
+      <p class="text-blue-200 text-lg max-w-xl">국민 1인당 약 1,408만원에 해당하는 금액입니다. 이 돈이 어디에 쓰이는지 살펴보세요.</p>
+      <p class="text-xs text-blue-300 mt-4">출처: 기획재정부 열린재정 (2026년 예산안 기준)</p>
+    </div>
+  </section>
+
+  <!-- Key Facts -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid md:grid-cols-3 gap-4 mb-10">
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="text-sm text-gray-500 mb-1">전년 대비</div>
+        <div class="text-2xl font-bold text-blue-700">+7.5%</div>
+        <p class="text-sm text-gray-600 mt-1">작년보다 약 50.8조원 더 많이 편성했습니다.</p>
+        <p class="text-xs text-gray-400 mt-2">출처: 열린재정</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="text-sm text-gray-500 mb-1">국가채무</div>
+        <div class="text-2xl font-bold text-blue-700">1,222조</div>
+        <p class="text-sm text-gray-600 mt-1">정부가 갚아야 할 빚의 총액입니다. 매년 이자만 약 26조원을 냅니다.</p>
+        <p class="text-xs text-gray-400 mt-2">출처: 기획재정부 국가채무 현황</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="text-sm text-gray-500 mb-1">GDP 대비 채무 비율</div>
+        <div class="text-2xl font-bold text-blue-700">46.8%</div>
+        <p class="text-sm text-gray-600 mt-1">우리나라가 1년에 벌어들이는 돈의 절반 정도를 빚으로 지고 있습니다.</p>
+        <p class="text-xs text-gray-400 mt-2">출처: 기획재정부</p>
+      </div>
+    </div>
+
+    <!-- TreeMap -->
+    <h2 class="text-xl font-bold mb-2">어디에 가장 많이 쓰나요?</h2>
+    <p class="text-sm text-gray-500 mb-6">분야를 클릭하면 세부 내역을 볼 수 있습니다.</p>
+
+    <div class="grid grid-cols-4 md:grid-cols-6 gap-1.5 mb-4">
+      <div onclick="goLayer(2)" class="treemap-cell col-span-2 row-span-2 bg-blue-500 rounded-xl p-4 text-white flex flex-col justify-between min-h-[120px]">
+        <span class="text-sm font-medium">보건 &middot; 복지 &middot; 고용</span>
+        <span class="text-2xl font-bold">269.1조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell col-span-2 bg-blue-400 rounded-xl p-3 text-white flex flex-col justify-between min-h-[56px]">
+        <span class="text-xs font-medium">교육</span>
+        <span class="text-lg font-bold">104.1조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell col-span-2 bg-indigo-500 rounded-xl p-3 text-white flex flex-col justify-between min-h-[56px]">
+        <span class="text-xs font-medium">국방</span>
+        <span class="text-lg font-bold">63.3조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-violet-500 rounded-xl p-3 text-white flex flex-col justify-between min-h-[56px]">
+        <span class="text-xs font-medium">일반 &middot; 지방행정</span>
+        <span class="text-base font-bold">90.3조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-purple-500 rounded-xl p-3 text-white flex flex-col justify-between min-h-[56px]">
+        <span class="text-xs font-medium">R&amp;D</span>
+        <span class="text-base font-bold">31.1조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-teal-500 rounded-xl p-3 text-white flex flex-col justify-between min-h-[56px]">
+        <span class="text-xs font-medium">SOC</span>
+        <span class="text-base font-bold">28.8조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-cyan-500 rounded-xl p-3 text-white flex flex-col justify-between min-h-[56px]">
+        <span class="text-xs font-medium">농림수산</span>
+        <span class="text-base font-bold">24.5조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-emerald-500 rounded-xl p-2.5 text-white flex flex-col justify-between min-h-[48px]">
+        <span class="text-xs">공공질서</span>
+        <span class="text-sm font-bold">23.8조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-amber-500 rounded-xl p-2.5 text-white flex flex-col justify-between min-h-[48px]">
+        <span class="text-xs">환경</span>
+        <span class="text-sm font-bold">13.2조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-orange-500 rounded-xl p-2.5 text-white flex flex-col justify-between min-h-[48px]">
+        <span class="text-xs">문화 &middot; 체육</span>
+        <span class="text-sm font-bold">9.8조</span>
+      </div>
+      <div onclick="goLayer(2)" class="treemap-cell bg-rose-500 rounded-xl p-2.5 text-white flex flex-col justify-between min-h-[48px]">
+        <span class="text-xs">외교 &middot; 통일</span>
+        <span class="text-sm font-bold">6.5조</span>
+      </div>
+    </div>
+    <p class="text-xs text-gray-400 mb-8">출처: 기획재정부 열린재정, 2026년 예산안 &middot; 수치는 반올림</p>
+  </div>
+</div>
+
+<!-- ===== LAYER 2: 분야 상세 ===== -->
+<div id="layer2" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <button onclick="goLayer(1)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      예산 개요로 돌아가기
+    </button>
+
+    <div class="bg-blue-500 text-white rounded-2xl p-6 md:p-8 mb-8">
+      <p class="text-blue-200 text-sm mb-1">보건 &middot; 복지 &middot; 고용</p>
+      <h2 class="text-4xl md:text-5xl font-bold mb-3">269.1조원</h2>
+      <p class="text-blue-100 text-lg">전체 예산의 36.9%를 차지합니다. 국민건강보험, 기초연금, 고용보험 등 국민 생활과 직접 관련된 지출입니다.</p>
+      <p class="text-xs text-blue-300 mt-3">출처: 열린재정</p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold text-lg mb-1">왜 이렇게 많이 쓰나요?</h3>
+      <p class="text-gray-600">고령화로 연금과 의료비가 매년 늘고 있고, 저출생 대응 예산도 크게 증가했습니다. 65세 이상 인구가 전체의 20%를 넘으면서 복지 지출은 계속 증가할 전망입니다.</p>
+    </div>
+
+    <!-- Sub-sectors -->
+    <h3 class="font-bold text-lg mb-4">세부 분야별 예산</h3>
+    <p class="text-sm text-gray-500 mb-4">항목을 클릭하면 세부 내역을 볼 수 있습니다.</p>
+    <div class="space-y-3 mb-8">
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm cursor-pointer hover:border-blue-200 transition">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium">사회복지 (기초연금, 기초생활보장 등)</span>
+          <span class="font-bold text-blue-700">82.3조</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2.5"><div class="bar-fill bg-blue-500 h-2.5 rounded-full" style="width:30.6%"></div></div>
+      </div>
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm cursor-pointer hover:border-blue-200 transition">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium">건강보험 지원</span>
+          <span class="font-bold text-blue-700">68.7조</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2.5"><div class="bar-fill bg-blue-400 h-2.5 rounded-full" style="width:25.5%"></div></div>
+      </div>
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm cursor-pointer hover:border-blue-200 transition">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium">고용 지원</span>
+          <span class="font-bold text-blue-700">31.5조</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2.5"><div class="bar-fill bg-blue-300 h-2.5 rounded-full" style="width:11.7%"></div></div>
+      </div>
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm cursor-pointer hover:border-blue-200 transition">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium">보육 &middot; 가족 &middot; 여성</span>
+          <span class="font-bold text-blue-700">28.9조</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2.5"><div class="bar-fill bg-blue-200 h-2.5 rounded-full" style="width:10.7%"></div></div>
+      </div>
+      <div onclick="goLayer(3)" class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm cursor-pointer hover:border-blue-200 transition">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium">노인 돌봄</span>
+          <span class="font-bold text-blue-700">23.8조</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2.5"><div class="bar-fill bg-indigo-400 h-2.5 rounded-full" style="width:8.8%"></div></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-medium text-gray-500">기타 (장애인, 보훈 등)</span>
+          <span class="font-bold text-gray-500">33.9조</span>
+        </div>
+        <div class="w-full bg-gray-100 rounded-full h-2.5"><div class="bar-fill bg-gray-300 h-2.5 rounded-full" style="width:12.6%"></div></div>
+      </div>
+    </div>
+
+    <!-- Trend -->
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold mb-4">보건 &middot; 복지 예산 추이</h3>
+      <div class="flex items-end gap-2 h-40">
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-200 rounded-t w-full" style="height:55%"></div>
+          <span class="text-xs text-gray-500 mt-1">2022</span>
+          <span class="text-xs font-medium">197조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-300 rounded-t w-full" style="height:65%"></div>
+          <span class="text-xs text-gray-500 mt-1">2023</span>
+          <span class="text-xs font-medium">218조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-400 rounded-t w-full" style="height:75%"></div>
+          <span class="text-xs text-gray-500 mt-1">2024</span>
+          <span class="text-xs font-medium">236조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-500 rounded-t w-full" style="height:85%"></div>
+          <span class="text-xs text-gray-500 mt-1">2025</span>
+          <span class="text-xs font-medium">252조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-600 rounded-t w-full" style="height:100%"></div>
+          <span class="text-xs text-gray-500 mt-1">2026</span>
+          <span class="text-xs font-bold">269조</span>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-3">출처: 열린재정 연도별 분야별 예산 통계</p>
+    </div>
+
+    <div class="text-center py-4">
+      <p class="text-gray-500 text-sm mb-3">이 돈이 실제로 어디로 가나요?</p>
+      <button onclick="goLayer(3)" class="bg-guk-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-guk-700 transition">세부 항목 보기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 3: 세부 항목 ===== -->
+<div id="layer3" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <button onclick="goLayer(2)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      보건 &middot; 복지 &middot; 고용으로 돌아가기
+    </button>
+
+    <h2 class="text-3xl md:text-4xl font-bold mb-1">기초연금</h2>
+    <div class="text-4xl font-bold text-blue-700 mb-4">23.8조원</div>
+
+    <div class="grid md:grid-cols-2 gap-4 mb-8">
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-blue-800 mb-2">이 돈은 뭔가요?</h3>
+        <p class="text-gray-600">소득이 낮은 65세 이상 어르신에게 매달 지급하는 연금입니다. 국민연금과는 별도로, 노후 생활을 돕기 위해 정부가 세금으로 지급합니다.</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-blue-800 mb-2">누가 받나요?</h3>
+        <p class="text-gray-600">65세 이상 어르신 중 소득 하위 70%에 해당하는 약 <strong>620만명</strong>이 받고 있습니다. 단독가구 기준 월 소득이 213만원 이하이면 받을 수 있습니다.</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-blue-800 mb-2">얼마를 받나요?</h3>
+        <p class="text-gray-600">1인당 <strong>월 최대 334,810원</strong>을 받습니다. 국민연금을 함께 받는 경우 기초연금이 일부 감액될 수 있습니다.</p>
+        <p class="text-xs text-gray-400 mt-2">출처: 보건복지부 기초연금 안내 (2026년 기준)</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-blue-800 mb-2">어떻게 지급되나요?</h3>
+        <p class="text-gray-600">매월 25일에 본인 명의 통장으로 입금됩니다. 주민센터나 국민연금공단에서 신청할 수 있고, 신청 후 약 30일 내에 결과가 나옵니다.</p>
+      </div>
+    </div>
+
+    <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 mb-6">
+      <h3 class="font-bold text-blue-800 mb-2">관련 법안</h3>
+      <ul class="space-y-2">
+        <li class="flex items-start gap-2">
+          <span class="text-blue-500 mt-0.5">&#8226;</span>
+          <span class="text-sm"><a href="mockup-bills.html" class="text-blue-600 hover:underline font-medium">기초연금법 일부개정법률안</a> — 기초연금 금액을 40만원으로 인상하는 법안</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-blue-500 mt-0.5">&#8226;</span>
+          <span class="text-sm"><a href="mockup-bills.html" class="text-blue-600 hover:underline font-medium">기초연금법 일부개정법률안</a> — 소득 기준을 80%로 확대하는 법안</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="text-center py-4">
+      <button onclick="goLayer(4)" class="bg-guk-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-guk-700 transition">실제 사례 보기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 4: 실제 사례 ===== -->
+<div id="layer4" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <button onclick="goLayer(3)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      기초연금 항목으로 돌아가기
+    </button>
+
+    <div class="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm mb-8">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-2xl">&#128105;&#8205;&#129459;</div>
+        <div>
+          <h2 class="text-xl font-bold">서울 종로구 김순자 할머니 (78세)</h2>
+          <p class="text-sm text-gray-500">독거 어르신 &middot; 기초연금 수급자</p>
+        </div>
+      </div>
+      <p class="text-gray-500 text-xs mb-4">이 사례는 통계 데이터를 바탕으로 구성한 대표적인 예시입니다.</p>
+
+      <h3 class="font-bold mb-3">월 수입 내역</h3>
+      <div class="space-y-2 mb-6">
+        <div class="flex justify-between items-center bg-gray-50 rounded-lg px-4 py-3">
+          <span class="text-gray-600">국민연금</span>
+          <span class="font-bold">250,000원</span>
+        </div>
+        <div class="flex justify-between items-center bg-blue-50 rounded-lg px-4 py-3">
+          <span class="text-blue-800">기초연금</span>
+          <span class="font-bold text-blue-700">320,000원</span>
+        </div>
+        <div class="flex justify-between items-center bg-gray-100 rounded-lg px-4 py-3 font-bold">
+          <span>월 총수입</span>
+          <span class="text-lg">570,000원</span>
+        </div>
+      </div>
+
+      <h3 class="font-bold mb-3">월 지출 내역</h3>
+      <div class="space-y-2 mb-6">
+        <div class="flex justify-between items-center bg-gray-50 rounded-lg px-4 py-3">
+          <span class="text-gray-600">월세 (원룸)</span>
+          <span class="font-bold">200,000원</span>
+        </div>
+        <div class="flex justify-between items-center bg-gray-50 rounded-lg px-4 py-3">
+          <span class="text-gray-600">공과금</span>
+          <span class="font-bold">50,000원</span>
+        </div>
+        <div class="flex justify-between items-center bg-amber-50 rounded-lg px-4 py-3">
+          <span class="text-amber-800">남은 생활비</span>
+          <span class="font-bold text-amber-700">320,000원</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+        <h3 class="font-bold mb-2">이 정도로 충분한가요?</h3>
+        <p class="text-gray-600 text-sm mb-2">보건복지부 발표 노인 단독가구 최저 생계비는 월 약 113만원입니다. 김 할머니의 수입(57만원)은 이에 크게 미치지 못합니다.</p>
+        <p class="text-gray-600 text-sm">다만, 의료비(건강보험), 교통(경로우대), 주거 급여 등 현물 복지를 함께 받을 수 있어 실질 생활 수준은 이보다 높을 수 있습니다.</p>
+        <p class="text-xs text-gray-400 mt-3">출처: 보건복지부 2026년 최저생계비 고시, 국민연금공단 통계</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <h3 class="font-bold mb-3">비슷한 제도를 가진 나라들</h3>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-bold mb-1">일본</div>
+          <p class="text-sm text-gray-600">국민연금 (기초연금): 월 약 65,000엔 (약 58만원). 전 국민 가입 의무.</p>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-bold mb-1">호주</div>
+          <p class="text-sm text-gray-600">Age Pension: 2주 약 1,064AUD (약 96만원/월). 자산 심사 기반.</p>
+        </div>
+        <div class="border border-gray-100 rounded-lg p-4">
+          <div class="font-bold mb-1">캐나다</div>
+          <p class="text-sm text-gray-600">OAS+GIS: 월 최대 약 1,800CAD (약 180만원). 소득 비례 감액.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center py-4">
+      <button onclick="goLayer(5)" class="bg-guk-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-guk-700 transition">이 예산의 역사 보기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 5: 이 예산의 역사 ===== -->
+<div id="layer5" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <button onclick="goLayer(4)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      실제 사례로 돌아가기
+    </button>
+
+    <h2 class="text-2xl md:text-3xl font-bold mb-6">기초연금의 역사</h2>
+
+    <div class="relative">
+      <div class="absolute left-4 md:left-6 top-0 bottom-0 w-0.5 bg-blue-200"></div>
+      <div class="space-y-8 ml-10 md:ml-14">
+        <div class="relative">
+          <div class="absolute -left-[34px] md:-left-[42px] w-5 h-5 bg-blue-300 rounded-full border-4 border-white"></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <span class="text-sm text-blue-600 font-semibold">2008년</span>
+            <h3 class="font-bold mt-1">기초노령연금 도입</h3>
+            <p class="text-sm text-gray-600 mt-1">노무현 정부에서 법안 통과, 이명박 정부에서 시행. 70세 이상 소득 하위 60%에게 월 최대 84,000원 지급 시작.</p>
+            <p class="text-xs text-gray-400 mt-2">출처: 보건복지부</p>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute -left-[34px] md:-left-[42px] w-5 h-5 bg-blue-400 rounded-full border-4 border-white"></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <span class="text-sm text-blue-600 font-semibold">2014년 7월</span>
+            <h3 class="font-bold mt-1">기초연금으로 전면 개편</h3>
+            <p class="text-sm text-gray-600 mt-1">박근혜 정부. 지급 대상을 65세 이상 소득 하위 70%로 확대. 월 최대 20만원으로 인상. 예산 약 7조원.</p>
+            <p class="text-xs text-gray-400 mt-2">출처: 기초연금법 제정안</p>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute -left-[34px] md:-left-[42px] w-5 h-5 bg-blue-500 rounded-full border-4 border-white"></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <span class="text-sm text-blue-600 font-semibold">2019년 4월</span>
+            <h3 class="font-bold mt-1">30만원으로 인상 (소득 하위 20%)</h3>
+            <p class="text-sm text-gray-600 mt-1">문재인 정부. 소득 하위 20% 어르신에게 먼저 30만원 적용. 전체 확대는 2021년으로 계획.</p>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute -left-[34px] md:-left-[42px] w-5 h-5 bg-blue-500 rounded-full border-4 border-white"></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <span class="text-sm text-blue-600 font-semibold">2021년 1월</span>
+            <h3 class="font-bold mt-1">전체 수급자 30만원 적용</h3>
+            <p class="text-sm text-gray-600 mt-1">소득 하위 70% 전체에게 월 30만원 지급. 수급자 약 580만명. 예산 약 17조원.</p>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="absolute -left-[34px] md:-left-[42px] w-5 h-5 bg-blue-600 rounded-full border-4 border-white"></div>
+          <div class="bg-blue-50 rounded-xl p-5 border border-blue-200 shadow-sm">
+            <span class="text-sm text-blue-600 font-semibold">2026년 (현재)</span>
+            <h3 class="font-bold mt-1">월 최대 334,810원</h3>
+            <p class="text-sm text-gray-600 mt-1">물가 연동 인상. 수급자 약 620만명. 예산 23.8조원. 40만원 인상 법안이 국회에 계류 중.</p>
+            <p class="text-xs text-gray-400 mt-2">출처: 보건복지부, 국회 의안정보시스템</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount Chart -->
+    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mt-8 mb-6">
+      <h3 class="font-bold mb-4">기초연금 예산 변화</h3>
+      <div class="flex items-end gap-3 h-40">
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-200 rounded-t w-full" style="height:18%"></div>
+          <span class="text-xs text-gray-500 mt-1">'14</span>
+          <span class="text-xs">7조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-300 rounded-t w-full" style="height:30%"></div>
+          <span class="text-xs text-gray-500 mt-1">'17</span>
+          <span class="text-xs">10조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-400 rounded-t w-full" style="height:50%"></div>
+          <span class="text-xs text-gray-500 mt-1">'20</span>
+          <span class="text-xs">15조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-500 rounded-t w-full" style="height:70%"></div>
+          <span class="text-xs text-gray-500 mt-1">'23</span>
+          <span class="text-xs">20조</span>
+        </div>
+        <div class="flex flex-col items-center flex-1">
+          <div class="bg-blue-600 rounded-t w-full" style="height:100%"></div>
+          <span class="text-xs text-gray-500 mt-1">'26</span>
+          <span class="text-xs font-bold">23.8조</span>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-3">출처: 열린재정 연도별 기초연금 예산</p>
+    </div>
+
+    <div class="text-center py-4">
+      <button onclick="goLayer(6)" class="bg-guk-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-guk-700 transition">관련 계약 보기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYER 6: 관련 계약 ===== -->
+<div id="layer6" class="layer fade-in">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <button onclick="goLayer(5)" class="text-sm text-guk-600 hover:underline mb-4 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      기초연금 역사로 돌아가기
+    </button>
+
+    <h2 class="text-2xl md:text-3xl font-bold mb-2">기초연금 관련 공공계약</h2>
+    <p class="text-gray-500 mb-6">나라장터에 공개된 기초연금 시스템 운영 관련 계약 내역입니다.</p>
+
+    <div class="space-y-4 mb-8">
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
+          <div>
+            <h3 class="font-bold">기초연금 정보시스템 운영 &middot; 유지보수</h3>
+            <p class="text-sm text-gray-500">국민연금공단 &rarr; (주)한국정보기술</p>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-lg text-blue-700">48억 3,200만원</span>
+            <div class="text-xs text-gray-500">수의계약 &middot; 2025.12</div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">기초연금 자격 심사, 지급 관리, 통계 산출을 위한 전산 시스템의 연간 운영 계약입니다.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">나라장터 계약번호: 20251234567</span>
+          <a href="mockup-audit.html" class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded hover:bg-amber-200">AI 감사: 반복 수의계약 패턴 탐지됨</a>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
+          <div>
+            <h3 class="font-bold">기초연금 대국민 상담 콜센터 운영</h3>
+            <p class="text-sm text-gray-500">국민연금공단 &rarr; (주)KT커머스</p>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-lg text-blue-700">32억 1,000만원</span>
+            <div class="text-xs text-gray-500">일반경쟁 &middot; 2025.11</div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">기초연금 관련 국민 문의를 처리하는 1355 콜센터의 연간 운영 계약입니다.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">나라장터 계약번호: 20251234568</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
+          <div>
+            <h3 class="font-bold">어르신 돌봄 서비스 관리 플랫폼 구축</h3>
+            <p class="text-sm text-gray-500">보건복지부 &rarr; (주)삼성SDS</p>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-lg text-blue-700">127억 5,000만원</span>
+            <div class="text-xs text-gray-500">제한경쟁 &middot; 2025.09</div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">기초연금 수급자를 포함한 어르신 돌봄 서비스 연계 플랫폼 신규 구축 사업입니다.</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">나라장터 계약번호: 20251234569</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+      <p class="text-sm text-gray-600">위 계약들은 나라장터(조달청)에 공개된 실제 계약 정보를 바탕으로 구성한 예시입니다. 정확한 금액과 업체명은 나라장터에서 직접 확인하시기 바랍니다.</p>
+      <p class="text-xs text-gray-400 mt-2">출처: 나라장터 (g2b.go.kr)</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-400 mt-12">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 bg-guk-600 rounded flex items-center justify-center"><span class="text-white font-bold text-xs">국</span></div>
+        <span class="font-bold text-white">국정투명</span>
+      </div>
+      <p class="text-xs">데이터 기준일: 2026년 3월 &middot; 출처: 기획재정부 열린재정, 보건복지부, 나라장터</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const breadcrumbLabels = {
+  1: '예산 개요',
+  2: '예산 개요 / 보건·복지·고용',
+  3: '예산 개요 / 보건·복지·고용 / 기초연금',
+  4: '예산 개요 / ... / 기초연금 / 실제 사례',
+  5: '예산 개요 / ... / 기초연금 / 역사',
+  6: '예산 개요 / ... / 기초연금 / 관련 계약'
+};
+
+function goLayer(n) {
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+  document.getElementById('layer' + n).classList.add('active');
+  document.getElementById('bc-current').textContent = breadcrumbLabels[n];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

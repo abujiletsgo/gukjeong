@@ -1,6 +1,6 @@
 'use client';
 // 예산 시각화 — 클라이언트 컴포넌트
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import type { FiscalYearly, FiscalBySector, SubSectorData } from '@/lib/types';
 import { getSubSectorData, getSectorIdByName } from '@/lib/data';
@@ -26,6 +26,61 @@ const SECTOR_COLORS: Record<string, { base: string; gradient: string[] }> = {
   '문화·체육·관광': { base: '#a855f7', gradient: ['#7e22ce', '#9333ea', '#a855f7', '#c084fc', '#d8b4fe'] },
 };
 
+/* ------------------------------------------------------------------ */
+/*  Collapsible section wrapper                                        */
+/* ------------------------------------------------------------------ */
+function CollapsibleSection({
+  open,
+  onToggle,
+  label,
+  collapseLabel = '접기',
+  children,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  label: string;
+  collapseLabel?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      {!open && (
+        <button
+          type="button"
+          onClick={onToggle}
+          className="w-full flex items-center justify-center gap-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-800 bg-gray-50 hover:bg-gray-100 rounded-lg border border-dashed border-gray-200 transition-colors"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+          {label}
+        </button>
+      )}
+      <div
+        className={`transition-all duration-500 ease-in-out overflow-hidden ${
+          open ? 'max-h-[4000px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        {open && (
+          <>
+            {children}
+            <button
+              type="button"
+              onClick={onToggle}
+              className="mt-3 flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 15l-6-6-6 6" />
+              </svg>
+              {collapseLabel}
+            </button>
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
 interface BudgetPageClientProps {
   fiscalData: FiscalYearly[];
   sectorDataByYear: Record<number, FiscalBySector[]>;
@@ -47,13 +102,24 @@ export default function BudgetPageClient({
   const [selectedSubSector, setSelectedSubSector] = useState<string | null>(null);
   const availableYears = [2024, 2025, 2026];
 
-  // TreeMap 클릭 핸들러 — 분야 상세 페이지로 이동
-  const handleTreeMapClick = (sectorName: string) => {
-    const sectorId = getSectorIdByName(sectorName);
-    if (sectorId) {
-      router.push(`/budget/${sectorId}`);
-    }
-  };
+  // Progressive disclosure state
+  const [showSankey, setShowSankey] = useState(false);
+  const [showDebt, setShowDebt] = useState(false);
+  const [showTable, setShowTable] = useState(false);
+  const [showSubSector, setShowSubSector] = useState(false);
+
+  const subSectorRef = useRef<HTMLDivElement>(null);
+
+  // TreeMap 클릭 핸들러 — 분야 드릴다운 표시 + 해당 분야 선택
+  const handleTreeMapClick = useCallback((sectorName: string) => {
+    setSelectedSector(sectorName);
+    setSelectedSubSector(null);
+    setShowSubSector(true);
+    // Smooth scroll to sub-sector section after a short delay for render
+    setTimeout(() => {
+      subSectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }, []);
 
   const currentSectors = sectorDataByYear[selectedYear] || sectorDataByYear[2026];
 
@@ -204,7 +270,7 @@ export default function BudgetPageClient({
             {selectedYear}년 분야별 예산
           </h2>
           <p className="text-xs text-gray-400 mb-4">
-            크기 = 예산 규모 · 클릭하면 상세 페이지로 이동 · 출처: 기획재정부
+            크기 = 예산 규모 · 클릭하면 세부 항목을 볼 수 있습니다 · 출처: 기획재정부
           </p>
           <TreeMapChart data={treemapData} height={380} onSectorClick={handleTreeMapClick} />
         </div>
@@ -224,8 +290,8 @@ export default function BudgetPageClient({
         </div>
       </div>
 
-      {/* 예산 상세 분류 (Sub-Sector Drill-Down) */}
-      <div className="card mb-6">
+      {/* 예산 상세 분류 (Sub-Sector Drill-Down) — collapsible */}
+      <div className="card mb-6" ref={subSectorRef}>
         <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
@@ -239,173 +305,219 @@ export default function BudgetPageClient({
           분야를 선택하면 세부 항목별 예산 배분을 확인할 수 있습니다 (2026년 예산안 기준)
         </p>
 
-        {/* 분야 셀렉터 (pills) */}
-        <div className="flex flex-wrap gap-1.5 mb-6">
-          {sectorList.map(sector => {
-            const isActive = sector === selectedSector;
-            const baseColor = getSectorBaseColor(sector);
-            return (
-              <button
-                key={sector}
-                onClick={() => { setSelectedSector(sector); setSelectedSubSector(null); }}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
-                  isActive
-                    ? 'text-white shadow-sm'
-                    : 'text-gray-600 bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
-                style={isActive ? { backgroundColor: baseColor, borderColor: baseColor } : undefined}
-              >
-                {sector}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 선택된 분야 요약 헤더 */}
-        <div className="flex items-baseline gap-3 mb-5">
-          <div
-            className="w-3 h-3 rounded-sm shrink-0"
-            style={{ backgroundColor: getSectorBaseColor(selectedSector) }}
-          />
-          <div>
-            <span className="font-bold text-gray-900 text-base">{selectedSector}</span>
-            <span className="text-gray-400 text-sm ml-2">
-              {selectedSectorTotal.toFixed(1)}조원
-            </span>
-          </div>
-        </div>
-
-        {/* 하위 분류 바 차트 */}
-        {subSectorData.length > 0 ? (
-          <div>
-            <p className="text-xs text-gray-400 mb-3 flex items-center gap-1">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-              각 항목을 클릭하면 상세 설명을 볼 수 있습니다
+        {!showSubSector ? (
+          /* Prompt state: guide user to interact */
+          <div className="text-center py-10">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-violet-50 mb-3">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5">
+                <path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/>
+              </svg>
+            </div>
+            <p className="text-sm text-gray-500 mb-4">
+              위 트리맵에서 분야를 클릭하거나, 아래 버튼으로 분야를 선택하세요
             </p>
-            <div className="space-y-1">
-              {subSectorData.map((item, idx) => {
-                const barWidth = Math.max(2, (item.amount / maxSubAmount) * 100);
-                const barColor = getSectorColor(selectedSector, idx);
-                const isExpanded = selectedSubSector === item.sub_sector;
-                const isEtc = item.sub_sector.startsWith('기타');
-                const hasDescription = !!(item.description || isEtc);
-                const totalBudget = 728;
-                const percentOfTotal = ((item.amount / totalBudget) * 100);
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {sectorList.map(sector => {
+                const baseColor = getSectorBaseColor(sector);
                 return (
-                  <div key={item.sub_sector}>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedSubSector(isExpanded ? null : item.sub_sector)}
-                      className={`w-full text-left rounded-lg px-2 py-1.5 transition-colors ${
-                        isExpanded ? 'bg-gray-50' : 'hover:bg-gray-50/60'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {/* 항목명 */}
-                        <span className="text-sm text-gray-700 w-36 sm:w-44 shrink-0 truncate" title={item.sub_sector}>
-                          {item.sub_sector}
-                        </span>
-
-                        {/* 바 */}
-                        <div className="flex-1 h-7 bg-gray-100 rounded relative overflow-hidden">
-                          <div
-                            className="h-full rounded transition-all duration-500 ease-out"
-                            style={{
-                              width: `${barWidth}%`,
-                              backgroundColor: barColor,
-                              opacity: 0.85,
-                            }}
-                          />
-                          {/* 바 내부 퍼센트 (바가 충분히 넓을 때) */}
-                          {barWidth > 25 && (
-                            <span className="absolute left-2 top-0 h-full flex items-center text-[11px] font-medium text-white/90">
-                              {item.percentage.toFixed(1)}%
-                            </span>
-                          )}
-                        </div>
-
-                        {/* 금액 */}
-                        <div className="text-right shrink-0 w-20">
-                          <span className="text-sm font-semibold text-gray-800">
-                            {item.amount.toFixed(1)}
-                          </span>
-                          <span className="text-xs text-gray-400 ml-0.5">조</span>
-                        </div>
-
-                        {/* 비중 (바 바깥, 좁은 바용) */}
-                        {barWidth <= 25 && (
-                          <span className="text-[11px] text-gray-400 w-12 text-right shrink-0">
-                            {item.percentage.toFixed(1)}%
-                          </span>
-                        )}
-
-                        {/* 셰브론 인디케이터 */}
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          className={`shrink-0 text-gray-300 transition-transform duration-200 ${
-                            isExpanded ? 'rotate-180' : ''
-                          }`}
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </div>
-                    </button>
-
-                    {/* 확장 패널 */}
-                    {isExpanded && (
-                      <div className="mx-2 mt-1 mb-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                        <div className="mb-2">
-                          <span className="text-lg font-bold text-gray-900">
-                            {item.amount.toFixed(1)}조원
-                          </span>
-                          <span className="text-sm text-gray-500 ml-1.5">
-                            (전체 예산의 {percentOfTotal.toFixed(1)}%)
-                          </span>
-                        </div>
-
-                        {item.description && (
-                          <p className="text-sm text-gray-600 leading-relaxed mb-2">
-                            {item.description}
-                          </p>
-                        )}
-
-                        {isEtc && (
-                          <p className="text-xs text-gray-400 italic mb-2">
-                            여러 소규모 사업을 합산한 항목입니다
-                          </p>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedSubSector(null);
-                          }}
-                          className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 mt-1"
-                        >
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M18 15l-6-6-6 6" />
-                          </svg>
-                          접기
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <button
+                    key={sector}
+                    onClick={() => {
+                      setSelectedSector(sector);
+                      setSelectedSubSector(null);
+                      setShowSubSector(true);
+                    }}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border text-gray-600 bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                  >
+                    {sector}
+                  </button>
                 );
               })}
             </div>
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            {selectedYear !== 2026
-              ? '하위 분류 데이터는 2026년 예산안에서만 제공됩니다.'
-              : '해당 분야의 하위 분류 데이터가 없습니다.'}
-          </div>
+          /* Expanded state: full drill-down */
+          <>
+            {/* 분야 셀렉터 (pills) */}
+            <div className="flex flex-wrap gap-1.5 mb-6">
+              {sectorList.map(sector => {
+                const isActive = sector === selectedSector;
+                const baseColor = getSectorBaseColor(sector);
+                return (
+                  <button
+                    key={sector}
+                    onClick={() => { setSelectedSector(sector); setSelectedSubSector(null); }}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                      isActive
+                        ? 'text-white shadow-sm'
+                        : 'text-gray-600 bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                    style={isActive ? { backgroundColor: baseColor, borderColor: baseColor } : undefined}
+                  >
+                    {sector}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 선택된 분야 요약 헤더 */}
+            <div className="flex items-baseline gap-3 mb-5">
+              <div
+                className="w-3 h-3 rounded-sm shrink-0"
+                style={{ backgroundColor: getSectorBaseColor(selectedSector) }}
+              />
+              <div>
+                <span className="font-bold text-gray-900 text-base">{selectedSector}</span>
+                <span className="text-gray-400 text-sm ml-2">
+                  {selectedSectorTotal.toFixed(1)}조원
+                </span>
+              </div>
+            </div>
+
+            {/* 하위 분류 바 차트 */}
+            {subSectorData.length > 0 ? (
+              <div>
+                <p className="text-xs text-gray-400 mb-3 flex items-center gap-1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                  각 항목을 클릭하면 상세 설명을 볼 수 있습니다
+                </p>
+                <div className="space-y-1">
+                  {subSectorData.map((item, idx) => {
+                    const barWidth = Math.max(2, (item.amount / maxSubAmount) * 100);
+                    const barColor = getSectorColor(selectedSector, idx);
+                    const isExpanded = selectedSubSector === item.sub_sector;
+                    const isEtc = item.sub_sector.startsWith('기타');
+                    const hasDescription = !!(item.description || isEtc);
+                    const totalBudget = 728;
+                    const percentOfTotal = ((item.amount / totalBudget) * 100);
+                    return (
+                      <div key={item.sub_sector}>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSubSector(isExpanded ? null : item.sub_sector)}
+                          className={`w-full text-left rounded-lg px-2 py-1.5 transition-colors ${
+                            isExpanded ? 'bg-gray-50' : 'hover:bg-gray-50/60'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            {/* 항목명 */}
+                            <span className="text-sm text-gray-700 w-36 sm:w-44 shrink-0 truncate" title={item.sub_sector}>
+                              {item.sub_sector}
+                            </span>
+
+                            {/* 바 */}
+                            <div className="flex-1 h-7 bg-gray-100 rounded relative overflow-hidden">
+                              <div
+                                className="h-full rounded transition-all duration-500 ease-out"
+                                style={{
+                                  width: `${barWidth}%`,
+                                  backgroundColor: barColor,
+                                  opacity: 0.85,
+                                }}
+                              />
+                              {/* 바 내부 퍼센트 (바가 충분히 넓을 때) */}
+                              {barWidth > 25 && (
+                                <span className="absolute left-2 top-0 h-full flex items-center text-[11px] font-medium text-white/90">
+                                  {item.percentage.toFixed(1)}%
+                                </span>
+                              )}
+                            </div>
+
+                            {/* 금액 */}
+                            <div className="text-right shrink-0 w-20">
+                              <span className="text-sm font-semibold text-gray-800">
+                                {item.amount.toFixed(1)}
+                              </span>
+                              <span className="text-xs text-gray-400 ml-0.5">조</span>
+                            </div>
+
+                            {/* 비중 (바 바깥, 좁은 바용) */}
+                            {barWidth <= 25 && (
+                              <span className="text-[11px] text-gray-400 w-12 text-right shrink-0">
+                                {item.percentage.toFixed(1)}%
+                              </span>
+                            )}
+
+                            {/* 셰브론 인디케이터 */}
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              className={`shrink-0 text-gray-300 transition-transform duration-200 ${
+                                isExpanded ? 'rotate-180' : ''
+                              }`}
+                            >
+                              <path d="M6 9l6 6 6-6" />
+                            </svg>
+                          </div>
+                        </button>
+
+                        {/* 확장 패널 */}
+                        {isExpanded && (
+                          <div className="mx-2 mt-1 mb-2 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                            <div className="mb-2">
+                              <span className="text-lg font-bold text-gray-900">
+                                {item.amount.toFixed(1)}조원
+                              </span>
+                              <span className="text-sm text-gray-500 ml-1.5">
+                                (전체 예산의 {percentOfTotal.toFixed(1)}%)
+                              </span>
+                            </div>
+
+                            {item.description && (
+                              <p className="text-sm text-gray-600 leading-relaxed mb-2">
+                                {item.description}
+                              </p>
+                            )}
+
+                            {isEtc && (
+                              <p className="text-xs text-gray-400 italic mb-2">
+                                여러 소규모 사업을 합산한 항목입니다
+                              </p>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedSubSector(null);
+                              }}
+                              className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1 mt-1"
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M18 15l-6-6-6 6" />
+                              </svg>
+                              접기
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-400 text-sm">
+                {selectedYear !== 2026
+                  ? '하위 분류 데이터는 2026년 예산안에서만 제공됩니다.'
+                  : '해당 분야의 하위 분류 데이터가 없습니다.'}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => { setShowSubSector(false); setSelectedSubSector(null); }}
+              className="mt-3 flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 15l-6-6-6 6" />
+              </svg>
+              접기
+            </button>
+          </>
         )}
 
         <p className="text-[10px] text-gray-300 mt-4">
@@ -413,7 +525,7 @@ export default function BudgetPageClient({
         </p>
       </div>
 
-      {/* Sankey */}
+      {/* Sankey — collapsible */}
       <div className="card mb-6">
         <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 5-9"/></svg>
@@ -422,21 +534,33 @@ export default function BudgetPageClient({
         <p className="text-xs text-gray-400 mb-4">
           주요 수입원에서 지출 분야로의 자금 흐름 (2026년 예산안 기준) · 출처: 기획재정부
         </p>
-        <SankeyChart data={sankeyData} height={480} />
+        <CollapsibleSection
+          open={showSankey}
+          onToggle={() => setShowSankey(v => !v)}
+          label="세입 → 세출 흐름도 보기"
+        >
+          <SankeyChart data={sankeyData} height={480} />
+        </CollapsibleSection>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6 mb-6">
-        {/* 국가채무 */}
+        {/* 국가채무 — collapsible */}
         <div className="card">
           <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5"><path d="M2 20h20M6 20V12l4-4 4 4 4-8v16"/></svg>
             국가채무 궤적
           </h2>
           <p className="text-xs text-gray-400 mb-4">채무 규모 및 GDP 대비 비율</p>
-          <DebtChart data={debtChartData} height={350} />
+          <CollapsibleSection
+            open={showDebt}
+            onToggle={() => setShowDebt(v => !v)}
+            label="국가채무 궤적 보기"
+          >
+            <DebtChart data={debtChartData} height={350} />
+          </CollapsibleSection>
         </div>
 
-        {/* 국제 비교 */}
+        {/* 국제 비교 — always visible (quick to scan) */}
         <div className="card">
           <h2 className="flex items-center gap-2 font-bold text-lg mb-1">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
@@ -472,50 +596,56 @@ export default function BudgetPageClient({
         </div>
       </div>
 
-      {/* 비교 테이블 */}
+      {/* 비교 테이블 — collapsible */}
       <div className="card">
         <h2 className="flex items-center gap-2 font-bold text-lg mb-4">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
           {selectedYear}년 분야별 예산 상세
         </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b-2 border-gray-200">
-                <th className="text-left py-3 px-2 font-semibold text-gray-600">분야</th>
-                <th className="text-right py-3 px-2 font-semibold text-gray-600">예산 (조원)</th>
-                <th className="text-right py-3 px-2 font-semibold text-gray-600">비중</th>
-                <th className="text-right py-3 px-2 font-semibold text-gray-600">전년 대비</th>
-              </tr>
-            </thead>
-            <tbody>
-              {comparisonData.map((row, i) => {
-                const sectorId = getSectorIdByName(row.sector);
-                return (
-                <tr key={row.sector} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                  <td className="py-2.5 px-2 font-medium text-gray-800">
-                    {sectorId ? (
-                      <a href={`/budget/${sectorId}`} className="hover:text-accent hover:underline transition-colors">
-                        {row.sector}
-                      </a>
-                    ) : row.sector}
-                  </td>
-                  <td className="py-2.5 px-2 text-right text-gray-700">{row.amount.toFixed(1)}</td>
-                  <td className="py-2.5 px-2 text-right text-gray-500">{row.percentage.toFixed(1)}%</td>
-                  <td className={`py-2.5 px-2 text-right font-medium ${
-                    row.yoyChange > 0 ? 'text-rose-600' : row.yoyChange < 0 ? 'text-emerald-600' : 'text-gray-500'
-                  }`}>
-                    {row.yoyChange > 0 ? '+' : ''}{row.yoyChange.toFixed(1)}%
-                  </td>
+        <CollapsibleSection
+          open={showTable}
+          onToggle={() => setShowTable(v => !v)}
+          label="분야별 상세 보기"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-gray-200">
+                  <th className="text-left py-3 px-2 font-semibold text-gray-600">분야</th>
+                  <th className="text-right py-3 px-2 font-semibold text-gray-600">예산 (조원)</th>
+                  <th className="text-right py-3 px-2 font-semibold text-gray-600">비중</th>
+                  <th className="text-right py-3 px-2 font-semibold text-gray-600">전년 대비</th>
                 </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <p className="text-[10px] text-gray-300 mt-3">
-          출처: 기획재정부 나라살림 예산개요 · {selectedYear}년 {selectedYear >= 2026 ? '예산안' : '본예산'} 기준
-        </p>
+              </thead>
+              <tbody>
+                {comparisonData.map((row, i) => {
+                  const sectorId = getSectorIdByName(row.sector);
+                  return (
+                  <tr key={row.sector} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                    <td className="py-2.5 px-2 font-medium text-gray-800">
+                      {sectorId ? (
+                        <a href={`/budget/${sectorId}`} className="hover:text-accent hover:underline transition-colors">
+                          {row.sector}
+                        </a>
+                      ) : row.sector}
+                    </td>
+                    <td className="py-2.5 px-2 text-right text-gray-700">{row.amount.toFixed(1)}</td>
+                    <td className="py-2.5 px-2 text-right text-gray-500">{row.percentage.toFixed(1)}%</td>
+                    <td className={`py-2.5 px-2 text-right font-medium ${
+                      row.yoyChange > 0 ? 'text-rose-600' : row.yoyChange < 0 ? 'text-emerald-600' : 'text-gray-500'
+                    }`}>
+                      {row.yoyChange > 0 ? '+' : ''}{row.yoyChange.toFixed(1)}%
+                    </td>
+                  </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[10px] text-gray-300 mt-3">
+            출처: 기획재정부 나라살림 예산개요 · {selectedYear}년 {selectedYear >= 2026 ? '예산안' : '본예산'} 기준
+          </p>
+        </CollapsibleSection>
       </div>
     </div>
   );
