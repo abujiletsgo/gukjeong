@@ -232,3 +232,14 @@
   apps/web/public/legislators/3C23171A.jpg           | Bin 0 -> 106405 bytes
   apps/web/public/legislators/3NI5978A.jpg           | Bin 0 -> 680297 bytes
   ... and 31 more files
+
+## 2026-03-28 (12:51 UTC) · @Tom Kwon
+**Commit:** fix: Remove live data banner, fix gender stat, filter news keywords, rich audit UI (9fa8d5b) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md                         |   15 +
+  apps/web/app/audit/AuditPageClient.tsx             | 1240 +++++++++++---------
+  apps/web/app/legislators/LegislatorsPageClient.tsx |    6 +-
+  apps/web/components/common/DataModeBanner.tsx      |   13 +-
+  apps/web/lib/news/rss.ts                           |   21 +-
+  apps/web/tsconfig.tsbuildinfo                      |    2 +-
+  6 files changed, 735 insertions(+), 562 deletions(-)
