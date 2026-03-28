@@ -10,6 +10,7 @@ interface PatternBadgeProps {
 const PATTERN_CONFIG: Record<string, { label: string; icon: string; color: string }> = {
   yearend_spike: { label: '연말 급증', icon: '📈', color: 'bg-orange-50 text-orange-700 border-orange-200' },
   vendor_concentration: { label: '업체 집중', icon: '🏢', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+  repeat_sole_source: { label: '반복 수의계약', icon: '🔄', color: 'bg-amber-50 text-amber-700 border-amber-200' },
   inflated_pricing: { label: '고가 계약', icon: '💰', color: 'bg-rose-50 text-rose-700 border-rose-200' },
   contract_splitting: { label: '계약 분할', icon: '✂️', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
   zombie_project: { label: '좀비 사업', icon: '🧟', color: 'bg-gray-50 text-gray-700 border-gray-200' },

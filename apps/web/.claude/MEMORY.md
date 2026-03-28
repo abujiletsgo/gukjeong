@@ -202,3 +202,18 @@
   apps/web/lib/hooks/useRealData.ts             | 31 ++++++++++++++++++++++
   apps/web/tsconfig.tsbuildinfo                 |  2 +-
   7 files changed, 148 insertions(+), 13 deletions(-)
+
+## 2026-03-28 (09:59 UTC) · @Tom Kwon
+**Commit:** feat: 76 real audit findings from 3200 contracts + more photos (9102b22) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json  | 4304 ++++++++++++++++++++++++++----
+  apps/web/public/legislators/0698755I.jpg |  Bin 0 -> 21547618 bytes
+  apps/web/public/legislators/0R68099X.jpg |  Bin 0 -> 57410 bytes
+  apps/web/public/legislators/2385336L.jpg |  Bin 0 -> 376070 bytes
+  apps/web/public/legislators/25G2571T.jpg |  Bin 0 -> 559103 bytes
+  apps/web/public/legislators/2NV6751W.jpg |  Bin 0 -> 653927 bytes
+  apps/web/public/legislators/2S73768V.jpg |  Bin 0 -> 342953 bytes
+  apps/web/public/legislators/3LP22204.jpg |  Bin 0 -> 894314 bytes
+  apps/web/public/legislators/3ZR4438W.jpg |  Bin 0 -> 5560717 bytes
+  apps/web/public/legislators/4T026790.jpg |  Bin 0 -> 1103197 bytes
+  ... and 53 more files

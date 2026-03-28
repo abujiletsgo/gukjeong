@@ -4,6 +4,7 @@ import { getPresidents, getFiscalData, getDepartmentScores, getAuditFlags, getBi
 export const revalidate = 3600;
 import Sparkline from '@/components/charts/Sparkline';
 import PresidentPortrait from '@/components/presidents/PresidentPortrait';
+import HomeRealDataOverlay from './HomeRealDataOverlay';
 
 export default function HomePage() {
   const presidents = getPresidents();
@@ -46,6 +47,12 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ━━━ REAL DATA OVERLAY (client component) ━━━ */}
+      <HomeRealDataOverlay
+        seedAuditCount={auditFlags.length}
+        seedLegislatorCount={legislators.length}
+      />
 
       {/* ━━━ NUMBERS BAR ━━━ */}
       <section className="bg-white border-b border-gray-100">
