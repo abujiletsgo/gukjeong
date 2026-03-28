@@ -1,0 +1,1084 @@
+{
+  "timestamp": "2026-03-28",
+  "contracts_analyzed": 2000,
+  "findings_count": 36,
+  "findings": [
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 100,
+      "target_institution": "병무청 사회복무연수센터",
+      "summary": "병무청 사회복무연수센터에서 (주)당진엘피지이(가) 전체 4건 계약 중 4건(100%)을 수주했습니다.",
+      "detail": {
+        "기관": "병무청 사회복무연수센터",
+        "업체": "(주)당진엘피지",
+        "업체_계약건수": 4,
+        "기관_전체건수": 4,
+        "집중도": "100.0%",
+        "업체_계약총액": 226309120
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01631818",
+          "name": "2026년 액화석유가스(LPG) 단가 계약",
+          "amount": 56577280,
+          "vendor": "(주)당진엘피지",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "특수한설비,기술의보유및실적(물품제조) [국가계약법 제21조제1항3호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01631818&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01631818",
+          "name": "2026년 액화석유가스(LPG) 단가 계약",
+          "amount": 56577280,
+          "vendor": "(주)당진엘피지",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "특수한설비,기술의보유및실적(물품제조) [국가계약법 제21조제1항3호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01631818&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01631818",
+          "name": "2026년 액화석유가스(LPG) 단가 계약",
+          "amount": 56577280,
+          "vendor": "(주)당진엘피지",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "특수한설비,기술의보유및실적(물품제조) [국가계약법 제21조제1항3호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01631818&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01631818",
+          "name": "2026년 액화석유가스(LPG) 단가 계약",
+          "amount": 56577280,
+          "vendor": "(주)당진엘피지",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "특수한설비,기술의보유및실적(물품제조) [국가계약법 제21조제1항3호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01631818&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "(주)당진엘피지이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 100,
+      "target_institution": "동원시스템즈(주)",
+      "summary": "동원시스템즈(주)에서 에스텍(주)이(가) 전체 4건 계약 중 4건(100%)을 수주했습니다.",
+      "detail": {
+        "기관": "동원시스템즈(주)",
+        "업체": "에스텍(주)",
+        "업체_계약건수": 4,
+        "기관_전체건수": 4,
+        "집중도": "100.0%",
+        "업체_계약총액": 2754400000
+      },
+      "evidence_contracts": [
+        {
+          "no": "R25TA00920750",
+          "name": "동원시스템즈 군산공장 태양광 발전 설비 기자재 납품의 건.",
+          "amount": 687500000,
+          "vendor": "에스텍(주)",
+          "date": "2026-03-23",
+          "method": "일반경쟁",
+          "reason": "협상에 의한 계약 [국가계약법 제43조제1항]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA00920750&ctrtChgOrd=02&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA00921379",
+          "name": "동원시스템즈 음성공장 태양광 발전 설비 기자재 납품의 건.",
+          "amount": 199100000,
+          "vendor": "에스텍(주)",
+          "date": "2026-03-23",
+          "method": "일반경쟁",
+          "reason": "협상에 의한 계약 [국가계약법 제43조제1항]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA00921379&ctrtChgOrd=02&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA00724395",
+          "name": "동원시스템즈 광주공장 태양광 발전 설비 기자재 납품의 건.",
+          "amount": 471900000,
+          "vendor": "에스텍(주)",
+          "date": "2026-03-23",
+          "method": "일반경쟁",
+          "reason": "협상에 의한 계약 [국가계약법 제43조제1항]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA00724395&ctrtChgOrd=02&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA00921599",
+          "name": "동원시스템즈 횡성공장 태양광 발전 설비 기자재 납품",
+          "amount": 1395900000,
+          "vendor": "에스텍(주)",
+          "date": "2026-03-23",
+          "method": "일반경쟁",
+          "reason": "협상에 의한 계약 [국가계약법 제43조제1항]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA00921599&ctrtChgOrd=02&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "에스텍(주)이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 88,
+      "target_institution": "경상북도 구미시 상하수도사업본부",
+      "summary": "경상북도 구미시 상하수도사업본부에서 주식회사 위스코이(가) 전체 5건 계약 중 4건(80%)을 수주했습니다.",
+      "detail": {
+        "기관": "경상북도 구미시 상하수도사업본부",
+        "업체": "주식회사 위스코",
+        "업체_계약건수": 4,
+        "기관_전체건수": 5,
+        "집중도": "80.0%",
+        "업체_계약총액": 150110000
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01649953",
+          "name": "노후상수도관 개체공사(사곡동 422-76번지 일원)-이형관 및 연결구",
+          "amount": 22700000,
+          "vendor": "주식회사 위스코",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "부품공급 및 설비확충 시 호환성 [지방계약법 제25조제1항4호타목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01649953&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA00943158",
+          "name": "노후상수도관 개체공사(고아읍 괴평리 725-4번지 일원)-PEP이형관",
+          "amount": 73500000,
+          "vendor": "주식회사 위스코",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "부품공급 및 설비확충 시 호환성 [지방계약법 제25조제1항4호타목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA00943158&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01651547",
+          "name": "노후상수도관 개체공사(도량동 580-22번지일원)-이형관 및 연결구",
+          "amount": 30120000,
+          "vendor": "주식회사 위스코",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "부품공급 및 설비확충 시 호환성 [지방계약법 제25조제1항4호타목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01651547&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01626839",
+          "name": "노후상수도관 개체공사(사곡동281번지일원)-PEP이형관",
+          "amount": 23790000,
+          "vendor": "주식회사 위스코",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "부품공급 및 설비확충 시 호환성 [지방계약법 제25조제1항4호타목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01626839&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "주식회사 위스코이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 85,
+      "target_institution": "경상북도 의성군",
+      "summary": "경상북도 의성군에서 오원산업(주)이(가) 전체 4건 계약 중 3건(75%)을 수주했습니다.",
+      "detail": {
+        "기관": "경상북도 의성군",
+        "업체": "오원산업(주)",
+        "업체_계약건수": 3,
+        "기관_전체건수": 4,
+        "집중도": "75.0%",
+        "업체_계약총액": 99828160
+      },
+      "evidence_contracts": [
+        {
+          "no": "R25TA01135907",
+          "name": "단촌하화2리뒷골관정이용시설설치공사 관급자재_수중펌프",
+          "amount": 5734080,
+          "vendor": "오원산업(주)",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA01135907&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA01135947",
+          "name": "춘산옥정4리연지골관정이용시설설치공사 관급자재_수중펌프",
+          "amount": 5734080,
+          "vendor": "오원산업(주)",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA01135947&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA00838245",
+          "name": "단북이연2리재해예방배수장설치 관급자재_수중펌프",
+          "amount": 88360000,
+          "vendor": "오원산업(주)",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "농공단지 입주공장 생산품 [지방계약법 제25조제1항6호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA00838245&ctrtChgOrd=02&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "오원산업(주)이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 85,
+      "target_institution": "전북특별자치도 진안군",
+      "summary": "전북특별자치도 진안군에서 주식회사 임광산업이(가) 전체 4건 계약 중 3건(75%)을 수주했습니다.",
+      "detail": {
+        "기관": "전북특별자치도 진안군",
+        "업체": "주식회사 임광산업",
+        "업체_계약건수": 3,
+        "기관_전체건수": 4,
+        "집중도": "75.0%",
+        "업체_계약총액": 32807720
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01641965",
+          "name": "진안 가림리 세천 정비공사 깬잡석 구입",
+          "amount": 11430120,
+          "vendor": "주식회사 임광산업",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01641965&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01641852",
+          "name": "진안 목골 세천 정비공사 깬잡석 구입",
+          "amount": 10257800,
+          "vendor": "주식회사 임광산업",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01641852&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01641897",
+          "name": "정천 물거리골 사면 정비공사 전석 구입",
+          "amount": 11119800,
+          "vendor": "주식회사 임광산업",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01641897&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "주식회사 임광산업이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 85,
+      "target_institution": "경상북도 성주군 체육시설사업소",
+      "summary": "경상북도 성주군 체육시설사업소에서 주식회사 한성기계설비이(가) 전체 4건 계약 중 3건(75%)을 수주했습니다.",
+      "detail": {
+        "기관": "경상북도 성주군 체육시설사업소",
+        "업체": "주식회사 한성기계설비",
+        "업체_계약건수": 3,
+        "기관_전체건수": 4,
+        "집중도": "75.0%",
+        "업체_계약총액": 85390000
+      },
+      "evidence_contracts": [
+        {
+          "no": "R25TA01054889",
+          "name": "성주 별고을 종합체육시설 조성사업(1차) 관급자재(부스터펌프) 구입",
+          "amount": 54000000,
+          "vendor": "주식회사 한성기계설비",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "농공단지 입주공장 생산품 [지방계약법 제25조제1항6호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA01054889&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA01086191",
+          "name": "성주 별고을 종합체육시설 조성사업(2차) 관급자재[맨홀펌프(수중펌프)] 구입",
+          "amount": 11490000,
+          "vendor": "주식회사 한성기계설비",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA01086191&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R25TA01096236",
+          "name": "성주 별고을 종합체육시설 조성사업(2차) 관급자재(에어먼지털이기 외) 구입",
+          "amount": 19900000,
+          "vendor": "주식회사 한성기계설비",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R25TA01096236&ctrtChgOrd=01&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "주식회사 한성기계설비이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "강원특별자치도 강릉시",
+      "summary": "강원특별자치도 강릉시의 최근 계약 7건 중 7건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "강원특별자치도 강릉시",
+        "전체계약수": 7,
+        "수의계약수": 7,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "부산광역시",
+      "summary": "부산광역시의 최근 계약 7건 중 7건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "부산광역시",
+        "전체계약수": 7,
+        "수의계약수": 7,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "전라남도 고흥군",
+      "summary": "전라남도 고흥군의 최근 계약 6건 중 6건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "전라남도 고흥군",
+        "전체계약수": 6,
+        "수의계약수": 6,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "함안군산림조합",
+      "summary": "함안군산림조합의 최근 계약 10건 중 10건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "함안군산림조합",
+        "전체계약수": 10,
+        "수의계약수": 10,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "서울특별시교육청 서울특별시성동광진교육지원청",
+      "summary": "서울특별시교육청 서울특별시성동광진교육지원청의 최근 계약 7건 중 7건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "서울특별시교육청 서울특별시성동광진교육지원청",
+        "전체계약수": 7,
+        "수의계약수": 7,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "한국원자력연구원",
+      "summary": "한국원자력연구원의 최근 계약 10건 중 10건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "한국원자력연구원",
+        "전체계약수": 10,
+        "수의계약수": 10,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "강원특별자치도 횡성군",
+      "summary": "강원특별자치도 횡성군의 최근 계약 13건 중 13건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "강원특별자치도 횡성군",
+        "전체계약수": 13,
+        "수의계약수": 13,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "경상남도 진주시",
+      "summary": "경상남도 진주시의 최근 계약 6건 중 6건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "경상남도 진주시",
+        "전체계약수": 6,
+        "수의계약수": 6,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "충청남도 당진시",
+      "summary": "충청남도 당진시의 최근 계약 6건 중 6건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "충청남도 당진시",
+        "전체계약수": 6,
+        "수의계약수": 6,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "경상북도 포항시",
+      "summary": "경상북도 포항시의 최근 계약 6건 중 6건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "경상북도 포항시",
+        "전체계약수": 6,
+        "수의계약수": 6,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "전라남도 나주시 상수도사업소",
+      "summary": "전라남도 나주시 상수도사업소의 최근 계약 7건 중 7건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "전라남도 나주시 상수도사업소",
+        "전체계약수": 7,
+        "수의계약수": 7,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "경기도 북부소방재난본부",
+      "summary": "경기도 북부소방재난본부의 최근 계약 8건 중 8건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "경기도 북부소방재난본부",
+        "전체계약수": 8,
+        "수의계약수": 8,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "한국조폐공사",
+      "summary": "한국조폐공사의 최근 계약 19건 중 19건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "한국조폐공사",
+        "전체계약수": 19,
+        "수의계약수": 19,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "울산광역시교육청 울산광역시강남교육지원청",
+      "summary": "울산광역시교육청 울산광역시강남교육지원청의 최근 계약 8건 중 8건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "울산광역시교육청 울산광역시강남교육지원청",
+        "전체계약수": 8,
+        "수의계약수": 8,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "강원특별자치도 원주시",
+      "summary": "강원특별자치도 원주시의 최근 계약 7건 중 7건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "강원특별자치도 원주시",
+        "전체계약수": 7,
+        "수의계약수": 7,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "경상북도 안동시",
+      "summary": "경상북도 안동시의 최근 계약 10건 중 10건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "경상북도 안동시",
+        "전체계약수": 10,
+        "수의계약수": 10,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "부경대학교",
+      "summary": "부경대학교의 최근 계약 8건 중 8건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "부경대학교",
+        "전체계약수": 8,
+        "수의계약수": 8,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "HIGH",
+      "suspicion_score": 80,
+      "target_institution": "강원특별자치도 인제군 상하수도사업소",
+      "summary": "강원특별자치도 인제군 상하수도사업소의 최근 계약 6건 중 6건(100%)이 수의계약입니다.",
+      "detail": {
+        "기관": "강원특별자치도 인제군 상하수도사업소",
+        "전체계약수": 6,
+        "수의계약수": 6,
+        "수의계약비율": "100%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 76,
+      "target_institution": "함안군산림조합",
+      "summary": "함안군산림조합에서 진양농원이(가) 전체 10건 계약 중 6건(60%)을 수주했습니다.",
+      "detail": {
+        "기관": "함안군산림조합",
+        "업체": "진양농원",
+        "업체_계약건수": 6,
+        "기관_전체건수": 10,
+        "집중도": "60.0%",
+        "업체_계약총액": 127556100
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01653017",
+          "name": "2026년 춘기조림사업 큰나무공익1지구 관급자재(묘목)구입-편백2-2",
+          "amount": 27300000,
+          "vendor": "진양농원",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 초과 1억원 이하 물품·용역(소기업 소상공인 계약) [지방계약법 제25조제1항5호라목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01653017&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01652718",
+          "name": "2026춘기조림 산림재해2지구 관급자재(묘목)구입-편백",
+          "amount": 18373600,
+          "vendor": "진양농원",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01652718&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01653044",
+          "name": "2026년 춘기조림사업 큰나무공익3지구 관급자재(묘목)구입-편백2-2",
+          "amount": 29660000,
+          "vendor": "진양농원",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 초과 1억원 이하 물품·용역(소기업 소상공인 계약) [지방계약법 제25조제1항5호라목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01653044&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01652525",
+          "name": "2026년 춘기조림 내화수림1지구 관급자재(묘목)구입-백합(1-0)",
+          "amount": 6706500,
+          "vendor": "진양농원",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01652525&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01652778",
+          "name": "2026년 춘기조림 큰나무공익2지구 관급자재(묘목)구입-편백",
+          "amount": 41628000,
+          "vendor": "진양농원",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 초과 1억원 이하 물품·용역(소기업 소상공인 계약) [지방계약법 제25조제1항5호라목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01652778&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "진양농원이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "MEDIUM",
+      "suspicion_score": 75,
+      "target_institution": "경기도 화성시",
+      "summary": "경기도 화성시의 최근 계약 10건 중 9건(90%)이 수의계약입니다.",
+      "detail": {
+        "기관": "경기도 화성시",
+        "전체계약수": 10,
+        "수의계약수": 9,
+        "수의계약비율": "90%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 74,
+      "target_institution": "전라남도 신안군",
+      "summary": "전라남도 신안군에서 주식회사 효산화이버이(가) 전체 7건 계약 중 4건(57%)을 수주했습니다.",
+      "detail": {
+        "기관": "전라남도 신안군",
+        "업체": "주식회사 효산화이버",
+        "업체_계약건수": 4,
+        "기관_전체건수": 7,
+        "집중도": "57.1%",
+        "업체_계약총액": 9190500
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01644608",
+          "name": "팔금 이목지구 기계화경작로 확포장사업-섬유보강재",
+          "amount": 2574000,
+          "vendor": "주식회사 효산화이버",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01644608&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01644576",
+          "name": "팔금 대심지구 기계화경작로 확포장사업-섬유보강재",
+          "amount": 1237500,
+          "vendor": "주식회사 효산화이버",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01644576&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01644641",
+          "name": "암태 와촌지구 기계화경작로 확포장사업-섬유보강재",
+          "amount": 3003000,
+          "vendor": "주식회사 효산화이버",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01644641&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01644693",
+          "name": "암태 신석지구 기계화경작로 확포장사업-섬유보강재",
+          "amount": 2376000,
+          "vendor": "주식회사 효산화이버",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01644693&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "주식회사 효산화이버이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "MEDIUM",
+      "suspicion_score": 74,
+      "target_institution": "세종특별자치시교육청",
+      "summary": "세종특별자치시교육청의 최근 계약 9건 중 8건(89%)이 수의계약입니다.",
+      "detail": {
+        "기관": "세종특별자치시교육청",
+        "전체계약수": 9,
+        "수의계약수": 8,
+        "수의계약비율": "89%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "MEDIUM",
+      "suspicion_score": 72,
+      "target_institution": "강원특별자치도 춘천시",
+      "summary": "강원특별자치도 춘천시의 최근 계약 7건 중 6건(86%)이 수의계약입니다.",
+      "detail": {
+        "기관": "강원특별자치도 춘천시",
+        "전체계약수": 7,
+        "수의계약수": 6,
+        "수의계약비율": "86%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "repeated_sole_source",
+      "severity": "MEDIUM",
+      "suspicion_score": 72,
+      "target_institution": "전라남도 순천시",
+      "summary": "전라남도 순천시의 최근 계약 7건 중 6건(86%)이 수의계약입니다.",
+      "detail": {
+        "기관": "전라남도 순천시",
+        "전체계약수": 7,
+        "수의계약수": 6,
+        "수의계약비율": "86%"
+      },
+      "evidence_contracts": [],
+      "innocent_explanation": "소규모 기관은 구조적으로 수의계약 비율이 높을 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 70,
+      "target_institution": "부경대학교",
+      "summary": "부경대학교에서 (주)현대전기시스템이(가) 전체 8건 계약 중 4건(50%)을 수주했습니다.",
+      "detail": {
+        "기관": "부경대학교",
+        "업체": "(주)현대전기시스템",
+        "업체_계약건수": 4,
+        "기관_전체건수": 8,
+        "집중도": "50.0%",
+        "업체_계약총액": 117690100
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01611835",
+          "name": "2026년 국립부경대학교 공과대학 실험실습기자재(반도체 측정장비) 소액수의 구입 공고(일반)",
+          "amount": 27391100,
+          "vendor": "(주)현대전기시스템",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 초과 1억원 이하 물품·용역(소기업.소상공인 계약) [국가계약법 제26조제1항5호가3목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01611835&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01611204",
+          "name": "국립부경대학교 공과대학 실험실습기자재(캐비닛형데시케이터 등 5종) 소액수의 구입(일반)",
+          "amount": 46219800,
+          "vendor": "(주)현대전기시스템",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 초과 1억원 이하 물품·용역(소기업.소상공인 계약) [국가계약법 제26조제1항5호가3목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01611204&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01611861",
+          "name": "2026년 국립부경대학교 공과대학 실험실습기자재(진공건조기 등 4종) 소액수의 구입(교체)",
+          "amount": 23199000,
+          "vendor": "(주)현대전기시스템",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 초과 1억원 이하 물품·용역(소기업.소상공인 계약) [국가계약법 제26조제1항5호가3목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01611861&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01609610",
+          "name": "국립부경대학교 공과대학 실험실습기자재(마이크로피펫 등 2종) 소액수의 구입(일반)",
+          "amount": 20880200,
+          "vendor": "(주)현대전기시스템",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 초과 1억원 이하 물품·용역(소기업.소상공인 계약) [국가계약법 제26조제1항5호가3목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01609610&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "(주)현대전기시스템이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 70,
+      "target_institution": "강원특별자치도 인제군 상하수도사업소",
+      "summary": "강원특별자치도 인제군 상하수도사업소에서 주식회사 삼호이(가) 전체 6건 계약 중 3건(50%)을 수주했습니다.",
+      "detail": {
+        "기관": "강원특별자치도 인제군 상하수도사업소",
+        "업체": "주식회사 삼호",
+        "업체_계약건수": 3,
+        "기관_전체건수": 6,
+        "집중도": "50.0%",
+        "업체_계약총액": 1552960000
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01627175",
+          "name": "[관급자재]서화 천도통합상수도확장공사_STS라이닝(서화기존배수지)",
+          "amount": 462500000,
+          "vendor": "주식회사 삼호",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "농공단지 입주공장 생산품 [지방계약법 제25조제1항6호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01627175&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01627500",
+          "name": "[관급자재]서화 천도통합상수도시설 확장공사_ STS라이닝(원통배수지)",
+          "amount": 545230000,
+          "vendor": "주식회사 삼호",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "농공단지 입주공장 생산품 [지방계약법 제25조제1항6호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01627500&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01632153",
+          "name": "[관급자재]서화 천도통합상수도시설 확장공사_STS라이닝(원통배수지)",
+          "amount": 545230000,
+          "vendor": "주식회사 삼호",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "농공단지 입주공장 생산품 [지방계약법 제25조제1항6호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01632153&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "주식회사 삼호이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 65,
+      "target_institution": "경기도 안산시",
+      "summary": "경기도 안산시에서 휴먼이(가) 전체 7건 계약 중 3건(43%)을 수주했습니다.",
+      "detail": {
+        "기관": "경기도 안산시",
+        "업체": "휴먼",
+        "업체_계약건수": 3,
+        "기관_전체건수": 7,
+        "집중도": "42.9%",
+        "업체_계약총액": 301769130
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01634514",
+          "name": "2026년 상록수·단원보건소 의료소모품 단가 구입",
+          "amount": 100589710,
+          "vendor": "휴먼",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "행정안전부령 금액 미만 본점소재지 [지방계약법 제20조제1항6호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01634514&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01634514",
+          "name": "2026년 상록수·단원보건소 의료소모품 단가 구입",
+          "amount": 100589710,
+          "vendor": "휴먼",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "행정안전부령 금액 미만 본점소재지 [지방계약법 제20조제1항6호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01634514&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01634514",
+          "name": "2026년 상록수·단원보건소 의료소모품 단가 구입",
+          "amount": 100589710,
+          "vendor": "휴먼",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "행정안전부령 금액 미만 본점소재지 [지방계약법 제20조제1항6호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01634514&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "휴먼이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 65,
+      "target_institution": "전라남도 나주시 상수도사업소",
+      "summary": "전라남도 나주시 상수도사업소에서 신화산업이(가) 전체 7건 계약 중 3건(43%)을 수주했습니다.",
+      "detail": {
+        "기관": "전라남도 나주시 상수도사업소",
+        "업체": "신화산업",
+        "업체_계약건수": 3,
+        "기관_전체건수": 7,
+        "집중도": "42.9%",
+        "업체_계약총액": 12311000
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01645911",
+          "name": "동강면 인동리 광역상수도 설치공사 관급자재 구입(이형자재)",
+          "amount": 1415000,
+          "vendor": "신화산업",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01645911&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01644112",
+          "name": "수탁신설공사 비축용 관급자재 구입(주물뚜껑 등)",
+          "amount": 9567000,
+          "vendor": "신화산업",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01644112&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01649869",
+          "name": "공산면 복용리 광역상수도 설치공사 관급자재 구입(이형자재)",
+          "amount": 1329000,
+          "vendor": "신화산업",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격이 건설공사 4억원, 전문공사 2억원, 기타공사 1억6천만원 이하 [지방계약법 제25조제1항5호가목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01649869&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "신화산업이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 65,
+      "target_institution": "전라남도 나주시 상수도사업소",
+      "summary": "전라남도 나주시 상수도사업소에서 남산(주)이(가) 전체 7건 계약 중 3건(43%)을 수주했습니다.",
+      "detail": {
+        "기관": "전라남도 나주시 상수도사업소",
+        "업체": "남산(주)",
+        "업체_계약건수": 3,
+        "기관_전체건수": 7,
+        "집중도": "42.9%",
+        "업체_계약총액": 6038010
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01649876",
+          "name": "공산면 복용리 광역상수도 설치공사 관급자재 구입(골재)",
+          "amount": 3201960,
+          "vendor": "남산(주)",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01649876&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01645974",
+          "name": "동강면 인동리 광역상수도 설치공사 관급자재 구입(혼합골재)",
+          "amount": 813990,
+          "vendor": "남산(주)",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01645974&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01603211",
+          "name": "공산면 남창리 광역상수도 설치공사 관급자재 구입(골재)",
+          "amount": 2022060,
+          "vendor": "남산(주)",
+          "date": "2026-03-23",
+          "method": "수의계약",
+          "reason": "추정가격 2천만원 이하 물품 또는 용역 [지방계약법 제25조제1항5호나목]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01603211&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "남산(주)이(가) 해당 분야의 전문업체일 수 있습니다."
+    },
+    {
+      "pattern_type": "vendor_concentration",
+      "severity": "HIGH",
+      "suspicion_score": 65,
+      "target_institution": "충청북도",
+      "summary": "충청북도에서 충주LPG충전소이(가) 전체 7건 계약 중 3건(43%)을 수주했습니다.",
+      "detail": {
+        "기관": "충청북도",
+        "업체": "충주LPG충전소",
+        "업체_계약건수": 3,
+        "기관_전체건수": 7,
+        "집중도": "42.9%",
+        "업체_계약총액": 794963730
+      },
+      "evidence_contracts": [
+        {
+          "no": "R26TA01632889",
+          "name": "충청북도자치연수원 운영 가스요금(LPG) 단가계약",
+          "amount": 264987910,
+          "vendor": "충주LPG충전소",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "행정안전부령 금액 미만 본점소재지 [지방계약법 제20조제1항6호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01632889&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01632889",
+          "name": "충청북도자치연수원 운영 가스요금(LPG) 단가계약",
+          "amount": 264987910,
+          "vendor": "충주LPG충전소",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "행정안전부령 금액 미만 본점소재지 [지방계약법 제20조제1항6호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01632889&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        },
+        {
+          "no": "R26TA01632889",
+          "name": "충청북도자치연수원 운영 가스요금(LPG) 단가계약",
+          "amount": 264987910,
+          "vendor": "충주LPG충전소",
+          "date": "2026-03-23",
+          "method": "제한경쟁",
+          "reason": "행정안전부령 금액 미만 본점소재지 [지방계약법 제20조제1항6호]",
+          "url": "https://www.g2b.go.kr/link/FIUA027_01/single/?ctrtNo=R26TA01632889&ctrtChgOrd=00&prcmBsneSeCd=조070001&srchName=ctrtCrst&openUrl=Y"
+        }
+      ],
+      "innocent_explanation": "충주LPG충전소이(가) 해당 분야의 전문업체일 수 있습니다."
+    }
+  ],
+  "summary": {
+    "sole_source_ratio": 77.0,
+    "unique_institutions": 1114,
+    "unique_vendors": 1739
+  }
+}

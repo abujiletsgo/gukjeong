@@ -190,3 +190,15 @@
   apps/web/lib/news/rss.ts                         | 234 ++++++++++++++++
   apps/web/tsconfig.tsbuildinfo                    |   2 +-
   9 files changed, 1129 insertions(+), 1 deletion(-)
+
+## 2026-03-28 (09:32 UTC) · @Tom Kwon
+**Commit:** feat: Global demo/live toggle — real data is default, demo is opt-in (cc40585) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md                    | 14 ++++++++++
+  apps/web/app/layout.tsx                       | 26 ++++++++++---------
+  apps/web/components/common/DataModeBanner.tsx | 30 ++++++++++++++++++++++
+  apps/web/components/common/DataModeToggle.tsx | 21 +++++++++++++++
+  apps/web/lib/context/DataModeContext.tsx      | 37 +++++++++++++++++++++++++++
+  apps/web/lib/hooks/useRealData.ts             | 31 ++++++++++++++++++++++
+  apps/web/tsconfig.tsbuildinfo                 |  2 +-
+  7 files changed, 148 insertions(+), 13 deletions(-)
