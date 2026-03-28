@@ -57,6 +57,10 @@ interface TopicGroup {
   articles: RealRSSArticle[];
   isMultiOutlet: boolean;
   outletCount: number;
+  summary?: string;           // auto-generated from descriptions
+  progressiveTake?: string;   // what progressive outlets emphasize
+  conservativeTake?: string;  // what conservative outlets emphasize
+  whyItMatters?: string;      // why this matters to citizens
 }
 
 /* ================================================================
@@ -139,11 +143,37 @@ function groupArticlesByTopic(articles: RealRSSArticle[]): TopicGroup[] {
     }
 
     const uniqueOutlets = new Set(group.map(a => a.outlet_id));
+    const sorted = group.sort((a, b) => (a.spectrum_score ?? 3) - (b.spectrum_score ?? 3));
+
+    // Generate context from available data
+    const progArticles = sorted.filter(a => classifySpectrum(a.spectrum_score) === 'progressive');
+    const consArticles = sorted.filter(a => classifySpectrum(a.spectrum_score) === 'conservative');
+
+    // Build summary from the longest description available
+    const descriptions = group.map(a => a.description || '').filter(d => d.length > 20);
+    const bestDesc = descriptions.sort((a, b) => b.length - a.length)[0] || '';
+    // Clean HTML tags from description
+    const cleanDesc = bestDesc.replace(/<[^>]*>/g, '').replace(/&[a-z]+;/gi, ' ').trim();
+
+    // Extract what each side emphasizes from their headlines
+    const progTake = progArticles.length > 0
+      ? progArticles.map(a => a.title).join(' · ')
+      : undefined;
+    const consTake = consArticles.length > 0
+      ? consArticles.map(a => a.title).join(' · ')
+      : undefined;
+
     groups.push({
       topic: findCommonTopic(group),
-      articles: group.sort((a, b) => (a.spectrum_score ?? 3) - (b.spectrum_score ?? 3)),
+      articles: sorted,
       isMultiOutlet: uniqueOutlets.size >= 2,
       outletCount: uniqueOutlets.size,
+      summary: cleanDesc.length > 10 ? cleanDesc.slice(0, 200) : undefined,
+      progressiveTake: progTake,
+      conservativeTake: consTake,
+      whyItMatters: uniqueOutlets.size >= 2
+        ? `${uniqueOutlets.size}개 매체가 이 사안을 다루고 있으며, 정치적 성향에 따라 다른 관점에서 보도하고 있습니다.`
+        : undefined,
     });
   }
 
@@ -431,6 +461,18 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                 <h2 className="text-xl font-bold text-gray-900 mt-3">{heroGroup.topic}</h2>
               </div>
 
+              {/* Context: what this is about + why it matters */}
+              {(heroGroup.summary || heroGroup.whyItMatters) && (
+                <div className="px-5 py-3 border-b border-amber-200 bg-white/50">
+                  {heroGroup.summary && (
+                    <p className="text-sm text-gray-700 leading-relaxed mb-2">{heroGroup.summary}</p>
+                  )}
+                  {heroGroup.whyItMatters && (
+                    <p className="text-xs text-amber-700 font-medium">{heroGroup.whyItMatters}</p>
+                  )}
+                </div>
+              )}
+
               {/* Hero split: progressive vs conservative */}
               <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-amber-200">
                 {/* Left: Progressive */}
@@ -570,6 +612,27 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                   </div>
                 </div>
               )}
+
+              {/* "시민이 주목해야 할 점" box */}
+              <div className="px-5 py-4 bg-amber-50/80 border-t border-amber-200">
+                <h3 className="text-sm font-bold text-amber-900 mb-2">이 이슈를 읽는 법</h3>
+                <div className="space-y-2 text-xs text-amber-800">
+                  <p>같은 사건을 {heroGroup.outletCount}개 매체가 서로 다른 제목으로 보도하고 있습니다. 제목만 봐도 각 매체가 무엇을 강조하는지 알 수 있습니다.</p>
+                  {heroGroup.progressiveTake && heroGroup.conservativeTake && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                        <p className="font-semibold text-blue-800 mb-1">진보 매체가 강조하는 것</p>
+                        <p className="text-blue-700 text-[11px] leading-relaxed">{heroGroup.progressiveTake}</p>
+                      </div>
+                      <div className="bg-rose-50 rounded-lg p-3 border border-rose-100">
+                        <p className="font-semibold text-rose-800 mb-1">보수 매체가 강조하는 것</p>
+                        <p className="text-rose-700 text-[11px] leading-relaxed">{heroGroup.conservativeTake}</p>
+                      </div>
+                    </div>
+                  )}
+                  <p className="text-amber-600 mt-2">두 시각을 모두 읽고 직접 판단해 보세요. 원문 링크를 클릭하면 각 매체의 기사를 확인할 수 있습니다.</p>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -607,7 +670,15 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                         {group.articles.length}개 기사 · {group.outletCount}개 매체
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">{group.topic}</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{group.topic}</h3>
+
+                    {/* Context: what this is about */}
+                    {group.summary && (
+                      <p className="text-sm text-gray-600 leading-relaxed mb-3">{group.summary}</p>
+                    )}
+                    {group.whyItMatters && (
+                      <p className="text-xs text-amber-700 font-medium mb-4">{group.whyItMatters}</p>
+                    )}
 
                     {/* 3-column: 진보 | 중도 | 보수 */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -706,7 +777,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                         </div>
                         {article.description && (
                           <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-2">
-                            {article.description}
+                            {article.description.replace(/<[^>]*>/g, '').replace(/&[a-z]+;/gi, ' ').trim()}
                           </p>
                         )}
                       </div>

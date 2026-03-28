@@ -266,3 +266,18 @@
   apps/web/lib/audit/patterns.ts         |  42 +-
   docs/audit-patterns.md                 |  97 +++-
   4 files changed, 1143 insertions(+), 169 deletions(-)
+
+## 2026-03-28 (15:51 UTC) · @Tom Kwon
+**Commit:** feat: Full rebuild — all 5 pages with rich UI + real data (d1ad624) by Tom Kwon
+**Changed:**
+  .claude/FACTS.md                                   |      3 +-
+  .claude/MEMORY.md                                  |     16 +
+  apps/web/.claude/MEMORY.md                         |     16 +
+  apps/web/app/api/audit/analyze/route.ts            |     23 +-
+  apps/web/app/api/audit/contracts/route.ts          |     23 +-
+  apps/web/app/api/cron/scrape/route.ts              |     81 +-
+  apps/web/app/api/economy/route.ts                  |     85 +-
+  apps/web/app/api/legislators/real/bills/route.ts   |     26 +-
+  apps/web/app/api/legislators/real/route.ts         |     51 +-
+  apps/web/app/api/news/live/route.ts                |     23 +-
+  ... and 35 more files
