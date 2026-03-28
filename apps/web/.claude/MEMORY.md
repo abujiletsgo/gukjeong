@@ -243,3 +243,10 @@
   apps/web/lib/news/rss.ts                           |   21 +-
   apps/web/tsconfig.tsbuildinfo                      |    2 +-
   6 files changed, 735 insertions(+), 562 deletions(-)
+
+## 2026-03-28 (13:02 UTC) · @Tom Kwon
+**Commit:** feat: Rich legislator page with real bill data — photos, activity tracking, expandable details (5559938) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 378 +++++++++++++++++----
+  apps/web/tsconfig.tsbuildinfo                      |   2 +-
+  2 files changed, 307 insertions(+), 73 deletions(-)
