@@ -249,8 +249,9 @@ function detectVendorConcentration(
   const byInstitution = groupBy(contracts, (c) => c.dminsttNm);
 
   for (const [inst, instContracts] of entries(byInstitution)) {
-    // 최소 3건 이상이어야 의미 있는 비중 분석 가능
-    if (instContracts.length < 3) continue;
+    // 최소 5건 이상이어야 통계적으로 의미 있는 비중 분석 가능
+    // (3건 표본에서 "100% 집중"은 사실상 무의미)
+    if (instContracts.length < 5) continue;
 
     const totalAmount = instContracts.reduce(
       (s, c) => s + (c.cntrctAmt || 0),
@@ -698,6 +699,11 @@ function detectInflatedPricing(
 
 /**
  * 계약 데이터에 대해 5가지 감사 패턴을 모두 실행하고 결과를 통합 반환.
+ *
+ * v2: 패턴 탐지 후 맥락 분석(context enrichment)이 프론트엔드에서 적용됩니다.
+ * enrichAllFindings()가 상품 특성, 경쟁 입찰 여부, 법적 근거 등을 분석하여
+ * 점수를 보정합니다. 이 함수는 1단계 원시 탐지 결과만 반환합니다.
+ *
  * suspicion_score 내림차순으로 정렬.
  */
 export async function runAuditAnalysis(
@@ -705,15 +711,37 @@ export async function runAuditAnalysis(
 ): Promise<AuditFinding[]> {
   if (!contracts || contracts.length === 0) return [];
 
+  // Deduplicate by contract number (나라장터 API returns multiple rows per change order)
+  const deduped = deduplicateContracts(contracts);
+
   const findings: AuditFinding[] = [];
 
-  findings.push(...detectYearendSpike(contracts));
-  findings.push(...detectVendorConcentration(contracts));
-  findings.push(...detectContractSplitting(contracts));
-  findings.push(...detectRepeatedSoleSource(contracts));
-  findings.push(...detectInflatedPricing(contracts));
+  findings.push(...detectYearendSpike(deduped));
+  findings.push(...detectVendorConcentration(deduped));
+  findings.push(...detectContractSplitting(deduped));
+  findings.push(...detectRepeatedSoleSource(deduped));
+  findings.push(...detectInflatedPricing(deduped));
 
   return findings.sort((a, b) => b.suspicion_score - a.suspicion_score);
+}
+
+/**
+ * 계약번호(cntrctNo) 기준으로 중복 제거.
+ * 나라장터 API는 변경차수(ctrtChgOrd)별로 별도 행을 반환하므로
+ * 동일 계약이 여러 번 집계되는 것을 방지합니다.
+ * 가장 높은 금액의 행을 유지합니다.
+ */
+function deduplicateContracts(contracts: G2BContractInfo[]): G2BContractInfo[] {
+  const map = new Map<string, G2BContractInfo>();
+  for (const c of contracts) {
+    const key = c.cntrctNo;
+    if (!key) { map.set(`_no_id_${map.size}`, c); continue; }
+    const existing = map.get(key);
+    if (!existing || (c.cntrctAmt || 0) > (existing.cntrctAmt || 0)) {
+      map.set(key, c);
+    }
+  }
+  return Array.from(map.values());
 }
 
 // Named exports for individual use and testing
