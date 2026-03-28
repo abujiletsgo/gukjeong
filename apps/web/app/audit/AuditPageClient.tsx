@@ -69,7 +69,7 @@ interface AuditPageClientProps {
 }
 
 // ── Pattern category definitions ───────────────────────────────────────
-type PatternCategory = 'high_value_sole_source' | 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
+type PatternCategory = 'all' | 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
 
 const PATTERN_CATEGORIES: {
   key: PatternCategory;
@@ -77,7 +77,7 @@ const PATTERN_CATEGORIES: {
   description: string;
 }[] = [
   {
-    key: 'high_value_sole_source',
+    key: 'all',
     label: '고액 수의계약',
     description: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결된 건',
   },
@@ -701,7 +701,7 @@ export default function AuditPageClient({
   const [error, setError] = useState<string | null>(null);
 
   // Filter state
-  const [activeCategory, setActiveCategory] = useState<PatternCategory>('high_value_sole_source');
+  const [activeCategory, setActiveCategory] = useState<PatternCategory>('all');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -774,7 +774,7 @@ export default function AuditPageClient({
 
   // Reset filters on mode change
   useEffect(() => {
-    setActiveCategory('high_value_sole_source');
+    setActiveCategory('all');
     setSeverityFilter('all');
     setSearchQuery('');
   }, [isDemo]);
@@ -1013,12 +1013,12 @@ export default function AuditPageClient({
         </div>
 
         {/* Active filter tags */}
-        {(activeCategory !== 'high_value_sole_source' || severityFilter !== 'all' || searchQuery.trim()) && (
+        {(activeCategory !== 'all' || severityFilter !== 'all' || searchQuery.trim()) && (
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xs text-gray-400">필터:</span>
-            {activeCategory !== 'high_value_sole_source' && (
+            {activeCategory !== 'all' && (
               <button
-                onClick={() => setActiveCategory('high_value_sole_source')}
+                onClick={() => setActiveCategory('all')}
                 className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full hover:bg-gray-200"
               >
                 {PATTERN_CATEGORIES.find(c => c.key === activeCategory)?.label} &times;
@@ -1077,7 +1077,7 @@ export default function AuditPageClient({
         <h2 className="font-bold text-lg mb-4">감사 패턴 설명</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
           {[
-            { pattern: 'high_value_sole_source', desc: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
+            { pattern: 'all', desc: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
             { pattern: 'vendor_concentration', desc: '동일 업체 계약 30% 이상 점유 (맥락 보정 적용)', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg> },
             { pattern: 'repeated_sole_source', desc: '동일 업체+기관에 수의계약 3회 이상 반복', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> },
             { pattern: 'contract_splitting', desc: '수의계약 한도(2천만원) 직하 금액으로 반복 계약', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M14 14l7 7M3 8V3h5M10 10L3 3"/></svg> },

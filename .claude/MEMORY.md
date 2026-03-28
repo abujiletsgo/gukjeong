@@ -92,3 +92,18 @@
   apps/web/lib/audit/patterns.ts         |  42 +-
   docs/audit-patterns.md                 |  97 +++-
   4 files changed, 1143 insertions(+), 169 deletions(-)
+
+## 2026-03-28 (15:53 UTC) · @Tom Kwon
+**Commit:** fix: News page — add context, summaries, frame analysis to each story (367cf3d) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md             |  15 ++
+  apps/web/app/audit/AuditPageClient.tsx | 408 ++++++++++++++++-----------------
+  apps/web/app/news/NewsPageClient.tsx   |  77 ++++++-
+  apps/web/tsconfig.tsbuildinfo          |   2 +-
+  4 files changed, 290 insertions(+), 212 deletions(-)
+
+## 2026-03-28 (15:54 UTC) · @Tom Kwon
+**Commit:** style: Restore old audit layout — heatmap, dropdowns, pattern grid (2215b2b) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 11 ++++++++---
+  1 file changed, 8 insertions(+), 3 deletions(-)
