@@ -592,13 +592,11 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
                               rel="noopener noreferrer"
                               className="text-sm text-gray-700 hover:text-gray-900 transition-colors"
                             >
-                              {article.title.length > 50
-                                {article.title}}
+                              {article.title}
                             </a>
                           ) : (
                             <span className="text-sm text-gray-700">
-                              {article.title.length > 50
-                                {article.title}}
+                              {article.title}
                             </span>
                           )}
                           {article.link && (
