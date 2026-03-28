@@ -52,6 +52,31 @@ interface RealLegislatorData {
   legislators: RawLegislator[];
 }
 
+// ── Voting record types ──
+interface VoteRecord {
+  bill_id: string;
+  bill_name: string;
+  vote: '찬성' | '반대' | '기권' | '불참';
+}
+
+interface MemberVotingData {
+  total_votes: number;
+  present: number;
+  absent: number;
+  participation_rate: number;
+  yes: number;
+  no: number;
+  abstain: number;
+  votes: VoteRecord[];
+}
+
+interface VotingRecordsData {
+  timestamp?: string;
+  bills_analyzed: number;
+  members_with_data: number;
+  participation: Record<string, MemberVotingData>;
+}
+
 // ── 정당 색상 ──
 const PARTY_COLORS: Record<string, string> = {
   '더불어민주당': '#1A56DB',
@@ -217,16 +242,33 @@ function DistributionBar({
 }
 
 // ── Sort options for live mode ──
-type SortOption = 'bills_desc' | 'bills_asc' | 'name_asc' | 'passed_desc';
+type SortOption = 'bills_desc' | 'bills_asc' | 'name_asc' | 'passed_desc' | 'participation_desc' | 'absent_desc';
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'bills_desc', label: '발의 법안 많은순' },
   { value: 'bills_asc', label: '발의 법안 적은순' },
+  { value: 'participation_desc', label: '본회의 참여율 높은순' },
+  { value: 'absent_desc', label: '불참 많은순' },
   { value: 'name_asc', label: '이름순' },
 ];
 
-// ── Real legislator card (with photo, bills, expand/collapse) ──
-function RealLegislatorCard({ raw, maxBills }: { raw: RawLegislator; maxBills: number }) {
+// ── Vote badge component ──
+function VoteBadge({ vote }: { vote: string }) {
+  const styles: Record<string, string> = {
+    '찬성': 'bg-emerald-100 text-emerald-700',
+    '반대': 'bg-rose-100 text-rose-700',
+    '기권': 'bg-gray-200 text-gray-600',
+    '불참': 'bg-gray-300 text-gray-700',
+  };
+  return (
+    <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${styles[vote] || 'bg-gray-200 text-gray-600'}`}>
+      {vote}
+    </span>
+  );
+}
+
+// ── Real legislator card (with photo, bills, voting, expand/collapse) ──
+function RealLegislatorCard({ raw, maxBills, votingData, totalBillsAnalyzed }: { raw: RawLegislator; maxBills: number; votingData?: MemberVotingData; totalBillsAnalyzed: number }) {
   const [expanded, setExpanded] = useState(false);
   const partyColor = getPartyColor(raw.POLY_NM);
   const termCount = parseTermCount(raw.REELE_GBN_NM);
@@ -235,6 +277,14 @@ function RealLegislatorCard({ raw, maxBills }: { raw: RawLegislator; maxBills: n
   const billsPassed = raw.bills_passed ?? 0;
   const recentBills = raw.recent_bills ?? [];
   const billBarPct = maxBills > 0 ? Math.min((billsProposed / maxBills) * 100, 100) : 0;
+
+  // Voting participation
+  const totalVotes = votingData?.total_votes ?? totalBillsAnalyzed;
+  const present = votingData?.present ?? 0;
+  const absent = votingData?.absent ?? totalVotes;
+  const participationRate = votingData?.participation_rate ?? 0;
+  const participationBarPct = Math.min(participationRate, 100);
+  const isFullAbsent = totalVotes > 0 && absent === totalVotes;
 
   // Parse career lines
   const careerLines = (raw.MEM_TITLE || '')
@@ -321,6 +371,40 @@ function RealLegislatorCard({ raw, maxBills }: { raw: RawLegislator; maxBills: n
           </p>
         )}
 
+        {/* Voting participation */}
+        <div className="mt-3 pt-3 border-t border-gray-50">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-semibold text-gray-600">본회의 참여</span>
+            <span className="text-sm font-bold text-gray-900">
+              {present}/{totalVotes}<span className="text-xs font-normal text-gray-400 ml-0.5">회</span>
+              <span className="text-xs font-normal text-gray-400 ml-1">({participationRate.toFixed(1)}%)</span>
+            </span>
+          </div>
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden mb-1.5">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${participationBarPct}%`,
+                backgroundColor: participationRate === 0 ? '#E5E7EB' : '#6B7280',
+                opacity: participationRate === 0 ? 0.3 : 0.7,
+              }}
+            />
+          </div>
+          {isFullAbsent ? (
+            <p className="text-xs text-gray-500">
+              최근 본회의 표결 {totalVotes}회 중 {totalVotes}회 불참
+            </p>
+          ) : absent > 0 ? (
+            <p className="text-xs text-gray-500">
+              불참 {absent}회
+            </p>
+          ) : totalVotes > 0 ? (
+            <p className="text-xs text-gray-500">
+              최근 {totalVotes}회 표결 모두 참석
+            </p>
+          ) : null}
+        </div>
+
         {/* Recent bills preview (1-2 bills) */}
         {recentBills.length > 0 && (
           <div className="mt-2.5 space-y-1">
@@ -401,6 +485,31 @@ function RealLegislatorCard({ raw, maxBills }: { raw: RawLegislator; maxBills: n
                       <polyline points="15 3 21 3 21 9" />
                       <line x1="10" y1="14" x2="21" y2="3" />
                     </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Vote history */}
+          {votingData && votingData.votes.length > 0 && (
+            <div>
+              <h4 className="text-xs font-bold text-gray-700 mb-2">
+                본회의 투표 기록 ({votingData.votes.length}건)
+              </h4>
+              <div className="space-y-1.5 max-h-60 overflow-y-auto">
+                {votingData.votes.map((v, i) => (
+                  <a
+                    key={`${v.bill_id}-${i}`}
+                    href={`https://likms.assembly.go.kr/bill/billDetail.do?billId=${v.bill_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50 transition-colors group"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-gray-700 group-hover:text-blue-600 leading-snug line-clamp-2">{v.bill_name}</p>
+                    </div>
+                    <VoteBadge vote={v.vote} />
                   </a>
                 ))}
               </div>
@@ -529,6 +638,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
 
   // Real data state
   const [realData, setRealData] = useState<RealLegislatorData | null>(null);
+  const [votingRecords, setVotingRecords] = useState<VotingRecordsData | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Filter state
@@ -538,14 +648,17 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('bills_desc');
 
-  // Fetch real data
+  // Fetch real data + voting records
   useEffect(() => {
     if (isDemo) return;
     setLoading(true);
-    fetch('/data/legislators-real.json')
-      .then(r => r.json())
-      .then((data: RealLegislatorData) => {
-        setRealData(data);
+    Promise.all([
+      fetch('/data/legislators-real.json').then(r => r.json()),
+      fetch('/data/voting-records.json').then(r => r.json()).catch(() => null),
+    ])
+      .then(([legData, voteData]: [RealLegislatorData, VotingRecordsData | null]) => {
+        setRealData(legData);
+        if (voteData) setVotingRecords(voteData);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -689,6 +802,37 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
     return b;
   }, [rawLegislators]);
 
+  // ── Voting participation stats for real data ──
+  const participation = votingRecords?.participation ?? {};
+  const totalBillsAnalyzed = votingRecords?.bills_analyzed ?? 0;
+
+  const realVotingStats = useMemo(() => {
+    const entries = Object.values(participation);
+    if (entries.length === 0) return { avgRate: 0, membersWithData: 0 };
+    const totalRate = entries.reduce((s, e) => s + e.participation_rate, 0);
+    return {
+      avgRate: totalRate / entries.length,
+      membersWithData: entries.length,
+    };
+  }, [participation]);
+
+  const realParticipationBrackets = useMemo(() => {
+    const b = [
+      { label: '90%+', count: 0 },
+      { label: '70-90%', count: 0 },
+      { label: '50-70%', count: 0 },
+      { label: '50% 미만', count: 0 },
+    ];
+    for (const entry of Object.values(participation)) {
+      const r = entry.participation_rate;
+      if (r >= 90) b[0].count++;
+      else if (r >= 70) b[1].count++;
+      else if (r >= 50) b[2].count++;
+      else b[3].count++;
+    }
+    return b;
+  }, [participation]);
+
   const filteredRealLegislators = useMemo(() => {
     let list = [...rawLegislators];
 
@@ -727,13 +871,27 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
       case 'bills_asc':
         list.sort((a, b) => (a.bills_proposed ?? 0) - (b.bills_proposed ?? 0));
         break;
+      case 'participation_desc':
+        list.sort((a, b) => {
+          const ra = participation[a.MONA_CD]?.participation_rate ?? -1;
+          const rb = participation[b.MONA_CD]?.participation_rate ?? -1;
+          return rb - ra;
+        });
+        break;
+      case 'absent_desc':
+        list.sort((a, b) => {
+          const aa = participation[a.MONA_CD]?.absent ?? 0;
+          const ab = participation[b.MONA_CD]?.absent ?? 0;
+          return ab - aa;
+        });
+        break;
       case 'name_asc':
         list.sort((a, b) => a.HG_NM.localeCompare(b.HG_NM, 'ko'));
         break;
     }
 
     return list;
-  }, [rawLegislators, partyFilter, committeeFilter, regionFilter, searchQuery, sortBy]);
+  }, [rawLegislators, partyFilter, committeeFilter, regionFilter, searchQuery, sortBy, participation]);
 
   // ── DEMO data computations (unchanged logic) ──
   const partyDistribution = useMemo(() => {
@@ -921,7 +1079,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
         )}
 
         {/* Key stats grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
           <div className="card">
             <div className="text-xs text-gray-500 mb-1">총 발의 법안</div>
             <div className="text-xl sm:text-2xl font-bold text-gray-900">{realBillStats.totalProposed.toLocaleString()}건</div>
@@ -929,6 +1087,15 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
               의원 평균 {realBillStats.avgBills.toFixed(1)}건
             </div>
           </div>
+          {totalBillsAnalyzed > 0 && (
+            <div className="card">
+              <div className="text-xs text-gray-500 mb-1">평균 본회의 참여율</div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">{realVotingStats.avgRate.toFixed(1)}%</div>
+              <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full bg-gray-500 rounded-full transition-all duration-500" style={{ width: `${Math.min(realVotingStats.avgRate, 100)}%` }} />
+              </div>
+            </div>
+          )}
           <div className="card">
             <div className="text-xs text-gray-500 mb-1">성별 구성</div>
             <div className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -952,7 +1119,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
           </div>
         </div>
 
-        {/* Distribution charts: bills + terms */}
+        {/* Distribution charts: bills + participation + terms */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           <div className="card">
             <h3 className="text-sm font-bold text-gray-700 mb-3">법안 발의 분포</h3>
@@ -961,6 +1128,18 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
               colorScale={['#D1D5DB', '#9CA3AF', '#6B7280', '#374151']}
             />
           </div>
+          {totalBillsAnalyzed > 0 && (
+            <div className="card">
+              <h3 className="text-sm font-bold text-gray-700 mb-3">
+                본회의 참여율 분포
+                <span className="text-xs font-normal text-gray-400 ml-1.5">최근 {totalBillsAnalyzed}건 표결 기준</span>
+              </h3>
+              <DistributionBar
+                brackets={realParticipationBrackets}
+                colorScale={['#374151', '#6B7280', '#9CA3AF', '#D1D5DB']}
+              />
+            </div>
+          )}
           <div className="card">
             <h3 className="text-sm font-bold text-gray-700 mb-3">당선 횟수 분포</h3>
             <DistributionBar
@@ -1112,7 +1291,13 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredRealLegislators.map(l => (
-                <RealLegislatorCard key={l.MONA_CD} raw={l} maxBills={realBillStats.maxBills} />
+                <RealLegislatorCard
+                  key={l.MONA_CD}
+                  raw={l}
+                  maxBills={realBillStats.maxBills}
+                  votingData={participation[l.MONA_CD]}
+                  totalBillsAnalyzed={totalBillsAnalyzed}
+                />
               ))}
             </div>
           )}
@@ -1121,7 +1306,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
         {/* Source */}
         <p className="text-xs text-gray-400 mt-8 text-center leading-relaxed">
           이 페이지의 모든 데이터는 열린국회정보 공개 API 기반입니다.<br />
-          법안 발의 현황은 22대 국회 기준이며 실시간 업데이트됩니다.
+          법안 발의 현황은 22대 국회 기준이며, 본회의 표결 데이터는 최근 {totalBillsAnalyzed > 0 ? `${totalBillsAnalyzed}건` : ''} 기준입니다.
         </p>
       </div>
     );
