@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import '@/styles/globals.css';
+import { DataModeProvider } from '@/lib/context/DataModeContext';
+import DataModeToggle from '@/components/common/DataModeToggle';
+import DataModeBanner from '@/components/common/DataModeBanner';
 
 // Pretendard 폰트 최적화
 // 프로덕션에서는 next/font/local 사용 권장:
@@ -135,6 +138,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <DataModeProvider>
         {/* 헤더 */}
         <header className="bg-header text-white sticky top-0 z-50">
           <div className="container-page flex items-center justify-between h-16">
@@ -149,10 +153,13 @@ export default function RootLayout({
               <a href="/audit" className="hover:text-accent transition-colors">AI 감사</a>
               <a href="/news" className="hover:text-accent transition-colors">뉴스</a>
             </nav>
-            <a href="/search" className="text-gray-300 hover:text-white flex items-center gap-1.5 text-sm" aria-label="검색">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-              <span className="hidden sm:inline">검색</span>
-            </a>
+            <div className="flex items-center gap-3">
+              <DataModeToggle />
+              <a href="/search" className="text-gray-300 hover:text-white flex items-center gap-1.5 text-sm" aria-label="검색">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <span className="hidden sm:inline">검색</span>
+              </a>
+            </div>
           </div>
           {/* 모바일 하단 네비게이션 */}
           <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-header border-t border-gray-700 z-50" aria-label="모바일 메뉴">
@@ -185,14 +192,8 @@ export default function RootLayout({
           </nav>
         </header>
 
-        {/* 시범 데이터 배너 */}
-        <div className="bg-amber-50 border-b border-amber-200">
-          <div className="container-page flex items-center justify-center gap-2 py-2 text-xs text-amber-800">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
-            <span><strong>시범 운영 중</strong> — 현재 표시된 데이터는 공공데이터 기반의 시범 데이터입니다. 실시간 API 연동 후 자동 업데이트됩니다.</span>
-            <a href="/about#data" className="underline font-semibold ml-1">데이터 출처 →</a>
-          </div>
-        </div>
+        {/* 데이터 모드 배너 */}
+        <DataModeBanner />
 
         {/* 메인 콘텐츠 */}
         <main className="min-h-screen pb-20 md:pb-0">
@@ -240,6 +241,7 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+        </DataModeProvider>
       </body>
     </html>
   );

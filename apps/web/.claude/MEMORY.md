@@ -176,3 +176,17 @@
   apps/web/lib/assembly/client.ts                  | 279 +++++++++
   apps/web/tsconfig.tsbuildinfo                    |   2 +-
   5 files changed, 1212 insertions(+), 1 deletion(-)
+
+## 2026-03-28 (09:26 UTC) · @Tom Kwon
+**Commit:** feat: Live data pipelines — real RSS news, ECOS economy, verified audit patterns (139bef4) by Tom Kwon
+**Changed:**
+  apps/web/.claude/MEMORY.md                       |  10 +
+  apps/web/app/api/economy/route.ts                |  35 +++
+  apps/web/app/api/news/live/route.ts              |  37 +++
+  apps/web/app/news/live/LiveNewsClient.tsx        | 337 +++++++++++++++++++++++
+  apps/web/app/news/live/page.tsx                  |  27 ++
+  apps/web/components/economy/EconomyDashboard.tsx | 211 ++++++++++++++
+  apps/web/lib/ecos/client.ts                      | 237 ++++++++++++++++
+  apps/web/lib/news/rss.ts                         | 234 ++++++++++++++++
+  apps/web/tsconfig.tsbuildinfo                    |   2 +-
+  9 files changed, 1129 insertions(+), 1 deletion(-)
