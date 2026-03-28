@@ -69,7 +69,7 @@ interface AuditPageClientProps {
 }
 
 // ── Pattern category definitions ───────────────────────────────────────
-type PatternCategory = 'all' | 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
+type PatternCategory = 'all' | 'high_value_sole_source' | 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
 
 const PATTERN_CATEGORIES: {
   key: PatternCategory;
@@ -78,6 +78,11 @@ const PATTERN_CATEGORIES: {
 }[] = [
   {
     key: 'all',
+    label: '전체',
+    description: '모든 패턴을 한눈에 보기',
+  },
+  {
+    key: 'high_value_sole_source',
     label: '고액 수의계약',
     description: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결된 건',
   },
@@ -735,7 +740,9 @@ export default function AuditPageClient({
   // Count per category
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
+    counts['all'] = enrichedFindings.length;
     for (const cat of PATTERN_CATEGORIES) {
+      if (cat.key === 'all') continue;
       counts[cat.key] = enrichedFindings.filter(f => f.pattern_type === cat.key).length;
     }
     return counts;
@@ -744,7 +751,7 @@ export default function AuditPageClient({
   // Filtered findings
   const filteredFindings = useMemo(() => {
     return enrichedFindings.filter(f => {
-      if (f.pattern_type !== activeCategory) return false;
+      if (activeCategory !== 'all' && f.pattern_type !== activeCategory) return false;
       if (severityFilter !== 'all' && f.risk_level !== severityFilter) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
@@ -762,7 +769,9 @@ export default function AuditPageClient({
 
   // Risk level breakdown for active category
   const riskBreakdown = useMemo(() => {
-    const inCategory = enrichedFindings.filter(f => f.pattern_type === activeCategory);
+    const inCategory = activeCategory === 'all'
+      ? enrichedFindings
+      : enrichedFindings.filter(f => f.pattern_type === activeCategory);
     return {
       total: inCategory.length,
       concern: inCategory.filter(f => f.risk_level === 'CONCERN').length,
