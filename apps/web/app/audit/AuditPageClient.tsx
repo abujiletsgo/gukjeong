@@ -4,7 +4,44 @@
 // Demo mode: seed data passed as props
 //
 // v3: Production rebuild — full rich features in both modes
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+
+// Debug error boundary to show actual crash reason
+class AuditErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="container-page py-16">
+          <div className="card max-w-2xl mx-auto">
+            <h2 className="text-lg font-bold text-rose-600 mb-2">Audit Page Crash</h2>
+            <pre className="text-xs bg-gray-100 p-4 rounded overflow-auto whitespace-pre-wrap text-gray-700">
+              {this.state.error.message}
+              {'\n\n'}
+              {this.state.error.stack}
+            </pre>
+            <button
+              onClick={() => this.setState({ error: null })}
+              className="mt-4 btn-primary"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 import { useDataMode } from '@/lib/context/DataModeContext';
 import {
   enrichAllFindings,
@@ -693,7 +730,15 @@ function MethodologyFooter({ timestamp }: { timestamp?: string }) {
 // ══════════════════════════════════════════════════════════════════════
 // Main page component
 // ══════════════════════════════════════════════════════════════════════
-export default function AuditPageClient({
+export default function AuditPageClientWrapper(props: AuditPageClientProps) {
+  return (
+    <AuditErrorBoundary>
+      <AuditPageClientInner {...props} />
+    </AuditErrorBoundary>
+  );
+}
+
+function AuditPageClientInner({
   departmentScores,
   auditFlags,
   kpis,
@@ -702,7 +747,7 @@ export default function AuditPageClient({
 
   // Real data state
   const [realData, setRealData] = useState<RealAuditData | null>(null);
-  const [loading, setLoading] = useState(!isDemo);
+  const [loading, setLoading] = useState(true);
 
   // Filter state
   const [activeCategory, setActiveCategory] = useState<PatternCategory>('all');
@@ -711,7 +756,10 @@ export default function AuditPageClient({
 
   // Fetch real data on mount (only in live mode)
   useEffect(() => {
-    if (isDemo) return;
+    if (isDemo) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     fetch('/data/audit-results.json')
       .then(r => {
@@ -748,7 +796,12 @@ export default function AuditPageClient({
   const enrichedFindings = useMemo(() => {
     const raw = realData?.findings ?? [];
     if (raw.length === 0) return [];
-    return enrichAllFindings(raw);
+    try {
+      return enrichAllFindings(raw);
+    } catch (e) {
+      console.error('[Audit] enrichAllFindings crashed:', e);
+      return [];
+    }
   }, [realData]);
 
   // Count per category
