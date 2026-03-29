@@ -65,6 +65,49 @@ def now_iso():
     return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
+# ── KONEPS API helpers ──
+# 조달청 KONEPS APIs use different gateway prefixes and date formats
+
+G2B_BASE = 'https://apis.data.go.kr/1230000'
+
+def koneps_date(days_ago=30):
+    """Date pair for KONEPS APIs: (start, end) in YYYYMMDDHHmm format."""
+    end = datetime.now()
+    start = datetime(end.year, end.month, 1) if days_ago <= 31 else datetime(end.year - 1, 1, 1)
+    return start.strftime('%Y%m%d0000'), end.strftime('%Y%m%d2359')
+
+
+def fetch_koneps_pages(url_template, max_pages=10, label='items'):
+    """Generic paginated fetcher for KONEPS/data.go.kr APIs."""
+    all_items = []
+    page = 1
+    while page <= max_pages:
+        url = url_template.format(KEY=DATA_GO_KR_KEY, PAGE=page)
+        d = fetch_json(url)
+        # Handle KONEPS error format
+        err = d.get('nkoneps.com.response.ResponseError', {})
+        if err:
+            code = err.get('header', {}).get('resultCode', '?')
+            msg = err.get('header', {}).get('resultMsg', '?')
+            if page == 1:
+                print(f'  ⚠️  API error: {code} — {msg}')
+            break
+        body = d.get('response', {}).get('body', {})
+        items = body.get('items', [])
+        if not isinstance(items, list):
+            items = [items] if items else []
+        if not items:
+            break
+        all_items.extend(items)
+        total = int(body.get('totalCount', 0))
+        if page % 5 == 0:
+            print(f'  Page {page}: {len(all_items)}/{total}')
+        if len(all_items) >= total or len(items) < 100:
+            break
+        page += 1
+    return all_items
+
+
 # ── Fetchers ──
 
 def fetch_legislators():
@@ -217,6 +260,309 @@ def fetch_g2b_contracts():
     print(f'  ✅ {len(all_items)} contracts')
 
 
+def fetch_g2b_companies():
+    print('\n🏢 나라장터 — 조달업체 기본정보')
+    # Extract unique bizno values from existing bid/contract data
+    biznos = set()
+    for fname in ['g2b-actual-contracts.json', 'g2b-contracts.json']:
+        fpath = DATA_DIR / fname
+        if fpath.exists():
+            with open(fpath, encoding='utf-8') as f:
+                data = json.load(f)
+            for item in data.get('items', []):
+                for key in ['rprsntCorpBizrno', 'bidwinrBizno', 'cntrctorBizno']:
+                    bz = str(item.get(key, '')).strip().replace('-', '')
+                    if bz and len(bz) == 10 and bz.isdigit():
+                        biznos.add(bz)
+    print(f'  Found {len(biznos)} unique bizno values from existing data')
+
+    all_corps = []
+    for i, bizno in enumerate(sorted(biznos)):
+        if i >= 500:  # rate limit guard (1000/day shared across all endpoints)
+            print(f'  ⚠️  Stopped at 500 — rate limit')
+            break
+        try:
+            url = (
+                f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
+                f'/getPrcrmntCorpBasicInfo02?serviceKey={DATA_GO_KR_KEY}'
+                f'&bizno={bizno}&inqryDiv=3&numOfRows=1&pageNo=1&type=json'
+            )
+            d = fetch_json(url)
+            body = d.get('response', {}).get('body', {})
+            items = body.get('items', [])
+            if not isinstance(items, list):
+                items = [items] if items else []
+            all_corps.extend(items)
+        except Exception:
+            pass  # skip unreachable companies
+        if (i + 1) % 50 == 0:
+            print(f'  Queried {i + 1}/{min(len(biznos), 200)}')
+
+    save('g2b-companies.json', {
+        'source': 'data.go.kr',
+        'endpoint': 'getPrcrmntCorpBasicInfo02',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_corps),
+        'items': all_corps,
+    })
+    print(f'  ✅ {len(all_corps)} company profiles')
+
+
+def fetch_g2b_sanctions():
+    print('\n🚫 나라장터 — 부정당제재업체')
+    all_items = []
+    page = 1
+    while page <= 20:
+        url = (
+            f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
+            f'/getUnptRsttCorpInfo02?serviceKey={DATA_GO_KR_KEY}'
+            f'&inqryDiv=3&numOfRows=100&pageNo={page}&type=json'
+        )
+        d = fetch_json(url)
+        body = d.get('response', {}).get('body', {})
+        items = body.get('items', [])
+        if not isinstance(items, list):
+            items = [items] if items else []
+        if not items:
+            break
+        all_items.extend(items)
+        total = body.get('totalCount', 0)
+        if len(all_items) >= total or len(items) < 100:
+            break
+        page += 1
+
+    save('g2b-sanctions.json', {
+        'source': 'data.go.kr',
+        'endpoint': 'getUnptRsttCorpInfo02',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_items),
+        'items': all_items,
+    })
+    print(f'  ✅ {len(all_items)} sanctioned companies')
+
+
+def fetch_g2b_winning_bids():
+    """낙찰정보서비스 — as/ScsbidInfoService"""
+    print('\n🏆 나라장터 — 낙찰정보 (물품+공사+용역)')
+    start, end = koneps_date(30)
+    all_items = []
+    for category, ep in [
+        ('물품', 'getScsbidListSttusThng'),
+        ('공사', 'getScsbidListSttusCnstwk'),
+        ('용역', 'getScsbidListSttusServc'),
+    ]:
+        tmpl = (
+            f'{G2B_BASE}/as/ScsbidInfoService/{ep}'
+            f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+            f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
+        )
+        items = fetch_koneps_pages(tmpl, max_pages=5)
+        all_items.extend(items)
+        print(f'  {category}: {len(items)}건')
+
+    save('g2b-winning-bids.json', {
+        'source': 'data.go.kr',
+        'service': 'as/ScsbidInfoService',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_items),
+        'items': all_items,
+    })
+    print(f'  ✅ {len(all_items)} winning bids')
+
+
+def fetch_g2b_contract_details():
+    """계약정보서비스 — ao/CntrctInfoService"""
+    print('\n📋 나라장터 — 계약정보 (물품+공사+용역)')
+    start, end = koneps_date(30)
+    all_items = []
+    for category, ep in [
+        ('물품', 'getCntrctInfoListThng'),
+        ('공사', 'getCntrctInfoListCnstwk'),
+        ('용역', 'getCntrctInfoListServc'),
+    ]:
+        tmpl = (
+            f'{G2B_BASE}/ao/CntrctInfoService/{ep}'
+            f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+            f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
+        )
+        items = fetch_koneps_pages(tmpl, max_pages=5)
+        all_items.extend(items)
+        print(f'  {category}: {len(items)}건')
+
+    save('g2b-contract-details.json', {
+        'source': 'data.go.kr',
+        'service': 'ao/CntrctInfoService',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_items),
+        'items': all_items,
+    })
+    print(f'  ✅ {len(all_items)} contract details')
+
+
+def fetch_g2b_contract_process():
+    """계약과정통합공개 — ao/CntrctProcssIntgOpenService"""
+    print('\n🔄 나라장터 — 계약과정통합공개')
+    start, end = koneps_date(30)
+    all_items = []
+    for category, ep in [
+        ('물품', 'getCntrctProcssIntgOpenThng'),
+        ('공사', 'getCntrctProcssIntgOpenCnstwk'),
+        ('용역', 'getCntrctProcssIntgOpenServc'),
+    ]:
+        tmpl = (
+            f'{G2B_BASE}/ao/CntrctProcssIntgOpenService/{ep}'
+            f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+            f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
+        )
+        items = fetch_koneps_pages(tmpl, max_pages=3)
+        all_items.extend(items)
+        print(f'  {category}: {len(items)}건')
+
+    save('g2b-contract-process.json', {
+        'source': 'data.go.kr',
+        'service': 'ao/CntrctProcssIntgOpenService',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_items),
+        'items': all_items,
+    })
+    print(f'  ✅ {len(all_items)} contract process records')
+
+
+def fetch_g2b_prices():
+    """가격정보현황서비스 — ao/PriceInfoService"""
+    print('\n💰 나라장터 — 가격정보')
+    all_items = []
+    for category, ep in [
+        ('시설공통자재(토목)', 'getPriceInfoListFcltyCmmnMtrilEngrk'),
+        ('시설공통자재(건축)', 'getPriceInfoListFcltyCmmnMtrilBildng'),
+        ('시설공통자재(기계)', 'getPriceInfoListFcltyCmmnMtrilMchnEqp'),
+        ('시설공통자재(전기)', 'getPriceInfoListFcltyCmmnMtrilElctyIrmc'),
+    ]:
+        tmpl = (
+            f'{G2B_BASE}/ao/PriceInfoService/{ep}'
+            f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+        )
+        items = fetch_koneps_pages(tmpl, max_pages=5)
+        all_items.extend(items)
+        print(f'  {category}: {len(items)}건')
+
+    save('g2b-prices.json', {
+        'source': 'data.go.kr',
+        'service': 'ao/PriceInfoService',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_items),
+        'items': all_items,
+    })
+    print(f'  ✅ {len(all_items)} price records')
+
+
+def fetch_procurement_stats():
+    """공공조달통계정보서비스 — at/PubPrcrmntStatInfoService"""
+    print('\n📊 공공조달통계')
+    now = datetime.now()
+    year = str(now.year - 1)  # full year data
+    ym_start = f'{now.year - 1}01'
+    ym_end = f'{now.year - 1}12'
+
+    all_data = {}
+
+    # 총괄 현황
+    try:
+        url = (
+            f'{G2B_BASE}/at/PubPrcrmntStatInfoService/getTotlPubPrcrmntSttus'
+            f'?serviceKey={DATA_GO_KR_KEY}&numOfRows=100&pageNo=1&type=json'
+            f'&srchBssYear={year}'
+        )
+        d = fetch_json(url)
+        items = d.get('response', {}).get('body', {}).get('items', [])
+        if not isinstance(items, list):
+            items = [items] if items else []
+        all_data['total'] = items
+        print(f'  총괄: {len(items)}건')
+    except Exception as e:
+        print(f'  ❌ 총괄: {e}')
+
+    # 계약방법별
+    try:
+        url = (
+            f'{G2B_BASE}/at/PubPrcrmntStatInfoService/getCntrctMthdAccotSttus'
+            f'?serviceKey={DATA_GO_KR_KEY}&numOfRows=100&pageNo=1&type=json'
+            f'&srchBssYmBgn={ym_start}&srchBssYmEnd={ym_end}'
+        )
+        d = fetch_json(url)
+        items = d.get('response', {}).get('body', {}).get('items', [])
+        if not isinstance(items, list):
+            items = [items] if items else []
+        all_data['by_method'] = items
+        print(f'  계약방법별: {len(items)}건')
+    except Exception as e:
+        print(f'  ❌ 계약방법별: {e}')
+
+    # 기업구분별
+    try:
+        url = (
+            f'{G2B_BASE}/at/PubPrcrmntStatInfoService/getEntrprsDivAccotPrcrmntSttus'
+            f'?serviceKey={DATA_GO_KR_KEY}&numOfRows=100&pageNo=1&type=json'
+            f'&srchBssYmBgn={ym_start}&srchBssYmEnd={ym_end}'
+        )
+        d = fetch_json(url)
+        items = d.get('response', {}).get('body', {}).get('items', [])
+        if not isinstance(items, list):
+            items = [items] if items else []
+        all_data['by_enterprise'] = items
+        print(f'  기업구분별: {len(items)}건')
+    except Exception as e:
+        print(f'  ❌ 기업구분별: {e}')
+
+    save('procurement-stats.json', {
+        'source': 'data.go.kr',
+        'service': 'at/PubPrcrmntStatInfoService',
+        'fetched_at': now_iso(),
+        'year': year,
+        'data': all_data,
+    })
+    total = sum(len(v) for v in all_data.values())
+    print(f'  ✅ {total} stat records')
+
+
+def fetch_official_assets():
+    """공직자 재산공개 — 행정안전부 ApiPetyService"""
+    print('\n👔 공직자 재산공개 (관보)')
+    now = datetime.now()
+    req_from = f'{now.year - 1}0101'
+    req_to = now.strftime('%Y%m%d')
+
+    all_items = []
+    page = 1
+    while page <= 10:
+        url = (
+            f'https://apis.data.go.kr/1741000/ApiPetyService/getApiPetyList'
+            f'?serviceKey={DATA_GO_KR_KEY}&pageNo={page}&pageSize=100'
+            f'&reqFrom={req_from}&reqTo={req_to}&type=1'
+        )
+        d = fetch_json(url)
+        resp = d.get('response', {})
+        items = resp.get('items', {}).get('item', [])
+        if not isinstance(items, list):
+            items = [items] if items else []
+        if not items:
+            break
+        all_items.extend(items)
+        total = int(resp.get('totalCount', 0))
+        if len(all_items) >= total or len(items) < 100:
+            break
+        page += 1
+
+    save('official-assets.json', {
+        'source': 'data.go.kr',
+        'service': 'ApiPetyService',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_items),
+        'items': all_items,
+    })
+    print(f'  ✅ {len(all_items)} asset disclosure records')
+
+
 def fetch_news():
     print('\n📰 뉴스 RSS 피드')
     feeds = [
@@ -275,6 +621,14 @@ FETCHERS = {
     'ecos': fetch_ecos,
     'g2b': fetch_g2b_bids,
     'contracts': fetch_g2b_contracts,
+    'companies': fetch_g2b_companies,
+    'sanctions': fetch_g2b_sanctions,
+    'winning-bids': fetch_g2b_winning_bids,
+    'contract-details': fetch_g2b_contract_details,
+    'contract-process': fetch_g2b_contract_process,
+    'prices': fetch_g2b_prices,
+    'stats': fetch_procurement_stats,
+    'assets': fetch_official_assets,
     'news': fetch_news,
 }
 

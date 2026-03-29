@@ -9,6 +9,9 @@
 const BASE_URL =
   'https://apis.data.go.kr/1230000/ao/PubDataOpnStdService';
 
+const USR_INFO_URL =
+  'https://apis.data.go.kr/1230000/ao/UsrInfoService02';
+
 // ── Types ───────────────────────────────────────────────────────────
 
 /** 입찰공고 정보 */
@@ -70,6 +73,35 @@ export interface G2BContractInfo {
   rgstDt?: string;             // 등록일시
 }
 
+/** 조달업체 기본정보 */
+export interface G2BCorpInfo {
+  bizno: string;               // 사업자등록번호
+  corpNm: string;              // 업체명
+  engCorpNm?: string;          // 영문업체명
+  ceoNm: string;               // 대표자명
+  opbizDt?: string;            // 개업일
+  rgnNm?: string;              // 지역명
+  adrs?: string;               // 주소
+  dtlAdrs?: string;            // 상세주소
+  telNo?: string;              // 전화번호
+  emplyeNum: number;           // 종업원수
+  corpBsnsDivNm?: string;      // 업체사업구분명 (물품,공사,용역 등)
+  hdoffceDivNm?: string;       // 본사구분명
+  rgstDt?: string;             // 등록일시
+  chgDt?: string;              // 변경일시
+}
+
+/** 부정당제재업체 정보 */
+export interface G2BSanctionedCorp {
+  bizno: string;               // 사업자등록번호
+  corpNm: string;              // 업체명
+  ceoNm?: string;              // 대표자명
+  rsttBgnDt?: string;          // 제재시작일
+  rsttEndDt?: string;          // 제재종료일
+  rsttRsnCntnts?: string;      // 제재사유
+  rsttDivNm?: string;          // 제재구분명
+}
+
 /** 페이지네이션 응답 공통 */
 export interface G2BPagedResponse<T> {
   items: T[];
@@ -122,6 +154,7 @@ interface DataGoKrJsonResponse {
 function buildUrl(
   endpoint: string,
   params: Record<string, string | number>,
+  baseUrl: string = BASE_URL,
 ): string {
   // serviceKey는 이미 인코딩된 상태로 전달되므로 수동으로 URL을 구성합니다.
   // data.go.kr는 serviceKey를 decoding된 상태 또는 encoding된 상태
@@ -130,7 +163,7 @@ function buildUrl(
   for (const [key, value] of Object.entries(params)) {
     searchParams.set(key, String(value));
   }
-  return `${BASE_URL}/${endpoint}?${searchParams.toString()}`;
+  return `${baseUrl}/${endpoint}?${searchParams.toString()}`;
 }
 
 function parseItems<T>(body: DataGoKrJsonResponse['response']['body']): {
@@ -179,18 +212,27 @@ function isNumericField(fieldName: string): boolean {
 
 async function fetchFromG2B<T>(
   endpoint: string,
-  params: { numOfRows?: number; pageNo?: number },
+  params: { numOfRows?: number; pageNo?: number; [key: string]: string | number | undefined },
+  baseUrl: string = BASE_URL,
 ): Promise<G2BPagedResponse<T>> {
   const apiKey = getApiKey();
   const numOfRows = params.numOfRows ?? 10;
   const pageNo = params.pageNo ?? 1;
 
-  const url = buildUrl(endpoint, {
+  const queryParams: Record<string, string | number> = {
     serviceKey: apiKey,
     numOfRows,
     pageNo,
     type: 'json',
-  });
+  };
+  // Forward extra params (e.g. bizno for company lookup)
+  for (const [key, val] of Object.entries(params)) {
+    if (key !== 'numOfRows' && key !== 'pageNo' && val != null) {
+      queryParams[key] = val;
+    }
+  }
+
+  const url = buildUrl(endpoint, queryParams, baseUrl);
 
   const response = await fetch(url, {
     headers: { Accept: 'application/json' },
@@ -282,6 +324,51 @@ export async function fetchContracts(params: {
     return { items: [], totalCount: 0 };
   }
 }
+
+// ── UsrInfoService02 — 조달업체 정보 ────────────────────────────────
+
+/**
+ * 조달업체 기본정보 조회
+ * 사업자등록번호(bizno)로 업체의 대표자, 종업원수, 업종, 주소 등을 조회합니다.
+ * endpoint: getPrcrmntCorpBasicInfo02
+ */
+export async function fetchCorpInfo(bizno: string): Promise<G2BCorpInfo | null> {
+  try {
+    const result = await fetchFromG2B<G2BCorpInfo>(
+      'getPrcrmntCorpBasicInfo02',
+      { bizno, inqryDiv: '3', numOfRows: 1 },
+      USR_INFO_URL,
+    );
+    return result.items[0] ?? null;
+  } catch (error) {
+    console.error('[G2B] 조달업체 기본정보 조회 실패:', error);
+    return null;
+  }
+}
+
+/**
+ * 부정당제재업체 정보 조회
+ * 제재된 업체 목록을 페이지 단위로 조회합니다.
+ * endpoint: getUnptRsttCorpInfo02
+ */
+export async function fetchSanctionedCorps(params: {
+  numOfRows?: number;
+  pageNo?: number;
+} = {}): Promise<{ items: G2BSanctionedCorp[]; totalCount: number }> {
+  try {
+    const result = await fetchFromG2B<G2BSanctionedCorp>(
+      'getUnptRsttCorpInfo02',
+      { ...params, inqryDiv: '3' },
+      USR_INFO_URL,
+    );
+    return { items: result.items, totalCount: result.totalCount };
+  } catch (error) {
+    console.error('[G2B] 부정당제재업체 조회 실패:', error);
+    return { items: [], totalCount: 0 };
+  }
+}
+
+// ── Utilities ───────────────────────────────────────────────────────
 
 /**
  * 전체 페이지 순회하여 모든 데이터를 가져오는 유틸리티.

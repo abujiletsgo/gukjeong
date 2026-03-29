@@ -63,3 +63,59 @@ export function getLocalG2BContracts() {
 export function getLocalNews() {
   return cached<Record<string, string>>('news-rss.json');
 }
+
+export function getLocalG2BCompanies() {
+  try {
+    return cached<Record<string, unknown>>('g2b-companies.json');
+  } catch {
+    return { source: '', fetched_at: '', totalCount: 0, items: [] };
+  }
+}
+
+/** Lookup a company by bizno (strips dashes) */
+export function getCompanyByBizno(bizno: string): Record<string, unknown> | null {
+  const clean = bizno.replace(/-/g, '');
+  const { items } = getLocalG2BCompanies();
+  return items.find((c) => String(c.bizno) === clean) as Record<string, unknown> | null ?? null;
+}
+
+export function getLocalWinningBids() {
+  try {
+    return cached<Record<string, unknown>>('g2b-winning-bids.json');
+  } catch {
+    return { source: '', fetched_at: '', totalCount: 0, items: [] };
+  }
+}
+
+export function getLocalContractDetails() {
+  try {
+    return cached<Record<string, unknown>>('g2b-contract-details.json');
+  } catch {
+    return { source: '', fetched_at: '', totalCount: 0, items: [] };
+  }
+}
+
+export function getLocalPrices() {
+  try {
+    return cached<Record<string, unknown>>('g2b-prices.json');
+  } catch {
+    return { source: '', fetched_at: '', totalCount: 0, items: [] };
+  }
+}
+
+export function getLocalProcurementStats() {
+  try {
+    const raw = readFileSync(join(DATA_DIR, 'procurement-stats.json'), 'utf-8');
+    return JSON.parse(raw) as { year: string; data: Record<string, unknown[]> };
+  } catch {
+    return { year: '', data: {} };
+  }
+}
+
+export function getLocalOfficialAssets() {
+  try {
+    return cached<Record<string, unknown>>('official-assets.json');
+  } catch {
+    return { source: '', fetched_at: '', totalCount: 0, items: [] };
+  }
+}
