@@ -204,6 +204,9 @@ function getKeyStat(finding: RealFinding | EnrichedFinding): string {
 
 // ── Utility: plain Korean explanation per finding ────────────────────
 function getPlainExplanation(finding: RealFinding | EnrichedFinding): string {
+  // Use rich plain_explanation from generate-audit.py if available
+  if ((finding as any).plain_explanation) return (finding as any).plain_explanation;
+
   const d = finding.detail;
   const inst = finding.target_institution;
 
@@ -423,6 +426,14 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
             </p>
           </div>
 
+          {/* 왜 의심스러운가 (from rich narrative) */}
+          {(finding as any).why_it_matters && (
+            <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
+              <h4 className="text-sm font-bold text-amber-800 mb-1">왜 의심스러운가?</h4>
+              <p className="text-sm text-amber-700 leading-relaxed">{(finding as any).why_it_matters}</p>
+            </div>
+          )}
+
           {/* Contextual analysis (from enrichment engine) */}
           <div className="bg-gray-50 rounded-lg p-4">
             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">맥락 분석</h4>
@@ -430,6 +441,21 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
               {finding.contextual_analysis}
             </p>
           </div>
+
+          {/* 내 세금은? (citizen impact) */}
+          {(finding as any).citizen_impact && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-lg">
+                  <span aria-hidden="true">&#x20A9;</span>
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-amber-800 mb-1">내 세금은?</h4>
+                  <p className="text-sm text-amber-700 leading-relaxed">{(finding as any).citizen_impact}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Data quality warnings */}
           {(finding.data_quality.duplicate_contracts > 0 || finding.data_quality.small_sample) && (
@@ -580,6 +606,45 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                   <DetailTable detail={finding.detail} />
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 필요한 조치 (what should happen) */}
+          {(finding as any).what_should_happen && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h4 className="text-sm font-bold text-green-800 mb-2 flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                필요한 조치
+              </h4>
+              <p className="text-sm text-green-700 leading-relaxed whitespace-pre-line">
+                {(finding as any).what_should_happen}
+              </p>
+            </div>
+          )}
+
+          {/* 관련 링크 (related links) */}
+          {(finding as any).related_links?.length > 0 && (
+            <div>
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">직접 확인하기</h4>
+              <div className="flex flex-wrap gap-2">
+                {((finding as any).related_links as { title: string; url: string; source: string }[]).map((link, i) => (
+                  <a
+                    key={i}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-full transition-colors"
+                  >
+                    <span className="text-[10px] text-gray-400">{link.source}</span>
+                    <span>{link.title}</span>
+                    <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                  </a>
+                ))}
+              </div>
             </div>
           )}
 

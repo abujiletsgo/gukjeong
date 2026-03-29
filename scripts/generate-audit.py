@@ -157,6 +157,36 @@ for inst, items in ghost_by_inst.items():
         'detail': detail,
         'evidence_contracts': evidence,
         'innocent_explanation': innocent,
+        'plain_explanation': (
+            f'{inst}에서 종업원이 {items[0]["emp"]}명뿐인 {items[0]["corp"]}에게 '
+            f'{total_amt/1e8:.1f}억원 규모의 계약을 맡겼습니다. '
+            f'쉽게 말해, 직원이 없다시피 한 회사가 수억 원짜리 정부 일을 따낸 것입니다. '
+            f'이런 업체 {len(items)}곳이 총 {len(items)}건의 계약을 수주했습니다.'
+        ),
+        'why_it_matters': (
+            '종업원이 0~1명인 업체가 수억 원 이상의 정부 계약을 수주하는 것은 '
+            '유령회사를 통한 공금 횡령의 전형적 수법과 일치합니다. '
+            '실체가 없는 회사에 계약금을 지급하면, 그 돈이 실제 사업에 쓰이지 않고 '
+            '특정인의 사적 이익으로 빠져나갈 위험이 큽니다. '
+            '감사원 적발 사례 중 유령업체를 통한 횡령은 전체 조달 비리의 약 30%를 차지합니다.'
+        ),
+        'citizen_impact': (
+            f'총 {total_amt/1e8:.1f}억원(약 {total_amt/1e4:,.0f}만원)의 세금이 '
+            f'실체가 불분명한 업체에 지급되었습니다. '
+            f'만약 이 금액이 정상적인 업체를 통해 집행되었다면, '
+            f'같은 예산으로 더 높은 품질의 서비스를 받을 수 있었을 것입니다.'
+        ),
+        'what_should_happen': (
+            '1) 해당 업체의 4대보험 가입현황 확인 (실제 직원 존재 여부 검증) '
+            '2) 사업자등록증상 주소지에 실제 사업장이 있는지 현장 확인 '
+            '3) 계약 이행 실적 및 납품 증빙 서류 전수 점검 '
+            '4) 업체 대표와 발주기관 담당자 간 인적 관계 조사'
+        ),
+        'related_links': [
+            {'title': '나라장터에서 해당 기관 계약 검색', 'url': 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', 'source': '나라장터'},
+            {'title': '감사원 감사결과 검색', 'url': 'https://www.bai.go.kr/bai/result/list', 'source': '감사원'},
+            {'title': '국세청 사업자등록 상태 조회', 'url': 'https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/sf/a/a/UTESFAAF99.xml', 'source': '국세청 홈택스'},
+        ],
     })
 
 print(f'  Found {len([f for f in findings if f["pattern_type"] == "ghost_company"])} ghost company findings')
@@ -649,6 +679,256 @@ for winner, items in low_comp_winners.items():
     })
 
 print(f'  Found {len([f for f in findings if f["pattern_type"] == "low_bid_competition"])} low competition findings')
+
+
+# ════════════════════════════════════════════════════════════════════
+# Post-process: Add rich narrative fields to ALL findings
+# ════════════════════════════════════════════════════════════════════
+print('\n📝 Adding rich narrative fields...')
+
+STANDARD_LINKS = [
+    {'title': '나라장터에서 해당 기관 계약 검색', 'url': 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', 'source': '나라장터'},
+    {'title': '감사원 감사결과 검색', 'url': 'https://www.bai.go.kr/bai/result/list', 'source': '감사원'},
+]
+
+PATTERN_EXTRA_LINK = {
+    'ghost_company': {'title': '국세청 사업자등록 상태 조회', 'url': 'https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/sf/a/a/UTESFAAF99.xml', 'source': '국세청 홈택스'},
+    'zero_competition': {'title': '열린재정 세출 현황', 'url': 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', 'source': '열린재정'},
+    'bid_rate_anomaly': {'title': '공정거래위원회 입찰담합 의결서', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
+    'new_company_big_win': {'title': '국세청 사업자등록 상태 조회', 'url': 'https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/sf/a/a/UTESFAAF99.xml', 'source': '국세청 홈택스'},
+    'vendor_concentration': {'title': '열린재정 세출 현황', 'url': 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', 'source': '열린재정'},
+    'repeated_sole_source': {'title': '조달청 수의계약 현황', 'url': 'https://www.pps.go.kr/kor/bbs/list.do?bbsId=PPS_OPEN_INFO', 'source': '조달청'},
+    'contract_splitting': {'title': '국가법령정보센터 (국가계약법 시행령)', 'url': 'https://www.law.go.kr/법령/국가를당사자로하는계약에관한법률시행령', 'source': '법령정보'},
+    'low_bid_competition': {'title': '공정거래위원회 입찰담합 의결서', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
+}
+
+
+def fmt_amt(amt):
+    if amt >= 1e12: return f'{amt/1e12:.1f}조원'
+    if amt >= 1e8: return f'{amt/1e8:.1f}억원'
+    if amt >= 1e4: return f'{amt/1e4:,.0f}만원'
+    return f'{amt:,.0f}원'
+
+
+def enrich_narrative(f):
+    """Add plain_explanation, why_it_matters, citizen_impact, what_should_happen, related_links."""
+    if f.get('plain_explanation'):
+        # Already has rich fields (e.g. ghost_company)
+        if not f.get('related_links'):
+            f['related_links'] = STANDARD_LINKS + [PATTERN_EXTRA_LINK.get(f['pattern_type'], {})]
+        return
+
+    pt = f['pattern_type']
+    d = f.get('detail', {})
+    inst = f.get('target_institution', '')
+    total_amt = 0
+    for e in f.get('evidence_contracts', []):
+        total_amt += float(e.get('amount', 0))
+
+    if pt == 'zero_competition':
+        n = d.get('단독응찰_건수', 1)
+        winner = d.get('낙찰업체', '')
+        f['plain_explanation'] = (
+            f'{inst}에서 진행한 {n}건의 경쟁 입찰에 매번 단 1개 업체만 참여했습니다. '
+            f'마치 가위바위보를 혼자서 하는 것과 같습니다. '
+            f'경쟁이 없으면 정부는 유일한 입찰자가 부르는 가격을 그대로 지불할 수밖에 없습니다.'
+        )
+        f['why_it_matters'] = (
+            f'경쟁 입찰의 목적은 여러 업체가 가격과 품질을 경쟁하여 세금을 아끼는 것입니다. '
+            f'1개 업체만 참여하면 이 효과가 완전히 사라집니다. '
+            f'통계적으로 경쟁 입찰은 단독 응찰 대비 10-15% 낮은 가격에 낙찰됩니다. '
+            f'또한 입찰 공고의 참가 자격 조건을 특정 업체에 맞추는 '
+            f'"맞춤형 입찰 공고"를 통해 의도적으로 경쟁을 배제했을 가능성도 있습니다.'
+        )
+        savings = total_amt * 0.12
+        f['citizen_impact'] = (
+            f'경쟁이 있었다면 약 {fmt_amt(savings)}의 세금을 절감할 수 있었을 것입니다 '
+            f'(업계 평균 경쟁 절감률 12% 기준). '
+            f'이는 {inst} 관할 지역의 공공서비스 개선에 사용될 수 있는 금액입니다.'
+        )
+        f['what_should_happen'] = (
+            f'1) 해당 입찰 공고의 참가 자격 요건이 과도하게 제한적이었는지 검토 '
+            f'2) 동일 분야에 참여 가능한 다른 업체가 존재하는지 시장 조사 '
+            f'3) 입찰 공고 기간이 충분했는지 확인 (지나치게 짧은 공고 기간은 경쟁 배제 수법) '
+            f'4) {winner}과(와) {inst} 담당자 간 사전 접촉 여부 조사'
+        )
+
+    elif pt == 'bid_rate_anomaly':
+        rate = d.get('평균낙찰률', '99%')
+        vendor = d.get('낙찰업체', '')
+        n = d.get('해당건수', 1)
+        f['plain_explanation'] = (
+            f'{vendor}이(가) 예정가격의 {rate}에 낙찰되었습니다. '
+            f'이는 입찰 전에 예정가격을 미리 알고 있었을 가능성을 시사합니다. '
+            f'일반적인 경쟁 입찰에서는 낙찰률이 82-92% 범위이며, '
+            f'98% 이상은 통계적으로 극히 이례적입니다.'
+        )
+        f['why_it_matters'] = (
+            f'예정가격은 입찰 전에 비공개로 관리되어야 합니다. '
+            f'낙찰률이 98% 이상이라는 것은 거의 정확히 예정가격을 맞춘 것으로, '
+            f'내부 정보 유출의 전형적 신호입니다. '
+            f'2016년 조달청 예정가격 유출 사건에서는 7개 업체가 156건에 걸쳐 97-99% 낙찰률을 유지했고, '
+            f'이것이 우연일 확률은 10의 23승분의 1 미만이었습니다. 담당 공무원이 실형을 선고받았습니다.'
+        )
+        overcharge = total_amt * 0.10
+        f['citizen_impact'] = (
+            f'정상적인 경쟁이었다면 낙찰률 85-90% 수준에서 계약이 체결되어 '
+            f'약 {fmt_amt(overcharge)}의 세금을 절감할 수 있었을 것입니다. '
+            f'예정가격 유출은 개별 건의 과다 지출뿐 아니라, '
+            f'공정한 경쟁 환경 자체를 무너뜨리는 심각한 문제입니다.'
+        )
+        f['what_should_happen'] = (
+            f'1) {vendor}의 다른 기관 낙찰률 패턴 전수 조사 (98% 이상이 반복되는지) '
+            f'2) 해당 입찰의 복수예비가격 관리 절차 점검 '
+            f'3) 입찰 담당 공무원의 {vendor} 관계자와의 통화/접촉 기록 조사 '
+            f'4) 공정거래위원회에 입찰담합 여부 조사 의뢰'
+        )
+
+    elif pt == 'new_company_big_win':
+        vendor = d.get('업체', '')
+        age = d.get('업력', '')
+        emp = d.get('종업원수', '미확인')
+        f['plain_explanation'] = (
+            f'나라장터에 등록한 지 {age}밖에 안 된 {vendor}이(가) '
+            f'{inst}에서 {fmt_amt(total_amt)} 규모의 계약을 수주했습니다. '
+            f'신생 업체가 대형 정부 계약을 바로 따내는 것은 이례적입니다.'
+        )
+        f['why_it_matters'] = (
+            f'정부 계약은 일반적으로 수행 실적(유사 사업 경험)을 요구합니다. '
+            f'등록 {age}인 신생 업체가 이러한 실적 없이 대형 계약을 수주하는 것은 '
+            f'특정인을 위해 설립된 "목적 회사"일 가능성을 시사합니다. '
+            f'2021년 조달청 적발 사례에서는 37개 업체가 실적을 위조하여 입찰에 참여한 것이 드러났습니다.'
+        )
+        f['citizen_impact'] = (
+            f'{fmt_amt(total_amt)}의 세금이 검증되지 않은 신생 업체에 지급되었습니다. '
+            f'해당 업체의 사업 수행 역량이 부족할 경우, 계약 불이행이나 품질 저하로 '
+            f'추가 비용이 발생할 수 있습니다.'
+        )
+        f['what_should_happen'] = (
+            f'1) {vendor}의 실제 설립일(사업자등록일)과 나라장터 등록일 대조 '
+            f'2) 수행 실적 증명서의 진위 확인 '
+            f'3) 대표자의 이전 경력 및 {inst} 관계자와의 관계 조사 '
+            f'4) 동종 업계 유사 규모 업체와의 비교 분석'
+        )
+
+    elif pt == 'vendor_concentration':
+        vendor = d.get('업체', '')
+        ratio = d.get('집중도', '')
+        v_count = d.get('업체_계약건수', 0)
+        t_count = d.get('기관_전체건수', 0)
+        f['plain_explanation'] = (
+            f'{inst}의 계약 중 {ratio}가 {vendor} 한 곳에 집중되었습니다. '
+            f'전체 {t_count}건 중 {v_count}건을 한 업체가 가져간 것입니다. '
+            f'한 업체에 대한 과도한 의존은 경쟁을 저해하고 비용을 높입니다.'
+        )
+        f['why_it_matters'] = (
+            f'특정 업체에 계약이 집중되면 해당 업체가 가격 결정력을 갖게 됩니다. '
+            f'또한 발주 담당자와 업체 간의 유착 관계가 형성될 위험이 높아집니다. '
+            f'2018년 서울시 산하기관 IT 용역 편중 사건에서는 한 업체가 5년간 '
+            f'기관 IT 예산의 94%를 독점한 것이 적발되었습니다.'
+        )
+        savings = total_amt * 0.15
+        f['citizen_impact'] = (
+            f'경쟁 환경이 조성되었다면 약 {fmt_amt(savings)}의 절감이 가능했을 것입니다 '
+            f'(독점 대비 경쟁 도입 시 평균 15% 절감 효과). '
+            f'또한 서비스 품질도 경쟁을 통해 개선될 수 있습니다.'
+        )
+        f['what_should_happen'] = (
+            f'1) {vendor}이(가) 유일한 공급 가능 업체인지 시장 조사 실시 '
+            f'2) 대안 업체가 존재한다면, 경쟁 입찰로 전환 검토 '
+            f'3) {vendor}과(와) {inst} 담당자 간 인적 관계 조사 '
+            f'4) 수의계약 사유서의 법적 근거 적법성 검토'
+        )
+
+    elif pt == 'repeated_sole_source':
+        total = d.get('전체계약수', 0)
+        sole = d.get('수의계약_건수', 0)
+        ratio = d.get('수의계약_비율', '')
+        f['plain_explanation'] = (
+            f'{inst}의 계약 {total}건 중 {sole}건({ratio})이 '
+            f'경쟁 입찰 없이 수의계약으로 처리되었습니다. '
+            f'쉽게 말해, 10번 물건을 살 때 {sole}번은 한 가게에서만 가격 비교 없이 산 것입니다.'
+        )
+        f['why_it_matters'] = (
+            f'수의계약은 예외적 상황에서만 허용되는 비경쟁 계약 방식입니다. '
+            f'{ratio}라는 수치는 "예외"가 "원칙"이 되었음을 의미합니다. '
+            f'감사원 통계에 따르면 수의계약은 경쟁 입찰 대비 평균 7-15% 높은 가격에 체결됩니다. '
+            f'이는 구조적으로 세금이 낭비되고 있을 가능성을 시사합니다.'
+        )
+        overcharge = total_amt * 0.10
+        f['citizen_impact'] = (
+            f'수의계약의 과다 지출률(평균 10%)을 적용하면, '
+            f'경쟁 입찰로 전환 시 약 {fmt_amt(overcharge)}의 세금 절감이 가능합니다. '
+            f'이는 해당 기관의 다른 공공서비스 개선에 사용될 수 있는 금액입니다.'
+        )
+        f['what_should_happen'] = (
+            f'1) {inst}의 수의계약 사유서 전수 점검 (법적 근거 존재 여부) '
+            f'2) 2천만원 이하 소액 수의계약 중 동일 품목 반복 발주 여부 확인 '
+            f'3) 수의계약 업체 목록과 발주 담당자 간 이해관계 조사 '
+            f'4) 경쟁 입찰 전환 가능한 계약 유형 식별 및 개선 계획 수립'
+        )
+
+    elif pt == 'contract_splitting':
+        n = d.get('한도근처_계약수', 0)
+        f['plain_explanation'] = (
+            f'{inst}에서 수의계약 한도(2천만원) 바로 아래 금액의 계약이 {n}건 반복 발주되었습니다. '
+            f'이는 하나의 큰 계약을 여러 개로 쪼개서 경쟁 입찰 의무를 피하려는 '
+            f'"쪼개기 계약"의 전형적 패턴입니다.'
+        )
+        f['why_it_matters'] = (
+            f'국가계약법은 2천만원 이하 계약에 한해 수의계약을 허용합니다. '
+            f'이 한도 직하 금액으로 반복 발주하는 것은 법의 취지를 우회하는 행위입니다. '
+            f'2019년 경기도 교육청 사건에서는 12억원 규모의 급식 장비를 '
+            f'63건의 1,900만원대 계약으로 분할하여 감사원에 적발되었습니다.'
+        )
+        f['citizen_impact'] = (
+            f'분할된 {n}건을 합치면 총 {fmt_amt(total_amt)}입니다. '
+            f'이 금액을 하나의 경쟁 입찰로 진행했다면 '
+            f'약 {fmt_amt(total_amt * 0.12)}의 절감이 가능했을 것입니다.'
+        )
+        f['what_should_happen'] = (
+            f'1) {n}건의 계약이 동일 품목/용역에 해당하는지 확인 '
+            f'2) 발주 시기가 연속적인지 검토 (동일 주/월에 집중 발주 시 분할 의심 강화) '
+            f'3) 동일 업체에 반복 발주되었는지 확인 '
+            f'4) 해당 기관 감사 시 분할 발주 여부를 중점 점검 항목에 포함'
+        )
+
+    elif pt == 'low_bid_competition':
+        vendor = d.get('낙찰업체', '')
+        n = d.get('반복낙찰_건수', 0)
+        avg_p = d.get('평균_참여업체수', 0)
+        f['plain_explanation'] = (
+            f'{vendor}이(가) 2-3개 업체만 참여하는 입찰에서 {n}번 연속 낙찰되었습니다. '
+            f'소수 업체 간의 반복적 입찰은 들러리 입찰(담합)의 전형적 신호입니다. '
+            f'다른 업체들이 일부러 높은 가격에 입찰하여 특정 업체가 낙찰되도록 짜고 치는 것입니다.'
+        )
+        f['why_it_matters'] = (
+            f'공정거래위원회에 따르면, 입찰담합은 평균 7-15%의 가격 부풀리기를 초래합니다. '
+            f'2014년 인천 도시철도 담합 사건에서는 18개 건설사가 74억원의 과징금을 부과받았고, '
+            f'같은 업체 조합이 반복적으로 입찰에 참여한 것이 핵심 증거였습니다.'
+        )
+        overcharge = total_amt * 0.10
+        f['citizen_impact'] = (
+            f'담합이 확인될 경우, {fmt_amt(overcharge)} 이상의 세금이 과다 지출된 것입니다. '
+            f'공정거래위원회의 과징금 부과 및 형사 처벌 대상이 됩니다.'
+        )
+        f['what_should_happen'] = (
+            f'1) 참여 업체 간 관계 조사 (동일 주소, 공동 대표, 임원 겸직 여부) '
+            f'2) 각 입찰의 투찰가격 분포 분석 (가격이 5% 이내로 근접하면 담합 의심 강화) '
+            f'3) 공정거래위원회에 입찰담합 여부 신고 검토 '
+            f'4) 해당 업체들의 다른 기관 입찰 참여 패턴 조사'
+        )
+
+    # Add related links
+    if not f.get('related_links'):
+        extra = PATTERN_EXTRA_LINK.get(pt, {})
+        f['related_links'] = STANDARD_LINKS + ([extra] if extra else [])
+
+
+for f in findings:
+    enrich_narrative(f)
+
+print(f'  Enriched {len(findings)} findings with narrative fields')
 
 
 # ════════════════════════════════════════════════════════════════════

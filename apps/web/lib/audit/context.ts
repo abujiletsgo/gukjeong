@@ -26,6 +26,12 @@ export interface RawFinding {
   detail: Record<string, unknown>;
   evidence_contracts: RealEvidenceContract[];
   innocent_explanation: string;
+  // Rich narrative fields (from generate-audit.py)
+  plain_explanation?: string;
+  why_it_matters?: string;
+  citizen_impact?: string;
+  what_should_happen?: string;
+  related_links?: { title: string; url: string; source: string }[];
 }
 
 export type RiskLevel = 'CONCERN' | 'WATCH' | 'LOW_RISK' | 'NORMAL';
