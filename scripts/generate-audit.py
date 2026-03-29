@@ -177,7 +177,7 @@ for inst, items in ghost_by_inst.items():
             f'같은 예산으로 더 높은 품질의 서비스를 받을 수 있었을 것입니다.'
         ),
         'what_should_happen': (
-            '1) 해당 업체의 4대보험 가입현황 확인 (실제 직원 존재 여부 검증) '
+            '1) 해당 업체의 4대보험 가입현황 확인 (실제 직원 존재 여부 검증) \n'
             '2) 사업자등록증상 주소지에 실제 사업장이 있는지 현장 확인 '
             '3) 계약 이행 실적 및 납품 증빙 서류 전수 점검 '
             '4) 업체 대표와 발주기관 담당자 간 인적 관계 조사'
@@ -308,18 +308,24 @@ for h in high_rate:
     rate_by_winner[h['winner']].append(h)
 
 for winner, items in rate_by_winner.items():
-    if len(items) < 1:
-        continue
+    # 감사원 기준: 동일 업체가 98%+ 낙찰률을 2회 이상 반복하거나,
+    # 단일 건이 99.8%+(극단적 근접)인 경우만 의심
+    if len(items) >= 2:
+        pass  # 2+ occurrences = flag
+    elif items[0]['rate'] >= 99.8:
+        pass  # extreme single case
+    else:
+        continue  # single 98-99.7% bid = normal in Korean procurement
+
     items.sort(key=lambda x: -x['rate'])
     avg_rate = sum(i['rate'] for i in items) / len(items)
     total_amt = sum(i['amt'] for i in items)
-    # Single occurrence at 98-99% = mild. Multiple or 99.5%+ = severe
-    if len(items) >= 2:
-        score = min(90, 50 + (avg_rate - 98) * 20 + len(items) * 5)
-    elif items[0]['rate'] >= 99.5:
-        score = min(85, 55 + (items[0]['rate'] - 99) * 30)
+    if len(items) >= 3:
+        score = min(90, 55 + (avg_rate - 98) * 15 + len(items) * 5)
+    elif len(items) >= 2:
+        score = min(75, 45 + (avg_rate - 98) * 15)
     else:
-        score = min(65, 30 + (items[0]['rate'] - 98) * 15)
+        score = min(65, 40 + (items[0]['rate'] - 99) * 20)
 
     evidence = [make_contract(
         i['no'], f"[낙찰률 {i['rate']:.1f}%] {i['title']}",

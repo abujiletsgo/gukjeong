@@ -11,24 +11,33 @@ interface AuditDetailClientProps {
 }
 
 const patternLabels: Record<string, string> = {
+  ghost_company: '유령업체 의심',
+  zero_competition: '경쟁 부재',
+  bid_rate_anomaly: '예정가격 유출 의심',
+  new_company_big_win: '신생업체 고액수주',
+  vendor_concentration: '업체 집중',
+  repeated_sole_source: '반복 수의계약',
+  repeat_sole_source: '반복 수의계약',
+  contract_splitting: '계약 분할 의심',
+  low_bid_competition: '과소 경쟁',
+  high_value_sole_source: '고액 수의계약',
   yearend_spike: '연말 지출 급증',
-  vendor_concentration: '업체 집중도',
   inflated_pricing: '고가 계약',
-  contract_splitting: '계약 분할',
-  zombie_project: '좀비 사업',
-  revolving_door: '전관예우',
-  paper_company: '페이퍼 컴퍼니',
-  unnecessary_renovation: '불필요 개보수',
-  poor_roi: '낮은 ROI',
   bid_rigging: '입찰 담합',
+  revolving_door: '전관예우',
 };
 
 const patternDescriptions: Record<string, string> = {
-  yearend_spike: '연말(Q4)에 연간 예산의 40% 이상을 집중 집행하는 패턴입니다. 예산 소진 압력에 의한 불필요한 지출이 발생할 수 있습니다.',
-  vendor_concentration: '특정 업체에 해당 부처 계약의 30% 이상이 집중되는 패턴입니다. 공정한 경쟁 입찰이 이루어지지 않을 가능성이 있습니다.',
-  contract_splitting: '수의계약 한도(2,000만원) 직하 금액으로 같은 업체에 반복 발주하는 패턴입니다. 입찰 절차를 회피하려는 의도가 의심됩니다.',
-  inflated_pricing: '타 부처의 유사 물품/용역 대비 30% 이상 높은 가격으로 계약하는 패턴입니다.',
-  zombie_project: '3년 이상 집행률이 50% 미만인 사업입니다. 사업의 실효성에 대한 재검토가 필요합니다.',
+  ghost_company: '종업원이 0~1명인 업체가 수천만~수억 원 규모의 정부 계약을 수주한 패턴입니다. 실체 없는 페이퍼 컴퍼니를 통한 공금 유출 가능성을 점검합니다.',
+  zero_competition: '경쟁 입찰 공고에 1개 업체만 참여하여 사실상 무경쟁으로 낙찰된 패턴입니다. 입찰 자격 요건을 특정 업체에 맞춘 "맞춤형 공고"가 의심됩니다.',
+  bid_rate_anomaly: '낙찰률이 98% 이상으로 예정가격에 비정상적으로 근접한 패턴입니다. 예정가격이 사전에 유출되었을 가능성을 시사합니다. 감사원 중점 점검 항목입니다.',
+  new_company_big_win: '나라장터 등록 2년 미만의 신생 업체가 대형 정부 계약을 수주한 패턴입니다. 특정인을 위해 설립된 "목적 회사"일 가능성을 점검합니다.',
+  vendor_concentration: '특정 업체에 해당 기관 계약의 30% 이상이 집중되는 패턴입니다. 공정한 경쟁 입찰이 이루어지지 않을 가능성이 있습니다.',
+  repeated_sole_source: '기관의 전체 계약 중 80% 이상이 수의계약으로 처리된 패턴입니다. 경쟁 입찰 절차를 구조적으로 회피하고 있을 가능성이 있습니다.',
+  contract_splitting: '수의계약 한도(2,000만원) 직하 금액으로 반복 발주하는 패턴입니다. 하나의 큰 계약을 여러 건으로 쪼개 입찰을 회피하려는 의도가 의심됩니다.',
+  low_bid_competition: '2~3개 업체만 참여하는 입찰에서 동일 업체가 반복 낙찰되는 패턴입니다. 들러리 입찰(입찰담합)의 가능성이 있습니다.',
+  high_value_sole_source: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결된 건입니다.',
+  yearend_spike: '연말(4분기)에 연간 예산의 40% 이상을 집중 집행하는 패턴입니다.',
   bid_rigging: '동일한 입찰 참여 업체 조합이 5회 이상 반복되는 패턴입니다. 입찰 담합 가능성이 있습니다.',
 };
 

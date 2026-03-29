@@ -6,16 +6,21 @@ import PatternBadge from './PatternBadge';
 
 export default function SuspicionCard({ flag }: { flag: AuditFlag }) {
   const patternLabels: Record<string, string> = {
+    ghost_company: '유령업체 의심',
+    zero_competition: '경쟁 부재',
+    bid_rate_anomaly: '예정가격 유출 의심',
+    new_company_big_win: '신생업체 고액수주',
+    vendor_concentration: '업체 집중',
+    repeated_sole_source: '반복 수의계약',
+    repeat_sole_source: '반복 수의계약',
+    contract_splitting: '계약 분할 의심',
+    low_bid_competition: '과소 경쟁',
+    high_value_sole_source: '고액 수의계약',
     yearend_spike: '연말 지출 급증',
-    vendor_concentration: '업체 집중도',
     inflated_pricing: '고가 계약',
-    contract_splitting: '계약 분할',
-    zombie_project: '좀비 사업',
+    bid_rigging: '입찰 담합',
     revolving_door: '전관예우',
     paper_company: '페이퍼 컴퍼니',
-    unnecessary_renovation: '불필요 개보수',
-    poor_roi: '낮은 ROI',
-    bid_rigging: '입찰 담합',
   };
 
   const score = flag.suspicion_score;
