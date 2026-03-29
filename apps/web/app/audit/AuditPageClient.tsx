@@ -106,7 +106,7 @@ interface AuditPageClientProps {
 }
 
 // ── Pattern category definitions ───────────────────────────────────────
-type PatternCategory = 'all' | 'high_value_sole_source' | 'vendor_concentration' | 'repeated_sole_source' | 'contract_splitting';
+type PatternCategory = string;
 
 const PATTERN_CATEGORIES: {
   key: PatternCategory;
@@ -117,6 +117,26 @@ const PATTERN_CATEGORIES: {
     key: 'all',
     label: '전체',
     description: '모든 패턴을 한눈에 보기',
+  },
+  {
+    key: 'ghost_company',
+    label: '유령업체',
+    description: '종업원 0-1명 업체가 수억원 규모의 정부 계약을 수주한 건',
+  },
+  {
+    key: 'zero_competition',
+    label: '경쟁 부재',
+    description: '경쟁 입찰에 1개 업체만 참여하여 사실상 무경쟁 낙찰된 건',
+  },
+  {
+    key: 'bid_rate_anomaly',
+    label: '예정가격 유출 의심',
+    description: '낙찰률이 98-99%+로 예정가격에 비정상적으로 근접한 낙찰 (감사원 중점 점검 항목)',
+  },
+  {
+    key: 'new_company_big_win',
+    label: '신생업체 고액수주',
+    description: '나라장터 등록 1-2년 이내의 신생 업체가 대형 계약을 수주한 건',
   },
   {
     key: 'high_value_sole_source',
@@ -137,6 +157,11 @@ const PATTERN_CATEGORIES: {
     key: 'contract_splitting',
     label: '계약 분할 의심',
     description: '수의계약 한도(2천만원) 근처 금액으로 반복 계약하여 입찰을 회피하는 패턴',
+  },
+  {
+    key: 'low_bid_competition',
+    label: '과소 경쟁',
+    description: '2-3개사만 참여하는 경쟁 입찰에서 동일 업체가 반복 낙찰되는 패턴 (담합 의심)',
   },
 ];
 
