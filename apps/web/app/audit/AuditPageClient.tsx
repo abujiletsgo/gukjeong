@@ -78,6 +78,11 @@ interface RealFinding {
   detail: Record<string, unknown>;
   evidence_contracts: RealEvidenceContract[];
   innocent_explanation: string;
+  plain_explanation?: string;
+  why_it_matters?: string;
+  citizen_impact?: string;
+  what_should_happen?: string;
+  related_links?: { title: string; url: string; source: string }[];
 }
 
 interface RealAuditData {
@@ -205,7 +210,7 @@ function getKeyStat(finding: RealFinding | EnrichedFinding): string {
 // ── Utility: plain Korean explanation per finding ────────────────────
 function getPlainExplanation(finding: RealFinding | EnrichedFinding): string {
   // Use rich plain_explanation from generate-audit.py if available
-  if ((finding as any).plain_explanation) return (finding as any).plain_explanation;
+  if (finding.plain_explanation) return finding.plain_explanation;
 
   const d = finding.detail;
   const inst = finding.target_institution;
@@ -427,10 +432,10 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
           </div>
 
           {/* 왜 의심스러운가 (from rich narrative) */}
-          {(finding as any).why_it_matters && (
+          {finding.why_it_matters && (
             <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
               <h4 className="text-sm font-bold text-amber-800 mb-1">왜 의심스러운가?</h4>
-              <p className="text-sm text-amber-700 leading-relaxed">{(finding as any).why_it_matters}</p>
+              <p className="text-sm text-amber-700 leading-relaxed">{finding.why_it_matters}</p>
             </div>
           )}
 
@@ -443,7 +448,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
           </div>
 
           {/* 내 세금은? (citizen impact) */}
-          {(finding as any).citizen_impact && (
+          {finding.citizen_impact && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-lg">
@@ -451,7 +456,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-amber-800 mb-1">내 세금은?</h4>
-                  <p className="text-sm text-amber-700 leading-relaxed">{(finding as any).citizen_impact}</p>
+                  <p className="text-sm text-amber-700 leading-relaxed">{finding.citizen_impact}</p>
                 </div>
               </div>
             </div>
@@ -541,25 +546,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
             </div>
           )}
 
-          {/* 확인 포인트 (What to watch for) */}
-          {finding.what_to_watch_for && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <h4 className="text-xs font-bold text-amber-700 flex items-center gap-1.5 mb-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
-                이것까지 확인하면 더 정확합니다
-              </h4>
-              <ul className="text-xs text-amber-800 space-y-1.5 leading-relaxed">
-                {finding.what_to_watch_for.split('\n').filter(Boolean).map((item, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-amber-500 shrink-0 mt-0.5">&#x2022;</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* "이것까지 확인하면" removed — Claude Code performs these checks automatically */}
 
           {/* Section 3: 실제 계약 내역 (Collapsible) */}
           {uniqueContracts.length > 0 && (
@@ -610,7 +597,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
           )}
 
           {/* 필요한 조치 (what should happen) */}
-          {(finding as any).what_should_happen && (
+          {finding.what_should_happen && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h4 className="text-sm font-bold text-green-800 mb-2 flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -619,17 +606,17 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                 필요한 조치
               </h4>
               <p className="text-sm text-green-700 leading-relaxed whitespace-pre-line">
-                {(finding as any).what_should_happen}
+                {finding.what_should_happen}
               </p>
             </div>
           )}
 
           {/* 관련 링크 (related links) */}
-          {(finding as any).related_links?.length > 0 && (
+          {(finding.related_links?.length ?? 0) > 0 && (
             <div>
               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">직접 확인하기</h4>
               <div className="flex flex-wrap gap-2">
-                {((finding as any).related_links as { title: string; url: string; source: string }[]).map((link, i) => (
+                {(finding.related_links as { title: string; url: string; source: string }[]).map((link, i) => (
                   <a
                     key={i}
                     href={link.url}
