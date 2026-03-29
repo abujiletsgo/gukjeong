@@ -529,13 +529,13 @@ for inst, d in inst_methods.items():
     top = sorted(d['contracts'], key=lambda x: -float(x.get('thtmCntrctAmt', 0) or 0))[:5]
     evidence = []
     for c in top:
-        # Extract vendor from corpList
+        # Extract vendor from corpList: format [1^주계약업체^단독^업체명^대표자^...]
         corp_list = str(c.get('corpList', ''))
         vendor = ''
         if corp_list and '^' in corp_list:
             parts = corp_list.split('^')
-            if len(parts) > 2:
-                vendor = parts[2].split('，')[0] if '，' in parts[2] else parts[2]
+            if len(parts) > 3:
+                vendor = parts[3].split('，')[0] if '，' in parts[3] else parts[3]
         evidence.append(make_contract(
             c.get('untyCntrctNo', ''), c.get('cntrctNm', ''),
             float(c.get('thtmCntrctAmt', 0) or 0), vendor,
@@ -593,9 +593,17 @@ for inst, items in split_by_inst.items():
     total_amt = sum(float(c.get('thtmCntrctAmt', 0) or 0) for c in items)
     score = min(75, 30 + len(items) * 8)
 
+    def extract_vendor(c):
+        cl = str(c.get('corpList', ''))
+        if cl and '^' in cl:
+            parts = cl.split('^')
+            if len(parts) > 3:
+                return parts[3].split('，')[0] if '，' in parts[3] else parts[3]
+        return ''
+
     evidence = [make_contract(
         c.get('untyCntrctNo', ''), c.get('cntrctNm', ''),
-        float(c.get('thtmCntrctAmt', 0) or 0), '',
+        float(c.get('thtmCntrctAmt', 0) or 0), extract_vendor(c),
         c.get('cntrctCnclsDate', ''), '수의계약',
     ) for c in sorted(items, key=lambda x: -float(x.get('thtmCntrctAmt', 0) or 0))[:5]]
 

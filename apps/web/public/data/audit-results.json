@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-29T16:46:50Z",
+  "timestamp": "2026-03-29T16:56:22Z",
   "contracts_analyzed": 4000,
   "total_contracts_in_db": 2500,
   "findings_count": 209,
@@ -255,7 +255,7 @@
           "no": "R26TE12653300",
           "name": "",
           "amount": 197839780.0,
-          "vendor": "단독",
+          "vendor": "주식회사 다담건설",
           "date": "2026-02-26",
           "method": "수의계약",
           "reason": "",
@@ -265,7 +265,7 @@
           "no": "R26TE12652115",
           "name": "",
           "amount": 149165220.0,
-          "vendor": "단독",
+          "vendor": "(주)대상건설",
           "date": "2025-09-10",
           "method": "수의계약",
           "reason": "",
@@ -275,7 +275,7 @@
           "no": "R26TE12652116",
           "name": "",
           "amount": 149165220.0,
-          "vendor": "단독",
+          "vendor": "(주)대상건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -285,7 +285,7 @@
           "no": "R26TE12652138",
           "name": "",
           "amount": 132108610.0,
-          "vendor": "단독",
+          "vendor": "주식회사 감포건설",
           "date": "2025-05-26",
           "method": "수의계약",
           "reason": "",
@@ -295,7 +295,7 @@
           "no": "R26TE12652140",
           "name": "",
           "amount": 132108610.0,
-          "vendor": "단독",
+          "vendor": "주식회사 감포건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -332,7 +332,7 @@
         {
           "title": "",
           "amount": 197839780.0,
-          "vendor": "단독",
+          "vendor": "주식회사 다담건설",
           "date": "2026-02-26",
           "method": "수의계약",
           "justification": ""
@@ -340,7 +340,7 @@
         {
           "title": "",
           "amount": 149165220.0,
-          "vendor": "단독",
+          "vendor": "(주)대상건설",
           "date": "2025-09-10",
           "method": "수의계약",
           "justification": ""
@@ -348,7 +348,7 @@
         {
           "title": "",
           "amount": 149165220.0,
-          "vendor": "단독",
+          "vendor": "(주)대상건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -356,7 +356,7 @@
         {
           "title": "",
           "amount": 132108610.0,
-          "vendor": "단독",
+          "vendor": "주식회사 감포건설",
           "date": "2025-05-26",
           "method": "수의계약",
           "justification": ""
@@ -364,7 +364,7 @@
         {
           "title": "",
           "amount": 132108610.0,
-          "vendor": "단독",
+          "vendor": "주식회사 감포건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -391,7 +391,7 @@
           "no": "R26TE12653889",
           "name": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 611951470.0,
-          "vendor": "단독",
+          "vendor": "책쉼터",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -401,7 +401,7 @@
           "no": "R26TE12653903",
           "name": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 375278390.0,
-          "vendor": "단독",
+          "vendor": "미래서적",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -411,7 +411,7 @@
           "no": "R26TE12653875",
           "name": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 354322130.0,
-          "vendor": "단독",
+          "vendor": "(주)동광사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -421,7 +421,7 @@
           "no": "R26TE12653825",
           "name": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 343520000.0,
-          "vendor": "단독",
+          "vendor": "용인서적",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -431,7 +431,7 @@
           "no": "R26TE12653838",
           "name": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 313627700.0,
-          "vendor": "단독",
+          "vendor": "진원서적",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -468,7 +468,7 @@
         {
           "title": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 611951470.0,
-          "vendor": "단독",
+          "vendor": "책쉼터",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -476,7 +476,7 @@
         {
           "title": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 375278390.0,
-          "vendor": "단독",
+          "vendor": "미래서적",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -484,7 +484,7 @@
         {
           "title": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 354322130.0,
-          "vendor": "단독",
+          "vendor": "(주)동광사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -492,7 +492,7 @@
         {
           "title": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 343520000.0,
-          "vendor": "단독",
+          "vendor": "용인서적",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -500,7 +500,7 @@
         {
           "title": "2026학년도 1학기 교과용 도서 2차 공급 계약",
           "amount": 313627700.0,
-          "vendor": "단독",
+          "vendor": "진원서적",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -527,7 +527,7 @@
           "no": "R26TE12654735",
           "name": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 474061000.0,
-          "vendor": "단독",
+          "vendor": "완주농원",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -537,7 +537,7 @@
           "no": "R26TE12654739",
           "name": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 337273000.0,
-          "vendor": "단독",
+          "vendor": "보람농원",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -547,7 +547,7 @@
           "no": "R26TE12654733",
           "name": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 315962000.0,
-          "vendor": "단독",
+          "vendor": "정주농원",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -557,7 +557,7 @@
           "no": "R26TE12654736",
           "name": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 305813000.0,
-          "vendor": "단독",
+          "vendor": "상교농원",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -567,7 +567,7 @@
           "no": "R26TE12654734",
           "name": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 244680000.0,
-          "vendor": "단독",
+          "vendor": "은설농원",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -604,7 +604,7 @@
         {
           "title": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 474061000.0,
-          "vendor": "단독",
+          "vendor": "완주농원",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -612,7 +612,7 @@
         {
           "title": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 337273000.0,
-          "vendor": "단독",
+          "vendor": "보람농원",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -620,7 +620,7 @@
         {
           "title": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 315962000.0,
-          "vendor": "단독",
+          "vendor": "정주농원",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -628,7 +628,7 @@
         {
           "title": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 305813000.0,
-          "vendor": "단독",
+          "vendor": "상교농원",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -636,7 +636,7 @@
         {
           "title": "2026년 봄철 경제림 조성용 묘목 구입",
           "amount": 244680000.0,
-          "vendor": "단독",
+          "vendor": "은설농원",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -663,7 +663,7 @@
           "no": "R26TE12656289",
           "name": "미산배수지 설치사업(전기 및 계측제어) 관급자재(계장제어장치)",
           "amount": 119519000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 보령제어시스템",
           "date": "2025-12-30",
           "method": "수의계약",
           "reason": "",
@@ -673,7 +673,7 @@
           "no": "R26TE12656287",
           "name": "미산배수지 설치사업(전기 및 계측제어) 관급자재(수질계측기기)",
           "amount": 87736610.0,
-          "vendor": "단독",
+          "vendor": "주식회사혜승기술연구소",
           "date": "2025-12-30",
           "method": "수의계약",
           "reason": "",
@@ -683,7 +683,7 @@
           "no": "R26TE12656303",
           "name": "오천농어촌 지방상수도 시설공사(원산도구간) 가압장설치공사(전기및계측제어) 관급자재(계장제어장치)",
           "amount": 48757240.0,
-          "vendor": "단독",
+          "vendor": "주식회사혜승기술연구소",
           "date": "2025-09-24",
           "method": "수의계약",
           "reason": "",
@@ -693,7 +693,7 @@
           "no": "R26TE12656285",
           "name": "천북가압장 고장 펌프 교체",
           "amount": 17000000.0,
-          "vendor": "단독",
+          "vendor": "청양산업",
           "date": "2026-01-30",
           "method": "수의계약",
           "reason": "",
@@ -703,7 +703,7 @@
           "no": "R26TE12656301",
           "name": "2025년 IOT 지능형 소화전 관리시스템 설치공사 관급자재",
           "amount": 13000000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 엔시드",
           "date": "2025-11-27",
           "method": "수의계약",
           "reason": "",
@@ -740,7 +740,7 @@
         {
           "title": "미산배수지 설치사업(전기 및 계측제어) 관급자재(계장제어장치)",
           "amount": 119519000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 보령제어시스템",
           "date": "2025-12-30",
           "method": "수의계약",
           "justification": ""
@@ -748,7 +748,7 @@
         {
           "title": "미산배수지 설치사업(전기 및 계측제어) 관급자재(수질계측기기)",
           "amount": 87736610.0,
-          "vendor": "단독",
+          "vendor": "주식회사혜승기술연구소",
           "date": "2025-12-30",
           "method": "수의계약",
           "justification": ""
@@ -756,7 +756,7 @@
         {
           "title": "오천농어촌 지방상수도 시설공사(원산도구간) 가압장설치공사(전기및계측제어) 관급자재(계장제어장치)",
           "amount": 48757240.0,
-          "vendor": "단독",
+          "vendor": "주식회사혜승기술연구소",
           "date": "2025-09-24",
           "method": "수의계약",
           "justification": ""
@@ -764,7 +764,7 @@
         {
           "title": "천북가압장 고장 펌프 교체",
           "amount": 17000000.0,
-          "vendor": "단독",
+          "vendor": "청양산업",
           "date": "2026-01-30",
           "method": "수의계약",
           "justification": ""
@@ -772,7 +772,7 @@
         {
           "title": "2025년 IOT 지능형 소화전 관리시스템 설치공사 관급자재",
           "amount": 13000000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 엔시드",
           "date": "2025-11-27",
           "method": "수의계약",
           "justification": ""
@@ -799,7 +799,7 @@
           "no": "R26TE12652387",
           "name": "",
           "amount": 233707000.0,
-          "vendor": "단독",
+          "vendor": "사천시산림조합",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -809,7 +809,7 @@
           "no": "R26TE12652381",
           "name": "",
           "amount": 158920000.0,
-          "vendor": "단독",
+          "vendor": "다산건설 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -819,7 +819,7 @@
           "no": "R26TE12652373",
           "name": "",
           "amount": 146247000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 원일",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -829,7 +829,7 @@
           "no": "R26TE12652458",
           "name": "",
           "amount": 135847730.0,
-          "vendor": "단독",
+          "vendor": "주식회사 수암종합건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -839,7 +839,7 @@
           "no": "R26TE12652368",
           "name": "",
           "amount": 98820200.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에프씨",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -876,7 +876,7 @@
         {
           "title": "",
           "amount": 233707000.0,
-          "vendor": "단독",
+          "vendor": "사천시산림조합",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -884,7 +884,7 @@
         {
           "title": "",
           "amount": 158920000.0,
-          "vendor": "단독",
+          "vendor": "다산건설 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -892,7 +892,7 @@
         {
           "title": "",
           "amount": 146247000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 원일",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -900,7 +900,7 @@
         {
           "title": "",
           "amount": 135847730.0,
-          "vendor": "단독",
+          "vendor": "주식회사 수암종합건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -908,7 +908,7 @@
         {
           "title": "",
           "amount": 98820200.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에프씨",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -935,7 +935,7 @@
           "no": "R26TE12652831",
           "name": "",
           "amount": 186400000.0,
-          "vendor": "단독",
+          "vendor": "동진건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -945,7 +945,7 @@
           "no": "R26TE12652759",
           "name": "",
           "amount": 20404200.0,
-          "vendor": "단독",
+          "vendor": "(주)대도건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -955,7 +955,7 @@
           "no": "R26TE12652730",
           "name": "",
           "amount": 20394900.0,
-          "vendor": "단독",
+          "vendor": "비스타건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -965,7 +965,7 @@
           "no": "R26TE12652803",
           "name": "",
           "amount": 20329800.0,
-          "vendor": "단독",
+          "vendor": "(주) 삼우건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -975,7 +975,7 @@
           "no": "R26TE12652685",
           "name": "",
           "amount": 20274000.0,
-          "vendor": "단독",
+          "vendor": "제이케이토건 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1012,7 +1012,7 @@
         {
           "title": "",
           "amount": 186400000.0,
-          "vendor": "단독",
+          "vendor": "동진건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1020,7 +1020,7 @@
         {
           "title": "",
           "amount": 20404200.0,
-          "vendor": "단독",
+          "vendor": "(주)대도건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1028,7 +1028,7 @@
         {
           "title": "",
           "amount": 20394900.0,
-          "vendor": "단독",
+          "vendor": "비스타건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1036,7 +1036,7 @@
         {
           "title": "",
           "amount": 20329800.0,
-          "vendor": "단독",
+          "vendor": "(주) 삼우건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1044,7 +1044,7 @@
         {
           "title": "",
           "amount": 20274000.0,
-          "vendor": "단독",
+          "vendor": "제이케이토건 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1071,7 +1071,7 @@
           "no": "R26TE12652793",
           "name": "",
           "amount": 139016050.0,
-          "vendor": "단독",
+          "vendor": "주식회사 건양전기신호",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1081,7 +1081,7 @@
           "no": "R26TE12652790",
           "name": "",
           "amount": 136495000.0,
-          "vendor": "단독",
+          "vendor": "가나소방 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1091,7 +1091,7 @@
           "no": "R26TE12652806",
           "name": "",
           "amount": 102299810.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에이치와이이앤씨",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1101,7 +1101,7 @@
           "no": "R26TE12652808",
           "name": "",
           "amount": 90104000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 정이앤에프",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1111,7 +1111,7 @@
           "no": "R26TE12652810",
           "name": "",
           "amount": 84954930.0,
-          "vendor": "단독",
+          "vendor": "세종전설주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1148,7 +1148,7 @@
         {
           "title": "",
           "amount": 139016050.0,
-          "vendor": "단독",
+          "vendor": "주식회사 건양전기신호",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1156,7 +1156,7 @@
         {
           "title": "",
           "amount": 136495000.0,
-          "vendor": "단독",
+          "vendor": "가나소방 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1164,7 +1164,7 @@
         {
           "title": "",
           "amount": 102299810.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에이치와이이앤씨",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1172,7 +1172,7 @@
         {
           "title": "",
           "amount": 90104000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 정이앤에프",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1180,7 +1180,7 @@
         {
           "title": "",
           "amount": 84954930.0,
-          "vendor": "단독",
+          "vendor": "세종전설주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1207,7 +1207,7 @@
           "no": "R26TE12653339",
           "name": "",
           "amount": 51606000.0,
-          "vendor": "단독",
+          "vendor": "이든토건 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1217,7 +1217,7 @@
           "no": "R26TE12653374",
           "name": "",
           "amount": 51606000.0,
-          "vendor": "단독",
+          "vendor": "이든토건 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1227,7 +1227,7 @@
           "no": "R26TE12653371",
           "name": "",
           "amount": 39207400.0,
-          "vendor": "단독",
+          "vendor": "티지건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1237,7 +1237,7 @@
           "no": "R26TE12653400",
           "name": "",
           "amount": 30105500.0,
-          "vendor": "단독",
+          "vendor": "황우건설(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1247,7 +1247,7 @@
           "no": "R26TE12653390",
           "name": "",
           "amount": 17799500.0,
-          "vendor": "단독",
+          "vendor": "주식회사 한경건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1284,7 +1284,7 @@
         {
           "title": "",
           "amount": 51606000.0,
-          "vendor": "단독",
+          "vendor": "이든토건 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1292,7 +1292,7 @@
         {
           "title": "",
           "amount": 51606000.0,
-          "vendor": "단독",
+          "vendor": "이든토건 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1300,7 +1300,7 @@
         {
           "title": "",
           "amount": 39207400.0,
-          "vendor": "단독",
+          "vendor": "티지건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1308,7 +1308,7 @@
         {
           "title": "",
           "amount": 30105500.0,
-          "vendor": "단독",
+          "vendor": "황우건설(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1316,7 +1316,7 @@
         {
           "title": "",
           "amount": 17799500.0,
-          "vendor": "단독",
+          "vendor": "주식회사 한경건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1343,7 +1343,7 @@
           "no": "R26TE12653537",
           "name": "",
           "amount": 153239990.0,
-          "vendor": "단독",
+          "vendor": "금원건설(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1353,7 +1353,7 @@
           "no": "R26TE12653560",
           "name": "",
           "amount": 91483150.0,
-          "vendor": "단독",
+          "vendor": "삼현토건 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1363,7 +1363,7 @@
           "no": "R26TE12653398",
           "name": "",
           "amount": 73200000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 세아",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1373,7 +1373,7 @@
           "no": "R26TE12653522",
           "name": "",
           "amount": 67057000.0,
-          "vendor": "단독",
+          "vendor": "합자회사 성림건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1383,7 +1383,7 @@
           "no": "R26TE12653761",
           "name": "",
           "amount": 21609000.0,
-          "vendor": "단독",
+          "vendor": "한일건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1420,7 +1420,7 @@
         {
           "title": "",
           "amount": 153239990.0,
-          "vendor": "단독",
+          "vendor": "금원건설(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1428,7 +1428,7 @@
         {
           "title": "",
           "amount": 91483150.0,
-          "vendor": "단독",
+          "vendor": "삼현토건 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1436,7 +1436,7 @@
         {
           "title": "",
           "amount": 73200000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 세아",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1444,7 +1444,7 @@
         {
           "title": "",
           "amount": 67057000.0,
-          "vendor": "단독",
+          "vendor": "합자회사 성림건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1452,7 +1452,7 @@
         {
           "title": "",
           "amount": 21609000.0,
-          "vendor": "단독",
+          "vendor": "한일건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1479,7 +1479,7 @@
           "no": "R26TE12653647",
           "name": "",
           "amount": 106931720.0,
-          "vendor": "단독",
+          "vendor": "주식회사에코",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -1489,7 +1489,7 @@
           "no": "R26TE12653645",
           "name": "",
           "amount": 77869700.0,
-          "vendor": "단독",
+          "vendor": "주식회사 송복건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1499,7 +1499,7 @@
           "no": "R26TE12653692",
           "name": "",
           "amount": 69353900.0,
-          "vendor": "단독",
+          "vendor": "(주)동천기업",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1509,7 +1509,7 @@
           "no": "R26TE12653639",
           "name": "",
           "amount": 46478000.0,
-          "vendor": "단독",
+          "vendor": "한우코리아 주식회사",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -1519,7 +1519,7 @@
           "no": "R26TE12653635",
           "name": "",
           "amount": 45290750.0,
-          "vendor": "단독",
+          "vendor": "이케이(주)",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -1556,7 +1556,7 @@
         {
           "title": "",
           "amount": 106931720.0,
-          "vendor": "단독",
+          "vendor": "주식회사에코",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -1564,7 +1564,7 @@
         {
           "title": "",
           "amount": 77869700.0,
-          "vendor": "단독",
+          "vendor": "주식회사 송복건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1572,7 +1572,7 @@
         {
           "title": "",
           "amount": 69353900.0,
-          "vendor": "단독",
+          "vendor": "(주)동천기업",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1580,7 +1580,7 @@
         {
           "title": "",
           "amount": 46478000.0,
-          "vendor": "단독",
+          "vendor": "한우코리아 주식회사",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -1588,7 +1588,7 @@
         {
           "title": "",
           "amount": 45290750.0,
-          "vendor": "단독",
+          "vendor": "이케이(주)",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -1615,7 +1615,7 @@
           "no": "R26TE12695467",
           "name": "안산해솔중학교 2026학년도 공기정화장치 유지관리",
           "amount": 17000000.0,
-          "vendor": "단독",
+          "vendor": "이노필터",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1625,7 +1625,7 @@
           "no": "R26TE12696253",
           "name": "안산해솔중학교 2026학년도 소형정수기 임대관리",
           "amount": 6884520.0,
-          "vendor": "단독",
+          "vendor": "코웨이 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1635,7 +1635,7 @@
           "no": "R26TE12697093",
           "name": "안산해솔중학교 2026학년도 음식물쓰레기 수거",
           "amount": 6480000.0,
-          "vendor": "단독",
+          "vendor": "(유)청명",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1645,7 +1645,7 @@
           "no": "R26TE12696856",
           "name": "안산해솔중학교 2026학년도 대형정수기 유지관리",
           "amount": 5702400.0,
-          "vendor": "단독",
+          "vendor": "다인정수시스템",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1655,7 +1655,7 @@
           "no": "R26TE12696060",
           "name": "안산해솔중학교 2026학년도 복합기 임대관리",
           "amount": 5280000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 고려시스템즈",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1692,7 +1692,7 @@
         {
           "title": "안산해솔중학교 2026학년도 공기정화장치 유지관리",
           "amount": 17000000.0,
-          "vendor": "단독",
+          "vendor": "이노필터",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1700,7 +1700,7 @@
         {
           "title": "안산해솔중학교 2026학년도 소형정수기 임대관리",
           "amount": 6884520.0,
-          "vendor": "단독",
+          "vendor": "코웨이 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1708,7 +1708,7 @@
         {
           "title": "안산해솔중학교 2026학년도 음식물쓰레기 수거",
           "amount": 6480000.0,
-          "vendor": "단독",
+          "vendor": "(유)청명",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1716,7 +1716,7 @@
         {
           "title": "안산해솔중학교 2026학년도 대형정수기 유지관리",
           "amount": 5702400.0,
-          "vendor": "단독",
+          "vendor": "다인정수시스템",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1724,7 +1724,7 @@
         {
           "title": "안산해솔중학교 2026학년도 복합기 임대관리",
           "amount": 5280000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 고려시스템즈",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1750,7 +1750,7 @@
           "no": "R26TE12652262",
           "name": "",
           "amount": 19600000.0,
-          "vendor": "",
+          "vendor": "주식회사 미성",
           "date": "2026-02-25",
           "method": "수의계약",
           "reason": "",
@@ -1760,7 +1760,7 @@
           "no": "R26TE12652269",
           "name": "",
           "amount": 18350000.0,
-          "vendor": "",
+          "vendor": "성운건설 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1770,7 +1770,7 @@
           "no": "R26TE12652273",
           "name": "",
           "amount": 18350000.0,
-          "vendor": "",
+          "vendor": "주식회사대흥산업",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1780,7 +1780,7 @@
           "no": "R26TE12652274",
           "name": "",
           "amount": 18350000.0,
-          "vendor": "",
+          "vendor": "주식회사 우림건설",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1790,7 +1790,7 @@
           "no": "R26TE12652271",
           "name": "",
           "amount": 18200000.0,
-          "vendor": "",
+          "vendor": "주식회사 천수건설",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -1827,7 +1827,7 @@
         {
           "title": "",
           "amount": 19600000.0,
-          "vendor": "",
+          "vendor": "주식회사 미성",
           "date": "2026-02-25",
           "method": "수의계약",
           "justification": ""
@@ -1835,7 +1835,7 @@
         {
           "title": "",
           "amount": 18350000.0,
-          "vendor": "",
+          "vendor": "성운건설 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1843,7 +1843,7 @@
         {
           "title": "",
           "amount": 18350000.0,
-          "vendor": "",
+          "vendor": "주식회사대흥산업",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1851,7 +1851,7 @@
         {
           "title": "",
           "amount": 18350000.0,
-          "vendor": "",
+          "vendor": "주식회사 우림건설",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1859,7 +1859,7 @@
         {
           "title": "",
           "amount": 18200000.0,
-          "vendor": "",
+          "vendor": "주식회사 천수건설",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -1885,7 +1885,7 @@
           "no": "R26TE12652595",
           "name": "",
           "amount": 19800000.0,
-          "vendor": "",
+          "vendor": "(주)미주건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1895,7 +1895,7 @@
           "no": "R26TE12652703",
           "name": "",
           "amount": 19782000.0,
-          "vendor": "",
+          "vendor": "(주)미송건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1905,7 +1905,7 @@
           "no": "R26TE12652695",
           "name": "",
           "amount": 19755000.0,
-          "vendor": "",
+          "vendor": "그린이엔지(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1915,7 +1915,7 @@
           "no": "R26TE12652688",
           "name": "",
           "amount": 19701000.0,
-          "vendor": "",
+          "vendor": "문화전력 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1925,7 +1925,7 @@
           "no": "R26TE12652677",
           "name": "",
           "amount": 19621800.0,
-          "vendor": "",
+          "vendor": "대산전설(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -1962,7 +1962,7 @@
         {
           "title": "",
           "amount": 19800000.0,
-          "vendor": "",
+          "vendor": "(주)미주건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1970,7 +1970,7 @@
         {
           "title": "",
           "amount": 19782000.0,
-          "vendor": "",
+          "vendor": "(주)미송건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1978,7 +1978,7 @@
         {
           "title": "",
           "amount": 19755000.0,
-          "vendor": "",
+          "vendor": "그린이엔지(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1986,7 +1986,7 @@
         {
           "title": "",
           "amount": 19701000.0,
-          "vendor": "",
+          "vendor": "문화전력 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -1994,7 +1994,7 @@
         {
           "title": "",
           "amount": 19621800.0,
-          "vendor": "",
+          "vendor": "대산전설(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -2020,7 +2020,7 @@
           "no": "R26TE12653574",
           "name": "",
           "amount": 19657410.0,
-          "vendor": "",
+          "vendor": "담양토건(주)",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -2030,7 +2030,7 @@
           "no": "R26TE12653517",
           "name": "",
           "amount": 19539300.0,
-          "vendor": "",
+          "vendor": "호남지하수",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -2040,7 +2040,7 @@
           "no": "R26TE12653602",
           "name": "",
           "amount": 19334700.0,
-          "vendor": "",
+          "vendor": "주식회사 정원건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -2050,7 +2050,7 @@
           "no": "R26TE12653679",
           "name": "",
           "amount": 19283000.0,
-          "vendor": "",
+          "vendor": "(주)제이에스글로벌",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -2060,7 +2060,7 @@
           "no": "R26TE12653597",
           "name": "",
           "amount": 19232400.0,
-          "vendor": "",
+          "vendor": "경동건설 주식회사",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -2097,7 +2097,7 @@
         {
           "title": "",
           "amount": 19657410.0,
-          "vendor": "",
+          "vendor": "담양토건(주)",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -2105,7 +2105,7 @@
         {
           "title": "",
           "amount": 19539300.0,
-          "vendor": "",
+          "vendor": "호남지하수",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -2113,7 +2113,7 @@
         {
           "title": "",
           "amount": 19334700.0,
-          "vendor": "",
+          "vendor": "주식회사 정원건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -2121,7 +2121,7 @@
         {
           "title": "",
           "amount": 19283000.0,
-          "vendor": "",
+          "vendor": "(주)제이에스글로벌",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -2129,7 +2129,7 @@
         {
           "title": "",
           "amount": 19232400.0,
-          "vendor": "",
+          "vendor": "경동건설 주식회사",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -2222,7 +2222,7 @@
           "no": "R26TE12657717",
           "name": "2026학년도 아산세교유치원 소방시설 유지관리 용역 계약",
           "amount": 6564000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 우성소방",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2232,7 +2232,7 @@
           "no": "R26TE12657742",
           "name": "2026학년도 아산세교유치원 전기안전관리 용역 계약",
           "amount": 5280000.0,
-          "vendor": "단독",
+          "vendor": "(주) 충청전기안전관리",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2242,7 +2242,7 @@
           "no": "R26TE12658247",
           "name": "2026학년도 아산세교유치원 정수기 임대 및 관리 용역 계약",
           "amount": 5277600.0,
-          "vendor": "단독",
+          "vendor": "코웨이 주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2252,7 +2252,7 @@
           "no": "R26TE12658288",
           "name": "2026학년도 아산세교유치원 컬러 복합기 임차 계약",
           "amount": 4668000.0,
-          "vendor": "단독",
+          "vendor": "(주)성지정보통신",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2262,7 +2262,7 @@
           "no": "R26TE12658002",
           "name": "2026학년도 아산세교유치원 어린이놀이시설 소독 및 안전관리 위탁 용역 계약",
           "amount": 1500000.0,
-          "vendor": "단독",
+          "vendor": "(주)대한안전조경",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2299,7 +2299,7 @@
         {
           "title": "2026학년도 아산세교유치원 소방시설 유지관리 용역 계약",
           "amount": 6564000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 우성소방",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2307,7 +2307,7 @@
         {
           "title": "2026학년도 아산세교유치원 전기안전관리 용역 계약",
           "amount": 5280000.0,
-          "vendor": "단독",
+          "vendor": "(주) 충청전기안전관리",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2315,7 +2315,7 @@
         {
           "title": "2026학년도 아산세교유치원 정수기 임대 및 관리 용역 계약",
           "amount": 5277600.0,
-          "vendor": "단독",
+          "vendor": "코웨이 주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2323,7 +2323,7 @@
         {
           "title": "2026학년도 아산세교유치원 컬러 복합기 임차 계약",
           "amount": 4668000.0,
-          "vendor": "단독",
+          "vendor": "(주)성지정보통신",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2331,7 +2331,7 @@
         {
           "title": "2026학년도 아산세교유치원 어린이놀이시설 소독 및 안전관리 위탁 용역 계약",
           "amount": 1500000.0,
-          "vendor": "단독",
+          "vendor": "(주)대한안전조경",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2524,7 +2524,7 @@
           "no": "R26TE12652348",
           "name": "",
           "amount": 40574710.0,
-          "vendor": "단독",
+          "vendor": "주식회사 대흥엠피에스",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -2534,7 +2534,7 @@
           "no": "R26TE12652433",
           "name": "",
           "amount": 18084660.0,
-          "vendor": "단독",
+          "vendor": "주식회사 다올조경",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -2544,7 +2544,7 @@
           "no": "R26TE12652502",
           "name": "청라공원 도색 정비자재 구입",
           "amount": 17865980.0,
-          "vendor": "단독",
+          "vendor": "제이에스컴퍼니",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2554,7 +2554,7 @@
           "no": "R26TE12652487",
           "name": "1·3, 6·8 공동구 화재 대피용 비상 라이트 구매",
           "amount": 17836500.0,
-          "vendor": "단독",
+          "vendor": "드림네트워크",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2564,7 +2564,7 @@
           "no": "R26TE12652469",
           "name": "1·3, 5·7, 6·8 공동구 복합가스측정기 구입",
           "amount": 10909800.0,
-          "vendor": "단독",
+          "vendor": "명성계측기",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -2601,7 +2601,7 @@
         {
           "title": "",
           "amount": 40574710.0,
-          "vendor": "단독",
+          "vendor": "주식회사 대흥엠피에스",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -2609,7 +2609,7 @@
         {
           "title": "",
           "amount": 18084660.0,
-          "vendor": "단독",
+          "vendor": "주식회사 다올조경",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -2617,7 +2617,7 @@
         {
           "title": "청라공원 도색 정비자재 구입",
           "amount": 17865980.0,
-          "vendor": "단독",
+          "vendor": "제이에스컴퍼니",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2625,7 +2625,7 @@
         {
           "title": "1·3, 6·8 공동구 화재 대피용 비상 라이트 구매",
           "amount": 17836500.0,
-          "vendor": "단독",
+          "vendor": "드림네트워크",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2633,7 +2633,7 @@
         {
           "title": "1·3, 5·7, 6·8 공동구 복합가스측정기 구입",
           "amount": 10909800.0,
-          "vendor": "단독",
+          "vendor": "명성계측기",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -2660,7 +2660,7 @@
           "no": "R26TE12652356",
           "name": "",
           "amount": 181226200.0,
-          "vendor": "단독",
+          "vendor": "대국건설 주식회사",
           "date": "2023-12-28",
           "method": "수의계약",
           "reason": "",
@@ -2670,7 +2670,7 @@
           "no": "R26TE12652374",
           "name": "",
           "amount": 181226200.0,
-          "vendor": "단독",
+          "vendor": "대국건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -2680,7 +2680,7 @@
           "no": "R26TE12653822",
           "name": "빛가람 복합문화체육센터 수영장 운영관리시스템 물품 구입 ",
           "amount": 41775360.0,
-          "vendor": "단독",
+          "vendor": "주식회사 메이커스테크놀로지",
           "date": "2026-02-24",
           "method": "수의계약",
           "reason": "",
@@ -2690,7 +2690,7 @@
           "no": "R26TE12652494",
           "name": "",
           "amount": 24823000.0,
-          "vendor": "단독",
+          "vendor": "우정산업 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -2700,7 +2700,7 @@
           "no": "R26TE12653836",
           "name": "2026년 세지면 행정복지센터 LED전광판 제작 설치사업",
           "amount": 21058800.0,
-          "vendor": "단독",
+          "vendor": "천연테크놀러지",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -2737,7 +2737,7 @@
         {
           "title": "",
           "amount": 181226200.0,
-          "vendor": "단독",
+          "vendor": "대국건설 주식회사",
           "date": "2023-12-28",
           "method": "수의계약",
           "justification": ""
@@ -2745,7 +2745,7 @@
         {
           "title": "",
           "amount": 181226200.0,
-          "vendor": "단독",
+          "vendor": "대국건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -2753,7 +2753,7 @@
         {
           "title": "빛가람 복합문화체육센터 수영장 운영관리시스템 물품 구입 ",
           "amount": 41775360.0,
-          "vendor": "단독",
+          "vendor": "주식회사 메이커스테크놀로지",
           "date": "2026-02-24",
           "method": "수의계약",
           "justification": ""
@@ -2761,7 +2761,7 @@
         {
           "title": "",
           "amount": 24823000.0,
-          "vendor": "단독",
+          "vendor": "우정산업 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -2769,7 +2769,7 @@
         {
           "title": "2026년 세지면 행정복지센터 LED전광판 제작 설치사업",
           "amount": 21058800.0,
-          "vendor": "단독",
+          "vendor": "천연테크놀러지",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -3046,7 +3046,7 @@
           "no": "R26TE12653969",
           "name": "",
           "amount": 34211300.0,
-          "vendor": "단독",
+          "vendor": "(주)명덕건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3056,7 +3056,7 @@
           "no": "R26TE12653874",
           "name": "",
           "amount": 30805390.0,
-          "vendor": "단독",
+          "vendor": "주식회사다산건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3066,7 +3066,7 @@
           "no": "R26TE12653955",
           "name": "",
           "amount": 26822130.0,
-          "vendor": "단독",
+          "vendor": "현우건설(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3076,7 +3076,7 @@
           "no": "R26TE12652482",
           "name": "",
           "amount": 23099000.0,
-          "vendor": "단독",
+          "vendor": "우주건설주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3086,7 +3086,7 @@
           "no": "R26TE12653498",
           "name": "",
           "amount": 21168000.0,
-          "vendor": "단독",
+          "vendor": "동창산업주식회사",
           "date": "2026-02-28",
           "method": "수의계약",
           "reason": "",
@@ -3123,7 +3123,7 @@
         {
           "title": "",
           "amount": 34211300.0,
-          "vendor": "단독",
+          "vendor": "(주)명덕건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3131,7 +3131,7 @@
         {
           "title": "",
           "amount": 30805390.0,
-          "vendor": "단독",
+          "vendor": "주식회사다산건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3139,7 +3139,7 @@
         {
           "title": "",
           "amount": 26822130.0,
-          "vendor": "단독",
+          "vendor": "현우건설(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3147,7 +3147,7 @@
         {
           "title": "",
           "amount": 23099000.0,
-          "vendor": "단독",
+          "vendor": "우주건설주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3155,7 +3155,7 @@
         {
           "title": "",
           "amount": 21168000.0,
-          "vendor": "단독",
+          "vendor": "동창산업주식회사",
           "date": "2026-02-28",
           "method": "수의계약",
           "justification": ""
@@ -3182,7 +3182,7 @@
           "no": "R26TE12653488",
           "name": "",
           "amount": 12900000.0,
-          "vendor": "단독",
+          "vendor": "주식회사현담건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3192,7 +3192,7 @@
           "no": "R26TE12653481",
           "name": "",
           "amount": 10110000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3202,7 +3202,7 @@
           "no": "R26TE12653471",
           "name": "",
           "amount": 9350000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3212,7 +3212,7 @@
           "no": "R26TE12653479",
           "name": "",
           "amount": 7200000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3222,7 +3222,7 @@
           "no": "R26TE12653476",
           "name": "",
           "amount": 6230000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3259,7 +3259,7 @@
         {
           "title": "",
           "amount": 12900000.0,
-          "vendor": "단독",
+          "vendor": "주식회사현담건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3267,7 +3267,7 @@
         {
           "title": "",
           "amount": 10110000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3275,7 +3275,7 @@
         {
           "title": "",
           "amount": 9350000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3283,7 +3283,7 @@
         {
           "title": "",
           "amount": 7200000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3291,7 +3291,7 @@
         {
           "title": "",
           "amount": 6230000.0,
-          "vendor": "단독",
+          "vendor": "(주)청안건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3318,7 +3318,7 @@
           "no": "R26TE12675282",
           "name": "2026학년도 천안불당초등학교 관리실 복합기 임차 관리 계약 ",
           "amount": 16632000.0,
-          "vendor": "단독",
+          "vendor": "주식회사코리아오에이(KOREA OA)",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -3328,7 +3328,7 @@
           "no": "R26TE12675776",
           "name": "2026학년도 천안불당초등학교 생활폐기물 위탁 처리 용역 계약(단가)",
           "amount": 6600000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 중부에너지공사",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -3338,7 +3338,7 @@
           "no": "R26TE12675582",
           "name": "2026학년도 천안불당초등학교 음식물쓰레기 위탁 처리 용역 계약(단가)",
           "amount": 6420000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 청림",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -3348,7 +3348,7 @@
           "no": "R26TE12674881",
           "name": "2026학년도 천안불당초등학교 전기설비 안전관리 대행 계약",
           "amount": 5676000.0,
-          "vendor": "단독",
+          "vendor": "(주)유일엔지니어링",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -3358,7 +3358,7 @@
           "no": "R26TE12668481",
           "name": "2026학년도 천안불당초등학교 무인경비 용역 계약",
           "amount": 3600000.0,
-          "vendor": "단독",
+          "vendor": "에스케이쉴더스 주식회사 천안지점",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -3395,7 +3395,7 @@
         {
           "title": "2026학년도 천안불당초등학교 관리실 복합기 임차 관리 계약 ",
           "amount": 16632000.0,
-          "vendor": "단독",
+          "vendor": "주식회사코리아오에이(KOREA OA)",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -3403,7 +3403,7 @@
         {
           "title": "2026학년도 천안불당초등학교 생활폐기물 위탁 처리 용역 계약(단가)",
           "amount": 6600000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 중부에너지공사",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -3411,7 +3411,7 @@
         {
           "title": "2026학년도 천안불당초등학교 음식물쓰레기 위탁 처리 용역 계약(단가)",
           "amount": 6420000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 청림",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -3419,7 +3419,7 @@
         {
           "title": "2026학년도 천안불당초등학교 전기설비 안전관리 대행 계약",
           "amount": 5676000.0,
-          "vendor": "단독",
+          "vendor": "(주)유일엔지니어링",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -3427,7 +3427,7 @@
         {
           "title": "2026학년도 천안불당초등학교 무인경비 용역 계약",
           "amount": 3600000.0,
-          "vendor": "단독",
+          "vendor": "에스케이쉴더스 주식회사 천안지점",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -3520,7 +3520,7 @@
           "no": "R26TE12652291",
           "name": "",
           "amount": 152976300.0,
-          "vendor": "단독",
+          "vendor": "기린종합건설 주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -3530,7 +3530,7 @@
           "no": "R26TE12654920",
           "name": "2026학년도 실험실습기자재 구매(노후8_겔도큐멘테이션시스템)",
           "amount": 68750000.0,
-          "vendor": "단독",
+          "vendor": "(주)제노필",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3540,7 +3540,7 @@
           "no": "R26TE12654836",
           "name": "2026학년도 실험실습기자재 구매(노후1_현미경용사진기 외 2종)",
           "amount": 66150000.0,
-          "vendor": "단독",
+          "vendor": "씨엔에스 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3550,7 +3550,7 @@
           "no": "R26TE12654851",
           "name": "2026학년도 실험실습기자재 구매(노후1_현미경용사진기 외 2종)",
           "amount": 66150000.0,
-          "vendor": "단독",
+          "vendor": "씨엔에스 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3560,7 +3560,7 @@
           "no": "R26TE12654879",
           "name": "2026학년도 실험실습기자재 구매(노후3_스마트널스이엔알)",
           "amount": 38400000.0,
-          "vendor": "단독",
+          "vendor": "지엘메드（G．L Med）",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3597,7 +3597,7 @@
         {
           "title": "",
           "amount": 152976300.0,
-          "vendor": "단독",
+          "vendor": "기린종합건설 주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -3605,7 +3605,7 @@
         {
           "title": "2026학년도 실험실습기자재 구매(노후8_겔도큐멘테이션시스템)",
           "amount": 68750000.0,
-          "vendor": "단독",
+          "vendor": "(주)제노필",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3613,7 +3613,7 @@
         {
           "title": "2026학년도 실험실습기자재 구매(노후1_현미경용사진기 외 2종)",
           "amount": 66150000.0,
-          "vendor": "단독",
+          "vendor": "씨엔에스 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3621,7 +3621,7 @@
         {
           "title": "2026학년도 실험실습기자재 구매(노후1_현미경용사진기 외 2종)",
           "amount": 66150000.0,
-          "vendor": "단독",
+          "vendor": "씨엔에스 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3629,7 +3629,7 @@
         {
           "title": "2026학년도 실험실습기자재 구매(노후3_스마트널스이엔알)",
           "amount": 38400000.0,
-          "vendor": "단독",
+          "vendor": "지엘메드（G．L Med）",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3656,7 +3656,7 @@
           "no": "R26TE12655702",
           "name": "2023년 만수지구 침수피해 기능복구사업 관급자재(벨트컨베이어)",
           "amount": 26312000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 이에스텍",
           "date": "2025-11-10",
           "method": "수의계약",
           "reason": "",
@@ -3666,7 +3666,7 @@
           "no": "R26TE12655857",
           "name": "2023년 만수지구 침수피해 기능복구사업 관급자재(벨트컨베이어)",
           "amount": 26312000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 이에스텍",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3676,7 +3676,7 @@
           "no": "R26TE12652297",
           "name": "",
           "amount": 23661630.0,
-          "vendor": "단독",
+          "vendor": "주식회사 우원",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3686,7 +3686,7 @@
           "no": "R26TE12652298",
           "name": "",
           "amount": 23661630.0,
-          "vendor": "단독",
+          "vendor": "주식회사 우원",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3696,7 +3696,7 @@
           "no": "R26TE12652294",
           "name": "",
           "amount": 18600000.0,
-          "vendor": "단독",
+          "vendor": "호원건설주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -3733,7 +3733,7 @@
         {
           "title": "2023년 만수지구 침수피해 기능복구사업 관급자재(벨트컨베이어)",
           "amount": 26312000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 이에스텍",
           "date": "2025-11-10",
           "method": "수의계약",
           "justification": ""
@@ -3741,7 +3741,7 @@
         {
           "title": "2023년 만수지구 침수피해 기능복구사업 관급자재(벨트컨베이어)",
           "amount": 26312000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 이에스텍",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3749,7 +3749,7 @@
         {
           "title": "",
           "amount": 23661630.0,
-          "vendor": "단독",
+          "vendor": "주식회사 우원",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3757,7 +3757,7 @@
         {
           "title": "",
           "amount": 23661630.0,
-          "vendor": "단독",
+          "vendor": "주식회사 우원",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -3765,7 +3765,7 @@
         {
           "title": "",
           "amount": 18600000.0,
-          "vendor": "단독",
+          "vendor": "호원건설주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -3792,7 +3792,7 @@
           "no": "R26TE12653299",
           "name": "",
           "amount": 208049510.0,
-          "vendor": "단독",
+          "vendor": "주식회사 백율",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -3802,7 +3802,7 @@
           "no": "R26TE12653385",
           "name": "",
           "amount": 98979760.0,
-          "vendor": "단독",
+          "vendor": "(주)명지건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3812,7 +3812,7 @@
           "no": "R26TE12653336",
           "name": "",
           "amount": 89512970.0,
-          "vendor": "단독",
+          "vendor": "(주)명지건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3822,7 +3822,7 @@
           "no": "R26TE12653405",
           "name": "",
           "amount": 54815000.0,
-          "vendor": "단독",
+          "vendor": "만경 주식회사",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3832,7 +3832,7 @@
           "no": "R26TE12653324",
           "name": "",
           "amount": 36151480.0,
-          "vendor": "단독",
+          "vendor": "서준건설(주)",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -3869,7 +3869,7 @@
         {
           "title": "",
           "amount": 208049510.0,
-          "vendor": "단독",
+          "vendor": "주식회사 백율",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -3877,7 +3877,7 @@
         {
           "title": "",
           "amount": 98979760.0,
-          "vendor": "단독",
+          "vendor": "(주)명지건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3885,7 +3885,7 @@
         {
           "title": "",
           "amount": 89512970.0,
-          "vendor": "단독",
+          "vendor": "(주)명지건설",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3893,7 +3893,7 @@
         {
           "title": "",
           "amount": 54815000.0,
-          "vendor": "단독",
+          "vendor": "만경 주식회사",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3901,7 +3901,7 @@
         {
           "title": "",
           "amount": 36151480.0,
-          "vendor": "단독",
+          "vendor": "서준건설(주)",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -3928,7 +3928,7 @@
           "no": "R26TE12653960",
           "name": "",
           "amount": 14200000.0,
-          "vendor": "단독",
+          "vendor": "세울건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3938,7 +3938,7 @@
           "no": "R26TE12653940",
           "name": "",
           "amount": 12300000.0,
-          "vendor": "단독",
+          "vendor": "세울건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3948,7 +3948,7 @@
           "no": "R26TE12653983",
           "name": "",
           "amount": 10700000.0,
-          "vendor": "단독",
+          "vendor": "원창건설(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3958,7 +3958,7 @@
           "no": "R26TE12653994",
           "name": "",
           "amount": 9300000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 백석건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -3968,7 +3968,7 @@
           "no": "R26TE12653973",
           "name": "",
           "amount": 8200000.0,
-          "vendor": "단독",
+          "vendor": "원창건설(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4005,7 +4005,7 @@
         {
           "title": "",
           "amount": 14200000.0,
-          "vendor": "단독",
+          "vendor": "세울건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4013,7 +4013,7 @@
         {
           "title": "",
           "amount": 12300000.0,
-          "vendor": "단독",
+          "vendor": "세울건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4021,7 +4021,7 @@
         {
           "title": "",
           "amount": 10700000.0,
-          "vendor": "단독",
+          "vendor": "원창건설(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4029,7 +4029,7 @@
         {
           "title": "",
           "amount": 9300000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 백석건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4037,7 +4037,7 @@
         {
           "title": "",
           "amount": 8200000.0,
-          "vendor": "단독",
+          "vendor": "원창건설(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4064,7 +4064,7 @@
           "no": "R26TE12690785",
           "name": "2026년 소상공인 인건비 지원사업 현장점검 운영",
           "amount": 21813200.0,
-          "vendor": "단독",
+          "vendor": "(주)휴먼시스",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4074,7 +4074,7 @@
           "no": "R26TE12701505",
           "name": "2026년 소상공인 인건비 지원사업 현장점검 운영",
           "amount": 21813200.0,
-          "vendor": "단독",
+          "vendor": "(주)휴먼시스",
           "date": "2026-03-04",
           "method": "수의계약",
           "reason": "",
@@ -4084,7 +4084,7 @@
           "no": "R26TE12657237",
           "name": "2026년 청년성장프로젝트 사무가구 및 기기 임차 용역",
           "amount": 7840000.0,
-          "vendor": "단독",
+          "vendor": "이일테크",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4094,7 +4094,7 @@
           "no": "R26TE12671778",
           "name": "2026년 청년성장프로젝트 사무가구 및 기기 임차 용역",
           "amount": 7840000.0,
-          "vendor": "단독",
+          "vendor": "이일테크",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -4104,7 +4104,7 @@
           "no": "R26TE12692770",
           "name": "2026년 청년도전지원사업 노트북 임차",
           "amount": 7000000.0,
-          "vendor": "단독",
+          "vendor": "이일테크",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4141,7 +4141,7 @@
         {
           "title": "2026년 소상공인 인건비 지원사업 현장점검 운영",
           "amount": 21813200.0,
-          "vendor": "단독",
+          "vendor": "(주)휴먼시스",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4149,7 +4149,7 @@
         {
           "title": "2026년 소상공인 인건비 지원사업 현장점검 운영",
           "amount": 21813200.0,
-          "vendor": "단독",
+          "vendor": "(주)휴먼시스",
           "date": "2026-03-04",
           "method": "수의계약",
           "justification": ""
@@ -4157,7 +4157,7 @@
         {
           "title": "2026년 청년성장프로젝트 사무가구 및 기기 임차 용역",
           "amount": 7840000.0,
-          "vendor": "단독",
+          "vendor": "이일테크",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4165,7 +4165,7 @@
         {
           "title": "2026년 청년성장프로젝트 사무가구 및 기기 임차 용역",
           "amount": 7840000.0,
-          "vendor": "단독",
+          "vendor": "이일테크",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -4173,7 +4173,7 @@
         {
           "title": "2026년 청년도전지원사업 노트북 임차",
           "amount": 7000000.0,
-          "vendor": "단독",
+          "vendor": "이일테크",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4200,7 +4200,7 @@
           "no": "R26TE12710474",
           "name": "「지역 맞춤형 스포츠관광 종합 홍보부스 운영」 대행 용역",
           "amount": 26500000.0,
-          "vendor": "단독",
+          "vendor": "중앙기획",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4210,7 +4210,7 @@
           "no": "R26TE12658618",
           "name": "강원 방문의 해 홈페이지 운영 관리 용역",
           "amount": 17000000.0,
-          "vendor": "단독",
+          "vendor": "픽스미디어",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -4220,7 +4220,7 @@
           "no": "R26TE12709900",
           "name": "강원관광재단 개인정보보호 컨설팅 용역",
           "amount": 14155000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 케이씨에이",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4230,7 +4230,7 @@
           "no": "R26TE12727135",
           "name": "강원관광재단 개인정보보호 컨설팅 용역",
           "amount": 14155000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 케이씨에이",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4240,7 +4240,7 @@
           "no": "R26TE12706562",
           "name": "2026 강원 체류관광 책자 인쇄 용역",
           "amount": 12780000.0,
-          "vendor": "단독",
+          "vendor": "행복공감 장애인보호작업장",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4277,7 +4277,7 @@
         {
           "title": "「지역 맞춤형 스포츠관광 종합 홍보부스 운영」 대행 용역",
           "amount": 26500000.0,
-          "vendor": "단독",
+          "vendor": "중앙기획",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4285,7 +4285,7 @@
         {
           "title": "강원 방문의 해 홈페이지 운영 관리 용역",
           "amount": 17000000.0,
-          "vendor": "단독",
+          "vendor": "픽스미디어",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -4293,7 +4293,7 @@
         {
           "title": "강원관광재단 개인정보보호 컨설팅 용역",
           "amount": 14155000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 케이씨에이",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4301,7 +4301,7 @@
         {
           "title": "강원관광재단 개인정보보호 컨설팅 용역",
           "amount": 14155000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 케이씨에이",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4309,7 +4309,7 @@
         {
           "title": "2026 강원 체류관광 책자 인쇄 용역",
           "amount": 12780000.0,
-          "vendor": "단독",
+          "vendor": "행복공감 장애인보호작업장",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4336,7 +4336,7 @@
           "no": "R26TE12662947",
           "name": "2026학년도 돌봄 간식 납품 계약",
           "amount": 51000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4346,7 +4346,7 @@
           "no": "R26TE12693920",
           "name": "2026학년도 돌봄 간식 납품 계약",
           "amount": 51000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4356,7 +4356,7 @@
           "no": "R26TE12694472",
           "name": "2026학년도 돌봄 간식 납품 계약",
           "amount": 51000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "2026-03-04",
           "method": "수의계약",
           "reason": "",
@@ -4366,7 +4366,7 @@
           "no": "R26TE12662996",
           "name": "2026학년도 돌봄교실 간식 계약(유구초병설유치원)",
           "amount": 8000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4376,7 +4376,7 @@
           "no": "R26TE12694010",
           "name": "2026학년도 돌봄교실 간식 계약(유구초병설유치원)",
           "amount": 8000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4413,7 +4413,7 @@
         {
           "title": "2026학년도 돌봄 간식 납품 계약",
           "amount": 51000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4421,7 +4421,7 @@
         {
           "title": "2026학년도 돌봄 간식 납품 계약",
           "amount": 51000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4429,7 +4429,7 @@
         {
           "title": "2026학년도 돌봄 간식 납품 계약",
           "amount": 51000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "2026-03-04",
           "method": "수의계약",
           "justification": ""
@@ -4437,7 +4437,7 @@
         {
           "title": "2026학년도 돌봄교실 간식 계약(유구초병설유치원)",
           "amount": 8000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4445,7 +4445,7 @@
         {
           "title": "2026학년도 돌봄교실 간식 계약(유구초병설유치원)",
           "amount": 8000.0,
-          "vendor": "단독",
+          "vendor": "주식회사세종공주키즈",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4472,7 +4472,7 @@
           "no": "R26TE12668444",
           "name": "2026년 농어촌 기본소득 시범사업 홍보",
           "amount": 45000000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 탄젠트90",
           "date": "2026-02-25",
           "method": "수의계약",
           "reason": "",
@@ -4482,7 +4482,7 @@
           "no": "R26TE12695490",
           "name": "2026년 귀농귀촌 종합상담 매뉴얼 및 정책자금 리플렛 제작배포",
           "amount": 36000000.0,
-          "vendor": "단독",
+          "vendor": "사단법인 한국장애인상생복지회",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4492,7 +4492,7 @@
           "no": "R26TE12699823",
           "name": "2026년 귀농귀촌 종합상담 매뉴얼 및 정책자금 리플렛 제작배포",
           "amount": 36000000.0,
-          "vendor": "단독",
+          "vendor": "사단법인 한국장애인상생복지회",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -4502,7 +4502,7 @@
           "no": "R26TE12699836",
           "name": "2026년 귀농귀촌 종합상담 매뉴얼 및 정책자금 리플렛 제작배포",
           "amount": 36000000.0,
-          "vendor": "단독",
+          "vendor": "사단법인 한국장애인상생복지회",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -4512,7 +4512,7 @@
           "no": "R26TE12672503",
           "name": "2026년 청년농업인 영농정착지원 필수교육 과정 개선",
           "amount": 22000000.0,
-          "vendor": "단독",
+          "vendor": "농협대학교 산학협력단",
           "date": "2026-02-12",
           "method": "수의계약",
           "reason": "",
@@ -4549,7 +4549,7 @@
         {
           "title": "2026년 농어촌 기본소득 시범사업 홍보",
           "amount": 45000000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 탄젠트90",
           "date": "2026-02-25",
           "method": "수의계약",
           "justification": ""
@@ -4557,7 +4557,7 @@
         {
           "title": "2026년 귀농귀촌 종합상담 매뉴얼 및 정책자금 리플렛 제작배포",
           "amount": 36000000.0,
-          "vendor": "단독",
+          "vendor": "사단법인 한국장애인상생복지회",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4565,7 +4565,7 @@
         {
           "title": "2026년 귀농귀촌 종합상담 매뉴얼 및 정책자금 리플렛 제작배포",
           "amount": 36000000.0,
-          "vendor": "단독",
+          "vendor": "사단법인 한국장애인상생복지회",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -4573,7 +4573,7 @@
         {
           "title": "2026년 귀농귀촌 종합상담 매뉴얼 및 정책자금 리플렛 제작배포",
           "amount": 36000000.0,
-          "vendor": "단독",
+          "vendor": "사단법인 한국장애인상생복지회",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -4581,7 +4581,7 @@
         {
           "title": "2026년 청년농업인 영농정착지원 필수교육 과정 개선",
           "amount": 22000000.0,
-          "vendor": "단독",
+          "vendor": "농협대학교 산학협력단",
           "date": "2026-02-12",
           "method": "수의계약",
           "justification": ""
@@ -4674,7 +4674,7 @@
           "no": "R26TE12652439",
           "name": "제설용 염화칼슘 소포장 구매",
           "amount": 47386000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 해이드",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4684,7 +4684,7 @@
           "no": "R26TE12652447",
           "name": "제설용 염화칼슘 톤백 구매",
           "amount": 38000000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 이레케미칼",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4694,7 +4694,7 @@
           "no": "R26TE12652249",
           "name": "",
           "amount": 30560000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에피테크",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4704,7 +4704,7 @@
           "no": "R26TE12652427",
           "name": "2026년 어린이 등·하교 교통안전용품 지원",
           "amount": 19993700.0,
-          "vendor": "단독",
+          "vendor": "크리에이터 그룹",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4714,7 +4714,7 @@
           "no": "R26TE12652471",
           "name": "이화여대8길 일대 도로열선 정비",
           "amount": 5420000.0,
-          "vendor": "단독",
+          "vendor": "(주)한국엠아이씨",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4751,7 +4751,7 @@
         {
           "title": "제설용 염화칼슘 소포장 구매",
           "amount": 47386000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 해이드",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4759,7 +4759,7 @@
         {
           "title": "제설용 염화칼슘 톤백 구매",
           "amount": 38000000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 이레케미칼",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4767,7 +4767,7 @@
         {
           "title": "",
           "amount": 30560000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에피테크",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4775,7 +4775,7 @@
         {
           "title": "2026년 어린이 등·하교 교통안전용품 지원",
           "amount": 19993700.0,
-          "vendor": "단독",
+          "vendor": "크리에이터 그룹",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4783,7 +4783,7 @@
         {
           "title": "이화여대8길 일대 도로열선 정비",
           "amount": 5420000.0,
-          "vendor": "단독",
+          "vendor": "(주)한국엠아이씨",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -4810,7 +4810,7 @@
           "no": "R26TE12652732",
           "name": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(냉동류)구입",
           "amount": 78888880.0,
-          "vendor": "단독",
+          "vendor": "씨더블유푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "reason": "",
@@ -4820,7 +4820,7 @@
           "no": "R26TE12652725",
           "name": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(육류 및 계육류)구입",
           "amount": 78708000.0,
-          "vendor": "단독",
+          "vendor": "다해푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "reason": "",
@@ -4830,7 +4830,7 @@
           "no": "R26TE12652728",
           "name": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(생선류)구입",
           "amount": 40232600.0,
-          "vendor": "단독",
+          "vendor": "신우씨푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "reason": "",
@@ -4840,7 +4840,7 @@
           "no": "R26TE12652741",
           "name": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(곡류) 구입",
           "amount": 29424000.0,
-          "vendor": "단독",
+          "vendor": "다해푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "reason": "",
@@ -4850,7 +4850,7 @@
           "no": "R26TE12652744",
           "name": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(김치류)구입",
           "amount": 19682410.0,
-          "vendor": "단독",
+          "vendor": "농업회사법인 주식회사 에스비케이",
           "date": "2026-02-25",
           "method": "수의계약",
           "reason": "",
@@ -4887,7 +4887,7 @@
         {
           "title": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(냉동류)구입",
           "amount": 78888880.0,
-          "vendor": "단독",
+          "vendor": "씨더블유푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "justification": ""
@@ -4895,7 +4895,7 @@
         {
           "title": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(육류 및 계육류)구입",
           "amount": 78708000.0,
-          "vendor": "단독",
+          "vendor": "다해푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "justification": ""
@@ -4903,7 +4903,7 @@
         {
           "title": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(생선류)구입",
           "amount": 40232600.0,
-          "vendor": "단독",
+          "vendor": "신우씨푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "justification": ""
@@ -4911,7 +4911,7 @@
         {
           "title": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(곡류) 구입",
           "amount": 29424000.0,
-          "vendor": "단독",
+          "vendor": "다해푸드",
           "date": "2026-02-25",
           "method": "수의계약",
           "justification": ""
@@ -4919,7 +4919,7 @@
         {
           "title": "2026학년도 1학기 국립공주대학교 학생생활관 천안공과대학분관 구내식당 급식재료(김치류)구입",
           "amount": 19682410.0,
-          "vendor": "단독",
+          "vendor": "농업회사법인 주식회사 에스비케이",
           "date": "2026-02-25",
           "method": "수의계약",
           "justification": ""
@@ -4946,7 +4946,7 @@
           "no": "R26TE12653640",
           "name": "",
           "amount": 46300000.0,
-          "vendor": "단독",
+          "vendor": "(주)원주상하수도건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4956,7 +4956,7 @@
           "no": "R26TE12653611",
           "name": "",
           "amount": 44490000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 현대수도건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4966,7 +4966,7 @@
           "no": "R26TE12653653",
           "name": "",
           "amount": 24500000.0,
-          "vendor": "단독",
+          "vendor": "(주)원주상하수도건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4976,7 +4976,7 @@
           "no": "R26TE12653950",
           "name": "",
           "amount": 13460000.0,
-          "vendor": "단독",
+          "vendor": "대성공업",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -4986,7 +4986,7 @@
           "no": "R26TE12653982",
           "name": "수질검사(미생물) 시약 구입",
           "amount": 4292000.0,
-          "vendor": "단독",
+          "vendor": "엔에이치바이오",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5023,7 +5023,7 @@
         {
           "title": "",
           "amount": 46300000.0,
-          "vendor": "단독",
+          "vendor": "(주)원주상하수도건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5031,7 +5031,7 @@
         {
           "title": "",
           "amount": 44490000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 현대수도건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5039,7 +5039,7 @@
         {
           "title": "",
           "amount": 24500000.0,
-          "vendor": "단독",
+          "vendor": "(주)원주상하수도건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5047,7 +5047,7 @@
         {
           "title": "",
           "amount": 13460000.0,
-          "vendor": "단독",
+          "vendor": "대성공업",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5055,7 +5055,7 @@
         {
           "title": "수질검사(미생물) 시약 구입",
           "amount": 4292000.0,
-          "vendor": "단독",
+          "vendor": "엔에이치바이오",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5082,7 +5082,7 @@
           "no": "R26TE12654300",
           "name": "초화 생산 및 관리용 자재 구입",
           "amount": 14918810.0,
-          "vendor": "단독",
+          "vendor": "백두종합자재",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5092,7 +5092,7 @@
           "no": "R26TE12654286",
           "name": "자원재활용 활성화를 위한 홍보 물품 구입",
           "amount": 14508000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 대성에코",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5102,7 +5102,7 @@
           "no": "R26TE12654297",
           "name": "2026년 봄초화 구입",
           "amount": 10695000.0,
-          "vendor": "단독",
+          "vendor": "선암팜",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5112,7 +5112,7 @@
           "no": "R26TE12654267",
           "name": "2026년 강서구 스마트돌봄 플러그 설치 지원 사업 관련 물품 구입",
           "amount": 7690160.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에이나인",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5122,7 +5122,7 @@
           "no": "R26TE12654245",
           "name": "2026 공원관리 기간제근로자(공원2계) 안전용품 계약",
           "amount": 4336750.0,
-          "vendor": "단독",
+          "vendor": "건영상사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5159,7 +5159,7 @@
         {
           "title": "초화 생산 및 관리용 자재 구입",
           "amount": 14918810.0,
-          "vendor": "단독",
+          "vendor": "백두종합자재",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5167,7 +5167,7 @@
         {
           "title": "자원재활용 활성화를 위한 홍보 물품 구입",
           "amount": 14508000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 대성에코",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5175,7 +5175,7 @@
         {
           "title": "2026년 봄초화 구입",
           "amount": 10695000.0,
-          "vendor": "단독",
+          "vendor": "선암팜",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5183,7 +5183,7 @@
         {
           "title": "2026년 강서구 스마트돌봄 플러그 설치 지원 사업 관련 물품 구입",
           "amount": 7690160.0,
-          "vendor": "단독",
+          "vendor": "주식회사 에이나인",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5191,7 +5191,7 @@
         {
           "title": "2026 공원관리 기간제근로자(공원2계) 안전용품 계약",
           "amount": 4336750.0,
-          "vendor": "단독",
+          "vendor": "건영상사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5218,7 +5218,7 @@
           "no": "R26TE12655798",
           "name": "의성워라밸복합문화센터건립공사 관급자재_자동제어",
           "amount": 129500000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 유일",
           "date": "2025-12-31",
           "method": "수의계약",
           "reason": "",
@@ -5228,7 +5228,7 @@
           "no": "R26TE12655877",
           "name": "의성워라밸복합문화센터건립공사 관급자재_자동제어",
           "amount": 129500000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 유일",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5238,7 +5238,7 @@
           "no": "R26TE12652794",
           "name": "",
           "amount": 123791790.0,
-          "vendor": "단독",
+          "vendor": "명가종합건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5248,7 +5248,7 @@
           "no": "R26TE12652776",
           "name": "",
           "amount": 88670000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 아셀",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5258,7 +5258,7 @@
           "no": "R26TE12655812",
           "name": "의성워라밸복합문화센터건립공사 관급자재_분전반",
           "amount": 86514000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 유일",
           "date": "2025-11-07",
           "method": "수의계약",
           "reason": "",
@@ -5295,7 +5295,7 @@
         {
           "title": "의성워라밸복합문화센터건립공사 관급자재_자동제어",
           "amount": 129500000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 유일",
           "date": "2025-12-31",
           "method": "수의계약",
           "justification": ""
@@ -5303,7 +5303,7 @@
         {
           "title": "의성워라밸복합문화센터건립공사 관급자재_자동제어",
           "amount": 129500000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 유일",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5311,7 +5311,7 @@
         {
           "title": "",
           "amount": 123791790.0,
-          "vendor": "단독",
+          "vendor": "명가종합건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5319,7 +5319,7 @@
         {
           "title": "",
           "amount": 88670000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 아셀",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5327,7 +5327,7 @@
         {
           "title": "의성워라밸복합문화센터건립공사 관급자재_분전반",
           "amount": 86514000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 유일",
           "date": "2025-11-07",
           "method": "수의계약",
           "justification": ""
@@ -5354,7 +5354,7 @@
           "no": "R26TE12665953",
           "name": "2026년도 직업능력개발훈련(집체) 심사평가 설명회 행사 운영 용역",
           "amount": 54982400.0,
-          "vendor": "단독",
+          "vendor": "(주) 케이에스센세이션",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5364,7 +5364,7 @@
           "no": "R26TE12690814",
           "name": "2026년도 직업능력개발훈련(집체) 심사평가 설명회 행사 운영 용역",
           "amount": 54982400.0,
-          "vendor": "단독",
+          "vendor": "(주) 케이에스센세이션",
           "date": "2026-03-03",
           "method": "수의계약",
           "reason": "",
@@ -5374,7 +5374,7 @@
           "no": "R26TE12708910",
           "name": "2026년도 심사평가 설명회 행사 장비대여",
           "amount": 20768000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 티비미디어",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5384,7 +5384,7 @@
           "no": "R26TE12701354",
           "name": "2026년도 심사평가 설명회 행사 영상촬영 및 콘텐츠 제작 용역",
           "amount": 14550000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 스튜디오레드우드",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5394,7 +5394,7 @@
           "no": "R26TE12710692",
           "name": "2026년도 심사평가 설명회 행사 영상촬영 및 콘텐츠 제작 용역",
           "amount": 14550000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 스튜디오레드우드",
           "date": "2026-03-04",
           "method": "수의계약",
           "reason": "",
@@ -5431,7 +5431,7 @@
         {
           "title": "2026년도 직업능력개발훈련(집체) 심사평가 설명회 행사 운영 용역",
           "amount": 54982400.0,
-          "vendor": "단독",
+          "vendor": "(주) 케이에스센세이션",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5439,7 +5439,7 @@
         {
           "title": "2026년도 직업능력개발훈련(집체) 심사평가 설명회 행사 운영 용역",
           "amount": 54982400.0,
-          "vendor": "단독",
+          "vendor": "(주) 케이에스센세이션",
           "date": "2026-03-03",
           "method": "수의계약",
           "justification": ""
@@ -5447,7 +5447,7 @@
         {
           "title": "2026년도 심사평가 설명회 행사 장비대여",
           "amount": 20768000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 티비미디어",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5455,7 +5455,7 @@
         {
           "title": "2026년도 심사평가 설명회 행사 영상촬영 및 콘텐츠 제작 용역",
           "amount": 14550000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 스튜디오레드우드",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5463,7 +5463,7 @@
         {
           "title": "2026년도 심사평가 설명회 행사 영상촬영 및 콘텐츠 제작 용역",
           "amount": 14550000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 스튜디오레드우드",
           "date": "2026-03-04",
           "method": "수의계약",
           "justification": ""
@@ -5609,7 +5609,7 @@
           "no": "R26TE12652539",
           "name": "",
           "amount": 151937000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 대원조경건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5619,7 +5619,7 @@
           "no": "R26TE12652566",
           "name": "",
           "amount": 85858000.0,
-          "vendor": "단독",
+          "vendor": "우진전기공사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5629,7 +5629,7 @@
           "no": "R26TE12652565",
           "name": "",
           "amount": 73318000.0,
-          "vendor": "단독",
+          "vendor": "서광개발주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5639,7 +5639,7 @@
           "no": "R26TE12652544",
           "name": "",
           "amount": 72250000.0,
-          "vendor": "단독",
+          "vendor": "태영이엔지",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5649,7 +5649,7 @@
           "no": "R26TE12652698",
           "name": "",
           "amount": 71105000.0,
-          "vendor": "단독",
+          "vendor": "대아건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5686,7 +5686,7 @@
         {
           "title": "",
           "amount": 151937000.0,
-          "vendor": "단독",
+          "vendor": "주식회사 대원조경건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5694,7 +5694,7 @@
         {
           "title": "",
           "amount": 85858000.0,
-          "vendor": "단독",
+          "vendor": "우진전기공사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5702,7 +5702,7 @@
         {
           "title": "",
           "amount": 73318000.0,
-          "vendor": "단독",
+          "vendor": "서광개발주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5710,7 +5710,7 @@
         {
           "title": "",
           "amount": 72250000.0,
-          "vendor": "단독",
+          "vendor": "태영이엔지",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5718,7 +5718,7 @@
         {
           "title": "",
           "amount": 71105000.0,
-          "vendor": "단독",
+          "vendor": "대아건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5870,7 +5870,7 @@
           "no": "R26TE12652771",
           "name": "",
           "amount": 19827600.0,
-          "vendor": "",
+          "vendor": "(유)해봉건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5880,7 +5880,7 @@
           "no": "R26TE12652792",
           "name": "",
           "amount": 19669500.0,
-          "vendor": "",
+          "vendor": "동진건설 주식회사",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5890,7 +5890,7 @@
           "no": "R26TE12652723",
           "name": "",
           "amount": 18912000.0,
-          "vendor": "",
+          "vendor": "(주)지우토건",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5900,7 +5900,7 @@
           "no": "R26TE12652650",
           "name": "",
           "amount": 17875200.0,
-          "vendor": "",
+          "vendor": "(주)영창건설",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -5937,7 +5937,7 @@
         {
           "title": "",
           "amount": 19827600.0,
-          "vendor": "",
+          "vendor": "(유)해봉건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5945,7 +5945,7 @@
         {
           "title": "",
           "amount": 19669500.0,
-          "vendor": "",
+          "vendor": "동진건설 주식회사",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5953,7 +5953,7 @@
         {
           "title": "",
           "amount": 18912000.0,
-          "vendor": "",
+          "vendor": "(주)지우토건",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5961,7 +5961,7 @@
         {
           "title": "",
           "amount": 17875200.0,
-          "vendor": "",
+          "vendor": "(주)영창건설",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -5987,7 +5987,7 @@
           "no": "R26TE12652783",
           "name": "",
           "amount": 19400000.0,
-          "vendor": "",
+          "vendor": "가나소방 주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -5997,7 +5997,7 @@
           "no": "R26TE12652788",
           "name": "",
           "amount": 18308680.0,
-          "vendor": "",
+          "vendor": "(주)명동전기공사",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -6007,7 +6007,7 @@
           "no": "R26TE12652812",
           "name": "",
           "amount": 17799300.0,
-          "vendor": "",
+          "vendor": "주식회사 네오미디어",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -6017,7 +6017,7 @@
           "no": "R26TE12652787",
           "name": "",
           "amount": 17046000.0,
-          "vendor": "",
+          "vendor": "이소이앤지",
           "date": "2025-12-29",
           "method": "수의계약",
           "reason": "",
@@ -6054,7 +6054,7 @@
         {
           "title": "",
           "amount": 19400000.0,
-          "vendor": "",
+          "vendor": "가나소방 주식회사",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -6062,7 +6062,7 @@
         {
           "title": "",
           "amount": 18308680.0,
-          "vendor": "",
+          "vendor": "(주)명동전기공사",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -6070,7 +6070,7 @@
         {
           "title": "",
           "amount": 17799300.0,
-          "vendor": "",
+          "vendor": "주식회사 네오미디어",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -6078,7 +6078,7 @@
         {
           "title": "",
           "amount": 17046000.0,
-          "vendor": "",
+          "vendor": "이소이앤지",
           "date": "2025-12-29",
           "method": "수의계약",
           "justification": ""
@@ -8001,7 +8001,7 @@
           "no": "R26TE12655207",
           "name": "온산바이오에너지센터 건식 탈황장치 탈황제 구매",
           "amount": 93575000.0,
-          "vendor": "단독",
+          "vendor": "에이티이 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -8011,7 +8011,7 @@
           "no": "R26TE12655328",
           "name": "2026년 울산도서관 장애인도서 구입",
           "amount": 24403900.0,
-          "vendor": "분담",
+          "vendor": "이지북스",
           "date": "2026-02-23",
           "method": "수의계약",
           "reason": "",
@@ -8021,7 +8021,7 @@
           "no": "R26TE12653729",
           "name": "대나무숲 비배관리용 비료 구입",
           "amount": 19940000.0,
-          "vendor": "단독",
+          "vendor": "사파엘라",
           "date": "2026-02-26",
           "method": "수의계약",
           "reason": "",
@@ -8031,7 +8031,7 @@
           "no": "R26TE12655364",
           "name": "보건환경연구원 기체크로마토그래프 질량분석기(GCMSMS) 장비 수리(긴급)",
           "amount": 9869000.0,
-          "vendor": "단독",
+          "vendor": "한국애질런트테크놀로지스(주)",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -8041,7 +8041,7 @@
           "no": "R26TE12653725",
           "name": "전광판 소모품(파워서플라이) 구입",
           "amount": 7920000.0,
-          "vendor": "단독",
+          "vendor": "울산광고",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -8078,7 +8078,7 @@
         {
           "title": "온산바이오에너지센터 건식 탈황장치 탈황제 구매",
           "amount": 93575000.0,
-          "vendor": "단독",
+          "vendor": "에이티이 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -8086,7 +8086,7 @@
         {
           "title": "2026년 울산도서관 장애인도서 구입",
           "amount": 24403900.0,
-          "vendor": "분담",
+          "vendor": "이지북스",
           "date": "2026-02-23",
           "method": "수의계약",
           "justification": ""
@@ -8094,7 +8094,7 @@
         {
           "title": "대나무숲 비배관리용 비료 구입",
           "amount": 19940000.0,
-          "vendor": "단독",
+          "vendor": "사파엘라",
           "date": "2026-02-26",
           "method": "수의계약",
           "justification": ""
@@ -8102,7 +8102,7 @@
         {
           "title": "보건환경연구원 기체크로마토그래프 질량분석기(GCMSMS) 장비 수리(긴급)",
           "amount": 9869000.0,
-          "vendor": "단독",
+          "vendor": "한국애질런트테크놀로지스(주)",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -8110,7 +8110,7 @@
         {
           "title": "전광판 소모품(파워서플라이) 구입",
           "amount": 7920000.0,
-          "vendor": "단독",
+          "vendor": "울산광고",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -9895,7 +9895,7 @@
           "no": "R26TE12652433",
           "name": "",
           "amount": 18084660.0,
-          "vendor": "",
+          "vendor": "주식회사 다올조경",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -9905,7 +9905,7 @@
           "no": "R26TE12652502",
           "name": "청라공원 도색 정비자재 구입",
           "amount": 17865980.0,
-          "vendor": "",
+          "vendor": "제이에스컴퍼니",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -9915,7 +9915,7 @@
           "no": "R26TE12652487",
           "name": "1·3, 6·8 공동구 화재 대피용 비상 라이트 구매",
           "amount": 17836500.0,
-          "vendor": "",
+          "vendor": "드림네트워크",
           "date": "2026-03-01",
           "method": "수의계약",
           "reason": "",
@@ -9952,7 +9952,7 @@
         {
           "title": "",
           "amount": 18084660.0,
-          "vendor": "",
+          "vendor": "주식회사 다올조경",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -9960,7 +9960,7 @@
         {
           "title": "청라공원 도색 정비자재 구입",
           "amount": 17865980.0,
-          "vendor": "",
+          "vendor": "제이에스컴퍼니",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -9968,7 +9968,7 @@
         {
           "title": "1·3, 6·8 공동구 화재 대피용 비상 라이트 구매",
           "amount": 17836500.0,
-          "vendor": "",
+          "vendor": "드림네트워크",
           "date": "2026-03-01",
           "method": "수의계약",
           "justification": ""
@@ -9994,7 +9994,7 @@
           "no": "R26TE12652404",
           "name": "",
           "amount": 19743200.0,
-          "vendor": "",
+          "vendor": "세하건설 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -10004,7 +10004,7 @@
           "no": "R26TE12652407",
           "name": "",
           "amount": 17358560.0,
-          "vendor": "",
+          "vendor": "다원건설 주식회사",
           "date": "2026-02-26",
           "method": "수의계약",
           "reason": "",
@@ -10014,7 +10014,7 @@
           "no": "R26TE12652251",
           "name": "",
           "amount": 17047600.0,
-          "vendor": "",
+          "vendor": "주식회사 도화환경건설",
           "date": "2026-02-27",
           "method": "수의계약",
           "reason": "",
@@ -10051,7 +10051,7 @@
         {
           "title": "",
           "amount": 19743200.0,
-          "vendor": "",
+          "vendor": "세하건설 주식회사",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -10059,7 +10059,7 @@
         {
           "title": "",
           "amount": 17358560.0,
-          "vendor": "",
+          "vendor": "다원건설 주식회사",
           "date": "2026-02-26",
           "method": "수의계약",
           "justification": ""
@@ -10067,7 +10067,7 @@
         {
           "title": "",
           "amount": 17047600.0,
-          "vendor": "",
+          "vendor": "주식회사 도화환경건설",
           "date": "2026-02-27",
           "method": "수의계약",
           "justification": ""
@@ -10093,7 +10093,7 @@
           "no": "R26TE12652558",
           "name": "",
           "amount": 19860000.0,
-          "vendor": "",
+          "vendor": "(주)대경",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -10103,7 +10103,7 @@
           "no": "R26TE12652580",
           "name": "",
           "amount": 18900000.0,
-          "vendor": "",
+          "vendor": "(주)대경",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -10113,7 +10113,7 @@
           "no": "R26TE12652582",
           "name": "",
           "amount": 18900000.0,
-          "vendor": "",
+          "vendor": "(주)대경",
           "date": "",
           "method": "수의계약",
           "reason": "",
@@ -10150,7 +10150,7 @@
         {
           "title": "",
           "amount": 19860000.0,
-          "vendor": "",
+          "vendor": "(주)대경",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -10158,7 +10158,7 @@
         {
           "title": "",
           "amount": 18900000.0,
-          "vendor": "",
+          "vendor": "(주)대경",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -10166,7 +10166,7 @@
         {
           "title": "",
           "amount": 18900000.0,
-          "vendor": "",
+          "vendor": "(주)대경",
           "date": "",
           "method": "수의계약",
           "justification": ""
@@ -17116,7 +17116,7 @@
   "summary": {
     "sole_source_ratio": 0.6706666666666666,
     "unique_institutions": 152,
-    "unique_vendors": 136
+    "unique_vendors": 293
   },
   "pattern_counts": {
     "new_company_big_win": 8,
