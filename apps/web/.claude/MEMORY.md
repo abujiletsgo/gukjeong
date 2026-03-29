@@ -299,3 +299,16 @@
   apps/web/app/audit/AuditPageClient.tsx | 16 ++++++++--------
   apps/web/tsconfig.tsbuildinfo          |  2 +-
   4 files changed, 33 insertions(+), 9 deletions(-)
+
+## 2026-03-28 (16:04 UTC) · @Tom Kwon
+**Commit:** fix: JSX syntax error in news center articles (2c244b9) by Tom Kwon
+**Changed:**
+  apps/web/app/news/NewsPageClient.tsx | 6 ++----
+  apps/web/tsconfig.tsbuildinfo        | 2 +-
+  2 files changed, 3 insertions(+), 5 deletions(-)
+
+## 2026-03-29 (12:30 UTC) · @Tom Kwon
+**Commit:** fix: Audit page — add 'all' tab, fix category filter, restore high_value_sole_source (e6d27da) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 15 ++++++++++++---
+  1 file changed, 12 insertions(+), 3 deletions(-)

@@ -11,6 +11,7 @@
 - Key file: `.claude/PROJECT_CONTEXT.md` [2026-03-25 @Tom Kwon]
 - Key file: `.claude/ARCHITECTURE.md` [2026-03-25 @Tom Kwon]
 - Key file: `scripts/fetch-data.py` [2026-03-28 @Tom Kwon]
+- Key file: `scripts/dispatch-api-subscription.md` [2026-03-28 @Tom Kwon]
 
 ## → PATTERNS (confirmed working sequences)
 
