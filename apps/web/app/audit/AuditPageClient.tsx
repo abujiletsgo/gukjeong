@@ -56,6 +56,7 @@ import DepartmentHeatmap from '@/components/audit/DepartmentHeatmap';
 import SuspicionCard from '@/components/audit/SuspicionCard';
 import PatternBadge from '@/components/audit/PatternBadge';
 import { getSeverityColor, getSeverityLabel, formatKRW, formatNumber, formatKeyLabel } from '@/lib/utils';
+import RichText from '@/components/common/RichText';
 
 // ── Real data types (from audit-results.json) ──────────────────────────
 interface RealEvidenceContract {
@@ -435,7 +436,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
           {finding.why_it_matters && (
             <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
               <h4 className="text-sm font-bold text-amber-800 mb-1">왜 의심스러운가?</h4>
-              <p className="text-sm text-amber-700 leading-relaxed">{finding.why_it_matters}</p>
+              <RichText text={finding.why_it_matters!} className="text-sm text-amber-700" />
             </div>
           )}
 
@@ -456,7 +457,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-amber-800 mb-1">내 세금은?</h4>
-                  <p className="text-sm text-amber-700 leading-relaxed">{finding.citizen_impact}</p>
+                  <RichText text={finding.citizen_impact!} className="text-sm text-amber-700" />
                 </div>
               </div>
             </div>
@@ -605,9 +606,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
                 </svg>
                 필요한 조치
               </h4>
-              <p className="text-sm text-green-700 leading-relaxed whitespace-pre-line">
-                {finding.what_should_happen}
-              </p>
+              <RichText text={finding.what_should_happen!} className="text-sm text-green-700" />
             </div>
           )}
 

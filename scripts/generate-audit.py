@@ -942,7 +942,25 @@ def enrich_narrative(f):
 for f in findings:
     enrich_narrative(f)
 
-print(f'  Enriched {len(findings)} findings with narrative fields')
+# Post-process: add proper formatting (newlines between numbered items, bold key terms)
+import re
+for f in findings:
+    for field in ['what_should_happen', 'why_it_matters', 'citizen_impact', 'plain_explanation']:
+        text = f.get(field, '')
+        if not text:
+            continue
+        # Convert "1) ... 2) ... 3) ..." to newline-separated
+        text = re.sub(r'\s+(\d+)\)\s', r'\n\1) ', text)
+        # Ensure first item also starts clean
+        text = re.sub(r'^(\d+)\)\s', r'\1) ', text.strip())
+        # Bold key terms
+        for term in ['감사원', '공정거래위원회', '국가계약법', '방위사업법', '페이퍼 컴퍼니', '예정가격', '들러리 입찰', '입찰담합']:
+            text = text.replace(term, f'**{term}**')
+        # Avoid double-bolding
+        text = text.replace('****', '')
+        f[field] = text
+
+print(f'  Enriched {len(findings)} findings with formatted narrative fields')
 
 
 # ════════════════════════════════════════════════════════════════════

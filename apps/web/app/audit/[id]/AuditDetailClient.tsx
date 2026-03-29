@@ -5,6 +5,7 @@ import type { AuditFlag, AuditContract, AuditTimelineItem, AuditLink, SimilarCas
 import { getSeverityColor, getSeverityLabel, formatKRW, formatNumber, formatKeyLabel } from '@/lib/utils';
 import PatternBadge from '@/components/audit/PatternBadge';
 import ScoreBar from '@/components/common/ScoreBar';
+import RichText from '@/components/common/RichText';
 
 interface AuditDetailClientProps {
   flag: AuditFlag;
@@ -202,16 +203,14 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
           <div className="p-5 sm:p-6 space-y-5">
             {/* 쉬운 설명 */}
             {plainExplanation && (
-              <p className="text-base sm:text-lg text-gray-800 leading-relaxed font-medium">
-                {plainExplanation}
-              </p>
+              <RichText text={plainExplanation} className="text-base sm:text-lg text-gray-800 font-medium" />
             )}
 
             {/* 왜 의심스러운가 */}
             {whyItMatters && (
               <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
                 <h3 className="text-sm font-bold text-amber-800 mb-1">왜 의심스러운가?</h3>
-                <p className="text-sm text-amber-700 leading-relaxed">{whyItMatters}</p>
+                <RichText text={whyItMatters} className="text-sm text-amber-700" />
               </div>
             )}
 
@@ -224,7 +223,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                   </svg>
                   비리가 아닐 수 있는 이유
                 </h3>
-                <p className="text-sm text-green-700 leading-relaxed">{innocentExplanation}</p>
+                <RichText text={innocentExplanation} className="text-sm text-green-700" />
               </div>
             )}
 
@@ -244,7 +243,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-amber-800 mb-1">내 세금은?</h3>
-                    <p className="text-sm text-amber-700 leading-relaxed">{citizenImpact}</p>
+                    <RichText text={citizenImpact} className="text-sm text-amber-700" />
                   </div>
                 </div>
               </div>
@@ -264,9 +263,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
 
             {aiAnalysis ? (
               <div className="bg-purple-50 rounded-lg p-4 mb-4">
-                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {aiAnalysis}
-                </p>
+                <RichText text={aiAnalysis} className="text-sm text-gray-700" />
               </div>
             ) : (
               <div className="text-center py-8 text-gray-400 mb-4">
@@ -281,7 +278,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                   <span className="inline-block w-1.5 h-1.5 bg-green-500 rounded-full" />
                   필요한 조치
                 </h3>
-                <p className="text-sm text-green-700 leading-relaxed">{whatShouldHappen}</p>
+                <RichText text={whatShouldHappen} className="text-sm text-green-700" />
               </div>
             )}
 
