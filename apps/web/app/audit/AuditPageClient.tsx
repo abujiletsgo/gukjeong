@@ -973,9 +973,10 @@ function AuditPageClientInner({
   }, [enrichedFindings]);
 
   // ══════════════════════════════════════════════════════════════════
-  // DEMO MODE — existing seed data rendering
+  // UNIFIED RENDERING — uses SuspicionCard → detail page flow
+  // Data comes from getAuditFlags() which loads live data from JSON
   // ══════════════════════════════════════════════════════════════════
-  if (isDemo) {
+  {
     return (
       <div className="container-page py-6 sm:py-8">
         {/* Header */}
@@ -985,17 +986,14 @@ function AuditPageClientInner({
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI 감사관</h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">데모</span>
-              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">AI 감사관</h1>
               <p className="text-sm text-gray-500">
                 나라장터 공개 계약 데이터에서 AI가 의심 패턴을 자동으로 탐지합니다.
               </p>
             </div>
           </div>
           <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800">
-            <strong>의심 패턴 &#8800; 비리 확정.</strong> 모든 부처에 동일한 기준이 적용됩니다.
+            <strong>의심 패턴 &#8800; 비리 확정.</strong> 모든 기관에 동일한 기준이 적용됩니다.
           </div>
         </div>
 

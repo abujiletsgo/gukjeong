@@ -932,6 +932,60 @@ print(f'  Enriched {len(findings)} findings with narrative fields')
 
 
 # ════════════════════════════════════════════════════════════════════
+# Convert to AuditFlag format (same as demo data)
+# This allows the detail page /audit/[id] to work with live data
+# ════════════════════════════════════════════════════════════════════
+print('🔄 Converting to AuditFlag format...')
+
+PATTERN_LABELS = {
+    'ghost_company': '유령업체',
+    'zero_competition': '경쟁 부재',
+    'bid_rate_anomaly': '예정가격 유출 의심',
+    'new_company_big_win': '신생업체 고액수주',
+    'vendor_concentration': '업체 집중',
+    'repeated_sole_source': '반복 수의계약',
+    'contract_splitting': '계약 분할',
+    'low_bid_competition': '과소 경쟁',
+    'high_value_sole_source': '고액 수의계약',
+}
+
+for i, f in enumerate(findings):
+    # Add id (required for detail page routing)
+    f['id'] = f'af-live-{i+1:04d}'
+
+    # Map target_institution → target_id/target_type (demo format)
+    f['target_id'] = f.get('target_institution', '')
+    f['target_type'] = 'institution'
+
+    # Generate ai_analysis from contextual fields
+    parts = []
+    if f.get('summary'):
+        parts.append(f['summary'])
+    if f.get('why_it_matters'):
+        parts.append(f['why_it_matters'])
+    f['ai_analysis'] = ' '.join(parts)
+
+    # Convert evidence_contracts → contracts (AuditContract format)
+    if f.get('evidence_contracts'):
+        f['contracts'] = []
+        for ec in f['evidence_contracts']:
+            f['contracts'].append({
+                'title': ec.get('name', ''),
+                'amount': ec.get('amount', 0),
+                'vendor': ec.get('vendor', ''),
+                'date': ec.get('date', ''),
+                'method': ec.get('method', ''),
+                'justification': ec.get('reason', ''),
+            })
+
+    # Add status and timestamp
+    f['status'] = 'detected'
+    f['created_at'] = datetime.now().strftime('%Y-%m-%d')
+
+print(f'  Converted {len(findings)} findings to AuditFlag format')
+
+
+# ════════════════════════════════════════════════════════════════════
 # Final: Sort, limit, and save
 # ════════════════════════════════════════════════════════════════════
 findings.sort(key=lambda f: -f['suspicion_score'])

@@ -307,7 +307,27 @@ export function getDepartmentScores(): DepartmentScore[] {
   })).sort((a, b) => b.suspicion_score - a.suspicion_score);
 }
 
+// Try to load live audit data from JSON; fall back to seed data
+function loadLiveAuditFlags(): AuditFlag[] | null {
+  try {
+    const { readFileSync } = require('fs');
+    const { join } = require('path');
+    const raw = readFileSync(join(process.cwd(), 'public', 'data', 'audit-results.json'), 'utf-8');
+    const data = JSON.parse(raw);
+    if (data?.findings?.length > 0) {
+      return data.findings as AuditFlag[];
+    }
+  } catch {
+    // File not found or parse error — fall back to seed data
+  }
+  return null;
+}
+
 export function getAuditFlags(): AuditFlag[] {
+  const live = loadLiveAuditFlags();
+  if (live && live.length > 0) return live;
+
+  // Seed data fallback
   return [
     {
       id: 'af-001',
