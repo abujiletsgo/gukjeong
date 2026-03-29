@@ -860,6 +860,41 @@ function AuditPageClientInner({
     setSeverityFilter('all');
   }, []);
 
+  // ── Computed: department scores for heatmap (must be before any early return) ──
+  const departmentScoresForHeatmap = useMemo((): DepartmentScore[] => {
+    const scoreMap: Record<string, { max: number; count: number }> = {};
+    for (const f of enrichedFindings) {
+      const inst = f.target_institution;
+      if (!scoreMap[inst]) scoreMap[inst] = { max: 0, count: 0 };
+      scoreMap[inst].max = Math.max(scoreMap[inst].max, f.adjusted_score);
+      scoreMap[inst].count++;
+    }
+    return Object.entries(scoreMap)
+      .map(([department, { max, count }]) => ({
+        department,
+        suspicion_score: max,
+        flag_count: count,
+      }))
+      .sort((a, b) => b.suspicion_score - a.suspicion_score);
+  }, [enrichedFindings]);
+
+  const liveKpis = useMemo(() => {
+    const concern = enrichedFindings.filter(f => f.risk_level === 'CONCERN').length;
+    const avgScore = enrichedFindings.length > 0
+      ? Math.round(enrichedFindings.reduce((s, f) => s + f.adjusted_score, 0) / enrichedFindings.length)
+      : 0;
+    return {
+      totalFlags: enrichedFindings.length,
+      highSeverity: concern,
+      departmentsMonitored: new Set(enrichedFindings.map(f => f.target_institution)).size,
+      avgScore,
+    };
+  }, [enrichedFindings]);
+
+  const departments = useMemo(() => {
+    return Array.from(new Set(enrichedFindings.map(f => f.target_institution))).sort();
+  }, [enrichedFindings]);
+
   // ══════════════════════════════════════════════════════════════════
   // DEMO MODE — existing seed data rendering
   // ══════════════════════════════════════════════════════════════════
@@ -929,49 +964,7 @@ function AuditPageClientInner({
     );
   }
 
-  // No real data and no error = fallback to enriched empty state (shows seed data section below)
-  if (!realData && !loading && enrichedFindings.length === 0) {
-    // Fall through to render with seed/demo data
-  }
-
-  // ── Computed: department scores for heatmap ──
-  const departmentScoresForHeatmap = useMemo((): DepartmentScore[] => {
-    // Group enriched findings by institution, take highest adjusted score + count flags
-    const scoreMap: Record<string, { max: number; count: number }> = {};
-    for (const f of enrichedFindings) {
-      const inst = f.target_institution;
-      if (!scoreMap[inst]) scoreMap[inst] = { max: 0, count: 0 };
-      scoreMap[inst].max = Math.max(scoreMap[inst].max, f.adjusted_score);
-      scoreMap[inst].count++;
-    }
-    return Object.entries(scoreMap)
-      .map(([department, { max, count }]) => ({
-        department,
-        suspicion_score: max,
-        flag_count: count,
-      }))
-      .sort((a, b) => b.suspicion_score - a.suspicion_score);
-  }, [enrichedFindings]);
-
-  // ── Computed: KPI values ──
-  const liveKpis = useMemo(() => {
-    const concern = enrichedFindings.filter(f => f.risk_level === 'CONCERN').length;
-    const avgScore = enrichedFindings.length > 0
-      ? Math.round(enrichedFindings.reduce((s, f) => s + f.adjusted_score, 0) / enrichedFindings.length)
-      : 0;
-    return {
-      totalFlags: enrichedFindings.length,
-      highSeverity: concern,
-      departmentsMonitored: new Set(enrichedFindings.map(f => f.target_institution)).size,
-      avgScore,
-    };
-  }, [enrichedFindings]);
-
-  // ── Computed: unique departments for filter dropdown ──
-  const departments = useMemo(() => {
-    return Array.from(new Set(enrichedFindings.map(f => f.target_institution))).sort();
-  }, [enrichedFindings]);
-
+  // ── Live mode rendering ──
   return (
     <div className="container-page py-6 sm:py-8">
 
