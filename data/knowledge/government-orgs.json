@@ -1,0 +1,826 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "대한민국 정부기관 지식베이스 — 기관 유형, 소속, 설립 근거, 주요 업무",
+    "last_updated": "2026-03-31",
+    "source": "정부조직법, 공공기관운영법, 각 설치법",
+    "update_pipeline": "scripts/update-knowledge.py"
+  },
+  "org_types": {
+    "ministry": {"label": "부", "level": 1, "description": "국무위원이 장관으로 있는 중앙행정기관"},
+    "ministry_office": {"label": "처", "level": 1, "description": "국무위원이 아닌 장이 이끄는 중앙행정기관"},
+    "commission": {"label": "위원회", "level": 1, "description": "합의제 행정기관"},
+    "agency": {"label": "청", "level": 2, "description": "부/처 산하 외청"},
+    "public_corp": {"label": "공사/공단", "level": 3, "description": "공공기관운영법상 공기업/준정부기관"},
+    "research_inst": {"label": "연구원/연구소", "level": 3, "description": "정부출연연구기관"},
+    "promotion_inst": {"label": "진흥원/진흥회", "level": 3, "description": "산업/정책 진흥 기관"},
+    "service_inst": {"label": "관리원/정보원", "level": 3, "description": "행정서비스/정보관리 전담기관"},
+    "local_gov": {"label": "지방자치단체", "level": 2, "description": "광역/기초 지자체"},
+    "education": {"label": "교육기관", "level": 2, "description": "교육청, 대학, 학교"},
+    "special_corp": {"label": "특수법인", "level": 3, "description": "개별 법률에 의해 설립된 법인"}
+  },
+  "organizations": [
+    {
+      "id": "go-president",
+      "name": "대통령실",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["대통령비서실", "대통령경호처"],
+      "procurement_profile": "security",
+      "notes": "경호/보안 물품은 국가안보 사유 수의계약 합법"
+    },
+    {
+      "id": "go-moef",
+      "name": "기획재정부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["기재부"],
+      "children": ["go-nts", "go-customs", "go-pps", "go-stats"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-nts",
+      "name": "국세청",
+      "type": "agency",
+      "parent_id": "go-moef",
+      "aliases": [],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-customs",
+      "name": "관세청",
+      "type": "agency",
+      "parent_id": "go-moef",
+      "aliases": [],
+      "procurement_profile": "security"
+    },
+    {
+      "id": "go-pps",
+      "name": "조달청",
+      "type": "agency",
+      "parent_id": "go-moef",
+      "aliases": ["PPS"],
+      "procurement_profile": "standard",
+      "notes": "나라장터 운영 주체, 제3자단가계약/MAS/디지털서비스 관리"
+    },
+    {
+      "id": "go-stats",
+      "name": "통계청",
+      "type": "agency",
+      "parent_id": "go-moef",
+      "aliases": ["KOSTAT"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-moe",
+      "name": "교육부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": [],
+      "children": ["go-kice"],
+      "procurement_profile": "education",
+      "notes": "교과서 지정/배분 체계 총괄. 교육지원청 통해 유통."
+    },
+    {
+      "id": "go-kice",
+      "name": "한국교육과정평가원",
+      "type": "research_inst",
+      "parent_id": "go-moe",
+      "aliases": ["KICE", "교육과정평가원"],
+      "procurement_profile": "education",
+      "notes": "수능/학력평가 출제 전담 — 유일 기관이므로 수의계약 정상"
+    },
+    {
+      "id": "go-msit",
+      "name": "과학기술정보통신부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["과기정통부", "과기부"],
+      "children": ["go-kisa", "go-nia", "go-nrf", "go-kari", "go-kist", "go-etri", "go-kaist"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-kisa",
+      "name": "한국인터넷진흥원",
+      "type": "promotion_inst",
+      "parent_id": "go-msit",
+      "aliases": ["KISA"],
+      "procurement_profile": "tech"
+    },
+    {
+      "id": "go-nia",
+      "name": "한국지능정보사회진흥원",
+      "type": "promotion_inst",
+      "parent_id": "go-msit",
+      "aliases": ["NIA", "지능정보원"],
+      "procurement_profile": "tech"
+    },
+    {
+      "id": "go-nrf",
+      "name": "한국연구재단",
+      "type": "promotion_inst",
+      "parent_id": "go-msit",
+      "aliases": ["NRF", "연구재단"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-kari",
+      "name": "한국항공우주연구원",
+      "type": "research_inst",
+      "parent_id": "go-msit",
+      "aliases": ["KARI", "항우연"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-kist",
+      "name": "한국과학기술연구원",
+      "type": "research_inst",
+      "parent_id": "go-msit",
+      "aliases": ["KIST"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-etri",
+      "name": "한국전자통신연구원",
+      "type": "research_inst",
+      "parent_id": "go-msit",
+      "aliases": ["ETRI", "전자통신연구원"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-kaist",
+      "name": "한국과학기술원",
+      "type": "education",
+      "parent_id": "go-msit",
+      "aliases": ["KAIST", "카이스트"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-mofa",
+      "name": "외교부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": [],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-mou",
+      "name": "통일부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": [],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-moj",
+      "name": "법무부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": [],
+      "children": ["go-prosecution"],
+      "procurement_profile": "security"
+    },
+    {
+      "id": "go-prosecution",
+      "name": "검찰청",
+      "type": "agency",
+      "parent_id": "go-moj",
+      "aliases": ["대검찰청", "지방검찰청"],
+      "procurement_profile": "security"
+    },
+    {
+      "id": "go-mnd",
+      "name": "국방부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": [],
+      "children": ["go-dapa", "go-army", "go-navy", "go-airforce", "go-mma"],
+      "procurement_profile": "defense",
+      "notes": "방위사업법 적용. D2B(국방전자조달시스템) 별도 운영."
+    },
+    {
+      "id": "go-dapa",
+      "name": "방위사업청",
+      "type": "agency",
+      "parent_id": "go-mnd",
+      "aliases": ["DAPA", "방사청"],
+      "procurement_profile": "defense",
+      "notes": "방산업체 지정/관리. 방위사업법 §35."
+    },
+    {
+      "id": "go-army",
+      "name": "육군",
+      "type": "agency",
+      "parent_id": "go-mnd",
+      "aliases": ["육군본부"],
+      "procurement_profile": "defense"
+    },
+    {
+      "id": "go-navy",
+      "name": "해군",
+      "type": "agency",
+      "parent_id": "go-mnd",
+      "aliases": ["해군본부"],
+      "procurement_profile": "defense"
+    },
+    {
+      "id": "go-airforce",
+      "name": "공군",
+      "type": "agency",
+      "parent_id": "go-mnd",
+      "aliases": ["공군본부"],
+      "procurement_profile": "defense"
+    },
+    {
+      "id": "go-mma",
+      "name": "병무청",
+      "type": "agency",
+      "parent_id": "go-mnd",
+      "aliases": [],
+      "procurement_profile": "defense"
+    },
+    {
+      "id": "go-mois",
+      "name": "행정안전부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["행안부"],
+      "children": ["go-npa", "go-nfa", "go-mpva"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-npa",
+      "name": "경찰청",
+      "type": "agency",
+      "parent_id": "go-mois",
+      "aliases": ["국가경찰청"],
+      "procurement_profile": "security"
+    },
+    {
+      "id": "go-nfa",
+      "name": "소방청",
+      "type": "agency",
+      "parent_id": "go-mois",
+      "aliases": [],
+      "procurement_profile": "security",
+      "notes": "소방장비 KFI 인증 필수. MAS 4종 + 경쟁 8종만 존재."
+    },
+    {
+      "id": "go-mpva",
+      "name": "국가보훈부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["보훈부", "보훈처"],
+      "children": ["go-bohun-medical"],
+      "procurement_profile": "medical"
+    },
+    {
+      "id": "go-bohun-medical",
+      "name": "한국보훈복지의료공단",
+      "type": "public_corp",
+      "parent_id": "go-mpva",
+      "aliases": ["보훈의료공단"],
+      "procurement_profile": "medical",
+      "notes": "보훈병원 의약품 수의계약은 약가 규정에 따른 표준 조달"
+    },
+    {
+      "id": "go-mcst",
+      "name": "문화체육관광부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["문체부"],
+      "children": ["go-kca-culture", "go-kcti"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kcti",
+      "name": "한국콘텐츠진흥원",
+      "type": "promotion_inst",
+      "parent_id": "go-mcst",
+      "aliases": ["KOCCA", "콘텐츠진흥원"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-mafra",
+      "name": "농림축산식품부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["농식품부", "농림부"],
+      "children": ["go-kfs", "go-nacf", "go-nfqs"],
+      "procurement_profile": "commodity"
+    },
+    {
+      "id": "go-kfs",
+      "name": "산림청",
+      "type": "agency",
+      "parent_id": "go-mafra",
+      "aliases": [],
+      "procurement_profile": "commodity",
+      "notes": "묘목/종자/조림 — 계절성 + 지역 한정 공급"
+    },
+    {
+      "id": "go-nacf",
+      "name": "농업협동조합",
+      "type": "special_corp",
+      "parent_id": "go-mafra",
+      "aliases": ["농협", "NH"],
+      "procurement_profile": "commodity"
+    },
+    {
+      "id": "go-nfqs",
+      "name": "국립농산물품질관리원",
+      "type": "service_inst",
+      "parent_id": "go-mafra",
+      "aliases": ["농관원"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-motie",
+      "name": "산업통상자원부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["산자부", "산업부"],
+      "children": ["go-kipo", "go-kotra", "go-kiat", "go-ketep"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kipo",
+      "name": "특허청",
+      "type": "agency",
+      "parent_id": "go-motie",
+      "aliases": ["KIPO"],
+      "procurement_profile": "tech"
+    },
+    {
+      "id": "go-kotra",
+      "name": "대한무역투자진흥공사",
+      "type": "public_corp",
+      "parent_id": "go-motie",
+      "aliases": ["KOTRA", "코트라"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kiat",
+      "name": "한국산업기술진흥원",
+      "type": "promotion_inst",
+      "parent_id": "go-motie",
+      "aliases": ["KIAT"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-ketep",
+      "name": "한국에너지기술평가원",
+      "type": "promotion_inst",
+      "parent_id": "go-motie",
+      "aliases": ["KETEP"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-mohw",
+      "name": "보건복지부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["복지부"],
+      "children": ["go-mfds", "go-nhis", "go-nps", "go-khidi"],
+      "procurement_profile": "medical"
+    },
+    {
+      "id": "go-mfds",
+      "name": "식품의약품안전처",
+      "type": "ministry_office",
+      "parent_id": "go-mohw",
+      "aliases": ["식약처"],
+      "procurement_profile": "medical"
+    },
+    {
+      "id": "go-nhis",
+      "name": "국민건강보험공단",
+      "type": "public_corp",
+      "parent_id": "go-mohw",
+      "aliases": ["건보공단", "NHIS"],
+      "procurement_profile": "medical"
+    },
+    {
+      "id": "go-nps",
+      "name": "국민연금공단",
+      "type": "public_corp",
+      "parent_id": "go-mohw",
+      "aliases": ["연금공단", "NPS"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-khidi",
+      "name": "한국보건산업진흥원",
+      "type": "promotion_inst",
+      "parent_id": "go-mohw",
+      "aliases": ["KHIDI", "보건산업진흥원"],
+      "procurement_profile": "medical"
+    },
+    {
+      "id": "go-me",
+      "name": "환경부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": [],
+      "children": ["go-keco", "go-keiti"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-keco",
+      "name": "한국환경공단",
+      "type": "public_corp",
+      "parent_id": "go-me",
+      "aliases": ["KECO"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-keiti",
+      "name": "한국환경산업기술원",
+      "type": "promotion_inst",
+      "parent_id": "go-me",
+      "aliases": ["KEITI", "환경산업기술원"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-moel",
+      "name": "고용노동부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["노동부", "고용부"],
+      "children": ["go-comwel"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-comwel",
+      "name": "근로복지공단",
+      "type": "public_corp",
+      "parent_id": "go-moel",
+      "aliases": ["COMWEL"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-mgef",
+      "name": "여성가족부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["여가부"],
+      "children": ["go-kwdi"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kwdi",
+      "name": "한국여성정책연구원",
+      "type": "research_inst",
+      "parent_id": "go-mgef",
+      "aliases": ["KWDI", "여성정책연구원"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-molit",
+      "name": "국토교통부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["국토부"],
+      "children": ["go-rea", "go-lh", "go-ex", "go-kr-rail", "go-koti", "go-lis", "go-ktsa", "go-krihs"],
+      "procurement_profile": "construction"
+    },
+    {
+      "id": "go-rea",
+      "name": "한국부동산원",
+      "type": "public_corp",
+      "parent_id": "go-molit",
+      "aliases": ["부동산원", "REA"],
+      "procurement_profile": "standard",
+      "notes": "부동산 감정/통계 — 국토부 위탁사업 수주는 설립 목적"
+    },
+    {
+      "id": "go-lh",
+      "name": "한국토지주택공사",
+      "type": "public_corp",
+      "parent_id": "go-molit",
+      "aliases": ["LH", "토지주택공사"],
+      "procurement_profile": "construction"
+    },
+    {
+      "id": "go-ex",
+      "name": "한국도로공사",
+      "type": "public_corp",
+      "parent_id": "go-molit",
+      "aliases": ["도로공사", "EX"],
+      "procurement_profile": "construction"
+    },
+    {
+      "id": "go-kr-rail",
+      "name": "한국철도공사",
+      "type": "public_corp",
+      "parent_id": "go-molit",
+      "aliases": ["코레일", "KORAIL", "철도공사"],
+      "procurement_profile": "transport"
+    },
+    {
+      "id": "go-koti",
+      "name": "한국교통연구원",
+      "type": "research_inst",
+      "parent_id": "go-molit",
+      "aliases": ["KOTI", "교통연구원"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-lis",
+      "name": "한국국토정보공사",
+      "type": "public_corp",
+      "parent_id": "go-molit",
+      "aliases": ["LX", "국토정보공사"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-ktsa",
+      "name": "한국교통안전공단",
+      "type": "public_corp",
+      "parent_id": "go-molit",
+      "aliases": ["TS", "교통안전공단"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-krihs",
+      "name": "국토연구원",
+      "type": "research_inst",
+      "parent_id": "go-molit",
+      "aliases": ["KRIHS"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-mof",
+      "name": "해양수산부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["해수부"],
+      "children": ["go-kcg", "go-kmi", "go-komsa"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kcg",
+      "name": "해양경찰청",
+      "type": "agency",
+      "parent_id": "go-mof",
+      "aliases": ["해경"],
+      "procurement_profile": "defense"
+    },
+    {
+      "id": "go-kmi",
+      "name": "한국해양수산개발원",
+      "type": "research_inst",
+      "parent_id": "go-mof",
+      "aliases": ["KMI", "해양수산개발원"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-komsa",
+      "name": "한국해양교통안전공단",
+      "type": "public_corp",
+      "parent_id": "go-mof",
+      "aliases": ["KOMSA", "해양교통안전공단"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-smba",
+      "name": "중소벤처기업부",
+      "type": "ministry",
+      "parent_id": null,
+      "aliases": ["중기부"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-bai",
+      "name": "감사원",
+      "type": "commission",
+      "parent_id": null,
+      "aliases": ["BAI"],
+      "procurement_profile": "standard",
+      "notes": "대통령 소속 헌법기관. 감사결과/적발사례가 본 시스템의 참고 기준."
+    },
+    {
+      "id": "go-acrc",
+      "name": "국민권익위원회",
+      "type": "commission",
+      "parent_id": null,
+      "aliases": ["ACRC", "권익위"],
+      "procurement_profile": "standard",
+      "notes": "청렴도 평가, 공익 신고 접수"
+    },
+    {
+      "id": "go-ftc",
+      "name": "공정거래위원회",
+      "type": "commission",
+      "parent_id": null,
+      "aliases": ["공정위", "FTC"],
+      "procurement_profile": "standard",
+      "notes": "입찰담합 조사/과징금 부과 권한"
+    },
+    {
+      "id": "go-nec",
+      "name": "중앙선거관리위원회",
+      "type": "commission",
+      "parent_id": null,
+      "aliases": ["선관위", "NEC"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-nis",
+      "name": "국가정보원",
+      "type": "agency",
+      "parent_id": null,
+      "aliases": ["국정원", "NIS"],
+      "procurement_profile": "security",
+      "notes": "국가안보 사유 수의계약 합법 (§26(1)2)"
+    },
+    {
+      "id": "go-kepco",
+      "name": "한국전력공사",
+      "type": "public_corp",
+      "parent_id": "go-motie",
+      "aliases": ["한전", "KEPCO"],
+      "procurement_profile": "energy"
+    },
+    {
+      "id": "go-kwater",
+      "name": "한국수자원공사",
+      "type": "public_corp",
+      "parent_id": "go-me",
+      "aliases": ["K-water", "수자원공사"],
+      "procurement_profile": "construction"
+    },
+    {
+      "id": "go-iiac",
+      "name": "인천국제공항공사",
+      "type": "public_corp",
+      "parent_id": "go-molit",
+      "aliases": ["IIAC", "인천공항"],
+      "procurement_profile": "transport"
+    },
+    {
+      "id": "go-bpa",
+      "name": "부산항만공사",
+      "type": "public_corp",
+      "parent_id": "go-mof",
+      "aliases": ["BPA"],
+      "procurement_profile": "transport"
+    },
+    {
+      "id": "go-ipa",
+      "name": "인천항만공사",
+      "type": "public_corp",
+      "parent_id": "go-mof",
+      "aliases": ["IPA"],
+      "procurement_profile": "transport"
+    },
+    {
+      "id": "go-geps",
+      "name": "공무원연금공단",
+      "type": "public_corp",
+      "parent_id": "go-mois",
+      "aliases": ["GEPS"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-klia",
+      "name": "한국법령정보원",
+      "type": "service_inst",
+      "parent_id": "go-moj",
+      "aliases": ["법령정보원", "KLIA"],
+      "procurement_profile": "tech",
+      "notes": "국가법령정보센터 운영 — 유일 기관"
+    },
+    {
+      "id": "go-kipa",
+      "name": "한국발명진흥회",
+      "type": "promotion_inst",
+      "parent_id": "go-kipo",
+      "aliases": ["KIPA", "발명진흥회"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-fsi",
+      "name": "식품안전정보원",
+      "type": "service_inst",
+      "parent_id": "go-mfds",
+      "aliases": ["FSI"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kata",
+      "name": "한국자동차연구원",
+      "type": "research_inst",
+      "parent_id": "go-molit",
+      "aliases": ["KATECH"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-klci",
+      "name": "한국도서관문화진흥원",
+      "type": "promotion_inst",
+      "parent_id": "go-mcst",
+      "aliases": [],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kpri",
+      "name": "한국조달연구원",
+      "type": "research_inst",
+      "parent_id": "go-pps",
+      "aliases": ["KPRI"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-kicet",
+      "name": "한국건설생활환경시험연구원",
+      "type": "research_inst",
+      "parent_id": "go-molit",
+      "aliases": ["KCL"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-kofsai",
+      "name": "한국식품안전관리인증원",
+      "type": "service_inst",
+      "parent_id": "go-mfds",
+      "aliases": ["HACCP인증원"],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-sq",
+      "name": "공간정보품질관리원",
+      "type": "service_inst",
+      "parent_id": "go-molit",
+      "aliases": [],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-kwe",
+      "name": "한국여성경제진흥원",
+      "type": "promotion_inst",
+      "parent_id": "go-mgef",
+      "aliases": [],
+      "procurement_profile": "standard"
+    },
+    {
+      "id": "go-ksti",
+      "name": "한국산업기술시험원",
+      "type": "research_inst",
+      "parent_id": "go-motie",
+      "aliases": ["KTL"],
+      "procurement_profile": "research"
+    },
+    {
+      "id": "go-kogas",
+      "name": "한국가스공사",
+      "type": "public_corp",
+      "parent_id": "go-motie",
+      "aliases": ["KOGAS"],
+      "procurement_profile": "energy"
+    },
+    {
+      "id": "go-khnp",
+      "name": "한국수력원자력",
+      "type": "public_corp",
+      "parent_id": "go-motie",
+      "aliases": ["한수원", "KHNP"],
+      "procurement_profile": "energy",
+      "notes": "원자력 특수 장비 — 구조적 단독 공급"
+    },
+    {
+      "id": "go-kaeri",
+      "name": "한국원자력연구원",
+      "type": "research_inst",
+      "parent_id": "go-msit",
+      "aliases": ["KAERI", "원자력연구원"],
+      "procurement_profile": "research",
+      "notes": "원자력/방사선 — 특수 규제 물품"
+    },
+    {
+      "id": "go-nfcf",
+      "name": "산림조합중앙회",
+      "type": "special_corp",
+      "parent_id": "go-kfs",
+      "aliases": ["산림조합"],
+      "procurement_profile": "commodity"
+    },
+    {
+      "id": "go-suhyup",
+      "name": "수산업협동조합",
+      "type": "special_corp",
+      "parent_id": "go-mof",
+      "aliases": ["수협", "Suhyup"],
+      "procurement_profile": "commodity"
+    },
+    {
+      "id": "go-komsco",
+      "name": "한국조폐공사",
+      "type": "public_corp",
+      "parent_id": "go-moef",
+      "aliases": ["조폐공사", "KOMSCO"],
+      "procurement_profile": "standard",
+      "notes": "지역사랑상품권 제작 유일 기관"
+    }
+  ]
+}

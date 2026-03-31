@@ -84,10 +84,27 @@ interface RealFinding {
   citizen_impact?: string;
   what_should_happen?: string;
   related_links?: { title: string; url: string; source: string }[];
+  confidence?: number;
+  confidence_label?: string;
+  context_category?: string;
+  context_reason?: string;
+}
+
+interface InvestigationTarget {
+  institution: string;
+  priority_score: number;
+  findings_count: number;
+  pattern_types_count: number;
+  pattern_types: string[];
+  total_amount: number;
+  critical_count: number;
+  high_count: number;
+  max_individual_score: number;
 }
 
 interface RealAuditData {
   timestamp: string;
+  version?: string;
   contracts_analyzed: number;
   total_contracts_in_db?: number;
   findings_count: number;
@@ -96,6 +113,17 @@ interface RealAuditData {
     sole_source_ratio: number;
     unique_institutions: number;
     unique_vendors: number;
+    total_amount_flagged?: number;
+    estimated_waste?: number;
+    severity_distribution?: Record<string, number>;
+    confidence_distribution?: { very_high: number; high: number; medium: number; low: number };
+  };
+  pattern_counts?: Record<string, number>;
+  investigation_priority?: InvestigationTarget[];
+  methodology?: {
+    patterns_count: number;
+    pattern_types: string[];
+    data_sources: Record<string, number>;
   };
 }
 
@@ -168,6 +196,61 @@ const PATTERN_CATEGORIES: {
     key: 'low_bid_competition',
     label: '과소 경쟁',
     description: '2-3개사만 참여하는 경쟁 입찰에서 동일 업체가 반복 낙찰되는 패턴 (담합 의심)',
+  },
+  {
+    key: 'yearend_budget_dump',
+    label: '연말 예산소진',
+    description: '11-12월에 계약이 월평균 대비 2.5배 이상 집중되는 패턴',
+  },
+  {
+    key: 'related_companies',
+    label: '동일주소/대표 업체',
+    description: '같은 주소 또는 대표자인 업체가 동일 기관에서 복수 계약을 수주한 패턴',
+  },
+  {
+    key: 'same_winner_repeat',
+    label: '동일업체 반복수주',
+    description: '한 업체가 같은 기관의 서로 다른 입찰에서 5건 이상 연속 낙찰된 패턴',
+  },
+  {
+    key: 'amount_spike',
+    label: '계약금액 급증',
+    description: '동일 기관-업체 간 계약 금액이 전년 대비 3배 이상 급증한 패턴',
+  },
+  {
+    key: 'bid_rigging',
+    label: '입찰담합',
+    description: '동일 업체 조합이 반복적으로 같은 입찰에 참여하는 들러리 입찰 패턴',
+  },
+  {
+    key: 'contract_inflation',
+    label: '계약변경 증액',
+    description: '계약 체결 후 30% 이상 금액이 증액된 계약 (저가 입찰 후 변경 증액 수법)',
+  },
+  {
+    key: 'cross_pattern',
+    label: '복합 의심',
+    description: '동일 기관-업체 조합에서 2가지 이상의 의심 패턴이 동시에 감지된 건 (가장 신뢰도 높은 발견)',
+  },
+  {
+    key: 'systemic_risk',
+    label: '체계적 위험',
+    description: '한 기관에서 4가지 이상의 서로 다른 의심 패턴이 감지된 건 (기관 차원의 내부 통제 실패)',
+  },
+  {
+    key: 'sanctioned_vendor',
+    label: '제재 업체 재수주',
+    description: '과거 부정당제재를 받았던 업체가 정부 계약을 다시 수주한 건',
+  },
+  {
+    key: 'price_clustering',
+    label: '투찰가 군집',
+    description: '여러 업체의 투찰가격이 2% 이내로 비정상적으로 근접한 입찰 (담합 통계 증거)',
+  },
+  {
+    key: 'network_collusion',
+    label: '업체 네트워크',
+    description: '주소/대표자 공유로 연결된 업체 네트워크가 동일 기관에서 복수 계약 수주',
   },
 ];
 
@@ -352,24 +435,18 @@ function DetailTable({ detail }: { detail: Record<string, unknown> }) {
 // Full-feature card with all 4 sections
 // ══════════════════════════════════════════════════════════════════════
 function FindingCard({ finding }: { finding: EnrichedFinding }) {
-  const [expanded, setExpanded] = useState(false);
-  const [contractsOpen, setContractsOpen] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
   const riskColor = getRiskColor(finding.risk_level);
   const riskBg = getRiskBgColor(finding.risk_level);
   const keyStat = getKeyStat(finding);
   const uniqueContracts = finding.deduplicated_contracts;
-  const hasMitigation = finding.mitigating_factors.length > 0;
-  const hasAggravation = finding.aggravating_factors.length > 0;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
-      {/* ── Collapsed header ── */}
-      <button
-        type="button"
-        onClick={() => setExpanded(!expanded)}
-        className="w-full text-left p-4 sm:p-5"
-      >
+    <a
+      href={finding.id ? `/audit/${finding.id}` : undefined}
+      className="block bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md group"
+    >
+      {/* ── Card header — clicks through to detail page ── */}
+      <div className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -380,7 +457,6 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
               >
                 {finding.risk_label}
               </span>
-              <PatternBadge pattern={finding.pattern_type} size="sm" />
               {keyStat && (
                 <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                   {keyStat}
@@ -394,15 +470,23 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
               )}
             </div>
 
-            <h3 className="font-bold text-sm sm:text-base text-gray-900 leading-snug">
+            <h3 className="font-bold text-sm sm:text-base text-gray-900 leading-snug group-hover:text-rose-700 transition-colors">
               {finding.target_institution}
             </h3>
             <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">
               {finding.contextual_analysis}
             </p>
+
+            {/* Contract preview */}
+            {uniqueContracts.length > 0 && (
+              <div className="mt-2 text-[11px] text-gray-400">
+                <span className="font-medium text-gray-500">{uniqueContracts[0].name}</span>
+                {uniqueContracts.length > 1 && <span> 외 {uniqueContracts.length - 1}건</span>}
+              </div>
+            )}
           </div>
 
-          {/* Right: adjusted score + chevron */}
+          {/* Right: adjusted score + arrow */}
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="text-right">
               <div className="text-2xl sm:text-3xl font-bold" style={{ color: riskColor }}>
@@ -410,236 +494,13 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
               </div>
               <div className="text-[10px] text-gray-400">{finding.risk_label}</div>
             </div>
-            <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+            <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
           </div>
         </div>
-      </button>
-
-      {/* ── Expanded content ── */}
-      {expanded && (
-        <div className="border-t border-gray-100 px-4 sm:px-5 pb-5 pt-4 space-y-4">
-
-          {/* Section 1: 쉽게 말하면 — plain explanation */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-              </svg>
-              쉽게 말하면
-            </h4>
-            <p className="text-sm text-gray-800 leading-relaxed">
-              {getPlainExplanation(finding)}
-            </p>
-          </div>
-
-          {/* 왜 의심스러운가 (from rich narrative) */}
-          {finding.why_it_matters && (
-            <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
-              <h4 className="text-sm font-bold text-amber-800 mb-1">왜 의심스러운가?</h4>
-              <RichText text={finding.why_it_matters!} className="text-sm text-amber-700" />
-            </div>
-          )}
-
-          {/* Contextual analysis (from enrichment engine) */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">맥락 분석</h4>
-            <p className="text-sm text-gray-800 leading-relaxed">
-              {finding.contextual_analysis}
-            </p>
-          </div>
-
-          {/* 내 세금은? (citizen impact) */}
-          {finding.citizen_impact && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-lg">
-                  <span aria-hidden="true">&#x20A9;</span>
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-amber-800 mb-1">내 세금은?</h4>
-                  <RichText text={finding.citizen_impact!} className="text-sm text-amber-700" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Data quality warnings */}
-          {(finding.data_quality.duplicate_contracts > 0 || finding.data_quality.small_sample) && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2.5">
-              <svg className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
-              </svg>
-              <div className="text-xs text-blue-700 leading-relaxed">
-                {finding.data_quality.duplicate_contracts > 0 && (
-                  <p>동일 계약번호 {finding.data_quality.duplicate_contracts}건이 중복 집계되어 보정했습니다. (실제 고유 계약: {finding.data_quality.unique_contracts}건)</p>
-                )}
-                {finding.data_quality.small_sample && (
-                  <p className={finding.data_quality.duplicate_contracts > 0 ? 'mt-1' : ''}>
-                    표본이 {finding.data_quality.unique_contracts}건으로 적어 통계적 신뢰도가 제한적입니다.
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Section 2: 비리가 아닐 수 있는 이유 — innocent explanation (green box) */}
-          {finding.innocent_explanation && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-              <h4 className="text-xs font-bold text-emerald-700 flex items-center gap-1.5 mb-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                비리가 아닐 수 있는 이유
-              </h4>
-              <p className="text-sm text-emerald-700 leading-relaxed">
-                {finding.innocent_explanation}
-              </p>
-            </div>
-          )}
-
-          {/* Mitigating Factors (정상 사유) */}
-          {hasMitigation && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-              <h4 className="text-xs font-bold text-emerald-700 flex items-center gap-1.5 mb-3">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                정상적 사유 ({finding.mitigating_factors.length}건 확인)
-              </h4>
-              <div className="space-y-3">
-                {finding.mitigating_factors.map((factor) => (
-                  <div key={factor.id} className="text-sm">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-semibold text-emerald-800">{factor.label}</span>
-                      <span className="text-[10px] text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded">
-                        -{factor.score_reduction}점
-                      </span>
-                    </div>
-                    <p className="text-xs text-emerald-700 leading-relaxed">{factor.explanation}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Aggravating Factors (주의 요인) */}
-          {hasAggravation && (
-            <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
-              <h4 className="text-xs font-bold text-rose-700 flex items-center gap-1.5 mb-3">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                </svg>
-                주의 요인 ({finding.aggravating_factors.length}건)
-              </h4>
-              <div className="space-y-3">
-                {finding.aggravating_factors.map((factor) => (
-                  <div key={factor.id} className="text-sm">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-semibold text-rose-800">{factor.label}</span>
-                      <span className="text-[10px] text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded">
-                        +{factor.score_increase}점
-                      </span>
-                    </div>
-                    <p className="text-xs text-rose-700 leading-relaxed">{factor.explanation}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* "이것까지 확인하면" removed — Claude Code performs these checks automatically */}
-
-          {/* Section 3: 실제 계약 내역 (Collapsible) */}
-          {uniqueContracts.length > 0 && (
-            <div>
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setContractsOpen(!contractsOpen); }}
-                className="flex items-center gap-2 text-xs font-bold text-gray-700 hover:text-gray-900 transition-colors"
-              >
-                <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                </svg>
-                실제 계약 내역 ({uniqueContracts.length}건)
-                <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${contractsOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {contractsOpen && (
-                <div className="mt-3">
-                  <ContractList contracts={uniqueContracts} />
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Section 4: 상세 데이터 (collapsible) */}
-          {Object.keys(finding.detail).length > 0 && (
-            <div>
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setDetailOpen(!detailOpen); }}
-                className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <svg
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${detailOpen ? 'rotate-90' : ''}`}
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-                상세 데이터
-              </button>
-
-              {detailOpen && (
-                <div className="mt-2">
-                  <DetailTable detail={finding.detail} />
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 필요한 조치 (what should happen) */}
-          {finding.what_should_happen && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h4 className="text-sm font-bold text-green-800 mb-2 flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                필요한 조치
-              </h4>
-              <RichText text={finding.what_should_happen!} className="text-sm text-green-700" />
-            </div>
-          )}
-
-          {/* 관련 링크 (related links) */}
-          {(finding.related_links?.length ?? 0) > 0 && (
-            <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">직접 확인하기</h4>
-              <div className="flex flex-wrap gap-2">
-                {(finding.related_links as { title: string; url: string; source: string }[]).map((link, i) => (
-                  <a
-                    key={i}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-full transition-colors"
-                  >
-                    <span className="text-[10px] text-gray-400">{link.source}</span>
-                    <span>{link.title}</span>
-                    <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                    </svg>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <p className="text-[10px] text-gray-400 text-center pt-1">
-            AI 분석은 참고용입니다. 의심 패턴 &ne; 비리 확정. 모든 기관에 동일한 기준이 적용됩니다.
-          </p>
-        </div>
-      )}
-    </div>
+      </div>
+    </a>
   );
 }
 
@@ -972,10 +833,9 @@ function AuditPageClientInner({
   }, [enrichedFindings]);
 
   // ══════════════════════════════════════════════════════════════════
-  // UNIFIED RENDERING — uses SuspicionCard → detail page flow
-  // Data comes from getAuditFlags() which loads live data from JSON
+  // DEMO MODE — seed data fallback (only when no live data)
   // ══════════════════════════════════════════════════════════════════
-  {
+  if (isDemo && !realData) {
     return (
       <div className="container-page py-6 sm:py-8">
         {/* Header */}
@@ -1065,15 +925,67 @@ function AuditPageClientInner({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <KPI label="분석 계약" value={`${(realData?.contracts_analyzed ?? 0).toLocaleString()}건`} source="나라장터" icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>} />
         <KPI label="점검 권고" value={`${liveKpis.highSeverity}건`} source="맥락 분석 반영" icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>} />
-        <KPI label="분석 기관" value={`${liveKpis.departmentsMonitored}개`} source="조달청" icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5"><path d="M3 21V7l9-5 9 5v14"/><path d="M9 21V12h6v9"/></svg>} />
-        <KPI label="평균 의심 점수" value={`${liveKpis.avgScore}`} source="0-100 (맥락 보정)" icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>} />
+        <KPI label="의심 금액" value={realData?.summary?.total_amount_flagged ? formatKRW(realData?.summary?.total_amount_flagged ?? 0) : `${liveKpis.departmentsMonitored}개 기관`} source={realData?.summary?.total_amount_flagged ? '관련 계약 총액' : '분석 대상 기관'} icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>} />
+        <KPI label="탐지 패턴" value={`${Object.keys((realData ?? {} as Partial<RealAuditData>).pattern_counts ?? {}).length}종`} source={`${(realData ?? {} as Partial<RealAuditData>).methodology?.patterns_count ?? 20}개 알고리즘`} icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>} />
       </div>
+
+      {/* ═══ 2.5 INVESTIGATION PRIORITY (Top 5) ═══ */}
+      {(realData?.investigation_priority ?? []).length > 0 && (
+        <div className="card mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">🎯</span>
+            <h2 className="font-bold text-lg text-gray-900">수사 우선순위 TOP 5</h2>
+          </div>
+          <p className="text-xs text-gray-400 mb-3">
+            AI가 복합 분석한 결과, 가장 우선적으로 점검이 필요한 기관 순위
+          </p>
+          <div className="space-y-2">
+            {(realData?.investigation_priority ?? []).slice(0, 5).map((target, idx) => (
+              <button
+                key={target.institution}
+                type="button"
+                onClick={() => setSearchQuery(target.institution)}
+                className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-rose-50 transition-colors text-left group"
+              >
+                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
+                  idx === 0 ? 'bg-rose-600 text-white' :
+                  idx === 1 ? 'bg-rose-500 text-white' :
+                  idx === 2 ? 'bg-rose-400 text-white' :
+                  'bg-gray-300 text-white'
+                }`}>
+                  {idx + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-gray-800 truncate group-hover:text-rose-700">
+                      {target.institution}
+                    </span>
+                    {target.critical_count > 0 && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 font-medium shrink-0">
+                        심각 {target.critical_count}건
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-gray-500 mt-0.5 flex gap-3">
+                    <span>{target.pattern_types_count}개 패턴</span>
+                    <span>{target.findings_count}건 발견</span>
+                    <span>{formatKRW(target.total_amount)}</span>
+                  </div>
+                </div>
+                <span className="text-xs text-gray-400 tabular-nums shrink-0">
+                  위험도 {target.priority_score.toFixed(0)}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ═══ 3. DEPARTMENT HEATMAP ═══ */}
       <div className="card mb-6">
-        <h2 className="font-bold text-lg mb-1">기관별 의심 점수 히트맵</h2>
+        <h2 className="font-bold text-lg mb-1">기관별 리스크 현황</h2>
         <p className="text-xs text-gray-400 mb-4">
-          색상이 진할수록 의심 점수가 높음 · 클릭하면 해당 기관의 플래그를 필터링합니다
+          리스크 등급별 기관 분포 · 기관을 클릭하면 해당 플래그를 필터링합니다
         </p>
         <DepartmentHeatmap
           scores={departmentScoresForHeatmap}
@@ -1081,155 +993,159 @@ function AuditPageClientInner({
             setSearchQuery(dept === searchQuery ? '' : dept);
           }}
         />
-        <div className="flex items-center gap-6 mt-4 text-[10px] text-gray-400">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-green-500" />
-            <span>0-14 정상</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-yellow-500" />
-            <span>15-34 낮은 위험</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-orange-500" />
-            <span>35-59 관심 관찰</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-rose-500" />
-            <span>60+ 점검 권고</span>
-          </div>
-        </div>
       </div>
 
-      {/* ═══ 4. FILTERS + FINDING LIST ═══ */}
-      <div className="card">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-          <h2 className="font-bold text-lg">감지된 패턴</h2>
-          <div className="flex flex-wrap gap-2">
-            {/* Pattern filter */}
-            <select
-              value={activeCategory}
-              onChange={(e) => { setActiveCategory(e.target.value as PatternCategory); setSeverityFilter('all'); }}
-              className="text-xs border border-gray-200 rounded-lg px-3 py-1.5 bg-white text-gray-600"
-            >
-              {PATTERN_CATEGORIES.map(cat => (
-                <option key={cat.key} value={cat.key}>{cat.label} ({categoryCounts[cat.key] || 0})</option>
-              ))}
-            </select>
-
-            {/* Risk level filter */}
-            <select
-              value={severityFilter}
-              onChange={(e) => setSeverityFilter(e.target.value)}
-              className="text-xs border border-gray-200 rounded-lg px-3 py-1.5 bg-white text-gray-600"
-            >
-              {RISK_FILTER_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-
-            {/* Search */}
-            <div className="relative">
-              <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-              </svg>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="기관/업체 검색..."
-                className="text-xs border border-gray-200 rounded-lg pl-8 pr-3 py-1.5 bg-white text-gray-600 placeholder:text-gray-400 w-40 focus:outline-none focus:ring-1 focus:ring-gray-200"
-              />
-            </div>
-          </div>
+      {/* ═══ 4. SEARCH BAR ═══ */}
+      <div className="flex items-center gap-2 mb-4">
+        <div className="relative flex-1 max-w-xs">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="기관 또는 업체명 검색..."
+            className="w-full text-sm border border-gray-200 rounded-xl pl-9 pr-3 py-2 bg-white text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+          />
         </div>
-
-        {/* Active filter tags */}
-        {(activeCategory !== 'all' || severityFilter !== 'all' || searchQuery.trim()) && (
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-xs text-gray-400">필터:</span>
-            {activeCategory !== 'all' && (
-              <button
-                onClick={() => setActiveCategory('all')}
-                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full hover:bg-gray-200"
-              >
-                {PATTERN_CATEGORIES.find(c => c.key === activeCategory)?.label} &times;
-              </button>
-            )}
-            {severityFilter !== 'all' && (
-              <button
-                onClick={() => setSeverityFilter('all')}
-                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full hover:bg-gray-200"
-              >
-                {RISK_FILTER_OPTIONS.find(o => o.value === severityFilter)?.label} &times;
-              </button>
-            )}
-            {searchQuery.trim() && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full hover:bg-gray-200"
-              >
-                &quot;{searchQuery.trim()}&quot; &times;
-              </button>
-            )}
-            <button
-              onClick={resetFilters}
-              className="text-xs text-gray-500 hover:text-gray-700"
-            >
-              전체 초기화
-            </button>
-          </div>
-        )}
-
-        {/* Finding cards */}
-        {filteredFindings.length > 0 ? (
-          <div className="space-y-3">
-            {filteredFindings.map((finding, i) => (
-              <FindingCard
-                key={`${finding.pattern_type}-${finding.target_institution}-${i}`}
-                finding={finding}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 text-gray-400">
-            <p className="text-sm">필터 조건에 맞는 패턴이 없습니다.</p>
-            <button
-              onClick={resetFilters}
-              className="mt-2 text-xs text-gray-500 hover:text-gray-700 underline"
-            >
-              전체 초기화
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* ═══ 5. PATTERN EXPLANATION GRID ═══ */}
-      <div className="card mt-6">
-        <h2 className="font-bold text-lg mb-4">감사 패턴 설명</h2>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {[
-            { pattern: 'all', desc: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
-            { pattern: 'vendor_concentration', desc: '동일 업체 계약 30% 이상 점유 (맥락 보정 적용)', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg> },
-            { pattern: 'repeated_sole_source', desc: '동일 업체+기관에 수의계약 3회 이상 반복', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> },
-            { pattern: 'contract_splitting', desc: '수의계약 한도(2천만원) 직하 금액으로 반복 계약', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M14 14l7 7M3 8V3h5M10 10L3 3"/></svg> },
-            { pattern: 'yearend_spike', desc: 'Q4 지출이 연간의 40% 초과 (연말 밀어내기)', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2"><path d="M2 20h20M6 20V12l4-4 4 4 4-8v16"/></svg> },
-            { pattern: 'inflated_pricing', desc: '유사 계약 대비 30% 이상 고가 계약', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ec4899" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
-          ].map(item => (
-            <div key={item.pattern} className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
-              <div className="shrink-0 mt-0.5">{item.icon}</div>
-              <div className="flex-1">
-                <PatternBadge pattern={item.pattern} size="sm" />
-                <span className="text-xs text-gray-600 block mt-1">{item.desc}</span>
-              </div>
-            </div>
+        {/* Risk level filter */}
+        <select
+          value={severityFilter}
+          onChange={(e) => setSeverityFilter(e.target.value)}
+          className="text-xs border border-gray-200 rounded-xl px-3 py-2 bg-white text-gray-600"
+        >
+          {RISK_FILTER_OPTIONS.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
-        </div>
-        <p className="text-[10px] text-gray-300 mt-4">
-          위험도: 0-14 정상 · 15-34 낮은 위험 · 35-59 관심 관찰 · 60-100 점검 권고
-          · 출처: 나라장터(조달청) 계약 데이터 · 맥락 분석(상품 특성, 경쟁 입찰, 법적 근거) 반영
-        </p>
+        </select>
+        {(searchQuery.trim() || severityFilter !== 'all') && (
+          <button onClick={resetFilters} className="text-xs text-gray-400 hover:text-gray-600 whitespace-nowrap">
+            초기화
+          </button>
+        )}
       </div>
+
+      {/* ═══ 5. FINDINGS GROUPED BY PATTERN ═══ */}
+      {(() => {
+        // Group by INSTITUTION — each institution shows all its findings
+        const byInst: Record<string, typeof filteredFindings> = {};
+        for (const f of filteredFindings) {
+          const inst = f.target_institution;
+          if (!byInst[inst]) byInst[inst] = [];
+          byInst[inst].push(f);
+        }
+        // Sort institutions by max score (most suspicious first)
+        const sortedInsts = Object.entries(byInst)
+          .sort((a, b) => {
+            const maxA = Math.max(...a[1].map(f => f.adjusted_score));
+            const maxB = Math.max(...b[1].map(f => f.adjusted_score));
+            return maxB - maxA;
+          });
+
+        if (sortedInsts.length === 0) {
+          return (
+            <div className="card text-center py-12 text-gray-400">
+              <p className="text-sm">필터 조건에 맞는 기관이 없습니다.</p>
+              <button onClick={resetFilters} className="mt-2 text-xs text-gray-500 hover:text-gray-700 underline">
+                전체 초기화
+              </button>
+            </div>
+          );
+        }
+
+        return (
+          <div className="space-y-4">
+            {sortedInsts.map(([inst, instFindings]) => {
+              const maxScore = Math.max(...instFindings.map(f => f.adjusted_score));
+              const maxRisk = instFindings.reduce((best, f) =>
+                f.adjusted_score > best.adjusted_score ? f : best, instFindings[0]);
+              const riskColor = getRiskColor(maxRisk.risk_level);
+              const patternTypes = Array.from(new Set(instFindings.map(f => f.pattern_type)));
+              const totalAmt = instFindings.reduce((sum, f) =>
+                sum + f.deduplicated_contracts.reduce((s, c) => s + (c.amount || 0), 0), 0);
+
+              return (
+                <div key={inst} className="card overflow-hidden border-l-4" style={{ borderLeftColor: riskColor }}>
+                  {/* Institution header */}
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-base text-gray-900">{inst}</h3>
+                      <div className="flex items-center gap-2 flex-wrap mt-1.5">
+                        {patternTypes.map(pt => (
+                          <PatternBadge key={pt} pattern={pt} size="sm" />
+                        ))}
+                      </div>
+                      {totalAmt > 0 && (
+                        <p className="text-[11px] text-gray-400 mt-1">
+                          관련 계약 총액: {formatKRW(totalAmt)}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-2xl font-bold" style={{ color: riskColor }}>
+                        {maxScore}
+                      </div>
+                      <div className="text-[10px] text-gray-400">{maxRisk.risk_label}</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">{instFindings.length}건 탐지</div>
+                    </div>
+                  </div>
+
+                  {/* Each finding as a clickable card */}
+                  <div className="space-y-2">
+                    {instFindings
+                      .sort((a, b) => b.adjusted_score - a.adjusted_score)
+                      .map((finding, i) => (
+                      <a
+                        key={`${finding.pattern_type}-${i}`}
+                        href={finding.id ? `/audit/${finding.id}` : undefined}
+                        className="block p-3 rounded-lg border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-colors group"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <span
+                                className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                style={{ backgroundColor: getRiskBgColor(finding.risk_level), color: getRiskColor(finding.risk_level) }}
+                              >
+                                {finding.risk_label}
+                              </span>
+                              <PatternBadge pattern={finding.pattern_type} size="sm" />
+                            </div>
+                            <p className="text-xs text-gray-600 line-clamp-2">
+                              {finding.summary}
+                            </p>
+                            {finding.deduplicated_contracts.length > 0 && (
+                              <p className="text-[10px] text-gray-400 mt-1 truncate">
+                                {finding.deduplicated_contracts[0].name}
+                                {finding.deduplicated_contracts.length > 1 && ` 외 ${finding.deduplicated_contracts.length - 1}건`}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className="text-lg font-bold" style={{ color: getRiskColor(finding.risk_level) }}>
+                              {finding.adjusted_score}
+                            </span>
+                            <svg className="w-4 h-4 text-gray-300 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
+
+      {/* ═══ 6. FOOTER NOTE ═══ */}
+      <p className="text-[10px] text-gray-300 mt-6 text-center">
+        위험도: 0-14 정상 · 15-34 낮은 위험 · 35-59 관심 관찰 · 60-100 점검 권고
+        · 출처: 나라장터(조달청) 계약 데이터 · 맥락 분석(상품 특성, 경쟁 입찰, 법적 근거) 반영
+      </p>
     </div>
   );
 }

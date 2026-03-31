@@ -1,8 +1,8 @@
 {
   "source": "data.go.kr",
   "service": "at/PubPrcrmntStatInfoService",
-  "fetched_at": "2026-03-29T13:49:16Z",
-  "year": "2025",
+  "fetched_at": "2026-03-30T17:53:35Z",
+  "years": "2020-2025",
   "data": {
     "total": [],
     "by_method": [],

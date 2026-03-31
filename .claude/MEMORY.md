@@ -129,3 +129,60 @@
 **Changed:**
   apps/web/app/audit/AuditPageClient.tsx | 15 ++++++++++++---
   1 file changed, 12 insertions(+), 3 deletions(-)
+
+## 2026-03-29 (13:13 UTC) · @Tom Kwon
+**Commit:** data: Real bid analysis — 500 construction bids, repeat winners, low competition (000ebf7) by Tom Kwon
+**Changed:**
+  .claude/FACTS.md                       |   1 +
+  .claude/MEMORY.md                      |  13 +
+  apps/web/.claude/MEMORY.md             |  13 +
+  apps/web/public/data/bid-analysis.json | 459 +++++++++++++++++++++++++++++++++
+  apps/web/tsconfig.tsbuildinfo          |   2 +-
+  scripts/dispatch-api-subscription.md   | 191 ++++++++++++++
+  6 files changed, 678 insertions(+), 1 deletion(-)
+
+## 2026-03-29 (14:04 UTC) · @Tom Kwon
+**Commit:** feat: Wire all 8 data.go.kr API services — winning bids, contracts, prices, assets (183c383) by Tom Kwon
+**Changed:**
+  apps/web/data/g2b-companies.json        | 12508 ++++++
+  apps/web/data/g2b-contract-details.json | 65008 +++++++++++++++++++++++++++++
+  apps/web/data/g2b-contract-process.json |     7 +
+  apps/web/data/g2b-prices.json           | 65084 ++++++++++++++++++++++++++++++
+  apps/web/data/g2b-winning-bids.json     | 33008 +++++++++++++++
+  apps/web/data/official-assets.json      |  1152 +
+  apps/web/data/procurement-stats.json    |    11 +
+  apps/web/lib/g2b/client.ts              |    95 +-
+  apps/web/lib/local-data.ts              |    56 +
+  scripts/fetch-data.py                   |   354 +
+  ... and 1 more files
+
+## 2026-03-29 (14:09 UTC) · @Tom Kwon
+**Commit:** fix: Audit page — fallback gracefully when static JSON unavailable (46e29bd) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 45 ++++++++++++++++++----------------
+  1 file changed, 24 insertions(+), 21 deletions(-)
+
+## 2026-03-29 (15:10 UTC) · @Tom Kwon
+**Commit:** fix: Move all hooks before early returns — React error #310 (aad372a) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 79 ++++++++++++++++------------------
+  1 file changed, 36 insertions(+), 43 deletions(-)
+
+## 2026-03-29 (15:59 UTC) · @Tom Kwon
+**Commit:** feat: AI 감사 — 8 pattern types, 252 findings from real 나라장터 data (8ba3b6e) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx     |    27 +-
+  apps/web/components/audit/PatternBadge.tsx |    18 +-
+  apps/web/public/data/audit-results.json    | 11888 +++++++++++++++++++--------
+  scripts/generate-audit.py                  |   692 ++
+  4 files changed, 8960 insertions(+), 3665 deletions(-)
+
+## 2026-03-31 (07:28 UTC) · @Tom Kwon
+**Commit:** feat: RichText — numbered lists, bold, bullets for all narrative fields (3e4e41a) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx        |    9 +-
+  apps/web/app/audit/[id]/AuditDetailClient.tsx |   17 +-
+  apps/web/components/common/RichText.tsx       |  122 +++
+  apps/web/public/data/audit-results.json       | 1132 ++++++++++++-------------
+  scripts/generate-audit.py                     |   20 +-
+  5 files changed, 718 insertions(+), 582 deletions(-)

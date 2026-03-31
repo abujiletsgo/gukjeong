@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "조달 법규/기준 — 합법/불법 판단의 근거",
+    "last_updated": "2026-03-31",
+    "primary_law": "국가를 당사자로 하는 계약에 관한 법률 (국가계약법)"
+  },
+  "sole_source_thresholds": {
+    "general": {
+      "amount": 50000000,
+      "label": "일반 수의계약 한도 (5천만원)",
+      "law": "국가계약법 시행령 §26①6",
+      "note": "추정가격 5천만원 이하: 수의계약 허용 (2024년 개정)"
+    },
+    "small_purchase": {
+      "amount": 20000000,
+      "label": "소액 수의계약 (2천만원)",
+      "law": "국가계약법 시행령 §26①6",
+      "note": "견적서 비교 없이 수의계약 가능"
+    },
+    "construction": {
+      "amount": 200000000,
+      "label": "건설공사 수의계약 한도 (2억원)",
+      "law": "지방계약법 시행령 §25①1(차)",
+      "note": "추정가격 2억원 이하 건설공사"
+    },
+    "local_small": {
+      "amount": 20000000,
+      "label": "지방계약 소액 (2천만원)",
+      "law": "지방계약법 시행령 §25①1",
+      "note": "2천만원 이하는 1인 견적 수의계약"
+    },
+    "emergency": {
+      "amount": null,
+      "label": "긴급 수의계약 (한도 없음)",
+      "law": "국가계약법 시행령 §26①1",
+      "note": "천재지변, 전시, 비상사태 — 금액 무관"
+    },
+    "sole_technology": {
+      "amount": null,
+      "label": "특수 기술/특허 (한도 없음)",
+      "law": "국가계약법 시행령 §26①3",
+      "note": "특정인의 기술이 필요하여 경쟁 불가 — 금액 무관"
+    },
+    "national_security": {
+      "amount": null,
+      "label": "국가안보 (한도 없음)",
+      "law": "국가계약법 시행령 §26①2",
+      "note": "국방, 정보기관, 외교안보 — 금액 무관"
+    }
+  },
+  "bid_rate_benchmarks": {
+    "normal_range": {"min": 82, "max": 92, "label": "정상 경쟁 입찰 낙찰률"},
+    "high_watch": {"min": 95, "max": 98, "label": "주의 관찰 (높은 원가분석 역량 가능)"},
+    "anomalous": {"min": 98, "max": 100, "label": "이상 (단독응찰 or 가격유출 의심)"},
+    "single_bidder_100": {"label": "단독응찰 100%", "assessment": "NORMAL — 협상/수의계약 가격", "flag": false},
+    "multi_bidder_99_plus": {"label": "복수업체 99%+", "assessment": "예정가격 유출 강력 의심", "flag": true},
+    "reference_case": {
+      "title": "2016년 조달청 예정가격 유출 사건",
+      "detail": "7개 업체 156건, 낙찰률 97.2-99.1%, 우연 확률 < 10^-23",
+      "outcome": "담당 공무원 실형"
+    }
+  },
+  "competition_methods": {
+    "general_competitive": {
+      "korean": "일반경쟁",
+      "transparency": "highest",
+      "score_reduction": 35,
+      "description": "모든 자격 업체 참여 가능"
+    },
+    "limited_competitive": {
+      "korean": "제한경쟁",
+      "transparency": "high",
+      "score_reduction": 25,
+      "description": "면허/실적 등 자격 요건 충족 업체 간 경쟁"
+    },
+    "negotiated": {
+      "korean": "협상에 의한 계약",
+      "transparency": "medium",
+      "score_reduction": 15,
+      "description": "제안서 평가 + 가격 협상"
+    },
+    "sole_source": {
+      "korean": "수의계약",
+      "transparency": "low",
+      "score_reduction": 0,
+      "description": "비경쟁 — 법적 근거 필수"
+    },
+    "third_party_unit_price": {
+      "korean": "제3자단가계약",
+      "transparency": "medium_high",
+      "score_reduction": 45,
+      "description": "조달청 사전 협상 가격 — 100% 낙찰률은 제도적 설계"
+    },
+    "mas": {
+      "korean": "다수공급자계약",
+      "transparency": "medium_high",
+      "score_reduction": 40,
+      "description": "MAS — 여러 공급자 중 수요기관이 선택"
+    }
+  },
+  "contract_splitting_rules": {
+    "threshold": 20000000,
+    "tolerance_pct": 15,
+    "min_count": 3,
+    "assessment": {
+      "same_vendor_same_item": "HIGH — 의도적 분할 강력 의심",
+      "same_vendor_different_item": "MEDIUM — 추가 확인 필요",
+      "different_vendors_same_item": "MEDIUM — 구조적 가능성",
+      "different_vendors_different_item": "LOW — 정상적 소액 발주 패턴"
+    }
+  },
+  "yearend_budget_rules": {
+    "fiscal_year": "1월-12월",
+    "critical_months": [11, 12],
+    "normal_spike_ratio": 1.5,
+    "watch_spike_ratio": 2.5,
+    "concern_spike_ratio": 4.0,
+    "bai_stats": {
+      "december_irregularity_rate_vs_avg": 2.3,
+      "source": "감사원 2022년 결산검사 보고서"
+    }
+  },
+  "collusion_indicators": {
+    "price_clustering": {
+      "spread_threshold_pct": 2.0,
+      "label": "투찰가 편차율 2% 미만",
+      "confidence": 0.92,
+      "source": "Imhof & Lambsdorff (2018)"
+    },
+    "same_bidder_group": {
+      "min_repeat": 4,
+      "label": "동일 업체 조합 4회+ 반복 참여"
+    },
+    "same_address": {
+      "label": "동일 주소 복수 업체",
+      "ftc_stat": "전체 담합의 25% (공정위)"
+    },
+    "price_markup_from_collusion": {
+      "avg_pct": 12,
+      "range": {"min": 7, "max": 15},
+      "source": "공정거래위원회 2014-2023 담합 사건 분석"
+    }
+  }
+}

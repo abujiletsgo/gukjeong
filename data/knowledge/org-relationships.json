@@ -1,0 +1,373 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "기관 간 관계 그래프 — 수주관계가 정상인지 판단하는 핵심 데이터",
+    "last_updated": "2026-03-31",
+    "usage": "vendor가 institution의 산하기관이면 수주는 정상 (설립 목적)"
+  },
+  "relationship_types": {
+    "parent_ministry": {
+      "label": "모 부처",
+      "description": "산하기관이 모 부처로부터 위탁사업을 수주하는 것은 설립 목적에 부합",
+      "normal_procurement": true,
+      "score_cap": 25
+    },
+    "sister_org": {
+      "label": "자매 기관",
+      "description": "같은 부처 산하 기관 간 협업 계약",
+      "normal_procurement": true,
+      "score_cap": 30
+    },
+    "delegated_function": {
+      "label": "위임 기능",
+      "description": "법률에 의해 특정 기능을 위임받은 관계",
+      "normal_procurement": true,
+      "score_cap": 20
+    },
+    "sole_provider": {
+      "label": "유일 공급자",
+      "description": "법적/기술적으로 유일한 공급 가능 기관",
+      "normal_procurement": true,
+      "score_cap": 15
+    },
+    "oversight": {
+      "label": "감독/규제",
+      "description": "규제기관-피규제기관 관계 (수주는 이해충돌 가능)",
+      "normal_procurement": false,
+      "score_bonus": 10
+    },
+    "local_branch": {
+      "label": "지방 조직",
+      "description": "중앙-지방 조직 관계 (교육부-교육청 등)",
+      "normal_procurement": true,
+      "score_cap": 30
+    }
+  },
+  "relationships": [
+    {
+      "from": "한국부동산원",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "한국부동산원법",
+      "note": "부동산 가격 공시, 감정평가 등 국토부 위탁사업"
+    },
+    {
+      "from": "한국교통연구원",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "정부출연연구기관등의설립·운영및육성에관한법률"
+    },
+    {
+      "from": "한국교통안전공단",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "한국교통안전공단법"
+    },
+    {
+      "from": "한국국토정보공사",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "공간정보의구축및관리등에관한법률"
+    },
+    {
+      "from": "한국토지주택공사",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "한국토지주택공사법"
+    },
+    {
+      "from": "한국도로공사",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "한국도로공사법"
+    },
+    {
+      "from": "한국철도공사",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "한국철도공사법"
+    },
+    {
+      "from": "국토연구원",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "정부출연연구기관등의설립·운영및육성에관한법률"
+    },
+    {
+      "from": "한국인터넷진흥원",
+      "to": "과학기술정보통신부",
+      "type": "parent_ministry",
+      "law": "정보통신산업진흥법"
+    },
+    {
+      "from": "한국지능정보사회진흥원",
+      "to": "과학기술정보통신부",
+      "type": "parent_ministry",
+      "law": "지능정보화기본법"
+    },
+    {
+      "from": "한국연구재단",
+      "to": "과학기술정보통신부",
+      "type": "parent_ministry",
+      "law": "한국연구재단법"
+    },
+    {
+      "from": "한국과학기술연구원",
+      "to": "과학기술정보통신부",
+      "type": "parent_ministry",
+      "law": "한국과학기술연구원법"
+    },
+    {
+      "from": "한국전자통신연구원",
+      "to": "과학기술정보통신부",
+      "type": "parent_ministry",
+      "law": "정부출연연구기관등의설립·운영및육성에관한법률"
+    },
+    {
+      "from": "한국항공우주연구원",
+      "to": "과학기술정보통신부",
+      "type": "parent_ministry",
+      "law": "한국항공우주연구원법"
+    },
+    {
+      "from": "한국원자력연구원",
+      "to": "과학기술정보통신부",
+      "type": "parent_ministry",
+      "law": "한국원자력연구원법"
+    },
+    {
+      "from": "한국콘텐츠진흥원",
+      "to": "문화체육관광부",
+      "type": "parent_ministry",
+      "law": "콘텐츠산업진흥법"
+    },
+    {
+      "from": "한국문화관광연구원",
+      "to": "문화체육관광부",
+      "type": "parent_ministry",
+      "law": "정부출연연구기관등의설립·운영및육성에관한법률"
+    },
+    {
+      "from": "한국발명진흥회",
+      "to": "특허청",
+      "type": "parent_ministry",
+      "law": "발명진흥법"
+    },
+    {
+      "from": "한국산업기술진흥원",
+      "to": "산업통상자원부",
+      "type": "parent_ministry",
+      "law": "산업기술혁신촉진법"
+    },
+    {
+      "from": "한국에너지기술평가원",
+      "to": "산업통상자원부",
+      "type": "parent_ministry",
+      "law": "에너지법"
+    },
+    {
+      "from": "한국전력공사",
+      "to": "산업통상자원부",
+      "type": "parent_ministry",
+      "law": "한국전력공사법"
+    },
+    {
+      "from": "한국가스공사",
+      "to": "산업통상자원부",
+      "type": "parent_ministry",
+      "law": "한국가스공사법"
+    },
+    {
+      "from": "한국보건산업진흥원",
+      "to": "보건복지부",
+      "type": "parent_ministry",
+      "law": "보건산업진흥법"
+    },
+    {
+      "from": "국민건강보험공단",
+      "to": "보건복지부",
+      "type": "parent_ministry",
+      "law": "국민건강보험법"
+    },
+    {
+      "from": "국민연금공단",
+      "to": "보건복지부",
+      "type": "parent_ministry",
+      "law": "국민연금법"
+    },
+    {
+      "from": "식품안전정보원",
+      "to": "식품의약품안전처",
+      "type": "parent_ministry",
+      "law": "식품안전기본법"
+    },
+    {
+      "from": "한국식품안전관리인증원",
+      "to": "식품의약품안전처",
+      "type": "parent_ministry",
+      "law": "식품위생법"
+    },
+    {
+      "from": "한국환경공단",
+      "to": "환경부",
+      "type": "parent_ministry",
+      "law": "한국환경공단법"
+    },
+    {
+      "from": "한국환경산업기술원",
+      "to": "환경부",
+      "type": "parent_ministry",
+      "law": "환경기술및환경산업지원법"
+    },
+    {
+      "from": "한국수자원공사",
+      "to": "환경부",
+      "type": "parent_ministry",
+      "law": "한국수자원공사법"
+    },
+    {
+      "from": "한국여성정책연구원",
+      "to": "여성가족부",
+      "type": "parent_ministry",
+      "law": "정부출연연구기관등의설립·운영및육성에관한법률"
+    },
+    {
+      "from": "한국여성경제진흥원",
+      "to": "여성가족부",
+      "type": "parent_ministry",
+      "law": "여성기업지원에관한법률"
+    },
+    {
+      "from": "한국법령정보원",
+      "to": "법무부",
+      "type": "parent_ministry",
+      "law": "한국법령정보원법"
+    },
+    {
+      "from": "한국보훈복지의료공단",
+      "to": "국가보훈부",
+      "type": "parent_ministry",
+      "law": "한국보훈복지의료공단법"
+    },
+    {
+      "from": "한국해양교통안전공단",
+      "to": "해양수산부",
+      "type": "parent_ministry",
+      "law": "해양교통안전법"
+    },
+    {
+      "from": "한국해양수산개발원",
+      "to": "해양수산부",
+      "type": "parent_ministry",
+      "law": "정부출연연구기관등의설립·운영및육성에관한법률"
+    },
+    {
+      "from": "부산항만공사",
+      "to": "해양수산부",
+      "type": "parent_ministry",
+      "law": "항만공사법"
+    },
+    {
+      "from": "인천항만공사",
+      "to": "해양수산부",
+      "type": "parent_ministry",
+      "law": "항만공사법"
+    },
+    {
+      "from": "인천국제공항공사",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "인천국제공항공사법"
+    },
+    {
+      "from": "근로복지공단",
+      "to": "고용노동부",
+      "type": "parent_ministry",
+      "law": "근로복지공단법"
+    },
+    {
+      "from": "공무원연금공단",
+      "to": "행정안전부",
+      "type": "parent_ministry",
+      "law": "공무원연금법"
+    },
+    {
+      "from": "한국조달연구원",
+      "to": "조달청",
+      "type": "parent_ministry",
+      "law": "조달사업법"
+    },
+    {
+      "from": "한국조폐공사",
+      "to": "기획재정부",
+      "type": "parent_ministry",
+      "law": "한국조폐공사법"
+    },
+    {
+      "from": "한국산업기술시험원",
+      "to": "산업통상자원부",
+      "type": "parent_ministry",
+      "law": "산업표준화법"
+    },
+    {
+      "from": "한국교육과정평가원",
+      "to": "교육부",
+      "type": "delegated_function",
+      "law": "한국교육과정평가원법",
+      "note": "수능/학력평가 출제 유일 기관 — 수의계약 정상"
+    },
+    {
+      "from": "한국수력원자력",
+      "to": "산업통상자원부",
+      "type": "parent_ministry",
+      "law": "한국전력공사법"
+    },
+    {
+      "from": "한국도서관문화진흥원",
+      "to": "문화체육관광부",
+      "type": "parent_ministry",
+      "law": "도서관법"
+    },
+    {
+      "from": "공간정보품질관리원",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "공간정보산업진흥법"
+    },
+    {
+      "from": "한국건설생활환경시험연구원",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "건설기술진흥법"
+    },
+    {
+      "from": "한국자동차연구원",
+      "to": "국토교통부",
+      "type": "parent_ministry",
+      "law": "자동차관리법"
+    }
+  ],
+  "name_normalization": {
+    "patterns": [
+      {"regex": "^\\(재\\)", "replace": "", "note": "재단법인 prefix"},
+      {"regex": "^재단법인\\s*", "replace": ""},
+      {"regex": "^\\(사\\)", "replace": "", "note": "사단법인 prefix"},
+      {"regex": "^사단법인\\s*", "replace": ""},
+      {"regex": "^\\(재단\\)", "replace": ""},
+      {"regex": "^\\(학\\)", "replace": "", "note": "학교법인 prefix"},
+      {"regex": "^학교법인\\s*", "replace": ""},
+      {"regex": "\\s*주식회사$", "replace": ""},
+      {"regex": "^주식회사\\s*", "replace": ""},
+      {"regex": "\\(주\\)", "replace": ""},
+      {"regex": "㈜", "replace": ""},
+      {"regex": "\\s+", "replace": " "}
+    ],
+    "examples": {
+      "(재)한국법령정보원": "한국법령정보원",
+      "재단법인 한국법령정보원": "한국법령정보원",
+      "(사)한국발명진흥회": "한국발명진흥회",
+      "주식회사 더존비즈온": "더존비즈온",
+      "㈜카카오": "카카오"
+    }
+  }
+}

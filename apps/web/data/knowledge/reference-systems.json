@@ -1,0 +1,118 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "국제 반부패/투명성 플랫폼 참조 — 우리 시스템 개선 방향의 근거",
+    "last_updated": "2026-03-31"
+  },
+  "international_standards": {
+    "ocds": {
+      "name": "Open Contracting Data Standard",
+      "url": "https://standard.open-contracting.org/",
+      "what_they_do": "조달 데이터의 국제 표준 스키마 — planning/tender/award/contract/implementation 5단계로 전체 조달 생애주기를 추적",
+      "key_concepts": [
+        "Unique OCID per contracting process (우리의 cntrctNo와 유사하지만 전체 수명주기 연결)",
+        "Red flags framework — 담합, 과소경쟁, 계약변경 등 20+ 지표",
+        "Beneficial ownership data (실소유자 정보) — 위장업체 탐지의 핵심",
+        "Releases vs Records — 변경 이력 전체를 보존하는 이벤트 기반 모델"
+      ],
+      "what_we_should_adopt": [
+        "전체 조달 수명주기 추적 (현재 우리는 계약 체결 시점만 봄)",
+        "Red flags taxonomy의 체계적 분류 (우리의 8패턴 → OCDS 20+ 패턴 대응)",
+        "실소유자 정보 연동 (현재 대표자/주소만 확인)"
+      ]
+    },
+    "opencorporates": {
+      "name": "OpenCorporates",
+      "url": "https://opencorporates.com/",
+      "what_they_do": "전 세계 2억+ 법인 데이터베이스 — 기업 간 관계 그래프, 임원 네트워크",
+      "key_concepts": [
+        "Reconciliation API — 이름 변형을 통합하는 엔티티 매칭",
+        "Corporate groupings — 지배구조 그래프 (모회사-자회사-관계사)",
+        "Officer network — 임원 겸직을 통한 기업 간 연결",
+        "Jurisdiction normalization — 국가별 기업 식별번호 표준화"
+      ],
+      "what_we_should_adopt": [
+        "이름 정규화 (재단법인/주식회사/괄호 등 변형 통합)",
+        "임원 네트워크 분석 (같은 대표 → 관련 기업 클러스터)",
+        "사업자등록번호 기반 유일 식별"
+      ]
+    },
+    "occrp_aleph": {
+      "name": "OCCRP Aleph",
+      "url": "https://aleph.occrp.org/",
+      "what_they_do": "탐사보도 기자용 반부패 데이터 플랫폼 — 문서/기업/인물 크로스 레퍼런스",
+      "key_concepts": [
+        "Follow The Money (FtM) schema — 인물, 기업, 거래의 관계를 그래프로",
+        "Entity deduplication — 퍼지 매칭 + 수동 확인 워크플로",
+        "Cross-dataset search — 여러 데이터셋을 동시에 검색",
+        "Investigation workbench — 의심 사건별 증거 수집/정리"
+      ],
+      "what_we_should_adopt": [
+        "Follow The Money 그래프 모델 (기관-업체-인물 관계)",
+        "퍼지 엔티티 매칭 (약간의 이름 차이도 연결)",
+        "사건별 도시에 생성 기능"
+      ]
+    },
+    "prozorro": {
+      "name": "ProZorro (Ukraine)",
+      "url": "https://prozorro.gov.ua/en",
+      "what_they_do": "우크라이나 전자조달 플랫폼 — 모든 정부 구매를 투명하게 공개, AI 모니터링",
+      "key_concepts": [
+        "DOZORRO — 시민 모니터링 모듈 (누구나 의심 거래 신고)",
+        "Risk indicators — 60+ 자동 위험 지표 (우리의 패턴과 유사)",
+        "Business intelligence module — 공무원이 의심 거래를 추적하는 도구",
+        "Open API — 모든 데이터를 API로 공개"
+      ],
+      "what_we_should_adopt": [
+        "시민 참여 모니터링 (의심 거래 신고/투표 기능)",
+        "60+ 위험 지표의 체계적 분류",
+        "발주기관 자체 모니터링 도구"
+      ],
+      "success_metrics": {
+        "savings": "2016-2023: 6조원+ 절감",
+        "competition": "평균 입찰 참여 3.1개사 → 4.8개사",
+        "sole_source_reduction": "40% → 15%"
+      }
+    },
+    "brazil_tcu": {
+      "name": "Brazil TCU (Tribunal de Contas da Uniao)",
+      "url": "https://portal.tcu.gov.br/",
+      "what_they_do": "브라질 감사원 — AI 기반 감사 시스템 ALICE, ADELE, MONICA",
+      "key_concepts": [
+        "ALICE — 공공조달 자동 분석 (가격 이상, 기업 관계, 패턴 탐지)",
+        "ADELE — 정부 예산 집행 실시간 모니터링",
+        "MONICA — 공공기관 입찰 공고 모니터링",
+        "연간 3만건+ 자동 분석, 200건+ 인간 감사관 투입"
+      ],
+      "what_we_should_adopt": [
+        "실시간 모니터링 (현재 우리는 배치 분석만)",
+        "자동 분석 → 인간 감사관 에스컬레이션 워크플로",
+        "다중 AI 에이전트 구조 (각각 다른 영역 담당)"
+      ]
+    },
+    "korea_acrc": {
+      "name": "국민권익위원회 청렴도 평가",
+      "url": "https://www.acrc.go.kr/",
+      "what_they_do": "공공기관 청렴도를 매년 평가 — 부패경험, 부패인식, 정책평가 3축",
+      "key_concepts": [
+        "외부청렴도 — 민원인이 경험한 부패 수준 (직접 측정)",
+        "내부청렴도 — 내부 직원이 경험한 부패 수준",
+        "정책투명성 — 정보공개, 참여, 소통 수준",
+        "기관별 비교 — 동종 기관 대비 순위"
+      ],
+      "what_we_should_adopt": [
+        "기관별 청렴도 등급을 맥락 정보로 활용 (청렴도 낮은 기관 = 의심 강화)",
+        "동종 기관 비교 (같은 유형 기관 평균 대비 이상 여부)",
+        "정보공개 수준을 데이터 품질 지표로"
+      ]
+    }
+  },
+  "design_principles": {
+    "from_ocds": "전체 조달 생애주기를 추적하라 (계약 체결만이 아니라 기획-입찰-낙찰-이행-변경 전체)",
+    "from_opencorporates": "기업을 고유 ID로 식별하고 이름 변형을 통합하라",
+    "from_aleph": "인물-기업-거래의 그래프를 그려라 — 연결이 핵심",
+    "from_prozorro": "시민이 직접 참여하는 감시 체계를 만들라",
+    "from_tcu": "AI는 스크리닝, 인간은 판단 — 에스컬레이션 워크플로",
+    "from_acrc": "정량 데이터만이 아니라 정성 평가(청렴도)도 함께 활용하라"
+  }
+}

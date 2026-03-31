@@ -758,7 +758,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
         <div className="grid sm:grid-cols-2 gap-x-8 gap-y-1">
           <div className="flex justify-between text-sm py-2 border-b border-gray-50">
             <span className="text-gray-500">대상 유형</span>
-            <span className="text-gray-800">{targetType === 'department' ? '정부 부처' : targetType}</span>
+            <span className="text-gray-800">{targetType === 'department' ? '정부 부처' : targetType === 'institution' ? '기관' : targetType || '기관'}</span>
           </div>
           <div className="flex justify-between text-sm py-2 border-b border-gray-50">
             <span className="text-gray-500">대상</span>

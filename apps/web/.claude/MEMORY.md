@@ -2,117 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-26 (04:20 UTC) · @Tom Kwon
-**Commit:** fix: Full team validation — 61 files fixed across 5 parallel agents (3602160) by Tom Kwon
-**Changed:**
-  .claude/MEMORY.md                                  |   18 +
-  .gitignore                                         |   11 +
-  apps/api/app/config.py                             |    7 +-
-  apps/api/app/dependencies.py                       |    7 +-
-  apps/api/app/models/__init__.py                    |   34 +
-  apps/api/app/models/audit_flag.py                  |    6 +-
-  apps/api/app/models/legislator.py                  |    2 +-
-  apps/api/app/routers/__init__.py                   |    7 +-
-  apps/api/app/routers/auth.py                       |   28 +-
-  apps/api/app/routers/comments.py                   |   10 +-
-  ... and 52 more files
-
-## 2026-03-26 (06:10 UTC) · @Tom Kwon
-**Commit:** feat: Deep presidential accountability — pledges, agenda, report cards, infographics (96069bd) by Tom Kwon
-**Changed:**
-  .claude/MEMORY.md                                  |   15 +
-  apps/api/app/models/__init__.py                    |    6 +-
-  apps/api/app/models/president.py                   |   83 +-
-  apps/api/app/routers/presidents.py                 |  515 +++++++--
-  apps/api/app/schemas/president.py                  |  187 +++-
-  apps/web/.claude/MEMORY.md                         |   18 +
-  .../app/presidents/[id]/PresidentDetailClient.tsx  |  614 ++++++++---
-  apps/web/app/presidents/[id]/page.tsx              |   31 +-
-  apps/web/components/presidents/AgendaProgress.tsx  |  164 +++
-  apps/web/components/presidents/AgendaTreemap.tsx   |  218 ++++
-  ... and 25 more files
-
-## 2026-03-26 (06:48 UTC) · @Tom Kwon
-**Commit:** feat: Phase 2 — Bills tracker, News frames, President comparisons, portraits (802f1df) by Tom Kwon
-**Changed:**
-  apps/api/app/routers/bills.py                      | 251 ++++++++--
-  apps/api/app/routers/news.py                       | 259 ++++++++++-
-  apps/api/app/schemas/bill.py                       |  82 +++-
-  apps/api/app/schemas/news.py                       | 125 ++++-
-  apps/web/app/(home)/page.tsx                       | 129 +++++-
-  apps/web/app/audit/AuditPageClient.tsx             |  38 +-
-  apps/web/app/bills/BillsPageClient.tsx             | 416 +++++++++++++++++
-  apps/web/app/bills/[id]/BillDetailClient.tsx       | 424 +++++++++++++++++
-  apps/web/app/bills/[id]/page.tsx                   |  44 +-
-  apps/web/app/bills/page.tsx                        |  13 +-
-  ... and 25 more files
-
-## 2026-03-26 (08:31 UTC) · @Tom Kwon
-**Commit:** feat: Phase 3 — Legislators scorecard + President comparison capped at 4 (da1de71) by Tom Kwon
-**Changed:**
-  .claude/MEMORY.md                                  |  15 +
-  apps/api/app/routers/legislators.py                | 410 ++++++++--
-  apps/api/app/schemas/legislator.py                 | 147 +++-
-  apps/web/app/legislators/LegislatorsPageClient.tsx | 267 +++++++
-  .../legislators/[id]/LegislatorDetailClient.tsx    | 397 ++++++++++
-  apps/web/app/legislators/[id]/page.tsx             |  43 +-
-  apps/web/app/legislators/page.tsx                  |  13 +-
-  apps/web/app/presidents/PresidentCompareClient.tsx |  17 +-
-  apps/web/components/legislators/RankingTable.tsx   | 306 +++++++-
-  apps/web/components/legislators/Scorecard.tsx      | 141 +++-
-  ... and 5 more files
-
-## 2026-03-26 (08:49 UTC) · @Tom Kwon
-**Commit:** feat: Minimal data-first landing page — numbers speak, no editorial (e7ea979) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md    |  15 ++
-  apps/web/app/(home)/page.tsx  | 393 ++++++++++++++++++++++--------------------
-  apps/web/tsconfig.tsbuildinfo |   2 +-
-  3 files changed, 224 insertions(+), 186 deletions(-)
-
-## 2026-03-26 (09:50 UTC) · @Tom Kwon
-**Commit:** feat: Deep audit details with links/contracts/timeline + 10 more flags + 8 more news (fc0da73) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md                    |   8 +
-  apps/web/app/audit/[id]/AuditDetailClient.tsx | 456 ++++++++++----
-  apps/web/components/audit/SuspicionCard.tsx   |  19 +-
-  apps/web/lib/data.ts                          | 816 +++++++++++++++++++++++++-
-  apps/web/lib/types.ts                         |  32 +
-  apps/web/tsconfig.tsbuildinfo                 |   2 +-
-  6 files changed, 1219 insertions(+), 114 deletions(-)
-
-## 2026-03-26 (10:12 UTC) · @Tom Kwon
-**Commit:** feat: Data provenance + demo banner + full about page with sources & methodology (01270b6) by Tom Kwon
-**Changed:**
-  apps/web/.claude/FACTS.md             |   15 +
-  apps/web/.claude/MEMORY.md            |   11 +
-  apps/web/.gitignore                   |    3 +
-  apps/web/app/about/page.tsx           |  255 +-
-  apps/web/app/api/cron/scrape/route.ts |   83 +
-  apps/web/app/api/sync/status/route.ts |   92 +
-  apps/web/app/layout.tsx               |    9 +
-  apps/web/drizzle.config.ts            |   10 +
-  apps/web/lib/db/index.ts              |    6 +
-  apps/web/lib/db/schema.ts             |  156 +
-  ... and 12 more files
-
-## 2026-03-26 (10:19 UTC) · @Tom Kwon
-**Commit:** chore: Remove GitHub/open-source references — private project (fcc5548) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md  | 15 +++++++++++++++
-  apps/web/app/about/page.tsx | 17 ++++-------------
-  apps/web/app/layout.tsx     |  4 ++--
-  3 files changed, 21 insertions(+), 15 deletions(-)
-
-## 2026-03-26 (16:02 UTC) · @Tom Kwon
-**Commit:** feat: Deep explorable bills — perspectives, controversy analysis, co-sponsors, timelines (dc7ef48) by Tom Kwon
-**Changed:**
-  apps/web/app/bills/[id]/BillDetailClient.tsx |  874 ++++++++++++++++-----
-  apps/web/lib/data.ts                         | 1084 +++++++++++++++++++++++++-
-  apps/web/lib/types.ts                        |   51 ++
-  apps/web/tsconfig.tsbuildinfo                |    2 +-
-  4 files changed, 1820 insertions(+), 191 deletions(-)
-
 ## 2026-03-26 (16:37 UTC) · @Tom Kwon
 **Commit:** fix: Korean severity labels, no emojis, clean nav, remove 이재명 from legislators (209dee6) by Tom Kwon
 **Changed:**
@@ -312,3 +201,92 @@
 **Changed:**
   apps/web/app/audit/AuditPageClient.tsx | 15 ++++++++++++---
   1 file changed, 12 insertions(+), 3 deletions(-)
+
+## 2026-03-29 (13:45 UTC) · @Tom Kwon
+**Commit:** data: Real bid analysis — 500 construction bids, repeat winners, low competition (000ebf7) by Tom Kwon
+**Changed:**
+  .claude/FACTS.md                       |   1 +
+  .claude/MEMORY.md                      |  13 +
+  apps/web/.claude/MEMORY.md             |  13 +
+  apps/web/public/data/bid-analysis.json | 459 +++++++++++++++++++++++++++++++++
+  apps/web/tsconfig.tsbuildinfo          |   2 +-
+  scripts/dispatch-api-subscription.md   | 191 ++++++++++++++
+  6 files changed, 678 insertions(+), 1 deletion(-)
+
+## 2026-03-29 (14:53 UTC) · @Tom Kwon
+**Commit:** fix: Audit page — fallback gracefully when static JSON unavailable (46e29bd) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 45 ++++++++++++++++++----------------
+  1 file changed, 24 insertions(+), 21 deletions(-)
+
+## 2026-03-29 (14:56 UTC) · @Tom Kwon
+**Commit:** fix: Audit page React error #310 — infinite re-render from useState(!isDemo) (0b4d9f2) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 63 +++++++++++++++++++++++++++++++---
+  1 file changed, 58 insertions(+), 5 deletions(-)
+
+## 2026-03-29 (15:00 UTC) · @Tom Kwon
+**Commit:** fix: Move all hooks before early returns — React error #310 (aad372a) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 79 ++++++++++++++++------------------
+  1 file changed, 36 insertions(+), 43 deletions(-)
+
+## 2026-03-29 (15:40 UTC) · @Tom Kwon
+**Commit:** feat: AI 감사 — 8 pattern types, 252 findings from real 나라장터 data (8ba3b6e) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx     |    27 +-
+  apps/web/components/audit/PatternBadge.tsx |    18 +-
+  apps/web/public/data/audit-results.json    | 11888 +++++++++++++++++++--------
+  scripts/generate-audit.py                  |   692 ++
+  4 files changed, 8960 insertions(+), 3665 deletions(-)
+
+## 2026-03-29 (16:12 UTC) · @Tom Kwon
+**Commit:** feat: Rich audit narratives — demo-level depth for all 252 findings (997d38f) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx  |   65 +
+  apps/web/lib/audit/context.ts           |    6 +
+  apps/web/public/data/audit-results.json | 5802 +++++++++++++++++++++++++++++--
+  scripts/generate-audit.py               |  280 ++
+  4 files changed, 5898 insertions(+), 255 deletions(-)
+
+## 2026-03-29 (16:20 UTC) · @Tom Kwon
+**Commit:** fix: Rich fields now render — add types to RealFinding, remove 확인 포인트 (8bb055a) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 43 ++++++++++++----------------------
+  1 file changed, 15 insertions(+), 28 deletions(-)
+
+## 2026-03-29 (16:42 UTC) · @Tom Kwon
+**Commit:** feat: Unified audit UI — live data uses same detail page as demo (1ca9bf3) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx  |   12 +-
+  apps/web/app/audit/page.tsx             |   30 +-
+  apps/web/lib/data.ts                    |   20 +
+  apps/web/public/data/audit-results.json | 6214 +++++++++++++++++++++++++++++--
+  scripts/generate-audit.py               |   54 +
+  5 files changed, 6003 insertions(+), 327 deletions(-)
+
+## 2026-03-29 (16:49 UTC) · @Tom Kwon
+**Commit:** fix: No English in UI, tighter bid rate criteria, Korean labels everywhere (b094a52) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/[id]/AuditDetailClient.tsx |    33 +-
+  apps/web/components/audit/SuspicionCard.tsx   |    17 +-
+  apps/web/public/data/audit-results.json       | 20909 ++++++++++--------------
+  scripts/generate-audit.py                     |    24 +-
+  4 files changed, 9104 insertions(+), 11879 deletions(-)
+
+## 2026-03-29 (16:58 UTC) · @Tom Kwon
+**Commit:** fix: Vendor names — corpList index 3 not 2 (was showing '단독' instead of company name) (9a53988) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 792 ++++++++++++++++----------------
+  scripts/generate-audit.py               |  16 +-
+  2 files changed, 408 insertions(+), 400 deletions(-)
+
+## 2026-03-31 (07:49 UTC) · @Tom Kwon
+**Commit:** feat: RichText — numbered lists, bold, bullets for all narrative fields (3e4e41a) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx        |    9 +-
+  apps/web/app/audit/[id]/AuditDetailClient.tsx |   17 +-
+  apps/web/components/common/RichText.tsx       |  122 +++
+  apps/web/public/data/audit-results.json       | 1132 ++++++++++++-------------
+  scripts/generate-audit.py                     |   20 +-
+  5 files changed, 718 insertions(+), 582 deletions(-)

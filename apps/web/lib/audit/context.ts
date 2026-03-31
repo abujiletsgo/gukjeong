@@ -3,6 +3,18 @@
 //
 // 핵심 원칙: 의심은 실제 공적 피해 가능성에 비례해야 한다.
 // "같은 업체가 또 수주했다"가 아니라 "이 계약이 국민에게 손해인가?"를 묻는다.
+//
+// Knowledge Base: data/knowledge/*.json (government-orgs, org-relationships,
+// industry-context, procurement-rules) — loaded via ./knowledge.ts
+
+import {
+  findRelationship,
+  isGovOrg,
+  getIndustryContext,
+  getProcurementProfile,
+  isParentChild,
+  normalizeName,
+} from './knowledge';
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -18,6 +30,7 @@ export interface RealEvidenceContract {
 }
 
 export interface RawFinding {
+  id?: string;
   pattern_type: string;
   severity: string;
   suspicion_score: number;
@@ -426,8 +439,67 @@ export function enrichFinding(finding: RawFinding): EnrichedFinding {
     });
   }
 
+  // ---- Step 5b: Knowledge Base — entity relationships ----
+  // Check if vendor is a child org of the institution (procurement is expected/normal)
+  for (const c of deduped) {
+    if (!c.vendor) continue;
+    const rel = findRelationship(c.vendor, instName);
+    if (rel && rel.normalProcurement) {
+      mitigating.push({
+        id: `kb_relationship_${normalizeName(c.vendor)}`,
+        label: `산하기관 관계: ${normalizeName(c.vendor)} → ${instName}`,
+        explanation: `${normalizeName(c.vendor)}은(는) ${instName}의 ${rel.typeInfo.label}입니다. 설립 목적에 부합하는 정상적 조달입니다.`,
+        score_reduction: Math.max(20, 100 - rel.scoreCap),
+      });
+      break; // Only apply once
+    }
+    // Fallback: check if vendor is any gov org
+    if (isGovOrg(c.vendor) && !rel) {
+      mitigating.push({
+        id: `kb_gov_org_${normalizeName(c.vendor)}`,
+        label: `정부 관련 기관: ${normalizeName(c.vendor)}`,
+        explanation: `${normalizeName(c.vendor)}은(는) 정부 산하기관/출연연구기관으로, 모 부처 위탁 사업 수주는 설립 목적에 부합합니다.`,
+        score_reduction: 25,
+      });
+      break;
+    }
+  }
+
+  // ---- Step 5c: Knowledge Base — industry context ----
+  const kbIndustry = getIndustryContext(searchText);
+  if (kbIndustry && !commodityMatches.length) {
+    // Only add if not already caught by COMMODITY_RULES
+    mitigating.push({
+      id: `kb_industry_${kbIndustry.category}`,
+      label: `${kbIndustry.label} (지식 베이스)`,
+      explanation: kbIndustry.reason,
+      score_reduction: kbIndustry.scoreReduction,
+    });
+  }
+
+  // ---- Step 5d: Knowledge Base — procurement profile ----
+  const profile = getProcurementProfile(instName);
+  if (profile && finding.pattern_type === 'repeated_sole_source') {
+    const soleRatio = Number(finding.detail['수의계약_비율']?.toString().replace('%', '') || 0);
+    if (soleRatio > 0 && soleRatio <= profile.expectedSoleSourcePct.max) {
+      mitigating.push({
+        id: `kb_profile_expected`,
+        label: `${profile.label} 기관 — 수의계약 비율 정상 범위`,
+        explanation: `${instName}은(는) ${profile.label} 유형 기관입니다. 이 유형의 기관은 수의계약 비율 ${profile.expectedSoleSourcePct.min}-${profile.expectedSoleSourcePct.max}%가 정상 범위이며, 현재 ${soleRatio}%는 이 범위 내입니다.`,
+        score_reduction: 20,
+      });
+    }
+  }
+
   // ---- Step 6: Amount-based assessment ----
-  const totalAmount = Number(finding.detail['업체_계약총액'] ?? finding.detail['총액'] ?? finding.detail['total_amount'] ?? 0);
+  const totalAmount = Number(
+    finding.detail['업체_계약총액'] ?? finding.detail['단독응찰_총액'] ??
+    finding.detail['반복낙찰_총액'] ?? finding.detail['낙찰총액'] ??
+    finding.detail['수의계약_총액'] ?? finding.detail['한도근처_총액'] ??
+    finding.detail['계약금액'] ?? finding.detail['총액'] ?? finding.detail['total_amount'] ??
+    // Fallback: sum evidence contract amounts
+    finding.evidence_contracts.reduce((s, c) => s + (c.amount || 0), 0)
+  );
   const amountInfo = getAmountTier(totalAmount);
 
   if (amountInfo.multiplier < 0.7) {

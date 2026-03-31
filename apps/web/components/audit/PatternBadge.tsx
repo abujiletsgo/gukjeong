@@ -19,10 +19,21 @@ const PATTERN_CONFIG: Record<string, { label: string; icon: string; color: strin
   contract_splitting: { label: '계약 분할', icon: '✂️', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
   low_bid_competition: { label: '과소 경쟁', icon: '🤝', color: 'bg-orange-50 text-orange-700 border-orange-200' },
   high_value_sole_source: { label: '고액 수의계약', icon: '💰', color: 'bg-rose-50 text-rose-700 border-rose-200' },
+  yearend_budget_dump: { label: '연말 예산소진', icon: '📅', color: 'bg-orange-50 text-orange-700 border-orange-200' },
+  related_companies: { label: '동일주소/대표 업체', icon: '🔗', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+  same_winner_repeat: { label: '동일업체 반복수주', icon: '🔁', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  amount_spike: { label: '계약금액 급증', icon: '📈', color: 'bg-red-50 text-red-700 border-red-200' },
+  bid_rigging: { label: '입찰담합', icon: '🤝', color: 'bg-rose-50 text-rose-700 border-rose-200' },
+  contract_inflation: { label: '계약변경 증액', icon: '💸', color: 'bg-red-50 text-red-700 border-red-200' },
+  // New advanced patterns (v2)
+  cross_pattern: { label: '복합 의심', icon: '⚠️', color: 'bg-rose-100 text-rose-800 border-rose-300' },
+  systemic_risk: { label: '체계적 위험', icon: '🚨', color: 'bg-rose-100 text-rose-800 border-rose-300' },
+  sanctioned_vendor: { label: '제재 업체', icon: '⛔', color: 'bg-rose-100 text-rose-800 border-rose-300' },
+  price_clustering: { label: '투찰가 군집', icon: '📊', color: 'bg-rose-100 text-rose-800 border-rose-300' },
+  network_collusion: { label: '업체 네트워크', icon: '🕸️', color: 'bg-purple-100 text-purple-800 border-purple-300' },
   // Legacy / future patterns
   yearend_spike: { label: '연말 급증', icon: '📈', color: 'bg-orange-50 text-orange-700 border-orange-200' },
   inflated_pricing: { label: '고가 계약', icon: '💰', color: 'bg-rose-50 text-rose-700 border-rose-200' },
-  bid_rigging: { label: '입찰 담합', icon: '🤝', color: 'bg-rose-50 text-rose-700 border-rose-200' },
   revolving_door: { label: '전관예우', icon: '🚪', color: 'bg-rose-50 text-rose-700 border-rose-200' },
   paper_company: { label: '페이퍼 컴퍼니', icon: '📄', color: 'bg-amber-50 text-amber-700 border-amber-200' },
 };
