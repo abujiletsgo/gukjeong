@@ -1,5 +1,5 @@
-<!-- GIT_HASH: 3e4e41ab1fa219402abc1cd3490a6b41e1f501bc -->
-<!-- GENERATED: 2026-03-31 -->
+<!-- GIT_HASH: 0e2fe7a515c2a06f2cba964e8effd50ee5aeb361 -->
+<!-- GENERATED: 2026-04-01 -->
 <!-- PRIME_VERSION: 2.0 -->
 
 # Project Context Cache
@@ -33,7 +33,7 @@
 ## 🏗️ Architecture Highlights
 - **Monorepo:** `apps/web/` (Next.js) + `apps/api/` (FastAPI) + `scripts/` (data pipeline)
 - **Data pipeline:** `scripts/fetch-data.py` → 8 data.go.kr APIs → `apps/web/data/*.json` (33MB)
-- **Audit pipeline:** `scripts/generate-audit.py` → cross-references all data → `public/data/audit-results.json` (252 findings, 8 patterns)
+- **Audit pipeline:** `scripts/generate-audit.py` → cross-references all data → `public/data/audit-results.json` (673 findings, 11 patterns)
 - **Key pages:** Budget viz, AI Auditor (8 patterns), News Frame Analysis, Legislator Scorecards, Presidents comparison
 - **Data sources (all working):** 개방표준, 사용자정보, 낙찰정보, 계약정보, 계약과정통합, 가격정보, 공공조달통계, 공직자재산공개
 - **Architecture map:** 🗺️ FRESH
@@ -54,11 +54,11 @@
 
 ## 💡 Key Insights
 - **8 API services wired** — all 조달청 + 행안부 subscriptions working after discovering undocumented gateway patterns (inqryDiv, YYYYMMDDHHmm dates, ao/as/at/ prefixes)
-- **AI 감사 system** — 252 real findings across 8 pattern types: ghost companies, zero competition, bid rate anomaly, new company wins, vendor concentration, repeated sole source, contract splitting, low bid competition
+- **AI 감사 system** — 673 real findings across 11 pattern types: ghost companies, zero competition, bid rate anomaly, new company wins, vendor concentration, repeated sole source, contract splitting, low bid competition, high value sole source, same winner repeat, cross pattern
 - **Each finding includes innocent_explanation** — contextual analysis considering legitimate reasons (textbook distributors, defense procurement, commodity rules)
 - **React hooks rule** — all useMemo/useEffect MUST be before any conditional return in AuditPageClient (React error #310)
 - **Vercel deploy** — `cd apps/web && npx vercel --prod` (git auto-deploy sometimes fails, CLI always works)
-- **Repo is 321MB** — data files + legislator photos; keep raw data in `apps/web/data/`, only processed results in `public/data/`
+- **Repo is ~2.2GB** — data files + legislator photos; keep raw data in `apps/web/data/`, only processed results in `public/data/`
 
 ## 🤝 Team Recommendation
 **Complexity Score:** 5.5
@@ -66,7 +66,7 @@
 **Indicators Detected:**
 - ✅ Multi-layer architecture (Next.js + FastAPI + Celery + scrapers)
 - ✅ Multiple technologies (TypeScript + Python + SQL + D3.js + Korean NLP)
-- ✅ Large codebase (587 tracked files)
+- ✅ Large codebase (605 tracked files)
 - ❌ Security concerns (none)
 - ✅ Unfamiliar stack (Korean NLP, Korean gov APIs, Korean payment systems)
 

@@ -23,13 +23,15 @@ uv run scripts/fetch-data.py       # Fetch fresh data from data.go.kr APIs
 
 ## Architecture
 
-- `apps/web/` — Next.js frontend (14 pages, 8 chart components, domain components)
-- `apps/api/` — FastAPI backend (11 routers, 7 services, 12 scrapers, Celery ETL)
+- `apps/web/` — Next.js frontend (26 pages across 17 routes, 8 chart components, domain components)
+- `apps/api/` — FastAPI backend (13 routers, 8 services, 14 scrapers, Celery ETL)
 - `apps/web/data/` — Raw JSON from G2B/government APIs (local cache)
 - `apps/web/public/data/` — Processed output (audit-results.json)
 - `scripts/` — Data pipeline scripts (fetch-data.py, generate-audit.py)
-- `data/seed/` — Seed JSON for DB (presidents, media outlets, fiscal data)
+- `data/seed/` — Seed JSON for DB (9 files: presidents, media outlets, fiscal data, etc.)
+- `data/knowledge/` — Domain knowledge base (5 files: government orgs, procurement rules, etc.)
 - `packages/shared/` — Shared TypeScript types and constants
+- `mockups/` — 18 HTML mockup files for UI design exploration
 
 ## Key Patterns
 
@@ -37,13 +39,13 @@ uv run scripts/fetch-data.py       # Fetch fresh data from data.go.kr APIs
 - **Types in 3 places:** SQLAlchemy models -> Pydantic schemas -> `apps/web/lib/types.ts` (keep in sync)
 - **Korean UI:** All user-facing text is Korean. Use Pretendard font. Comments can be Korean or English.
 - **Static + API hybrid:** Homepage uses ISR (revalidate=3600). Audit page falls back gracefully when JSON missing.
-- **8 audit patterns:** ghost_company, zero_competition, bid_rate_anomaly, new_company_big_win, vendor_concentration, repeated_sole_source, contract_splitting, low_bid_competition
+- **11 audit patterns:** ghost_company, zero_competition, bid_rate_anomaly, new_company_big_win, vendor_concentration, repeated_sole_source, contract_splitting, low_bid_competition, high_value_sole_source, same_winner_repeat, cross_pattern
 
 ## Rules
 
 - After model changes: update Pydantic schema + TypeScript types + generate Alembic migration
 - `apps/web/lib/data.ts` is the canonical data access layer for the frontend
-- Audit patterns live in `scripts/generate-audit.py` (8 detectors) and `apps/web/lib/audit/`
+- Audit patterns live in `scripts/generate-audit.py` (11 detectors) and `apps/web/lib/audit/`
 - API keys: `DATA_GO_KR_API_KEY`, `ECOS_API_KEY`, `ASSEMBLY_API_KEY`, `ANTHROPIC_API_KEY`
 - All D3 chart components are in `apps/web/components/charts/` (shared across pages)
 

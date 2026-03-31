@@ -186,3 +186,13 @@
   apps/web/public/data/audit-results.json       | 1132 ++++++++++++-------------
   scripts/generate-audit.py                     |   20 +-
   5 files changed, 718 insertions(+), 582 deletions(-)
+
+## 2026-04-01 (docs refresh) · @Tom Kwon
+**Commit:** feat: add knowledge base system, sanctions data, and audit UI improvements (0e2fe7a) by Tom Kwon
+**Changed:**
+  scripts/generate-audit.py                       | 1742 +-
+  scripts/knowledge.py                            |  518 +
+  scripts/procurement-context.md                  |   89 +
+  scripts/update-knowledge.py                     |  244 +
+  data/knowledge/*.json                           |    5 new files
+  ... and 34 more files (39 total, +4M/-119K lines — includes large data files)

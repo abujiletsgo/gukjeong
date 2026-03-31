@@ -27,3 +27,11 @@
 ## → PATTERNS (confirmed working sequences)
 
 ## ✗ STALE (superseded or disproven — do not use)
+
+## Recent Changes (2026-04-01 audit)
+- Audit findings: 673 (was 252), patterns: 11 (was 8) — added high_value_sole_source, same_winner_repeat, cross_pattern
+- Tracked files: 605 (was 587)
+- Knowledge base system added: `data/knowledge/` (5 JSON files), `scripts/knowledge.py`, `scripts/update-knowledge.py`
+- Repo size: ~2.2GB (was 321MB)
+- Pages: 26 page.tsx files across 17 route directories
+- Routers: 13, Services: 8, Scrapers: 14
