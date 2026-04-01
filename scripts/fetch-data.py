@@ -737,11 +737,23 @@ def fetch_g2b_bid_rankings():
 
 def fetch_g2b_contract_changes():
     """계약변경이력 — contract amendments (corruption detection)"""
+    import calendar
     print('\n📝 나라장터 — 계약변경이력 (12개월)')
-    month_ranges = koneps_month_ranges(12)
+    # This API requires end date = last day of month (not first of next month)
+    # Data is available from ~2025, not 2026 — so go back 24 months
+    now = datetime.now()
     all_items = []
-    for mi, (start, end) in enumerate(month_ranges):
-        month_label = f'{start[:4]}-{start[4:6]}'
+    for i in range(24):
+        y = now.year - ((now.month - 1 - i) < 0)
+        m = ((now.month - 1 - i) % 12) + 1
+        last_day = calendar.monthrange(y, m)[1]
+        start = f'{y:04d}{m:02d}010000'
+        # For current month, use today as end; otherwise last day of month
+        if y == now.year and m == now.month:
+            end = now.strftime('%Y%m%d2359')
+        else:
+            end = f'{y:04d}{m:02d}{last_day:02d}2359'
+        month_label = f'{y:04d}-{m:02d}'
         month_count = 0
         for category, ep in [
             ('공사변경', 'getCntrctInfoListCnstwkChgHstry'),

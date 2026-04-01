@@ -771,10 +771,11 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "low_bid_compe
 # ════════════════════════════════════════════════════════════════════
 print('🔍 Pattern 9: Year-End Budget Dump...')
 inst_monthly = defaultdict(lambda: defaultdict(lambda: {'count': 0, 'amt': 0, 'contracts': []}))
-for c in std_contracts:
-    inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
-    date = str(c.get('cntrctCnclsDate', ''))[:7]  # YYYY-MM
-    amt = float(c.get('cntrctAmt', 0) or 0)
+# Use winning bids (70k records, 12 months) — std_contracts only has 7 days
+for c in bids:
+    inst = str(c.get('dminsttNm', '')).strip()
+    date = str(c.get('fnlSucsfDate', ''))[:7]  # YYYY-MM
+    amt = float(c.get('sucsfbidAmt', 0) or 0)
     if inst and date and len(date) >= 7:
         month = date[5:7]
         inst_monthly[inst][month]['count'] += 1
@@ -797,12 +798,12 @@ for inst, months in inst_monthly.items():
         continue
     score = min(75, 25 + ratio * 8 + (yearend_amt / 1e9) * 5)
 
-    top = sorted(dec['contracts'] + nov['contracts'], key=lambda x: -float(x.get('cntrctAmt', 0) or 0))[:5]
+    top = sorted(dec['contracts'] + nov['contracts'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
     evidence = [make_contract(
-        c.get('cntrctNo', ''), get_contract_name(c),
-        float(c.get('cntrctAmt', 0) or 0),
-        str(c.get('rprsntCorpNm', '')),
-        c.get('cntrctCnclsDate', ''), c.get('cntrctCnclsMthdNm', ''),
+        c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
+        float(c.get('sucsfbidAmt', 0) or 0),
+        str(c.get('bidwinnrNm', '')),
+        c.get('fnlSucsfDate', ''), '낙찰',
     ) for c in top]
 
     findings.append({
@@ -878,17 +879,17 @@ for bizno, corp in corp_map.items():
         rep_corps[rep].append({'bizno': bizno, 'name': name, 'addr': addr})
 
 # Find clusters of companies at same address
+# Use winning bids (12 months) — std_contracts only has 7 days
 for addr, corps in addr_corps.items():
     if len(corps) < 2:
         continue
     # Check if these companies won contracts at same institution
     cluster_biznos = {c['bizno'] for c in corps}
-    cluster_contracts = []
     cluster_insts = defaultdict(lambda: {'companies': set(), 'contracts': []})
-    for c in std_contracts:
-        bz = str(c.get('rprsntCorpBizrno', '')).strip().replace('-', '')
+    for c in bids:
+        bz = str(c.get('bidwinnrBizno', '')).strip().replace('-', '')
         if bz in cluster_biznos:
-            inst = str(c.get('cntrctInsttNm', '')).strip()
+            inst = str(c.get('dminsttNm', '')).strip()
             if inst:
                 cluster_insts[inst]['companies'].add(bz)
                 cluster_insts[inst]['contracts'].append(c)
@@ -897,18 +898,18 @@ for addr, corps in addr_corps.items():
         if len(d['companies']) < 2:
             continue
         # Multiple related companies serving same institution!
-        total_amt = sum(float(c.get('cntrctAmt', 0) or 0) for c in d['contracts'])
+        total_amt = sum(float(c.get('sucsfbidAmt', 0) or 0) for c in d['contracts'])
         if total_amt < 50_000_000:
             continue
         company_names = [c['name'] for c in corps if c['bizno'] in d['companies']]
         reps = list(set(c['rep'] for c in corps if c['bizno'] in d['companies']))
         score = min(85, 45 + len(d['companies']) * 10 + (total_amt / 1e9) * 5)
 
-        top = sorted(d['contracts'], key=lambda x: -float(x.get('cntrctAmt', 0) or 0))[:5]
+        top = sorted(d['contracts'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
         evidence = [make_contract(
-            c.get('cntrctNo', ''), get_contract_name(c),
-            float(c.get('cntrctAmt', 0) or 0), str(c.get('rprsntCorpNm', '')),
-            c.get('cntrctCnclsDate', ''), c.get('cntrctCnclsMthdNm', ''),
+            c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
+            float(c.get('sucsfbidAmt', 0) or 0), str(c.get('bidwinnrNm', '')),
+            c.get('fnlSucsfDate', ''), '낙찰',
         ) for c in top]
 
         same_rep = len(reps) == 1
@@ -1141,11 +1142,12 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "same_winner_r
 # ════════════════════════════════════════════════════════════════════
 print('🔍 Pattern 13: Sudden Amount Spike...')
 inst_vendor_yearly = defaultdict(lambda: defaultdict(lambda: defaultdict(float)))
-for c in std_contracts:
-    inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
-    vendor = str(c.get('rprsntCorpNm', '')).strip()
-    year = str(c.get('cntrctCnclsDate', ''))[:4]
-    amt = float(c.get('cntrctAmt', 0) or 0)
+# Use winning bids (12 months across 2025-2026) — std_contracts only has 7 days
+for c in bids:
+    inst = str(c.get('dminsttNm', '')).strip()
+    vendor = str(c.get('bidwinnrNm', '')).strip()
+    year = str(c.get('fnlSucsfDate', ''))[:4]
+    amt = float(c.get('sucsfbidAmt', 0) or 0)
     if inst and vendor and year.isdigit():
         inst_vendor_yearly[inst][vendor][year] += amt
 
@@ -1312,8 +1314,15 @@ except Exception:
 
 if contract_changes:
     for ch in contract_changes:
-        orig_amt = float(ch.get('bfchgCntrctAmt', ch.get('orgnlCntrctAmt', 0)) or 0)
-        new_amt = float(ch.get('afchgCntrctAmt', ch.get('chgCntrctAmt', 0)) or 0)
+        # totCntrctAmt = total after all change orders; thtmCntrctAmt = original this-term amount
+        # cntrctNm or cnstwkNm or servcNm for title; corpList for vendor
+        orig_amt = float(ch.get('thtmCntrctAmt', 0) or 0)
+        new_amt = float(ch.get('totCntrctAmt', 0) or 0)
+        # Also try before/after fields if present
+        if not orig_amt:
+            orig_amt = float(ch.get('bfchgCntrctAmt', ch.get('orgnlCntrctAmt', 0)) or 0)
+        if not new_amt:
+            new_amt = float(ch.get('afchgCntrctAmt', ch.get('chgCntrctAmt', 0)) or 0)
         if orig_amt < 50_000_000 or new_amt <= orig_amt:
             continue
         increase = new_amt - orig_amt
@@ -1321,8 +1330,15 @@ if contract_changes:
         if ratio < 1.3:
             continue
         inst = str(ch.get('cntrctInsttNm', '')).strip()
-        title = str(ch.get('cntrctNm', '')).strip()
-        vendor = str(ch.get('rprsntCorpNm', '')).strip()
+        title = str(ch.get('cntrctNm', ch.get('cnstwkNm', ch.get('servcNm', '')))).strip()
+        # Extract vendor from corpList field: "[1^주계약업체^단독^업체명^대표^국가^비율^업체명^^사업자번호]"
+        corp_raw = str(ch.get('corpList', '')).strip()
+        vendor = ''
+        if corp_raw and '^' in corp_raw:
+            parts = corp_raw.strip('[]').split('^')
+            vendor = parts[3] if len(parts) > 3 else ''
+        if not vendor:
+            vendor = str(ch.get('rprsntCorpNm', '')).strip()
         score = min(80, 30 + (ratio - 1) * 25)
 
         findings.append({
@@ -2168,17 +2184,18 @@ print(f'  Found {len(cross_pattern_findings)} cross-pattern findings '
 # ════════════════════════════════════════════════════════════════════
 print('🔍 Pattern 17: Sanctioned Vendor Reappearance...')
 if sanctions_set:
-    for c in std_contracts:
-        bizno = str(c.get('rprsntCorpBizrno', '')).strip().replace('-', '')
+    # Use winning bids (12 months) — std_contracts only has 7 days
+    for c in bids:
+        bizno = str(c.get('bidwinnrBizno', '')).strip().replace('-', '')
         if bizno not in sanctions_set:
             continue
-        name = str(c.get('rprsntCorpNm', '')).strip()
-        inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
-        amt = float(c.get('cntrctAmt', 0) or 0)
-        title = str(get_contract_name(c)).strip()
-        method = str(c.get('cntrctCnclsMthdNm', '')).strip()
-        cno = str(c.get('cntrctNo', '')).strip()
-        date = str(c.get('cntrctCnclsDate', '')).strip()
+        name = str(c.get('bidwinnrNm', '')).strip()
+        inst = str(c.get('dminsttNm', '')).strip()
+        amt = float(c.get('sucsfbidAmt', 0) or 0)
+        title = str(c.get('bidNtceNm', '')).strip()
+        method = '낙찰'
+        cno = str(c.get('bidNtceNo', '')).strip()
+        date = str(c.get('fnlSucsfDate', '')).strip()
 
         if not inst or amt < 10_000_000:
             continue
@@ -2400,12 +2417,13 @@ for start in company_graph:
         clusters.append(cluster)
 
 # Check if cluster members win contracts at same institutions
+# Use winning bids (12 months) — std_contracts only has 7 days
 for cluster in clusters:
     cluster_inst_contracts = defaultdict(lambda: defaultdict(list))  # inst → bizno → contracts
-    for c in std_contracts:
-        bz = str(c.get('rprsntCorpBizrno', '')).strip().replace('-', '')
+    for c in bids:
+        bz = str(c.get('bidwinnrBizno', '')).strip().replace('-', '')
         if bz in cluster:
-            inst = str(c.get('cntrctInsttNm', '')).strip()
+            inst = str(c.get('dminsttNm', '')).strip()
             if inst:
                 cluster_inst_contracts[inst][bz].append(c)
 
@@ -2414,7 +2432,7 @@ for cluster in clusters:
             continue
         # Multiple companies from same cluster serving same institution
         total_amt = sum(
-            float(c.get('cntrctAmt', 0) or 0)
+            float(c.get('sucsfbidAmt', 0) or 0)
             for bz_list in bz_contracts.values()
             for c in bz_list
         )
@@ -2438,11 +2456,11 @@ for cluster in clusters:
 
         evidence = []
         for bz, contracts_list in bz_contracts.items():
-            for c in sorted(contracts_list, key=lambda x: -float(x.get('cntrctAmt', 0) or 0))[:2]:
+            for c in sorted(contracts_list, key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:2]:
                 evidence.append(make_contract(
-                    c.get('cntrctNo', ''), get_contract_name(c),
-                    float(c.get('cntrctAmt', 0) or 0), company_names.get(bz, bz),
-                    c.get('cntrctCnclsDate', ''), c.get('cntrctCnclsMthdNm', ''),
+                    c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
+                    float(c.get('sucsfbidAmt', 0) or 0), company_names.get(bz, c.get('bidwinnrNm', bz)),
+                    c.get('fnlSucsfDate', ''), '낙찰',
                 ))
 
         findings.append({
