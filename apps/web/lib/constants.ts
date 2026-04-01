@@ -61,13 +61,13 @@ export const SEVERITY_LABELS: Record<string, string> = {
   EXTREME: '극심',
 };
 
-// 감사 패턴 라벨
+// 감사 패턴 라벨 (generate-audit.py의 PATTERN_LABELS와 동기화)
 export const PATTERN_LABELS: Record<string, string> = {
   ghost_company: '유령업체',
   zero_competition: '경쟁 부재',
   bid_rate_anomaly: '예정가격 유출 의심',
   new_company_big_win: '신생업체 고액수주',
-  vendor_concentration: '업체 집중도',
+  vendor_concentration: '업체 집중',
   repeated_sole_source: '반복 수의계약',
   contract_splitting: '계약 분할',
   low_bid_competition: '과소 경쟁',
@@ -78,27 +78,35 @@ export const PATTERN_LABELS: Record<string, string> = {
   amount_spike: '계약금액 급증',
   bid_rigging: '입찰담합',
   contract_inflation: '계약변경 증액',
-  yearend_spike: '연말 지출 급증',
-  inflated_pricing: '과다 단가',
-  zombie_project: '좀비 사업',
-  revolving_door: '관피아',
-  paper_company: '페이퍼컴퍼니',
-  unnecessary_renovation: '반복 보수',
-  poor_roi: '저효율 사업',
+  cross_pattern: '복합 의심',
+  systemic_risk: '체계적 위험',
+  sanctioned_vendor: '제재 업체 재수주',
+  price_clustering: '투찰가 군집',
+  network_collusion: '업체 네트워크 담합',
 };
 
-// 감사 패턴 아이콘
+// 감사 패턴 아이콘 (PatternBadge.tsx의 PATTERN_CONFIG와 동기화)
 export const PATTERN_ICONS: Record<string, string> = {
-  yearend_spike: '📅',
+  ghost_company: '👻',
+  zero_competition: '🚫',
+  bid_rate_anomaly: '🎯',
+  new_company_big_win: '🆕',
   vendor_concentration: '🏢',
+  repeated_sole_source: '🔄',
   contract_splitting: '✂️',
-  inflated_pricing: '💸',
-  zombie_project: '🧟',
-  revolving_door: '🚪',
-  paper_company: '📄',
-  unnecessary_renovation: '🔨',
-  poor_roi: '📉',
+  low_bid_competition: '🤝',
+  yearend_budget_dump: '📅',
+  related_companies: '🔗',
+  high_value_sole_source: '💰',
+  same_winner_repeat: '🔁',
+  amount_spike: '📈',
   bid_rigging: '🤝',
+  contract_inflation: '💸',
+  cross_pattern: '⚠️',
+  systemic_risk: '🚨',
+  sanctioned_vendor: '⛔',
+  price_clustering: '📊',
+  network_collusion: '🕸️',
 };
 
 // 차트 기본 색상 팔레트

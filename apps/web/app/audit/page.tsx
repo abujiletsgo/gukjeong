@@ -7,10 +7,10 @@ import AuditPageClient from './AuditPageClient';
 
 export const metadata: Metadata = {
   title: 'AI 감사관',
-  description: '나라장터 계약 데이터에서 AI가 8가지 의심 패턴을 자동 탐지합니다.',
+  description: '나라장터 계약 데이터에서 AI가 20가지 의심 패턴을 자동 탐지합니다.',
   openGraph: {
     title: 'AI 감사관 | 국정투명',
-    description: '정부 계약에서 AI가 자동으로 의심 패턴을 탐지합니다. 유령업체, 경쟁 부재, 예정가격 유출 등.',
+    description: '정부 계약에서 AI가 자동으로 의심 패턴을 탐지합니다. 유령업체, 경쟁 부재, 입찰담합, 복합 의심 등 20가지.',
     images: [{ url: '/og/audit.png', width: 1200, height: 630 }],
   },
 };

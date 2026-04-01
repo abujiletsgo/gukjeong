@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
 """
-국정투명 AI 감사 분석기 — 나라장터 데이터에서 8가지 의심 패턴을 탐지합니다.
+국정투명 AI 감사 분석기 — 나라장터 데이터에서 19가지 의심 패턴을 탐지합니다.
 
 패턴:
-  1. ghost_company         유령업체: 0-1명 업체가 고액 계약 수주
-  2. zero_competition      경쟁 부재: 입찰 참여업체 1개뿐인 고액 낙찰
-  3. bid_rate_anomaly      예정가격 유출 의심: 낙찰률 99%+ (예정가 근접 낙찰)
-  4. new_company_big_win   신생업체 고액 수주: 설립 1년 미만 업체의 대형 계약
-  5. vendor_concentration  업체 집중: 특정 업체가 기관 계약의 30%+ 독점
-  6. repeated_sole_source  반복 수의계약: 기관의 전체 계약 중 수의계약 비율 90%+
-  7. contract_splitting    계약 분할: 수의계약 한도 직하 반복 발주
-  8. low_bid_competition   과소 경쟁: 입찰 참여 2-3개 업체에 반복 낙찰
+  1. ghost_company           유령업체: 0-1명 업체가 고액 계약 수주
+  2. zero_competition        경쟁 부재: 입찰 참여업체 1개뿐인 고액 낙찰
+  3. bid_rate_anomaly        예정가격 유출 의심: 낙찰률 99%+ (예정가 근접 낙찰)
+  4. new_company_big_win     신생업체 고액 수주: 설립 1년 미만 업체의 대형 계약
+  5. vendor_concentration    업체 집중: 특정 업체가 기관 계약의 30%+ 독점
+  6. repeated_sole_source    반복 수의계약: 기관의 전체 계약 중 수의계약 비율 90%+
+  7. contract_splitting      계약 분할: 수의계약 한도 직하 반복 발주
+  8. low_bid_competition     과소 경쟁: 입찰 참여 2-3개 업체에 반복 낙찰
+  9. yearend_budget_dump     연말 예산소진: 11-12월 계약 집중
+ 10. related_companies       동일주소/대표 업체: 같은 주소/대표 복수 계약
+ 11. high_value_sole_source  고액 수의계약: 1억+ 수의계약
+ 12. same_winner_repeat      동일업체 반복수주: 5건+ 연속 낙찰
+ 13. amount_spike            계약금액 급증: 전년 대비 3배+ 급증
+ 14. bid_rigging             입찰담합: 들러리 입찰 패턴
+ 15. contract_inflation      계약변경 증액: 30%+ 증액
+ 16. cross_pattern           복합 의심: 2+ 패턴 동시 감지
+ 17. sanctioned_vendor       제재 업체 재수주
+ 18. price_clustering        투찰가 군집: 담합 통계 증거
+ 19. network_collusion       업체 네트워크 담합
 
 출력: apps/web/public/data/audit-results.json
 """
