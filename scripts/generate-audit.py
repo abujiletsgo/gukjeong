@@ -99,6 +99,47 @@ try:
 except Exception:
     official_assets = []
 
+# Load bid rankings (개찰결과) — supplements winning-bids with additional bids
+# Format: opengCorpInfo = "company^bizno^ceo^amount^bidRate"
+try:
+    bid_rankings_raw = load('g2b-bid-rankings.json')['items']
+except Exception:
+    bid_rankings_raw = []
+
+existing_bid_nos = {b.get('bidNtceNo', '') for b in bids}
+for br in bid_rankings_raw:
+    no = br.get('bidNtceNo', '')
+    if no in existing_bid_nos:
+        continue  # already in winning-bids
+    info = br.get('opengCorpInfo', '')
+    if not info or '^' not in info:
+        continue
+    parts = info.split('^')
+    if len(parts) < 5:
+        continue
+    try:
+        amt = float(parts[3] or 0)
+        rate = float(parts[4] or 0)
+    except (ValueError, TypeError):
+        continue
+    if amt <= 0:
+        continue
+    bids.append({
+        'bidNtceNo': no,
+        'bidNtceNm': br.get('bidNtceNm', ''),
+        'prtcptCnum': br.get('prtcptCnum', '0'),
+        'bidwinnrNm': parts[0],
+        'bidwinnrBizno': parts[1],
+        'bidwinnrCeoNm': parts[2],
+        'sucsfbidAmt': str(int(amt)),
+        'sucsfbidRate': str(rate),
+        'rlOpengDt': br.get('opengDt', ''),
+        'fnlSucsfDate': br.get('opengDt', '')[:10],
+        'dminsttNm': br.get('dminsttNm', br.get('ntceInsttNm', '')),
+        'ntceInsttNm': br.get('ntceInsttNm', ''),
+        '_source': 'bid_rankings',
+    })
+
 corp_map = {str(c.get('bizno', '')): c for c in companies_raw}
 sanctions_set = set()
 for s in sanctions_raw:
@@ -107,7 +148,7 @@ for s in sanctions_raw:
         sanctions_set.add(bz)
 findings = []
 
-print(f'  Winning bids: {len(bids)}')
+print(f'  Winning bids: {len(bids)} (incl. bid rankings supplement)')
 print(f'  Contract details: {len(contracts)}')
 print(f'  Companies: {len(companies_raw)}')
 print(f'  Standard contracts: {len(std_contracts)}')
