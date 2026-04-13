@@ -1,4 +1,4 @@
-<!-- GIT_HASH: 0e2fe7a515c2a06f2cba964e8effd50ee5aeb361 -->
+<!-- GIT_HASH: bc3c6d8 -->
 <!-- GENERATED: 2026-04-01 -->
 <!-- PRIME_VERSION: 2.0 -->
 
@@ -33,8 +33,8 @@
 ## 🏗️ Architecture Highlights
 - **Monorepo:** `apps/web/` (Next.js) + `apps/api/` (FastAPI) + `scripts/` (data pipeline)
 - **Data pipeline:** `scripts/fetch-data.py` → 8 data.go.kr APIs → `apps/web/data/*.json` (33MB)
-- **Audit pipeline:** `scripts/generate-audit.py` → cross-references all data → `public/data/audit-results.json` (673 findings, 11 patterns)
-- **Key pages:** Budget viz, AI Auditor (8 patterns), News Frame Analysis, Legislator Scorecards, Presidents comparison
+- **Audit pipeline:** `scripts/generate-audit.py` → cross-references all data → `public/data/audit-results.json` (673 findings, 20 patterns)
+- **Key pages:** Budget viz, AI Auditor (20 patterns), News Frame Analysis, Legislator Scorecards, Presidents comparison
 - **Data sources (all working):** 개방표준, 사용자정보, 낙찰정보, 계약정보, 계약과정통합, 가격정보, 공공조달통계, 공직자재산공개
 - **Architecture map:** 🗺️ FRESH
 
@@ -54,7 +54,7 @@
 
 ## 💡 Key Insights
 - **8 API services wired** — all 조달청 + 행안부 subscriptions working after discovering undocumented gateway patterns (inqryDiv, YYYYMMDDHHmm dates, ao/as/at/ prefixes)
-- **AI 감사 system** — 673 real findings across 11 pattern types: ghost companies, zero competition, bid rate anomaly, new company wins, vendor concentration, repeated sole source, contract splitting, low bid competition, high value sole source, same winner repeat, cross pattern
+- **AI 감사 system** — 673 real findings across 20 pattern types: ghost_company, zero_competition, bid_rate_anomaly, new_company_big_win, vendor_concentration, repeated_sole_source, contract_splitting, low_bid_competition, yearend_budget_dump, related_companies, high_value_sole_source, same_winner_repeat, amount_spike, bid_rigging, contract_inflation, cross_pattern, systemic_risk, sanctioned_vendor, price_clustering, network_collusion
 - **Each finding includes innocent_explanation** — contextual analysis considering legitimate reasons (textbook distributors, defense procurement, commodity rules)
 - **React hooks rule** — all useMemo/useEffect MUST be before any conditional return in AuditPageClient (React error #310)
 - **Vercel deploy** — `cd apps/web && npx vercel --prod` (git auto-deploy sometimes fails, CLI always works)

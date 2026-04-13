@@ -18,6 +18,23 @@ import {
 
 // ── Types ──────────────────────────────────────────────────────────────
 
+export interface BidderRecord {
+  vendor: string;
+  bizno: string;
+  ceo?: string;
+  amount: number;
+  rate: number;
+  won: boolean;
+}
+
+export interface VendorProfile {
+  ceo_name?: string;
+  employee_count?: string | number;
+  reg_date?: string;
+  address?: string;
+  bizno?: string;
+}
+
 export interface RealEvidenceContract {
   no: string;
   name: string;
@@ -27,6 +44,7 @@ export interface RealEvidenceContract {
   method: string;
   reason?: string;
   url: string;
+  all_bidders?: BidderRecord[];
 }
 
 export interface RawFinding {
@@ -45,6 +63,12 @@ export interface RawFinding {
   citizen_impact?: string;
   what_should_happen?: string;
   related_links?: { title: string; url: string; source: string }[];
+  // Verdict fields
+  verdict?: 'suspicious' | 'investigate' | 'legitimate';
+  verdict_reason?: string;
+  key_evidence?: string;
+  vendor_profile?: VendorProfile;
+  priority_tier?: number;
 }
 
 export type RiskLevel = 'CONCERN' | 'WATCH' | 'LOW_RISK' | 'NORMAL';

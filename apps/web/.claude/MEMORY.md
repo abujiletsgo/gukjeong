@@ -2,16 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-26 (16:37 UTC) · @Tom Kwon
-**Commit:** fix: Korean severity labels, no emojis, clean nav, remove 이재명 from legislators (209dee6) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/[id]/AuditDetailClient.tsx |  4 +--
-  apps/web/app/layout.tsx                       | 46 +++++++++++++--------------
-  apps/web/components/audit/SuspicionCard.tsx   |  2 +-
-  apps/web/lib/data.ts                          | 28 ++++++++--------
-  apps/web/tsconfig.tsbuildinfo                 |  2 +-
-  5 files changed, 41 insertions(+), 41 deletions(-)
-
 ## 2026-03-26 (17:02 UTC) · @Tom Kwon
 **Commit:** fix: Merge duplicate audit link sections into single "직접 확인하기" (de1c20e) by Tom Kwon
 **Changed:**
@@ -290,3 +280,9 @@
   apps/web/public/data/audit-results.json       | 1132 ++++++++++++-------------
   scripts/generate-audit.py                     |   20 +-
   5 files changed, 718 insertions(+), 582 deletions(-)
+
+## 2026-04-10 (18:47 UTC) · @Tom Kwon
+**Commit:** fix: wire --font-pretendard CSS variable so Pretendard actually loads (f369e38) by Tom Kwon
+**Changed:**
+  apps/web/styles/globals.css | 1 +
+  1 file changed, 1 insertion(+)

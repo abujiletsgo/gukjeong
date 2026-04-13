@@ -161,6 +161,35 @@ export interface ConsistencyItem {
   vote_source?: string;           // 투표 출처 (e.g., "2025-03-20 본회의 표결")
 }
 
+export interface BidderRecord {
+  vendor: string;
+  bizno: string;
+  ceo?: string;
+  amount: number;
+  rate: number;
+  won: boolean;
+}
+
+export interface VendorProfile {
+  ceo_name?: string;
+  employee_count?: string | number;
+  reg_date?: string;
+  address?: string;
+  bizno?: string;
+}
+
+export interface EvidenceContract {
+  no: string;
+  name: string;
+  amount: number;
+  vendor: string;
+  date: string;
+  method: string;
+  reason?: string;
+  url?: string;
+  all_bidders?: BidderRecord[];
+}
+
 export interface AuditFlag {
   id: string;
   pattern_type: string;
@@ -168,23 +197,31 @@ export interface AuditFlag {
   suspicion_score: number;
   target_type?: string;
   target_id?: string;
+  target_institution?: string;
   detail?: Record<string, unknown>;
   evidence?: Record<string, unknown>;
   ai_analysis?: string;
   related_bai_case?: string;
   status: string;
   created_at?: string;
+  // 조사 판정
+  verdict?: 'suspicious' | 'investigate' | 'legitimate';
+  verdict_reason?: string;
+  key_evidence?: string;          // 핵심 증거 요약
+  evidence_contracts?: EvidenceContract[];
+  vendor_profile?: VendorProfile;
+  priority_tier?: number;         // 1=고위험 의심확실+고액, 2=의심확실, 3=기타
   // 시민을 위한 상세 설명
-  plain_explanation?: string;     // 이 패턴이 뭔지 쉽게 설명
-  why_it_matters?: string;        // 왜 의심스러운지
-  innocent_explanation?: string;  // 비리가 아닐 수 있는 합리적 이유
-  citizen_impact?: string;        // 세금이 어떻게 낭비될 수 있는지
-  what_should_happen?: string;    // 어떤 조치가 필요한지
-  real_case_example?: string;     // 요약 (기존 호환)
-  similar_cases?: SimilarCase[];   // 상세 유사 사례 목록
+  plain_explanation?: string;
+  why_it_matters?: string;
+  innocent_explanation?: string;
+  citizen_impact?: string;
+  what_should_happen?: string;
+  real_case_example?: string;
+  similar_cases?: SimilarCase[];
   // 관련 링크
   related_links?: AuditLink[];
-  // 관련 계약 정보
+  // 관련 계약 정보 (legacy)
   contracts?: AuditContract[];
   // 타임라인
   timeline?: AuditTimelineItem[];

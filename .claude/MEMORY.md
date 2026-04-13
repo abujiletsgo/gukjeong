@@ -196,3 +196,58 @@
   scripts/update-knowledge.py                     |  244 +
   data/knowledge/*.json                           |    5 new files
   ... and 34 more files (39 total, +4M/-119K lines — includes large data files)
+
+## 2026-04-01 (02:34 UTC) · @Tom Kwon
+**Commit:** docs: refresh project documentation to reflect current state (4f928e4) by Tom Kwon
+**Changed:**
+  .claude/FACTS.md           |  8 ++++++++
+  .claude/MEMORY.md          | 10 ++++++++++
+  .claude/PROJECT_CONTEXT.md | 12 ++++++------
+  CLAUDE.md                  | 12 +++++++-----
+  README.md                  |  2 +-
+  5 files changed, 32 insertions(+), 12 deletions(-)
+
+## 2026-04-01 (10:19 UTC) · @Tom Kwon
+**Commit:** fix: sync frontend pattern labels with 19 backend patterns, refresh data (bc3c6d8) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/page.tsx             |    4 +-
+  apps/web/data/g2b-contract-changes.json |    8 +
+  apps/web/data/g2b-contract-process.json |    2 +-
+  apps/web/data/g2b-sanctions.json        |    2 +-
+  apps/web/data/news-rss.json             | 1738 +++++++++++++++----------------
+  apps/web/lib/constants.ts               |   42 +-
+  apps/web/public/data/audit-results.json | 1620 ++++++++++++++--------------
+  scripts/generate-audit.py               |   29 +-
+  8 files changed, 1721 insertions(+), 1724 deletions(-)
+
+## 2026-04-01 (11:21 UTC) · @Tom Kwon
+**Commit:** feat: 4 new audit patterns — yearend_budget_dump, amount_spike, contract_inflation, systemic_risk (ac57ab9) by Tom Kwon
+**Changed:**
+  apps/web/data/g2b-contract-changes.json | 89495 +++++++++++++++++++++++++++++-
+  apps/web/public/data/audit-results.json | 71925 ++++++++++++++----------
+  scripts/fetch-data.py                   |    18 +-
+  scripts/generate-audit.py               |   106 +-
+  4 files changed, 132808 insertions(+), 28736 deletions(-)
+
+## 2026-04-01 (11:35 UTC) · @Tom Kwon
+**Commit:** chore: move spec docs to docs/, remove stray scripts/.claude/ (4cbfffd) by Tom Kwon
+**Changed:**
+  spec-CLAUDE.md => docs/spec-CLAUDE.md               | 0
+  spec-ORCHESTRATION.md => docs/spec-ORCHESTRATION.md | 0
+  spec-architecture.md => docs/spec-architecture.md   | 0
+  spec-facts.md => docs/spec-facts.md                 | 0
+  4 files changed, 0 insertions(+), 0 deletions(-)
+
+## 2026-04-09 (14:46 UTC) · @Tom Kwon
+**Commit:** feat: integrate g2b-bid-rankings data, expand audit to 1430 findings (7ff820d) by Tom Kwon
+**Changed:**
+  apps/web/data/g2b-bid-rankings.json     | 1223307 ++++++++++++++++++++++++++++
+  apps/web/public/data/audit-results.json |  144205 ++--
+  scripts/generate-audit.py               |      43 +-
+  3 files changed, 1320576 insertions(+), 46979 deletions(-)
+
+## 2026-04-13 (04:38 UTC) · @Tom Kwon
+**Commit:** fix: wire --font-pretendard CSS variable so Pretendard actually loads (f369e38) by Tom Kwon
+**Changed:**
+  apps/web/styles/globals.css | 1 +
+  1 file changed, 1 insertion(+)

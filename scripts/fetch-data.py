@@ -16,6 +16,7 @@ import ssl
 import sys
 import os
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -97,34 +98,50 @@ def koneps_month_ranges(months_back=12):
     return ranges
 
 
-def fetch_koneps_pages(url_template, max_pages=10, label='items'):
-    """Generic paginated fetcher for KONEPS/data.go.kr APIs."""
-    all_items = []
-    page = 1
-    while page <= max_pages:
-        url = url_template.format(KEY=DATA_GO_KR_KEY, PAGE=page)
-        d = fetch_json(url)
-        # Handle KONEPS error format
-        err = d.get('nkoneps.com.response.ResponseError', {})
-        if err:
-            code = err.get('header', {}).get('resultCode', '?')
-            msg = err.get('header', {}).get('resultMsg', '?')
-            if page == 1:
-                print(f'  ⚠️  API error: {code} — {msg}')
-            break
-        body = d.get('response', {}).get('body', {})
-        items = body.get('items', [])
-        if not isinstance(items, list):
-            items = [items] if items else []
-        if not items:
-            break
-        all_items.extend(items)
-        total = int(body.get('totalCount', 0))
-        if page % 5 == 0:
-            print(f'  Page {page}: {len(all_items)}/{total}')
-        if len(all_items) >= total or len(items) < 100:
-            break
-        page += 1
+def fetch_koneps_pages(url_template, max_pages=10, label='items', workers=10):
+    """Paginated fetcher for KONEPS/data.go.kr APIs — parallel after page 1."""
+    # Page 1 first to get totalCount
+    url = url_template.format(KEY=DATA_GO_KR_KEY, PAGE=1)
+    d = fetch_json(url)
+    err = d.get('nkoneps.com.response.ResponseError', {})
+    if err:
+        code = err.get('header', {}).get('resultCode', '?')
+        msg = err.get('header', {}).get('resultMsg', '?')
+        print(f'  ⚠️  API error: {code} — {msg}')
+        return []
+    body = d.get('response', {}).get('body', {})
+    items_p1 = body.get('items', [])
+    if not isinstance(items_p1, list):
+        items_p1 = [items_p1] if items_p1 else []
+    if not items_p1:
+        return []
+    total = int(body.get('totalCount', 0))
+    total_pages = min(max_pages, (total + 99) // 100)
+    if total_pages <= 1:
+        return items_p1
+
+    def _fetch_page(page):
+        u = url_template.format(KEY=DATA_GO_KR_KEY, PAGE=page)
+        try:
+            r = fetch_json(u)
+            b = r.get('response', {}).get('body', {})
+            its = b.get('items', [])
+            if not isinstance(its, list):
+                its = [its] if its else []
+            return page, its
+        except Exception:
+            return page, []
+
+    results = {}
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futs = {pool.submit(_fetch_page, p): p for p in range(2, total_pages + 1)}
+        for fut in as_completed(futs):
+            page, items = fut.result()
+            results[page] = items
+
+    all_items = list(items_p1)
+    for p in sorted(results):
+        all_items.extend(results[p])
     return all_items
 
 
@@ -214,28 +231,12 @@ def fetch_ecos():
 
 def fetch_g2b_bids():
     print('\n🏗️  나라장터 — 입찰공고 (전체)')
-    all_items = []
-    page = 1
-    while page <= 150:  # ~11,900 items / 100 per page = 120 pages
-        url = (
-            f'https://apis.data.go.kr/1230000/ao/PubDataOpnStdService'
-            f'/getDataSetOpnStdBidPblancInfo?serviceKey={DATA_GO_KR_KEY}'
-            f'&numOfRows=100&pageNo={page}&type=json'
-        )
-        d = fetch_json(url)
-        body = d.get('response', {}).get('body', {})
-        items = body.get('items', [])
-        if not isinstance(items, list):
-            items = [items] if items else []
-        if not items:
-            break
-        all_items.extend(items)
-        total = body.get('totalCount', 0)
-        if page % 20 == 0:
-            print(f'  Page {page}: {len(all_items)}/{total}')
-        if len(all_items) >= total or len(items) < 100:
-            break
-        page += 1
+    base_url = (
+        f'https://apis.data.go.kr/1230000/ao/PubDataOpnStdService'
+        f'/getDataSetOpnStdBidPblancInfo?serviceKey={DATA_GO_KR_KEY}'
+        f'&numOfRows=100&pageNo={{PAGE}}&type=json'
+    )
+    all_items = fetch_koneps_pages(base_url, max_pages=150)
 
     save('g2b-contracts.json', {
         'source': 'data.go.kr',
@@ -249,31 +250,12 @@ def fetch_g2b_bids():
 
 def fetch_g2b_contracts():
     print('\n📝 나라장터 — 계약정보 (전체)')
-    all_items = []
-    page = 1
-    try:
-        while page <= 400:  # ~38,600 items / 100 per page = 387 pages
-            url = (
-                f'https://apis.data.go.kr/1230000/ao/PubDataOpnStdService'
-                f'/getDataSetOpnStdCntrctInfo?serviceKey={DATA_GO_KR_KEY}'
-                f'&numOfRows=100&pageNo={page}&type=json'
-            )
-            d = fetch_json(url)
-            body = d.get('response', {}).get('body', {})
-            items = body.get('items', [])
-            if not isinstance(items, list):
-                items = [items] if items else []
-            if not items:
-                break
-            all_items.extend(items)
-            total = body.get('totalCount', 0)
-            if page % 50 == 0:
-                print(f'  Page {page}: {len(all_items)}/{total}')
-            if len(all_items) >= total or len(items) < 100:
-                break
-            page += 1
-    except Exception as e:
-        print(f'  ⚠️  Stopped at page {page}: {e} — saving {len(all_items)} items')
+    base_url = (
+        f'https://apis.data.go.kr/1230000/ao/PubDataOpnStdService'
+        f'/getDataSetOpnStdCntrctInfo?serviceKey={DATA_GO_KR_KEY}'
+        f'&numOfRows=100&pageNo={{PAGE}}&type=json'
+    )
+    all_items = fetch_koneps_pages(base_url, max_pages=400)
 
     if all_items:
         save('g2b-actual-contracts.json', {
@@ -302,27 +284,33 @@ def fetch_g2b_companies():
                         biznos.add(bz)
     print(f'  Found {len(biznos)} unique bizno values from existing data')
 
-    all_corps = []
-    for i, bizno in enumerate(sorted(biznos)):
-        if i >= 3000:  # expanded limit (10k/day quota)
-            print(f'  ⚠️  Stopped at 3000 — rate limit guard')
-            break
+    target_biznos = sorted(biznos)[:3000]
+
+    def _lookup(bizno):
+        url = (
+            f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
+            f'/getPrcrmntCorpBasicInfo02?serviceKey={DATA_GO_KR_KEY}'
+            f'&bizno={bizno}&inqryDiv=3&numOfRows=1&pageNo=1&type=json'
+        )
         try:
-            url = (
-                f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
-                f'/getPrcrmntCorpBasicInfo02?serviceKey={DATA_GO_KR_KEY}'
-                f'&bizno={bizno}&inqryDiv=3&numOfRows=1&pageNo=1&type=json'
-            )
             d = fetch_json(url)
             body = d.get('response', {}).get('body', {})
             items = body.get('items', [])
             if not isinstance(items, list):
                 items = [items] if items else []
-            all_corps.extend(items)
+            return items
         except Exception:
-            pass  # skip unreachable companies
-        if (i + 1) % 100 == 0:
-            print(f'  Queried {i + 1}/{min(len(biznos), 3000)}')
+            return []
+
+    all_corps = []
+    done = 0
+    with ThreadPoolExecutor(max_workers=20) as pool:
+        futs = {pool.submit(_lookup, bz): bz for bz in target_biznos}
+        for fut in as_completed(futs):
+            all_corps.extend(fut.result())
+            done += 1
+            if done % 200 == 0:
+                print(f'  Queried {done}/{len(target_biznos)}')
 
     save('g2b-companies.json', {
         'source': 'data.go.kr',
@@ -339,8 +327,9 @@ def fetch_g2b_sanctions():
     print('\n🚫 나라장터 — 부정당제재업체')
     all_items = []
 
-    # Try inqryDiv 1 with date range (month by month)
-    for start, end in koneps_month_ranges(24):  # 2 years of sanctions
+    # Try inqryDiv 1 with date range (month by month) — parallel, 60s timeout
+    def _fetch_sanctions_month(args):
+        start, end = args
         url = (
             f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
             f'/getUnptRsttCorpInfo02?serviceKey={DATA_GO_KR_KEY}'
@@ -348,38 +337,63 @@ def fetch_g2b_sanctions():
             f'&numOfRows=100&pageNo=1&type=json'
         )
         try:
-            d = fetch_json(url)
+            req = urllib.request.Request(url, headers={
+                'Accept': 'application/json',
+                'User-Agent': 'GukjeongTumyeong/fetch-data',
+            })
+            resp = urllib.request.urlopen(req, timeout=60, context=ctx)
+            d = json.loads(resp.read().decode('utf-8'))
             body = d.get('response', {}).get('body', {})
             items = body.get('items', [])
             if not isinstance(items, list):
                 items = [items] if items else []
-            all_items.extend(items)
+            return items
         except Exception:
-            pass
+            return []
 
-    # Also try inqryDiv=3 (no date, all records)
-    page = 1
-    while page <= 30:
-        url = (
-            f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
-            f'/getUnptRsttCorpInfo02?serviceKey={DATA_GO_KR_KEY}'
-            f'&inqryDiv=3&numOfRows=100&pageNo={page}&type=json'
-        )
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futs = [pool.submit(_fetch_sanctions_month, r) for r in koneps_month_ranges(36)]
+        for fut in as_completed(futs):
+            all_items.extend(fut.result())
+    print(f'  inqryDiv=1 (월별): {len(all_items)}건')
+
+    # Also try inqryDiv=3 (no date, all records) with longer timeout
+    tmpl = (
+        f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
+        f'/getUnptRsttCorpInfo02?serviceKey={{KEY}}'
+        f'&inqryDiv=3&numOfRows=100&pageNo={{PAGE}}&type=json'
+    )
+
+    def _fetch_sanctions_page(page):
+        url = tmpl.format(KEY=DATA_GO_KR_KEY, PAGE=page)
         try:
-            d = fetch_json(url)
+            req = urllib.request.Request(url, headers={
+                'Accept': 'application/json',
+                'User-Agent': 'GukjeongTumyeong/fetch-data',
+            })
+            resp = urllib.request.urlopen(req, timeout=60, context=ctx)
+            d = json.loads(resp.read().decode('utf-8'))
             body = d.get('response', {}).get('body', {})
             items = body.get('items', [])
             if not isinstance(items, list):
                 items = [items] if items else []
-            if not items:
-                break
-            all_items.extend(items)
-            total = body.get('totalCount', 0)
-            if len(all_items) >= total or len(items) < 100:
-                break
+            total = int(body.get('totalCount', 0))
+            return items, total
         except Exception:
-            break
-        page += 1
+            return [], 0
+
+    # Probe page 1 first
+    p1_items, total = _fetch_sanctions_page(1)
+    if p1_items:
+        all_items.extend(p1_items)
+        total_pages = min(50, (total + 99) // 100)
+        if total_pages > 1:
+            with ThreadPoolExecutor(max_workers=4) as pool:
+                futs = {pool.submit(_fetch_sanctions_page, p): p for p in range(2, total_pages + 1)}
+                for fut in as_completed(futs):
+                    items, _ = fut.result()
+                    all_items.extend(items)
+    print(f'  inqryDiv=3 (전체): +{len(p1_items)} (total reported: {total})')
 
     # Deduplicate by bizno
     seen = set()
@@ -405,30 +419,38 @@ def fetch_g2b_winning_bids():
     """낙찰정보서비스 — as/ScsbidInfoService (12개월 월별 조회, 월별 저장)"""
     print('\n🏆 나라장터 — 낙찰정보 (물품+공사+용역, 12개월)')
     month_ranges = koneps_month_ranges(12)
+
+    def _fetch_month(args):
+        mi, (start, end) = args
+        month_label = f'{start[:4]}-{start[4:6]}'
+        items = []
+        for category, ep in [
+            ('물품', 'getScsbidListSttusThng'),
+            ('공사', 'getScsbidListSttusCnstwk'),
+            ('용역', 'getScsbidListSttusServc'),
+        ]:
+            tmpl = (
+                f'{G2B_BASE}/as/ScsbidInfoService/{ep}'
+                f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+                f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
+            )
+            items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+        return month_label, items
+
     all_items = []
     months_done = 0
-    for mi, (start, end) in enumerate(month_ranges):
-        month_label = f'{start[:4]}-{start[4:6]}'
-        month_count = 0
-        try:
-            for category, ep in [
-                ('물품', 'getScsbidListSttusThng'),
-                ('공사', 'getScsbidListSttusCnstwk'),
-                ('용역', 'getScsbidListSttusServc'),
-            ]:
-                tmpl = (
-                    f'{G2B_BASE}/as/ScsbidInfoService/{ep}'
-                    f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
-                    f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
-                )
-                items = fetch_koneps_pages(tmpl, max_pages=20)
-                all_items.extend(items)
-                month_count += len(items)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futs = {pool.submit(_fetch_month, (mi, r)): mi for mi, r in enumerate(month_ranges)}
+        month_results = {}
+        for fut in as_completed(futs):
+            label, items = fut.result()
+            month_results[label] = items
             months_done += 1
-            print(f'  {month_label}: {month_count}건 (누적 {len(all_items)})')
-        except Exception as e:
-            print(f'  ⚠️  {month_label} stopped: {e}')
-            break  # Save what we have
+    for label in sorted(month_results, reverse=True):
+        items = month_results[label]
+        all_items.extend(items)
+        if items:
+            print(f'  {label}: {len(items)}건')
 
     if all_items:
         save('g2b-winning-bids.json', {
@@ -446,10 +468,11 @@ def fetch_g2b_contract_details():
     """계약정보서비스 — ao/CntrctInfoService (12개월 월별 조회)"""
     print('\n📋 나라장터 — 계약정보 (물품+공사+용역, 12개월)')
     month_ranges = koneps_month_ranges(12)
-    all_items = []
-    for mi, (start, end) in enumerate(month_ranges):
+
+    def _fetch_month(args):
+        mi, (start, end) = args
         month_label = f'{start[:4]}-{start[4:6]}'
-        month_count = 0
+        items = []
         for category, ep in [
             ('물품', 'getCntrctInfoListThng'),
             ('공사', 'getCntrctInfoListCnstwk'),
@@ -460,10 +483,21 @@ def fetch_g2b_contract_details():
                 f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
-            items = fetch_koneps_pages(tmpl, max_pages=20)
-            all_items.extend(items)
-            month_count += len(items)
-        print(f'  {month_label}: {month_count}건 (누적 {len(all_items)})')
+            items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+        return month_label, items
+
+    all_items = []
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futs = {pool.submit(_fetch_month, (mi, r)): mi for mi, r in enumerate(month_ranges)}
+        month_results = {}
+        for fut in as_completed(futs):
+            label, items = fut.result()
+            month_results[label] = items
+    for label in sorted(month_results, reverse=True):
+        items = month_results[label]
+        all_items.extend(items)
+        if items:
+            print(f'  {label}: {len(items)}건')
 
     save('g2b-contract-details.json', {
         'source': 'data.go.kr',
@@ -480,10 +514,11 @@ def fetch_g2b_contract_process():
     """계약과정통합공개 — ao/CntrctProcssIntgOpenService (12개월 월별)"""
     print('\n🔄 나라장터 — 계약과정통합공개 (12개월)')
     month_ranges = koneps_month_ranges(12)
-    all_items = []
-    for mi, (start, end) in enumerate(month_ranges):
+
+    def _fetch_month(args):
+        mi, (start, end) = args
         month_label = f'{start[:4]}-{start[4:6]}'
-        month_count = 0
+        items = []
         for category, ep in [
             ('물품', 'getCntrctProcssIntgOpenThng'),
             ('공사', 'getCntrctProcssIntgOpenCnstwk'),
@@ -494,11 +529,21 @@ def fetch_g2b_contract_process():
                 f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
-            items = fetch_koneps_pages(tmpl, max_pages=10)
-            all_items.extend(items)
-            month_count += len(items)
-        if month_count > 0:
-            print(f'  {month_label}: {month_count}건 (누적 {len(all_items)})')
+            items.extend(fetch_koneps_pages(tmpl, max_pages=10))
+        return month_label, items
+
+    all_items = []
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futs = {pool.submit(_fetch_month, (mi, r)): mi for mi, r in enumerate(month_ranges)}
+        month_results = {}
+        for fut in as_completed(futs):
+            label, items = fut.result()
+            month_results[label] = items
+    for label in sorted(month_results, reverse=True):
+        items = month_results[label]
+        all_items.extend(items)
+        if items:
+            print(f'  {label}: {len(items)}건')
 
     save('g2b-contract-process.json', {
         'source': 'data.go.kr',
@@ -704,10 +749,11 @@ def fetch_g2b_bid_rankings():
     """개찰결과 — ALL bidders per bid, not just winner (bid rigging detection)"""
     print('\n🏅 나라장터 — 개찰결과/입찰순위 (12개월)')
     month_ranges = koneps_month_ranges(12)
-    all_items = []
-    for mi, (start, end) in enumerate(month_ranges):
+
+    def _fetch_month(args):
+        mi, (start, end) = args
         month_label = f'{start[:4]}-{start[4:6]}'
-        month_count = 0
+        items = []
         for category, ep in [
             ('물품', 'getOpengResultListInfoThng'),
             ('공사', 'getOpengResultListInfoCnstwk'),
@@ -718,11 +764,21 @@ def fetch_g2b_bid_rankings():
                 f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
-            items = fetch_koneps_pages(tmpl, max_pages=20)
-            all_items.extend(items)
-            month_count += len(items)
-        if month_count > 0:
-            print(f'  {month_label}: {month_count}건 (누적 {len(all_items)})')
+            items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+        return month_label, items
+
+    all_items = []
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futs = {pool.submit(_fetch_month, (mi, r)): mi for mi, r in enumerate(month_ranges)}
+        month_results = {}
+        for fut in as_completed(futs):
+            label, items = fut.result()
+            month_results[label] = items
+    for label in sorted(month_results, reverse=True):
+        items = month_results[label]
+        all_items.extend(items)
+        if items:
+            print(f'  {label}: {len(items)}건')
 
     save('g2b-bid-rankings.json', {
         'source': 'data.go.kr',
@@ -742,20 +798,17 @@ def fetch_g2b_contract_changes():
     # This API requires end date = last day of month (not first of next month)
     # Data is available from ~2025, not 2026 — so go back 24 months
     now = datetime.now()
-    all_items = []
-    for i in range(24):
+
+    def _fetch_month(i):
         y = now.year - ((now.month - 1 - i) < 0)
         m = ((now.month - 1 - i) % 12) + 1
         last_day = calendar.monthrange(y, m)[1]
         start = f'{y:04d}{m:02d}010000'
-        # For current month, use today as end; otherwise last day of month
-        if y == now.year and m == now.month:
-            end = now.strftime('%Y%m%d2359')
-        else:
-            end = f'{y:04d}{m:02d}{last_day:02d}2359'
+        end = now.strftime('%Y%m%d2359') if (y == now.year and m == now.month) else f'{y:04d}{m:02d}{last_day:02d}2359'
         month_label = f'{y:04d}-{m:02d}'
-        month_count = 0
+        items = []
         for category, ep in [
+            ('물품변경', 'getCntrctInfoListThngChgHstry'),
             ('공사변경', 'getCntrctInfoListCnstwkChgHstry'),
             ('용역변경', 'getCntrctInfoListServcChgHstry'),
         ]:
@@ -764,11 +817,21 @@ def fetch_g2b_contract_changes():
                 f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
-            items = fetch_koneps_pages(tmpl, max_pages=10)
-            all_items.extend(items)
-            month_count += len(items)
-        if month_count > 0:
-            print(f'  {month_label}: {month_count}건 (누적 {len(all_items)})')
+            items.extend(fetch_koneps_pages(tmpl, max_pages=10))
+        return month_label, items
+
+    all_items = []
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futs = {pool.submit(_fetch_month, i): i for i in range(24)}
+        month_results = {}
+        for fut in as_completed(futs):
+            label, items = fut.result()
+            month_results[label] = items
+    for label in sorted(month_results, reverse=True):
+        items = month_results[label]
+        all_items.extend(items)
+        if items:
+            print(f'  {label}: {len(items)}건')
 
     save('g2b-contract-changes.json', {
         'source': 'data.go.kr',
@@ -781,6 +844,269 @@ def fetch_g2b_contract_changes():
     print(f'  ✅ {len(all_items)} contract change records (12개월)')
 
 
+def fetch_historical_bids():
+    """낙찰정보 2년 이전 이력 — as/ScsbidInfoService (13-36개월 전, 구독 불필요)
+
+    amount_spike 패턴의 정확도를 높이기 위한 2023-2024년 과거 데이터.
+    최초 1회만 실행하면 됩니다 (g2b-winning-bids-historical.json 생성).
+    현재 g2b-winning-bids.json은 최근 12개월만 포함.
+    """
+    print('\n📦 나라장터 — 과거 낙찰정보 (13-36개월, 2023-2025년)')
+    # Months 13 through 36 ago = 2 additional years of history
+    month_ranges = koneps_month_ranges(36)[12:]  # skip first 12 (already in winning-bids)
+
+    def _fetch_month(args):
+        mi, (start, end) = args
+        month_label = f'{start[:4]}-{start[4:6]}'
+        items = []
+        for category, ep in [
+            ('물품', 'getScsbidListSttusThng'),
+            ('공사', 'getScsbidListSttusCnstwk'),
+            ('용역', 'getScsbidListSttusServc'),
+        ]:
+            tmpl = (
+                f'{G2B_BASE}/as/ScsbidInfoService/{ep}'
+                f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+                f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
+            )
+            try:
+                items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+            except Exception as e:
+                print(f'  ⚠️  {month_label} {category} 중단: {e}')
+        return month_label, items
+
+    all_items = []
+    months_done = 0
+    month_results = {}
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futs = {pool.submit(_fetch_month, (mi, r)): mi for mi, r in enumerate(month_ranges)}
+        for fut in as_completed(futs):
+            label, items = fut.result()
+            month_results[label] = items
+            months_done += 1
+    for label in sorted(month_results, reverse=True):
+        items = month_results[label]
+        all_items.extend(items)
+        if items:
+            print(f'  {label}: {len(items)}건')
+
+    if all_items:
+        save('g2b-winning-bids-historical.json', {
+            'source': 'data.go.kr',
+            'service': 'as/ScsbidInfoService',
+            'fetched_at': now_iso(),
+            'note': '2년 이전 과거 데이터 (months 13-36). amount_spike 연도별 비교용.',
+            'months_covered': months_done,
+            'totalCount': len(all_items),
+            'items': all_items,
+        })
+        print(f'  ✅ {len(all_items)} 과거 낙찰 이력 (최근 {months_done}개월 전 데이터)')
+    else:
+        print(f'  ⚠️  수집된 데이터 없음')
+
+
+def fetch_targeted_companies():
+    """감사 결과에 등장하는 업체만 집중 조회 — 유령업체·신생업체·관계사 패턴 정밀화
+
+    g2b-companies.json은 현재 50,503개 bizno 중 1,647개만 커버.
+    audit-results.json에 등장하는 3,579개 업체를 추출해 bizno를 매핑한 후
+    미확보 프로필만 선택적으로 조회합니다 (~1,500 API 호출).
+    """
+    print('\n🎯 감사 결과 업체 집중 조회 (targeted company lookup)')
+
+    # Step 1: Collect vendor names from audit findings
+    audit_file = Path(__file__).parent.parent / 'apps' / 'web' / 'public' / 'data' / 'audit-results.json'
+    if not audit_file.exists():
+        print('  ⚠️  audit-results.json 없음 — generate-audit.py 먼저 실행하세요')
+        return
+    with open(audit_file, encoding='utf-8') as f:
+        audit = json.load(f)
+    finding_vendors: set[str] = set()
+    for finding in audit.get('findings', []):
+        for c in finding.get('evidence_contracts', []):
+            v = str(c.get('vendor', '')).strip()
+            if v:
+                finding_vendors.add(v)
+    print(f'  감사 등장 업체: {len(finding_vendors)}개')
+
+    # Step 2: Resolve vendor names -> bizno from existing raw data
+    name_to_bizno: dict[str, str] = {}
+    for fname in ['g2b-winning-bids.json', 'g2b-actual-contracts.json', 'g2b-contract-details.json']:
+        fpath = DATA_DIR / fname
+        if not fpath.exists():
+            continue
+        with open(fpath, encoding='utf-8') as f:
+            data = json.load(f)
+        for item in data.get('items', []):
+            for nm_key, bz_key in [
+                ('bidwinnrNm', 'bidwinnrBizno'),
+                ('cntrctorNm', 'cntrctorBizno'),
+                ('bidwinnrNm', 'bidwinnrBizno'),
+            ]:
+                nm = str(item.get(nm_key, '')).strip()
+                bz = str(item.get(bz_key, '')).strip().replace('-', '')
+                if nm and bz and len(bz) == 10 and bz.isdigit():
+                    name_to_bizno[nm] = bz
+
+    matched = {v: name_to_bizno[v] for v in finding_vendors if v in name_to_bizno}
+    print(f'  Bizno 매핑 성공: {len(matched)}/{len(finding_vendors)}개')
+
+    # Step 3: Only fetch profiles we don't already have
+    companies_path = DATA_DIR / 'g2b-companies.json'
+    if companies_path.exists():
+        with open(companies_path, encoding='utf-8') as f:
+            existing_companies = json.load(f)
+    else:
+        existing_companies = {'items': []}
+    have_biznos = {str(c.get('bizno', '')).strip() for c in existing_companies.get('items', [])}
+    new_biznos = sorted({bz for bz in matched.values() if bz not in have_biznos})
+    print(f'  신규 조회 대상: {len(new_biznos)}개 bizno')
+
+    if not new_biznos:
+        print('  ✅ 이미 모두 조회됨')
+        return
+
+    def _lookup(bizno):
+        url = (
+            f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
+            f'/getPrcrmntCorpBasicInfo02?serviceKey={DATA_GO_KR_KEY}'
+            f'&bizno={bizno}&inqryDiv=3&numOfRows=1&pageNo=1&type=json'
+        )
+        try:
+            d = fetch_json(url)
+            body = d.get('response', {}).get('body', {})
+            items = body.get('items', [])
+            if not isinstance(items, list):
+                items = [items] if items else []
+            return items
+        except Exception:
+            return []
+
+    new_corps = []
+    done = 0
+    with ThreadPoolExecutor(max_workers=20) as pool:
+        futs = {pool.submit(_lookup, bz): bz for bz in new_biznos}
+        for fut in as_completed(futs):
+            new_corps.extend(fut.result())
+            done += 1
+            if done % 300 == 0:
+                print(f'  조회 {done}/{len(new_biznos)} (확보 {len(new_corps)}개)')
+
+    # Merge with existing
+    merged = existing_companies.get('items', []) + new_corps
+    # Deduplicate by bizno
+    seen_bz: set[str] = set()
+    unique: list = []
+    for c in merged:
+        bz = str(c.get('bizno', '')).strip()
+        if bz not in seen_bz:
+            seen_bz.add(bz)
+            unique.append(c)
+
+    save('g2b-companies.json', {
+        'source': 'data.go.kr',
+        'endpoint': 'getPrcrmntCorpBasicInfo02 (targeted)',
+        'fetched_at': now_iso(),
+        'totalCount': len(unique),
+        'items': unique,
+    })
+    print(f'  ✅ {len(new_corps)}개 신규 프로필 추가 (총 {len(unique)}개)')
+
+
+def fetch_shopping_mall_prices():
+    """종합쇼핑몰 품목정보 — MltiSpcPrdctInfoService
+
+    ⚠️  이 API는 별도 구독이 필요합니다:
+        data.go.kr → "조달청_종합쇼핑몰 품목정보 서비스" 신청
+        (동일 API 키 사용 가능)
+
+    품목별 표준 단가 데이터를 가져와 price_vs_catalog 감사 패턴에 사용됩니다.
+    """
+    print('\n🛒 종합쇼핑몰 — 품목정보 (표준단가)')
+
+    # Candidate endpoints under MltiSpcPrdctInfoService
+    # (exact method name depends on 조달청 API specification)
+    CANDIDATE_METHODS = [
+        'getMltiSpcPrdctInfoList',
+        'getMltiSpcPrdctList',
+        'getShpngMallPrdctInfoList',
+        'getPrdctInfoList',
+    ]
+
+    all_items = []
+    used_method = None
+
+    for method in CANDIDATE_METHODS:
+        tmpl = (
+            f'https://apis.data.go.kr/1230000/MltiSpcPrdctInfoService/{method}'
+            f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+        )
+        try:
+            items = fetch_koneps_pages(tmpl, max_pages=3, label=method)
+            if items:
+                used_method = method
+                all_items.extend(items)
+                break
+        except Exception as e:
+            err = str(e)
+            if '500' in err or 'Unexpected' in err:
+                # API exists but key not subscribed — tell the user
+                print(f'  ⚠️  API 구독 필요: data.go.kr에서 "조달청_종합쇼핑몰 품목정보 서비스" 신청하세요')
+                print(f'     (현재 API 키로 구독 후 재실행하면 됩니다)')
+                return
+            # 404 = method name wrong, try next
+            continue
+
+    if not all_items:
+        print(f'  ⚠️  모든 endpoint 시도 실패. API 구독 필요 또는 endpoint 명칭 변경')
+        return
+
+    # If first page worked, fetch the rest (category-by-category if API supports it)
+    # Try fetching by major product categories for better coverage
+    MAJOR_CATEGORIES = [
+        ('소프트웨어', '소프트웨어'),
+        ('IT기기', 'IT·전자기기'),
+        ('사무용품', '사무용품·소모품'),
+        ('청소용품', '청소·환경미화'),
+        ('경비보안', '경비·보안'),
+        ('급식', '식품·급식'),
+        ('의료', '의료·방역'),
+    ]
+
+    tmpl_base = (
+        f'https://apis.data.go.kr/1230000/MltiSpcPrdctInfoService/{used_method}'
+        f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
+    )
+
+    # Get all pages from the base query (already started above)
+    # Re-fetch properly with full pagination
+    all_items = []
+    tmpl_full = tmpl_base + '&numOfRows=100&pageNo={PAGE}'
+    try:
+        items = fetch_koneps_pages(tmpl_base, max_pages=200, label='전체')
+        all_items.extend(items)
+        print(f'  전체: {len(items)}건')
+    except Exception as e:
+        print(f'  ⚠️  전체 조회 실패: {e}')
+
+    if not all_items:
+        print(f'  ⚠️  0건 수집됨')
+        return
+
+    save('g2b-shopping-mall.json', {
+        'source': 'data.go.kr',
+        'service': f'MltiSpcPrdctInfoService/{used_method}',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_items),
+        'items': all_items,
+    })
+    print(f'  ✅ {len(all_items)} 종합쇼핑몰 품목 가격 레코드')
+
+    # Print sample fields for debugging
+    if all_items:
+        print(f'  📋 필드: {list(all_items[0].keys())[:8]}')
+
+
 # ── Main ──
 
 FETCHERS = {
@@ -790,6 +1116,7 @@ FETCHERS = {
     'g2b': fetch_g2b_bids,
     'contracts': fetch_g2b_contracts,
     'companies': fetch_g2b_companies,
+    'targeted-companies': fetch_targeted_companies,
     'sanctions': fetch_g2b_sanctions,
     'winning-bids': fetch_g2b_winning_bids,
     'contract-details': fetch_g2b_contract_details,
@@ -800,6 +1127,8 @@ FETCHERS = {
     'news': fetch_news,
     'bid-rankings': fetch_g2b_bid_rankings,
     'contract-changes': fetch_g2b_contract_changes,
+    'shopping-mall': fetch_shopping_mall_prices,
+    'historical-bids': fetch_historical_bids,
 }
 
 if __name__ == '__main__':

@@ -37,27 +37,35 @@ export default function HomeRealDataOverlay({ seedAuditCount, seedLegislatorCoun
 
   // Overlay real numbers on the NUMBERS BAR section
   return (
-    <div className="bg-emerald-50 border-b border-emerald-100">
+    <div
+      style={{
+        backgroundColor: 'rgba(0,122,255,0.06)',
+        borderBottom: '1px solid rgba(0,122,255,0.12)',
+      }}
+    >
       <div className="container-page py-3 flex flex-wrap items-center justify-center gap-6 text-sm">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-emerald-800 font-medium">실제 데이터 요약</span>
+          <span
+            className="w-1.5 h-1.5 rounded-full animate-pulse"
+            style={{ backgroundColor: 'var(--apple-blue, #007AFF)' }}
+          />
+          <span className="font-medium" style={{ color: 'var(--apple-blue, #007AFF)' }}>실제 데이터 요약</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-emerald-900">{realData.findings_count}건</span>
-          <span className="text-emerald-700">의심 패턴 탐지</span>
+          <span className="font-bold" style={{ color: 'var(--color-label, #000)' }}>{realData.findings_count}건</span>
+          <span style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>의심 패턴 탐지</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-emerald-900">{realData.contracts_analyzed.toLocaleString()}건</span>
-          <span className="text-emerald-700">계약 분석</span>
+          <span className="font-bold" style={{ color: 'var(--color-label, #000)' }}>{realData.contracts_analyzed.toLocaleString()}건</span>
+          <span style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>계약 분석</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-emerald-900">{realData.summary.sole_source_ratio}%</span>
-          <span className="text-emerald-700">수의계약 비율</span>
+          <span className="font-bold" style={{ color: 'var(--color-label, #000)' }}>{realData.summary.sole_source_ratio}%</span>
+          <span style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>수의계약 비율</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-emerald-900">{realData.summary.unique_institutions.toLocaleString()}개</span>
-          <span className="text-emerald-700">기관</span>
+          <span className="font-bold" style={{ color: 'var(--color-label, #000)' }}>{realData.summary.unique_institutions.toLocaleString()}개</span>
+          <span style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>기관</span>
         </div>
       </div>
     </div>

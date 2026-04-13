@@ -1,7 +1,7 @@
 'use client';
 // 감사 플래그 상세 — 클라이언트 컴포넌트
 import { useState } from 'react';
-import type { AuditFlag, AuditContract, AuditTimelineItem, AuditLink, SimilarCase, ContractBid } from '@/lib/types';
+import type { AuditFlag, AuditContract, AuditTimelineItem, AuditLink, SimilarCase, ContractBid, EvidenceContract, BidderRecord } from '@/lib/types';
 import { getSeverityColor, getSeverityLabel, formatKRW, formatNumber, formatKeyLabel } from '@/lib/utils';
 import PatternBadge from '@/components/audit/PatternBadge';
 import ScoreBar from '@/components/common/ScoreBar';
@@ -91,6 +91,250 @@ function getOutcomeBorderColor(outcome: string): string {
   return 'border-l-gray-400';
 }
 
+// ── Pattern-specific "why this is corrupt" explanation ────────────────
+function getCorruptionExplanation(pattern: string, detail: Record<string, unknown>): string {
+  const d = detail as Record<string, string | number>;
+  switch (pattern) {
+    case 'bid_rate_anomaly':
+      return `낙찰률이 ${d['평균낙찰률'] || '98%+'}로 예정가격에 비정상적으로 근접합니다. 정상 낙찰률은 82~92%로, 98% 이상은 예정가격 사전 유출의 전형적 신호입니다.`;
+    case 'zero_competition':
+      return `경쟁 입찰 공고에 단 1개 업체만 응찰했습니다. 자격 요건을 특정 업체 맞춤으로 설정했거나 담합으로 나머지 업체가 빠진 "맞춤형 공고" 가능성이 있습니다.`;
+    case 'repeated_sole_source':
+      return `수의계약 비율이 ${d['수의계약_비율'] || '80%+'}입니다. 경쟁 입찰 의무를 구조적으로 회피하고 있는 패턴입니다. 수의계약은 긴급·특수한 경우에만 허용됩니다.`;
+    case 'contract_splitting':
+      return `수의계약 한도(2,000만원) 직하 금액으로 반복 발주했습니다. 하나의 대형 계약을 의도적으로 쪼개 경쟁 입찰을 회피한 것으로 의심됩니다.`;
+    case 'ghost_company':
+      return `종업원 ${d['종업원수'] || '0~1'}명의 업체가 수억원 규모 정부 계약을 수주했습니다. 실제 납품 능력이 없는 페이퍼 컴퍼니일 가능성이 있습니다.`;
+    case 'high_value_sole_source':
+      return `1억원 이상 고액 계약이 경쟁 없이 수의계약으로 체결되었습니다. 국가계약법상 2,000만원 초과 계약은 원칙적으로 경쟁 입찰이 필수입니다.`;
+    case 'low_bid_competition':
+      return `2~3개사만 참여하는 입찰에서 동일 업체가 반복 낙찰됩니다. 들러리 업체가 있는 사전 담합 구조일 가능성이 높습니다.`;
+    case 'same_winner_repeat':
+      return `같은 업체가 동일 기관의 서로 다른 입찰에서 반복 낙찰됩니다. 입찰 조건 조작 또는 사전 담합이 의심됩니다.`;
+    case 'amount_spike':
+      return `계약 금액이 전년 대비 ${d['증가율'] || '2배+'}으로 급증했습니다. 예산 말기 밀어내기 또는 단가 부풀리기 가능성이 있습니다.`;
+    case 'contract_inflation':
+      return `계약 변경으로 금액이 대폭 증액되었습니다. 처음부터 낮은 금액으로 수주 후 사후 증액하는 전형적인 관행입니다.`;
+    case 'cross_pattern':
+    case 'systemic_risk':
+      return `동일 기관-업체 쌍에서 여러 의심 패턴이 동시에 감지됩니다. 개별 건이 아닌 구조적·반복적 비리의 가능성이 높습니다.`;
+    case 'new_company_big_win':
+      return `설립 2년 미만의 신생 업체가 대형 계약을 수주했습니다. 특정인을 위해 급조된 목적 회사일 가능성을 배제할 수 없습니다.`;
+    default:
+      return '';
+  }
+}
+
+// ── Bidders table for a contract ──────────────────────────────────────
+function AllBiddersTable({ bidders, patternType }: { bidders: BidderRecord[]; patternType: string }) {
+  const sorted = [...bidders].sort((a, b) => b.rate - a.rate);
+  const winner = sorted.find(b => b.won) || sorted[0];
+  const isBidRateAnomaly = patternType === 'bid_rate_anomaly';
+  const isLowComp = patternType === 'low_bid_competition' || patternType === 'zero_competition';
+
+  return (
+    <div className="mt-3">
+      <h5 className="text-xs font-bold text-gray-600 mb-1.5 flex items-center gap-1.5">
+        <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        입찰 참여 업체 ({bidders.length}개사)
+      </h5>
+      <div className="overflow-x-auto rounded border border-gray-100">
+        <table className="w-full text-xs">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="text-left py-1.5 px-2 text-gray-500 font-semibold">업체명</th>
+              <th className="text-right py-1.5 px-2 text-gray-500 font-semibold">입찰금액</th>
+              <th className="text-right py-1.5 px-2 text-gray-500 font-semibold">낙찰률</th>
+              <th className="text-center py-1.5 px-2 text-gray-500 font-semibold">결과</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((b, i) => {
+              const isHighRate = isBidRateAnomaly && b.rate >= 98;
+              const isWin = b.won || b.vendor === winner?.vendor;
+              return (
+                <tr key={i} className={`border-t border-gray-50 ${isWin ? 'bg-rose-50' : ''}`}>
+                  <td className={`py-1.5 px-2 ${isWin ? 'font-semibold text-rose-800' : 'text-gray-700'}`}>
+                    {b.vendor}
+                    {isWin && <span className="ml-1.5 text-[9px] px-1 py-0.5 bg-rose-100 text-rose-700 rounded font-semibold">낙찰</span>}
+                  </td>
+                  <td className="py-1.5 px-2 text-right text-gray-700 tabular-nums">
+                    {b.amount > 0 ? formatKRW(b.amount) : '-'}
+                  </td>
+                  <td className={`py-1.5 px-2 text-right font-bold tabular-nums ${isHighRate ? 'text-rose-700' : isWin ? 'text-orange-700' : 'text-gray-600'}`}>
+                    {b.rate > 0 ? `${b.rate.toFixed(1)}%` : '-'}
+                    {isHighRate && <span className="ml-1 text-[9px] text-rose-500">⚠</span>}
+                  </td>
+                  <td className="py-1.5 px-2 text-center">
+                    {isWin ? <span className="text-rose-700 font-semibold">선정</span> : <span className="text-gray-400">탈락</span>}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {isBidRateAnomaly && bidders.some(b => b.rate >= 98) && (
+        <p className="text-[10px] text-rose-600 mt-1.5 font-medium">
+          ⚠ 낙찰률 98% 이상 — 예정가격 사전 유출 의심 (감사원 통계 기준)
+        </p>
+      )}
+      {isLowComp && bidders.length <= 2 && (
+        <p className="text-[10px] text-amber-600 mt-1.5 font-medium">
+          ⚠ 참여 업체 {bidders.length}개사 — 들러리 입찰 가능성
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ── Main corruption evidence section ─────────────────────────────────
+function CorruptionEvidenceSection({ flag }: { flag: AuditFlag }) {
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(0);
+  const contracts = flag.evidence_contracts || [];
+  const pattern = flag.pattern_type;
+  const explanation = getCorruptionExplanation(pattern, flag.detail || {});
+  const totalAmt = contracts.reduce((s, c) => s + (c.amount || 0), 0);
+
+  // Clean up contract name (remove [낙찰률 XX%] prefix)
+  function cleanName(name: string): string {
+    return name.replace(/^\[낙찰률 [\d.]+%\]\s*/, '').replace(/^\[수의\]\s*/, '');
+  }
+
+  return (
+    <div className="bg-rose-50 border border-rose-200 rounded-xl mb-4 overflow-hidden">
+      {/* Header */}
+      <div className="bg-rose-100 border-b border-rose-200 px-4 py-3 flex items-start gap-3">
+        <div className="shrink-0 w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center mt-0.5">
+          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-bold text-rose-800">부패 의심 증거 {contracts.length}건</p>
+          {explanation && <p className="text-xs text-rose-700 mt-0.5 leading-relaxed">{explanation}</p>}
+          {totalAmt > 0 && (
+            <p className="text-xs text-rose-600 mt-1 font-semibold">
+              총 의심 금액: {formatKRW(totalAmt)}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Vendor profile (if available) */}
+      {flag.vendor_profile && (
+        <div className="px-4 py-3 border-b border-rose-100 bg-white/60 flex flex-wrap gap-x-6 gap-y-1.5 text-xs">
+          <span className="font-semibold text-gray-700">업체 프로필</span>
+          {flag.vendor_profile.ceo_name && (
+            <span className="text-gray-600">대표: <span className="font-medium text-gray-800">{flag.vendor_profile.ceo_name}</span></span>
+          )}
+          {flag.vendor_profile.employee_count !== undefined && flag.vendor_profile.employee_count !== '' && (
+            <span className={`font-medium ${Number(flag.vendor_profile.employee_count) <= 1 ? 'text-rose-700' : 'text-gray-800'}`}>
+              직원: {flag.vendor_profile.employee_count}명
+              {Number(flag.vendor_profile.employee_count) <= 1 && ' ⚠'}
+            </span>
+          )}
+          {flag.vendor_profile.reg_date && (
+            <span className="text-gray-600">설립: <span className="font-medium text-gray-800">{String(flag.vendor_profile.reg_date).slice(0, 10)}</span></span>
+          )}
+          {flag.vendor_profile.address && (
+            <span className="text-gray-500 truncate max-w-xs">{flag.vendor_profile.address}</span>
+          )}
+        </div>
+      )}
+
+      {/* Contract list */}
+      <div className="divide-y divide-rose-100">
+        {contracts.map((ec, i) => {
+          const isOpen = expandedIdx === i;
+          const hasBidders = (ec.all_bidders?.length ?? 0) > 0;
+          const isSole = ec.method.includes('수의') || ec.method.includes('단독');
+          const rate = (() => {
+            const m = ec.method.match(/낙찰률\s*([\d.]+)%/);
+            return m ? parseFloat(m[1]) : null;
+          })();
+          const participants = (() => {
+            const m = ec.method.match(/참여\s*(\d+)개사/);
+            return m ? parseInt(m[1]) : null;
+          })();
+
+          return (
+            <div key={i} className="bg-white">
+              <button
+                type="button"
+                onClick={() => setExpandedIdx(isOpen ? null : i)}
+                className="w-full text-left px-4 py-3 hover:bg-rose-50 transition-colors"
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5 ${
+                    (rate && rate >= 98) || isSole ? 'bg-rose-500 text-white' : 'bg-amber-400 text-white'
+                  }`}>
+                    {i + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 leading-snug">{cleanName(ec.name)}</p>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1">
+                      <span className="text-sm font-bold text-rose-700">{formatKRW(ec.amount)}</span>
+                      <span className="text-xs text-gray-500">{ec.vendor}</span>
+                      <span className="text-xs text-gray-400">{ec.date}</span>
+                      {isSole && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-rose-100 text-rose-700 rounded font-semibold">수의계약</span>
+                      )}
+                      {rate !== null && rate >= 98 && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded font-bold">낙찰률 {rate}%</span>
+                      )}
+                      {participants !== null && participants <= 2 && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-semibold">참여 {participants}개사</span>
+                      )}
+                    </div>
+                  </div>
+                  <svg className={`w-4 h-4 text-gray-400 shrink-0 mt-1 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </div>
+              </button>
+
+              {isOpen && (
+                <div className="px-4 pb-4 pt-1 border-t border-rose-50 space-y-2">
+                  {/* Contract details */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs text-gray-600">
+                    <div><span className="text-gray-400 block">계약번호</span><span className="font-mono text-[11px] text-gray-800">{ec.no}</span></div>
+                    <div><span className="text-gray-400 block">계약방법</span><span className="text-gray-800">{ec.method}</span></div>
+                    {ec.reason && <div className="col-span-2"><span className="text-gray-400 block">계약사유</span><span className="text-gray-700">{ec.reason}</span></div>}
+                    {ec.url && (
+                      <div className="col-span-3">
+                        <a href={ec.url} target="_blank" rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline text-[11px] font-medium flex items-center gap-1">
+                          나라장터에서 원본 확인
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                          </svg>
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                  {/* All bidders */}
+                  {hasBidders && (
+                    <AllBiddersTable bidders={ec.all_bidders!} patternType={pattern} />
+                  )}
+                  {!hasBidders && isSole && (
+                    <p className="text-[11px] text-rose-600 bg-rose-50 rounded px-2 py-1.5">
+                      수의계약 — 경쟁 없이 단독 업체와 직접 체결. 입찰 내역 없음.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const [expandedContract, setExpandedContract] = useState<number | null>(null);
   const [expandedCase, setExpandedCase] = useState<number | null>(0); // first case expanded by default
@@ -134,6 +378,37 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
       <a href="/audit" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 mb-4 transition-colors">
         <span aria-hidden="true">&larr;</span> 감사 대시보드
       </a>
+
+      {/* ── 조사 판정 배너 ── */}
+      {flag.verdict && (() => {
+        const verdictCfg = {
+          suspicious:  { bg: 'bg-red-50',    border: 'border-red-200',    icon: '🔴', label: '의심 확실',   sub: '아래 증거를 바탕으로 실제 비리 가능성이 높다고 판단됩니다.', textColor: 'text-red-800', subColor: 'text-red-700' },
+          investigate: { bg: 'bg-amber-50',  border: 'border-amber-200',  icon: '🟡', label: '조사 필요',   sub: '이상 패턴이 감지되었으나 합리적 설명이 존재할 수 있습니다.', textColor: 'text-amber-800', subColor: 'text-amber-700' },
+          legitimate:  { bg: 'bg-green-50',  border: 'border-green-200',  icon: '🟢', label: '정상 가능성', sub: '구조적 특성으로 이 패턴이 정당화될 수 있습니다.', textColor: 'text-green-800', subColor: 'text-green-700' },
+        }[flag.verdict];
+        return (
+          <div className={`${verdictCfg.bg} border ${verdictCfg.border} rounded-lg p-4 mb-4`}>
+            <div className="flex items-start gap-3">
+              <span className="text-lg shrink-0 mt-0.5">{verdictCfg.icon}</span>
+              <div className="flex-1">
+                <p className={`text-sm font-bold ${verdictCfg.textColor} mb-1`}>AI 조사 판정: {verdictCfg.label}</p>
+                <p className={`text-xs ${verdictCfg.subColor} mb-2`}>{verdictCfg.sub}</p>
+                {flag.verdict_reason && (
+                  <p className={`text-xs ${verdictCfg.textColor} font-medium`}>{flag.verdict_reason}</p>
+                )}
+                {flag.key_evidence && (
+                  <pre className={`text-xs ${verdictCfg.subColor} mt-2 font-mono whitespace-pre-wrap bg-white/60 rounded p-2`}>{flag.key_evidence}</pre>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── 핵심 부패 증거 (Evidence of Corruption) ── */}
+      {flag.evidence_contracts && flag.evidence_contracts.length > 0 && (
+        <CorruptionEvidenceSection flag={flag} />
+      )}
 
       {/* ── 경고 배너 ── */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">

@@ -88,6 +88,10 @@ interface RealFinding {
   confidence_label?: string;
   context_category?: string;
   context_reason?: string;
+  verdict?: 'suspicious' | 'investigate' | 'legitimate';
+  verdict_reason?: string;
+  key_evidence?: string;
+  priority_tier?: number;
 }
 
 interface InvestigationTarget {
@@ -690,6 +694,8 @@ function AuditPageClientInner({
   const [activeCategory, setActiveCategory] = useState<PatternCategory>('all');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [verdictFilter, setVerdictFilter] = useState<'all' | 'suspicious' | 'investigate'>('suspicious');
+  const [tierFilter, setTierFilter] = useState<'all' | '1' | '2'>('all');
 
   // Fetch real data on mount (only in live mode)
   useEffect(() => {
@@ -757,6 +763,8 @@ function AuditPageClientInner({
     return enrichedFindings.filter(f => {
       if (activeCategory !== 'all' && f.pattern_type !== activeCategory) return false;
       if (severityFilter !== 'all' && f.risk_level !== severityFilter) return false;
+      if (!(verdictFilter === 'all' || f.verdict === verdictFilter || (verdictFilter === 'suspicious' && !f.verdict))) return false;
+      if (tierFilter !== 'all' && String((f as RealFinding).priority_tier ?? 3) !== tierFilter) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
         const matchesInst = f.target_institution.toLowerCase().includes(q);
@@ -1024,6 +1032,62 @@ function AuditPageClientInner({
             초기화
           </button>
         )}
+      </div>
+
+      {/* Verdict filter */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+        {([
+          { key: 'suspicious', label: '🔴 의심 확실', },
+          { key: 'investigate', label: '🟡 조사 필요', },
+          { key: 'all', label: '전체 보기', },
+        ] as const).map(opt => (
+          <button
+            key={opt.key}
+            onClick={() => setVerdictFilter(opt.key)}
+            style={{
+              padding: '5px 14px',
+              borderRadius: 20,
+              border: '1.5px solid',
+              borderColor: verdictFilter === opt.key ? 'var(--apple-blue)' : 'rgba(60,60,67,0.18)',
+              background: verdictFilter === opt.key ? 'rgba(0,122,255,0.08)' : 'transparent',
+              color: verdictFilter === opt.key ? 'var(--apple-blue)' : 'var(--apple-gray-1)',
+              fontSize: 13,
+              fontWeight: verdictFilter === opt.key ? 600 : 400,
+              cursor: 'pointer',
+            }}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Priority tier filter */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ fontSize: 12, color: 'var(--apple-gray-1)', fontWeight: 500 }}>우선순위:</span>
+        {([
+          { key: '1', label: '🔥 Tier 1 — 고위험', sub: '고액+의심확실' },
+          { key: '2', label: '⚠️ Tier 2 — 의심', sub: '의심확실' },
+          { key: 'all', label: '전체', sub: '' },
+        ] as const).map(opt => (
+          <button
+            key={opt.key}
+            onClick={() => setTierFilter(opt.key)}
+            title={opt.sub}
+            style={{
+              padding: '5px 14px',
+              borderRadius: 20,
+              border: '1.5px solid',
+              borderColor: tierFilter === opt.key ? 'var(--apple-orange)' : 'rgba(60,60,67,0.18)',
+              background: tierFilter === opt.key ? 'rgba(255,149,0,0.10)' : 'transparent',
+              color: tierFilter === opt.key ? 'var(--apple-orange)' : 'var(--apple-gray-1)',
+              fontSize: 13,
+              fontWeight: tierFilter === opt.key ? 600 : 400,
+              cursor: 'pointer',
+            }}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
 
       {/* ═══ 5. FINDINGS GROUPED BY PATTERN ═══ */}

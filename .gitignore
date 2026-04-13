@@ -71,3 +71,7 @@ logs/
 # Celery
 celerybeat-schedule
 celerybeat-schedule.db
+
+# Stray tooling context dirs
+scripts/.claude/
+.gstack/

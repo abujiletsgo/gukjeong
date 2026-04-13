@@ -1,37 +1,42 @@
 'use client';
-// 상태 뱃지
 
 interface StatusBadgeProps {
   status: string;
   size?: 'sm' | 'md';
 }
 
-const statusStyles: Record<string, string> = {
-  'detected': 'bg-yellow-50 text-yellow-700 border-yellow-200',
-  'active': 'bg-green-50 text-green-700 border-green-200',
-  'closed': 'bg-gray-50 text-gray-700 border-gray-200',
-  'pending': 'bg-amber-50 text-amber-700 border-amber-200',
-  'draft': 'bg-gray-50 text-gray-500 border-gray-200',
-  'submitted': 'bg-purple-50 text-purple-700 border-purple-200',
-};
-
-const statusLabels: Record<string, string> = {
-  'detected': '탐지됨',
-  'active': '진행 중',
-  'closed': '종료',
-  'pending': '대기',
-  'draft': '초안',
-  'submitted': '제출됨',
+const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
+  detected:  { label: '탐지됨',  bg: 'rgba(255,204,0,0.12)',   color: '#B8860B' },
+  active:    { label: '진행 중', bg: 'rgba(52,199,89,0.12)',   color: 'var(--apple-green)' },
+  closed:    { label: '종료',    bg: 'rgba(142,142,147,0.12)', color: 'var(--apple-gray-1)' },
+  pending:   { label: '대기',    bg: 'rgba(255,149,0,0.12)',   color: 'var(--apple-orange)' },
+  draft:     { label: '초안',    bg: 'rgba(142,142,147,0.10)', color: 'var(--apple-gray-1)' },
+  submitted: { label: '제출됨',  bg: 'rgba(88,86,214,0.12)',   color: 'var(--apple-indigo)' },
 };
 
 export default function StatusBadge({ status, size = 'sm' }: StatusBadgeProps) {
-  const style = statusStyles[status] || 'bg-gray-50 text-gray-700 border-gray-200';
-  const label = statusLabels[status] || status;
-  const sizeClass = size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1';
+  const config = STATUS_CONFIG[status] || {
+    label: status,
+    bg: 'rgba(142,142,147,0.10)',
+    color: 'var(--apple-gray-1)',
+  };
 
   return (
-    <span className={`inline-flex items-center rounded-full border ${style} ${sizeClass}`} role="status">
-      {label}
+    <span
+      role="status"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: size === 'sm' ? '3px 10px' : '5px 14px',
+        borderRadius: 100,
+        fontSize: size === 'sm' ? 12 : 14,
+        fontWeight: 500,
+        background: config.bg,
+        color: config.color,
+        letterSpacing: '0.1px',
+      }}
+    >
+      {config.label}
     </span>
   );
 }
