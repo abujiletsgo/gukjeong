@@ -75,3 +75,9 @@ celerybeat-schedule.db
 # Stray tooling context dirs
 scripts/.claude/
 .gstack/
+apps/web/data/g2b-contract-details.json
+apps/web/data/g2b-winning-bids-historical.json
+apps/web/data/dapa-bids.json
+apps/web/data/dapa-contracts.json
+apps/web/data/lh-bids.json
+apps/web/data/lh-contracts.json
