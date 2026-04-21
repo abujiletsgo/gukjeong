@@ -1225,7 +1225,7 @@ function AuditPageClientInner({
 
                         return (
                           <a
-                            key={`${finding.pattern_type}-${i}`}
+                            key={finding.id ?? `${finding.pattern_type}-${i}`}
                             href={finding.id ? `/audit/${finding.id}` : undefined}
                             className="block p-3 rounded-lg border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-colors group"
                           >
