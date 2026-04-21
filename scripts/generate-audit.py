@@ -2500,9 +2500,37 @@ PATTERN_LABELS = {
     'ai_anomaly': 'AI 이상탐지',
 }
 
+import hashlib as _hashlib
+
+def _stable_id(f: dict) -> str:
+    """Content-based ID so URLs survive regeneration (adding/removing other findings)."""
+    # Natural key: pattern + institution + sorted vendor names
+    vendors = sorted(set(
+        c.get('company', '') or c.get('winner', '') or ''
+        for c in (f.get('deduplicated_contracts') or [])
+    ))
+    # Also fold in summary text first 60 chars as extra uniqueness
+    summary_slug = (f.get('summary') or '')[:60]
+    key = '|'.join([
+        f.get('pattern_type', ''),
+        f.get('target_institution', ''),
+        ','.join(vendors),
+        summary_slug,
+    ])
+    h = _hashlib.sha256(key.encode('utf-8')).hexdigest()[:8]
+    return f'af-{h}'
+
+# Detect and resolve hash collisions
+_seen_ids: dict[str, int] = {}
 for i, f in enumerate(findings):
     # Add id (required for detail page routing)
-    f['id'] = f'af-live-{i+1:04d}'
+    base = _stable_id(f)
+    if base in _seen_ids:
+        _seen_ids[base] += 1
+        f['id'] = f'{base}-{_seen_ids[base]}'
+    else:
+        _seen_ids[base] = 0
+        f['id'] = base
 
     # Map target_institution → target_id/target_type (demo format)
     f['target_id'] = f.get('target_institution', '')
@@ -4201,9 +4229,17 @@ for i, ip in enumerate(top_20[:5]):
 # ════════════════════════════════════════════════════════════════════
 findings.sort(key=lambda f: -f['suspicion_score'])
 
-# Re-assign IDs to ALL findings (including cross_pattern/systemic_risk added later)
-for i, f in enumerate(findings):
-    f['id'] = f'af-live-{i+1:04d}'
+# Re-assign stable content-based IDs to ALL findings (including cross_pattern/systemic_risk added later)
+# IDs are hash-based so URLs survive regeneration when new findings are added/removed
+_seen_ids2: dict[str, int] = {}
+for f in findings:
+    base = _stable_id(f)
+    if base in _seen_ids2:
+        _seen_ids2[base] += 1
+        f['id'] = f'{base}-{_seen_ids2[base]}'
+    else:
+        _seen_ids2[base] = 0
+        f['id'] = base
     f['target_id'] = f.get('target_institution', '')
     f['target_type'] = '기관'
     f['status'] = 'detected'
