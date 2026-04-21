@@ -11,7 +11,7 @@
   6. repeated_sole_source    반복 수의계약: 기관의 전체 계약 중 수의계약 비율 90%+
   7. contract_splitting      계약 분할: 수의계약 한도 직하 반복 발주
   8. low_bid_competition     과소 경쟁: 입찰 참여 2-3개 업체에 반복 낙찰
-  9. yearend_budget_dump     연말 예산소진: 11-12월 계약 집중
+  9. yearend_new_vendor      연말 신규업체: 연말 수의계약 + 해당 연도 거래 없던 신규 업체
  10. related_companies       동일주소/대표 업체: 같은 주소/대표 복수 계약
  11. high_value_sole_source  고액 수의계약: 1억+ 수의계약
  12. same_winner_repeat      동일업체 반복수주: 5건+ 연속 낙찰
@@ -98,6 +98,14 @@ try:
     std_contracts = load('g2b-actual-contracts.json')['items']
 except Exception:
     std_contracts = []
+
+# Fallback: if contract-details is empty, use actual-contracts — both have the
+# same key fields (cntrctCnclsMthdNm, cntrctInsttNm, thtmCntrctAmt, rprsntCorpNm).
+# contract-details covers 12 months; actual-contracts covers recent weeks but
+# has richer per-record fields. Use whichever is larger.
+if not contracts and std_contracts:
+    contracts = std_contracts
+    print('  ⚠️  g2b-contract-details.json missing — using g2b-actual-contracts.json as fallback')
 
 try:
     sanctions_raw = load('g2b-sanctions.json')['items']
@@ -359,11 +367,26 @@ for c in std_contracts:
     if is_textbook or is_school_food or is_uniform or is_disaster or is_defense:
         continue  # 구조적으로 설명 가능한 1인 사업자
 
-    if emp >= 0 and emp <= 1 and amt > 30_000_000 and inst:
+    # Raise threshold to ₩50M — filters out routine sole-proprietor service contracts
+    # (cleaning, small repairs, local supply) while keeping significant ghost-company risks.
+    if emp >= 0 and emp <= 1 and amt > 50_000_000 and inst:
+        # Calculate company age at contract signing (months)
+        _opbiz = str(corp.get('opbizDt', '') or '')[:10]
+        _contract_date = date[:10] if date else ''
+        _company_age_months = None
+        if _opbiz and _contract_date and _opbiz >= '2000-01-01':
+            try:
+                from datetime import date as _dt
+                _od = _dt.fromisoformat(_opbiz)
+                _cd = _dt.fromisoformat(_contract_date) if _contract_date else _dt.today()
+                _company_age_months = max(0, (_cd.year - _od.year) * 12 + (_cd.month - _od.month))
+            except ValueError:
+                pass
         ghost_by_inst[inst].append({
             'corp': name, 'emp': emp, 'amt': amt, 'title': title,
             'method': method, 'reason': reason, 'date': date, 'cno': cno,
             'bizno': bizno, 'rgst': corp.get('rgstDt', ''),
+            'company_age_months': _company_age_months,
         })
 
 for inst, items in ghost_by_inst.items():
@@ -372,8 +395,15 @@ for inst, items in ghost_by_inst.items():
     items.sort(key=lambda x: -x['amt'])
     total_amt = sum(i['amt'] for i in items)
     top = items[:5]
-    # Score: higher with more contracts and larger amounts
+    # Score: higher with more contracts, larger amounts, and younger company age
     score = min(90, 40 + len(items) * 5 + (total_amt / 1e9) * 10)
+    # Boost for very young companies: a company < 6 months old winning a large contract
+    # is an extremely strong ghost/shell company signal.
+    min_age = min((i['company_age_months'] for i in items if i['company_age_months'] is not None), default=None)
+    if min_age is not None and min_age <= 6:
+        score = min(95, score + 20)
+    elif min_age is not None and min_age <= 12:
+        score = min(90, score + 10)
 
     # Check if it's a textbook distributor pattern (legitimate)
     is_textbook = any('교과' in i['title'] for i in items)
@@ -575,6 +605,9 @@ for b in bids:
     participants = int(b.get('prtcptCnum', 0) or 0)
     # Single-bidder high rate is NOT anomalous — it's a negotiated/sole-source price.
     # Only flag 2+ bidders at 99.5%+ (indicates possible price leak to ALL participants)
+    # Exclude: rate exactly 100.0 with 10+ participants → structural 복수예비가격 system
+    if rate == 100.0 and participants >= 10:
+        continue
     if rate >= 99.5 and amt > 200_000_000 and participants >= 2:
         winner = str(b.get('bidwinnrNm', '')).strip()
         inst = str(b.get('ntceInsttNm', b.get('dminsttNm', ''))).strip()
@@ -586,12 +619,13 @@ for b in bids:
             'participants': participants,
         })
 
-# Group by winner (a company consistently bidding at 99%+ is more suspicious)
+# Group by (winner, institution) — same vendor winning legitimately in different
+# institutions should not compound suspicion across them
 rate_by_winner = defaultdict(list)
 for h in high_rate:
-    rate_by_winner[h['winner']].append(h)
+    rate_by_winner[(h['winner'], h['inst'])].append(h)
 
-for winner, items in rate_by_winner.items():
+for (winner, inst), items in rate_by_winner.items():
     # High bar: 5+ occurrences, or 3+ at avg 99.8%+, or single at 99.95%+
     avg = sum(i['rate'] for i in items) / len(items) if items else 0
     if len(items) >= 5:
@@ -618,8 +652,6 @@ for winner, items in rate_by_winner.items():
         i['amt'], i['winner'], i['date'],
         f"낙찰률 {i['rate']:.1f}% (참여 {i['participants']}개사)",
     ) for i in items[:5]]
-
-    inst = items[0]['inst']
 
     findings.append({
         'pattern_type': 'bid_rate_anomaly',
@@ -820,7 +852,9 @@ inst_methods = defaultdict(lambda: {'sole': 0, 'total': 0, 'amt': 0, 'contracts'
 for c in contracts:
     method = str(c.get('cntrctCnclsMthdNm', ''))
     inst = str(c.get('cntrctInsttNm', '')).strip()
-    amt = float(c.get('thtmCntrctAmt', 0) or 0)
+    # thtmCntrctAmt is populated in contract-details; cntrctAmt is the fallback
+    # when using actual-contracts (thtmCntrctAmt is often empty there)
+    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
     if inst:
         inst_methods[inst]['total'] += 1
         inst_methods[inst]['amt'] += amt
@@ -854,25 +888,32 @@ for inst, d in inst_methods.items():
     ratio = d['sole'] / d['total']
     score = min(75, 25 + ratio * 30 + d['sole'] * 2)
 
-    top = sorted(d['contracts'], key=lambda x: -float(x.get('thtmCntrctAmt', 0) or 0))[:5]
+    top = sorted(d['contracts'],
+                 key=lambda x: -(float(x.get('thtmCntrctAmt', 0) or 0) or
+                                  float(x.get('cntrctAmt', 0) or 0)))[:5]
     evidence = []
     _top_vendors = set()
     for c in top:
-        # Extract vendor from corpList: format [1^주계약업체^단독^업체명^대표자^...]
+        # Extract vendor: try corpList first (contract-details format), fall back to rprsntCorpNm
         corp_list = str(c.get('corpList', ''))
         vendor = ''
         if corp_list and '^' in corp_list:
             parts = corp_list.split('^')
             if len(parts) > 3:
                 vendor = parts[3].split('，')[0] if '，' in parts[3] else parts[3]
+        if not vendor:
+            vendor = str(c.get('rprsntCorpNm', '')).strip()
         _top_vendors.add(vendor)
+        amt_ev = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
         evidence.append(make_contract(
-            c.get('untyCntrctNo', ''), get_contract_name(c),
-            float(c.get('thtmCntrctAmt', 0) or 0), vendor,
+            c.get('untyCntrctNo', c.get('cntrctNo', '')), get_contract_name(c),
+            amt_ev, vendor,
             c.get('cntrctCnclsDate', ''), '수의계약',
         ))
-    # Skip if all top vendors are cooperatives (e.g., 산림조합 for forest agencies)
-    if all(is_cooperative(v) for v in _top_vendors if v):
+    # Skip if all *named* vendors are cooperatives (산림조합 for forest agencies etc.)
+    # Guard: if no named vendors (all empty), don't skip — that's a data gap, not a cooperative.
+    _named_vendors = [v for v in _top_vendors if v]
+    if _named_vendors and all(is_cooperative(v) for v in _named_vendors):
         continue
 
     findings.append({
@@ -922,7 +963,7 @@ def extract_vendor(c):
 
 split_by_inst = defaultdict(list)
 for c in contracts:
-    amt = float(c.get('thtmCntrctAmt', 0) or 0)
+    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
     method = str(c.get('cntrctCnclsMthdNm', ''))
     inst = str(c.get('cntrctInsttNm', '')).strip()
     if '수의' in method and lower <= amt < THRESHOLD and inst:
@@ -946,8 +987,14 @@ for inst, items in split_by_inst.items():
     if vendor_concentration < 0.5 or top_count < 2:
         continue
 
-    # Also require: same vendor AND similar contract titles (real split = same work)
+    # Exclude: periodic service contracts that are structurally monthly
+    # (cleaning, security, facility management, meals) — these recur by design, not splitting
+    _MONTHLY_SERVICE_KW = ('청소', '경비', '시설관리', '용역', '급식', '교육', '강좌', '정기점검', '방역')
     top_vendor_contracts = [c for c in items if extract_vendor(c) == top_vendor]
+    if all(any(kw in get_contract_name(c) for kw in _MONTHLY_SERVICE_KW) for c in top_vendor_contracts):
+        continue
+
+    # Also require: same vendor AND similar contract titles (real split = same work)
     titles = [get_contract_name(c)[:20] for c in top_vendor_contracts]
     title_counts = _Counter(titles)
     has_repeated_title = title_counts.most_common(1)[0][1] >= 2 if title_counts else False
@@ -1061,186 +1108,237 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "low_bid_compe
 
 
 # ════════════════════════════════════════════════════════════════════
-# Pattern 9: YEAR-END BUDGET DUMP (연말 예산 소진)
-# 12월에 계약이 비정상적으로 집중 (통상 3배+ vs 월평균)
+# Pattern 9: YEAR-END NEW VENDOR SOLE SOURCE (연말 신규업체 수의계약)
+#
+# Prior pattern (연말 예산소진) had a 95%+ false-positive rate because
+# year-end spending concentration is REQUIRED by Korean budget law
+# (회계연도 내 미집행 예산 반납 규칙). Simply flagging November-December
+# contract spikes flags structurally normal behavior.
+#
+# New signal: flag year-end (Nov-Dec) SOLE SOURCE contracts to vendors
+# that have ZERO prior contract history at this institution during the
+# same year (Jan-Oct). This combination is genuinely suspicious:
+# - Sole source removes competition accountability
+# - New vendor means no established relationship / justification
+# - Year-end timing adds urgency pressure that bypasses normal vetting
+#
+# Real corruption case template: Year-end 수의계약 to a newly created or
+# unrelated vendor, approved by an outgoing official, often discovered
+# in the following year's audit (감사원 단골 지적 유형).
 # ════════════════════════════════════════════════════════════════════
-print('🔍 Pattern 9: Year-End Budget Dump...')
-inst_monthly = defaultdict(lambda: defaultdict(lambda: {'count': 0, 'amt': 0, 'contracts': []}))
-# Use winning bids (70k records, 12 months) — std_contracts only has 7 days
+print('🔍 Pattern 9: Year-End New Vendor Sole Source...')
+
+# Build: institution → set of vendors seen Jan-Oct (established relationships)
+_inst_prior_vendors: dict[str, set] = defaultdict(set)
+_inst_yearend_sole: dict[str, list] = defaultdict(list)
+
 for c in bids:
     inst = str(c.get('dminsttNm', '')).strip()
-    date = str(c.get('fnlSucsfDate', ''))[:7]  # YYYY-MM
-    amt = float(c.get('sucsfbidAmt', 0) or 0)
-    if inst and date and len(date) >= 7:
-        month = date[5:7]
-        inst_monthly[inst][month]['count'] += 1
-        inst_monthly[inst][month]['amt'] += amt
-        inst_monthly[inst][month]['contracts'].append(c)
+    date = str(c.get('fnlSucsfDate', ''))[:10]
+    winner = str(c.get('bidwinnrNm', '')).strip()
+    if not inst or not date or not winner:
+        continue
+    month = date[5:7] if len(date) >= 7 else ''
+    if not month:
+        continue
+    if month not in ('11', '12'):
+        _inst_prior_vendors[inst].add(winner)
 
-for inst, months in inst_monthly.items():
-    if len(months) < 3:
-        continue
-    avg_count = sum(m['count'] for m in months.values()) / max(len(months), 1)
-    avg_amt = sum(m['amt'] for m in months.values()) / max(len(months), 1)
-    dec = months.get('12', {'count': 0, 'amt': 0, 'contracts': []})
-    nov = months.get('11', {'count': 0, 'amt': 0, 'contracts': []})
-    yearend = dec['count'] + nov['count']
-    yearend_amt = dec['amt'] + nov['amt']
-    if avg_count < 2 or yearend < 5:
-        continue
-    ratio = yearend / max(avg_count * 2, 1)  # compare 2 months vs average of 2 months
-    if ratio < 2.5:
-        continue
-    score = min(75, 25 + ratio * 8 + (yearend_amt / 1e9) * 5)
+# Now find year-end sole-source contracts to vendors NOT in prior set.
+# Use `contracts` (12-month contract-details or actual-contracts fallback) since
+# std_contracts only covers recent weeks and may not include Nov-Dec.
+for c in contracts:
+    inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
+    date = str(c.get('cntrctCnclsDate', '')).strip()
+    # corpList vendor name (contract-details) or rprsntCorpNm (actual-contracts)
+    corp_list = str(c.get('corpList', ''))
+    vendor = ''
+    if corp_list and '^' in corp_list:
+        parts = corp_list.split('^')
+        vendor = parts[3].split('，')[0] if len(parts) > 3 else ''
+    if not vendor:
+        vendor = str(c.get('rprsntCorpNm', '')).strip()
+    method = str(c.get('cntrctCnclsMthdNm', '')).strip()
+    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
+    title = str(get_contract_name(c)).strip()
+    cno = str(c.get('untyCntrctNo', c.get('cntrctNo', ''))).strip()
 
-    top = sorted(dec['contracts'] + nov['contracts'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
+    if not inst or not date or not vendor or amt < 50_000_000:
+        continue
+    month = date[5:7] if len(date) >= 7 else ''
+    if month not in ('11', '12'):
+        continue
+    if '수의' not in method:
+        continue
+    # Skip structural exemptions
+    if (has_disaster_recovery(title) or is_defense_procurement(title) or
+            is_defense_procurement(inst)):
+        continue
+    if has_structural_procurement_method(title):
+        continue
+    # Skip established vendors (had prior contracts at this institution)
+    if vendor in _inst_prior_vendors.get(inst, set()):
+        continue
+    # Skip govt affiliates as vendors (structural delivery)
+    if is_govt_affiliate(vendor) or is_cooperative(vendor):
+        continue
+
+    _inst_yearend_sole[inst].append({
+        'vendor': vendor, 'amt': amt, 'title': title,
+        'date': date, 'cno': cno, 'method': method,
+    })
+
+for inst, contracts_list in _inst_yearend_sole.items():
+    if not contracts_list:
+        continue
+    # Require: meaningful total amount (5천만원+ single or multiple)
+    total_amt = sum(c['amt'] for c in contracts_list)
+    if total_amt < 50_000_000:
+        continue
+    # Require: at least 1 contract ≥5천만원 OR 3+ contracts
+    has_large = any(c['amt'] >= 50_000_000 for c in contracts_list)
+    if not has_large and len(contracts_list) < 3:
+        continue
+
+    contracts_list.sort(key=lambda x: -x['amt'])
+    unique_vendors = list({c['vendor'] for c in contracts_list})
+    score = min(82, 40 + len(contracts_list) * 8 + (total_amt / 1e9) * 12)
+
     evidence = [make_contract(
-        c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
-        float(c.get('sucsfbidAmt', 0) or 0),
-        str(c.get('bidwinnrNm', '')),
-        c.get('fnlSucsfDate', ''), '낙찰',
-    ) for c in top]
+        c['cno'], c['title'], c['amt'], c['vendor'], c['date'], c['method'],
+    ) for c in contracts_list[:5]]
 
     findings.append({
-        'pattern_type': 'yearend_budget_dump',
-        'severity': 'HIGH' if ratio >= 4 else 'MEDIUM',
+        'pattern_type': 'yearend_new_vendor',
+        'severity': 'HIGH' if total_amt >= 200_000_000 else 'MEDIUM',
         'suspicion_score': round(score),
         'target_institution': inst,
         'summary': (
-            f'{inst}의 11-12월 계약이 월평균 대비 {ratio:.1f}배 집중되었습니다. '
-            f'연말 {yearend}건({yearend_amt/1e8:.1f}억원) vs 월평균 {avg_count:.0f}건.'
+            f'{inst}에서 연말(11-12월)에 해당 연도 거래 이력이 없는 신규 업체에 '
+            f'수의계약 {len(contracts_list)}건(총 {total_amt/1e8:.1f}억원)을 체결했습니다. '
+            f'신규 업체: {", ".join(unique_vendors[:3])}.'
         ),
         'detail': {
             '기관': inst,
-            '11_12월_계약수': yearend,
-            '11_12월_계약액': yearend_amt,
-            '월평균_계약수': round(avg_count, 1),
-            '월평균_계약액': round(avg_amt),
-            '집중배율': f'{ratio:.1f}배',
+            '연말_신규업체_계약수': len(contracts_list),
+            '연말_신규업체_총액': total_amt,
+            '신규업체_목록': unique_vendors[:5],
+            '신규업체수': len(unique_vendors),
         },
         'evidence_contracts': evidence,
         'innocent_explanation': (
-            '연말 예산 소진은 한국 공공기관의 구조적 관행입니다. '
-            '회계연도(1-12월) 내 미집행 예산은 반납해야 하므로 '
-            '4분기에 집행이 집중되는 것은 일반적입니다. '
-            '다만, 과도한 연말 집중은 불필요한 지출, 졸속 계약, '
-            '검수 부실의 원인이 되며, 기획재정부도 지속적으로 개선을 권고하고 있습니다.'
+            '연말 수의계약 신규업체가 항상 문제인 것은 아닙니다. '
+            '해당 연도에 처음 나라장터에 등록한 합법적인 전문업체일 수 있으며, '
+            '기존 업체가 해당 서비스를 제공하지 못하는 상황일 수도 있습니다. '
+            '단, 연말+신규업체+수의계약의 조합은 감사원이 중점 점검하는 유형입니다.'
         ),
         'plain_explanation': (
-            f'{inst}에서 연말(11-12월)에 평소의 {ratio:.1f}배나 되는 계약이 몰렸습니다. '
-            f'이는 예산을 다 쓰지 않으면 내년에 줄어드니까 급하게 쓰는 '
-            f'"예산 소진" 현상입니다. 문제는 급하게 집행하면 '
-            f'부실한 계약이 체결되거나, 불필요한 지출이 발생할 수 있다는 것입니다.'
+            f'{inst}이(가) 연말에 갑자기 이전에 거래한 적 없는 회사들에게 '
+            f'수의계약(경쟁 입찰 없이 직접 계약)을 체결했습니다. '
+            f'연말에 예산을 소진하기 위해 사전 검토 없이 급하게 체결한 계약일 가능성이 높습니다. '
+            f'이런 계약은 가격이 적정한지, 실제로 납품/용역이 이루어졌는지 확인이 필요합니다.'
         ),
         'why_it_matters': (
-            '연말 예산 소진은 매년 감사원 지적사항의 상위권입니다. '
-            '2022년 감사원 보고서에 따르면, 12월에 집행된 계약의 부적정 비율은 '
-            '연중 평균 대비 2.3배 높았습니다. 시간 압박으로 인해 '
-            '가격 비교, 업체 검증, 납품 검수가 형식적으로 이루어지기 때문입니다.'
+            '감사원이 매년 가장 많이 적발하는 유형 중 하나가 '
+            '"연말 수의계약 신규업체 특혜"입니다. '
+            '경쟁 없는 계약 + 사전 관계 없는 업체 + 연말 시간 압박이 결합하면 '
+            '부실 계약, 과다 지급, 납품 부실의 위험이 크게 높아집니다.'
         ),
         'citizen_impact': (
-            f'연말에 급히 집행된 {yearend_amt/1e8:.1f}억원 중 '
-            f'부적정 비율(평균 12%)을 적용하면 약 {yearend_amt*0.12/1e8:.1f}억원이 '
-            f'낭비되었을 수 있습니다. 이는 시민이 체감할 수 있는 공공서비스 개선에 '
-            f'사용될 수 있었던 금액입니다.'
+            f'경쟁 없이 체결된 연말 신규업체 계약 {total_amt/1e8:.1f}억원 중 '
+            f'감사원 지적 비율(약 15%)을 적용하면 {total_amt*0.15/1e8:.1f}억원이 '
+            f'부적절하게 지출되었을 가능성이 있습니다.'
         ),
         'what_should_happen': (
-            '1) 11-12월 계약 중 긴급 사유가 명확하지 않은 건 전수 점검 '
-            '2) 동일 품목이 연초에도 발주되었는지 확인 (중복 발주 여부) '
-            '3) 연말 계약의 납품 검수 기록 확인 (형식적 검수 여부) '
-            '4) 차년도 예산 편성 시 연말 소진 방지를 위한 분기별 집행 계획 수립'
+            f'1) {inst}의 연말 수의계약 내역 전수 공개 요청 '
+            f'2) 계약 업체들의 설립일자, 이전 정부 계약 이력 확인 '
+            f'3) 납품/용역 이행 여부 및 검수 기록 확인 '
+            f'4) 감사원 또는 국민권익위원회에 감사 청구 가능'
         ),
     })
 
-print(f'  Found {len([f for f in findings if f["pattern_type"] == "yearend_budget_dump"])} year-end budget dump findings')
+print(f'  Found {len([f for f in findings if f["pattern_type"] == "yearend_new_vendor"])} year-end new vendor findings')
 
 
 # ════════════════════════════════════════════════════════════════════
 # Pattern 10: RELATED COMPANIES (동일 주소/대표 업체)
 # 같은 주소 또는 대표자가 다른 이름으로 복수 계약
+# Uses inline CEO/address data from bids (full 71k coverage)
 # ════════════════════════════════════════════════════════════════════
 print('🔍 Pattern 10: Related Companies...')
-addr_corps = defaultdict(list)
-rep_corps = defaultdict(list)
-for bizno, corp in corp_map.items():
-    addr = str(corp.get('rprsntCorpAddr', '')).strip()
-    rep = str(corp.get('rprsntNm', '')).strip()
-    name = str(corp.get('rprsntCorpNm', '')).strip()
-    if addr and len(addr) > 10:
-        # Normalize: strip unit numbers, keep building-level
-        addr_key = addr.split('(')[0].strip()[:30]
-        addr_corps[addr_key].append({'bizno': bizno, 'name': name, 'rep': rep, 'addr': addr})
-    if rep and len(rep) >= 2:
-        rep_corps[rep].append({'bizno': bizno, 'name': name, 'addr': addr})
-
-# Find clusters of companies at same address
-# Use winning bids (12 months) — std_contracts only has 7 days
-for addr, corps in addr_corps.items():
-    if len(corps) < 2:
+# Build per-institution groupings directly from bid data (CEO and address signals)
+# inst → ceo_name → { biznos, names, contracts }
+inst_ceo_map: dict = defaultdict(lambda: defaultdict(lambda: {'biznos': set(), 'names': set(), 'contracts': []}))
+# inst → addr_key → { biznos, names, ceos, contracts }
+inst_addr_map: dict = defaultdict(lambda: defaultdict(lambda: {'biznos': set(), 'names': set(), 'ceos': set(), 'contracts': []}))
+import re as _re
+for _b in bids:
+    _inst = str(_b.get('dminsttNm', '')).strip()
+    _bz = str(_b.get('bidwinnrBizno', '')).replace('-', '').strip()
+    _nm = str(_b.get('bidwinnrNm', '')).strip()
+    _ceo = str(_b.get('bidwinnrCeoNm', '')).strip()
+    _addr = str(_b.get('bidwinnrAdrs', '')).strip()
+    _amt = float(_b.get('sucsfbidAmt', 0) or 0)
+    if not _inst or not _bz:
         continue
-    # Check if these companies won contracts at same institution
-    cluster_biznos = {c['bizno'] for c in corps}
-    cluster_insts = defaultdict(lambda: {'companies': set(), 'contracts': []})
-    for c in bids:
-        bz = str(c.get('bidwinnrBizno', '')).strip().replace('-', '')
-        if bz in cluster_biznos:
-            inst = str(c.get('dminsttNm', '')).strip()
-            if inst:
-                cluster_insts[inst]['companies'].add(bz)
-                cluster_insts[inst]['contracts'].append(c)
+    if _ceo and len(_ceo) >= 2 and _amt > 0:
+        inst_ceo_map[_inst][_ceo]['biznos'].add(_bz)
+        inst_ceo_map[_inst][_ceo]['names'].add(_nm)
+        inst_ceo_map[_inst][_ceo]['contracts'].append(_b)
+    if _addr and len(_addr) > 10 and _amt > 0:
+        _addr_key = _re.sub(r'\s+', '', _addr.split('(')[0].split(',')[0])[:35]
+        inst_addr_map[_inst][_addr_key]['biznos'].add(_bz)
+        inst_addr_map[_inst][_addr_key]['names'].add(_nm)
+        inst_addr_map[_inst][_addr_key]['ceos'].add(_ceo)
+        inst_addr_map[_inst][_addr_key]['contracts'].append(_b)
 
-    for inst, d in cluster_insts.items():
-        if len(d['companies']) < 2:
+# Signal 1: Same CEO winning at same institution via different companies
+for inst, ceo_data in inst_ceo_map.items():
+    for ceo, d in ceo_data.items():
+        if len(d['biznos']) < 2:
+            continue  # need at least 2 distinct companies
+        # Skip common Korean names that are likely coincidental
+        if ceo in ('김영희', '이영희', '박영희', '김철수', '이철수'):
             continue
-        # Multiple related companies serving same institution!
         total_amt = sum(float(c.get('sucsfbidAmt', 0) or 0) for c in d['contracts'])
         if total_amt < 50_000_000:
             continue
-        company_names = [c['name'] for c in corps if c['bizno'] in d['companies']]
-        reps = list(set(c['rep'] for c in corps if c['bizno'] in d['companies']))
-        score = min(85, 45 + len(d['companies']) * 10 + (total_amt / 1e9) * 5)
-
+        company_names = sorted(d['names'])
+        score = min(90, 55 + len(d['biznos']) * 10 + (total_amt / 1e9) * 5)
         top = sorted(d['contracts'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
         evidence = [make_contract(
             c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
             float(c.get('sucsfbidAmt', 0) or 0), str(c.get('bidwinnrNm', '')),
             c.get('fnlSucsfDate', ''), '낙찰',
         ) for c in top]
-
-        same_rep = len(reps) == 1
         findings.append({
             'pattern_type': 'related_companies',
-            'severity': 'HIGH' if same_rep else 'MEDIUM',
+            'severity': 'HIGH',
             'suspicion_score': round(score),
             'target_institution': inst,
             'summary': (
-                f'{inst}에서 동일 주소({addr[:20]}…)의 {len(d["companies"])}개 업체'
+                f'{inst}에서 동일 대표자({ceo})의 {len(d["biznos"])}개 업체'
                 f'({", ".join(company_names[:3])})가 총 {total_amt/1e8:.1f}억원을 수주했습니다.'
-                + (f' 대표자가 동일인({reps[0]})입니다.' if same_rep else '')
             ),
             'detail': {
                 '기관': inst,
-                '관련업체수': len(d['companies']),
+                '관련업체수': len(d['biznos']),
                 '업체명': ', '.join(company_names),
-                '공통주소': addr[:50],
-                '대표자': ', '.join(reps),
-                '동일대표': '예' if same_rep else '아니오',
+                '공통대표자': ceo,
+                '동일대표': '예',
                 '합계금액': total_amt,
             },
             'evidence_contracts': evidence,
             'innocent_explanation': (
-                '동일 주소에 여러 업체가 소재하는 것은 오피스텔, 공유 사무실, '
-                '산업단지 등에서 자연스럽게 발생합니다. '
-                '특히 IT, 컨설팅 등 지식산업 분야에서는 같은 건물에 '
-                '동종 업체가 밀집하는 것이 일반적입니다. '
-                '다만, 동일 대표자가 여러 법인을 설립하여 '
-                '입찰에 동시 참여하는 것은 「입찰담합」에 해당할 수 있습니다.'
+                '동일인이 여러 법인을 운영하는 것 자체는 합법입니다. '
+                '그룹사 계열 관계, 면허 종류별 별도 법인, 분리 상장 등 정당한 사유가 있을 수 있습니다. '
+                '다만, 동일 대표자의 복수 법인이 같은 기관에 동시 납품하는 것은 '
+                '「입찰담합」에 해당할 수 있습니다.'
             ),
             'plain_explanation': (
-                f'같은 주소({addr[:20]}…)에 있는 {len(d["companies"])}개 회사가 '
+                f'같은 사람({ceo})이 대표인 {len(d["biznos"])}개 회사가 '
                 f'모두 {inst}에서 계약을 따냈습니다. '
-                + ('심지어 대표자가 같은 사람입니다. ' if same_rep else '')
-                + '이는 한 사람이 여러 회사를 만들어 경쟁을 가장하는 '
+                '이는 한 사람이 여러 회사를 만들어 경쟁을 가장하는 '
                 '"들러리 입찰"의 전형적 수법일 수 있습니다.'
             ),
             'why_it_matters': (
@@ -1263,6 +1361,72 @@ for addr, corps in addr_corps.items():
             ),
         })
 
+# Signal 2: Same address winning at same institution via different companies
+for inst, addr_data in inst_addr_map.items():
+    for addr_key, d in addr_data.items():
+        if len(d['biznos']) < 2:
+            continue
+        total_amt = sum(float(c.get('sucsfbidAmt', 0) or 0) for c in d['contracts'])
+        if total_amt < 200_000_000:  # Higher bar for address-only signal — 2억원
+            continue
+        # Skip if only 1 unique CEO (already covered by Signal 1)
+        ceos = {c for c in d['ceos'] if c}
+        if len(ceos) <= 1:
+            continue  # same-CEO case is handled above and is a stronger signal
+        company_names = sorted(d['names'])
+        score = min(80, 40 + len(d['biznos']) * 10 + (total_amt / 1e9) * 5)
+        top = sorted(d['contracts'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
+        evidence = [make_contract(
+            c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
+            float(c.get('sucsfbidAmt', 0) or 0), str(c.get('bidwinnrNm', '')),
+            c.get('fnlSucsfDate', ''), '낙찰',
+        ) for c in top]
+        findings.append({
+            'pattern_type': 'related_companies',
+            'severity': 'MEDIUM',
+            'suspicion_score': round(score),
+            'target_institution': inst,
+            'summary': (
+                f'{inst}에서 동일 주소의 {len(d["biznos"])}개 업체'
+                f'({", ".join(company_names[:3])})가 총 {total_amt/1e8:.1f}억원을 수주했습니다.'
+            ),
+            'detail': {
+                '기관': inst,
+                '관련업체수': len(d['biznos']),
+                '업체명': ', '.join(company_names),
+                '공통주소': addr_key[:50],
+                '대표자': ', '.join(c for c in ceos if c),
+                '동일대표': '아니오',
+                '합계금액': total_amt,
+            },
+            'evidence_contracts': evidence,
+            'innocent_explanation': (
+                '동일 주소에 여러 업체가 소재하는 것은 오피스텔, 공유 사무실, '
+                '산업단지 등에서 자연스럽게 발생합니다. '
+                '특히 IT, 컨설팅 등 지식산업 분야에서는 같은 건물에 '
+                '동종 업체가 밀집하는 것이 일반적입니다.'
+            ),
+            'plain_explanation': (
+                f'같은 주소({addr_key[:20]}…)에 있는 {len(d["biznos"])}개 회사가 '
+                f'모두 {inst}에서 계약을 따냈습니다. '
+                '이는 관계가 있는 업체들이 담합했을 가능성을 시사합니다.'
+            ),
+            'why_it_matters': (
+                '같은 주소를 공유하는 업체들이 동일 기관에 납품하는 것은 '
+                '들러리 입찰이나 실질적 경쟁 부재의 신호일 수 있습니다. '
+                '특히 대표자까지 같다면 위장 경쟁 가능성이 높습니다.'
+            ),
+            'citizen_impact': (
+                f'관련 업체들이 수주한 총 {total_amt/1e8:.1f}억원의 계약이 '
+                f'실질적 경쟁 없이 체결되었을 수 있습니다.'
+            ),
+            'what_should_happen': (
+                '1) 관련 업체의 등기부등본 확인 (주주, 임원 관계 조사) '
+                '2) 입찰 시 동시 참여 여부 확인 '
+                '3) 공정거래위원회에 위장 경쟁 여부 신고 검토'
+            ),
+        })
+
 print(f'  Found {len([f for f in findings if f["pattern_type"] == "related_companies"])} related company findings')
 
 
@@ -1275,14 +1439,14 @@ print('🔍 Pattern 11: High-Value Sole Source...')
 hvss_by_inst = defaultdict(list)
 for c in contracts:
     method = str(c.get('cntrctCnclsMthdNm', ''))
-    amt = float(c.get('thtmCntrctAmt', 0) or 0)
+    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
     inst = str(c.get('cntrctInsttNm', '')).strip()
     title = get_contract_name(c)
-    # 2억 threshold — below this, 수의계약 is often legally permitted (§26 exemptions).
-    # At 2억+, competition should normally be required unless specific exemptions apply.
-    # Small-scale 비리 in 수의계약 (1억-2억) exists but needs more specific signals —
+    # 3억 threshold — below this, 수의계약 is often legally permitted (§26 exemptions).
+    # At 3억+, competition should normally be required unless specific exemptions apply.
+    # Small-scale 비리 in 수의계약 (1억-3억) exists but needs more specific signals —
     # captured better by contract_splitting and ghost_company patterns.
-    if '수의' not in method or amt < 200_000_000 or not inst:
+    if '수의' not in method or amt < 300_000_000 or not inst:
         continue
     # Skip disaster recovery (legally unlimited under §26①1)
     if has_disaster_recovery(title):
@@ -1879,7 +2043,8 @@ PATTERN_EXTRA_LINK = {
     'repeated_sole_source': {'title': '조달청 수의계약 현황', 'url': 'https://www.pps.go.kr/kor/bbs/list.do?bbsId=PPS_OPEN_INFO', 'source': '조달청'},
     'contract_splitting': {'title': '국가법령정보센터 (국가계약법 시행령)', 'url': 'https://www.law.go.kr/법령/국가를당사자로하는계약에관한법률시행령', 'source': '법령정보'},
     'low_bid_competition': {'title': '공정거래위원회 입찰담합 의결서', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
-    'yearend_budget_dump': {'title': '기획재정부 예산 집행 현황', 'url': 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', 'source': '열린재정'},
+    'yearend_new_vendor': {'title': '국민권익위원회 신고', 'url': 'https://www.acrc.go.kr/menu.es?mid=a10301040000', 'source': '국민권익위원회'},
+    'vendor_rotation': {'title': '공정거래위원회 입찰담합 신고', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
     'related_companies': {'title': '공정거래위원회 입찰담합 의결서', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
     'high_value_sole_source': {'title': '조달청 수의계약 현황', 'url': 'https://www.pps.go.kr/kor/bbs/list.do?bbsId=PPS_OPEN_INFO', 'source': '조달청'},
     'same_winner_repeat': {'title': '나라장터 입찰 현황', 'url': 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', 'source': '나라장터'},
@@ -2330,6 +2495,9 @@ PATTERN_LABELS = {
     'network_collusion': '업체 네트워크 담합',
     'price_divergence': '가격 이탈',
     'price_vs_catalog': '표준단가 초과',
+    'vendor_rotation': '순번 담합',
+    'yearend_new_vendor': '연말 신규업체 수의계약',
+    'ai_anomaly': 'AI 이상탐지',
 }
 
 for i, f in enumerate(findings):
@@ -2738,8 +2906,13 @@ for inst, vendors in inst_vendor_findings.items():
         })
 
 # Case 2: Institution with 4+ DIFFERENT pattern types (systemic issue)
+_STRUCTURAL_ONLY_PATTERNS = {'contract_splitting', 'repeated_sole_source', 'high_value_sole_source'}
 for inst, patterns in inst_pattern_types.items():
     if len(patterns) < 4:
+        continue
+    # If ALL patterns are purely structural (contract_splitting + sole_source variants),
+    # it's likely a large institution with many sole-source exemptions — not systemic fraud
+    if set(patterns.keys()).issubset(_STRUCTURAL_ONLY_PATTERNS):
         continue
     key = f'inst-systemic|{inst}'
     if key in seen_cross:
@@ -3070,13 +3243,13 @@ company_graph = defaultdict(set)  # bizno → set of related biznos
 company_names = {}  # bizno → company name
 
 for bizno, corp in corp_map.items():
-    name = str(corp.get('rprsntCorpNm', '')).strip()
+    name = str(corp.get('corpNm', '')).strip()
     company_names[bizno] = name
 
 # Edge type 1: same representative
 rep_to_biznos = defaultdict(set)
 for bizno, corp in corp_map.items():
-    rep = str(corp.get('rprsntNm', '')).strip()
+    rep = str(corp.get('ceoNm', '')).strip()
     if rep and len(rep) >= 2:
         rep_to_biznos[rep].add(bizno)
 
@@ -3090,14 +3263,16 @@ for rep, biznos in rep_to_biznos.items():
 # Edge type 2: same address (building level)
 addr_to_biznos = defaultdict(set)
 for bizno, corp in corp_map.items():
-    addr = str(corp.get('rprsntCorpAddr', '')).strip()
+    addr = (str(corp.get('adrs', '')).strip() + ' ' + str(corp.get('dtlAdrs', '')).strip()).strip()
     if addr and len(addr) > 15:
-        # Normalize: keep up to building level (remove unit numbers)
-        addr_key = addr.split('(')[0].split(',')[0].strip()[:25]
+        # Normalize: strip whitespace, keep building level (35 chars)
+        # 35 chars is long enough to distinguish buildings, short enough to merge same-building variants
+        import re as _re
+        addr_key = _re.sub(r'\s+', '', addr.split('(')[0].split(',')[0])[:35]
         addr_to_biznos[addr_key].add(bizno)
 
 for addr, biznos in addr_to_biznos.items():
-    if 2 <= len(biznos) <= 8:  # Too many = just a common building
+    if 2 <= len(biznos) <= 5:  # Cap at 5 to avoid flagging shared office parks
         for b1 in biznos:
             for b2 in biznos:
                 if b1 != b2:
@@ -3152,7 +3327,7 @@ for cluster in clusters:
         # Check if they share representative
         reps = set()
         for bz in bz_contracts.keys():
-            rep = str(corp_map.get(bz, {}).get('rprsntNm', '')).strip()
+            rep = str(corp_map.get(bz, {}).get('ceoNm', '')).strip()
             if rep:
                 reps.add(rep)
         same_rep = len(reps) == 1
@@ -3227,6 +3402,186 @@ for cluster in clusters:
         })
 
 print(f'  Found {len([f for f in findings if f["pattern_type"] == "network_collusion"])} network collusion findings')
+
+
+# ════════════════════════════════════════════════════════════════════
+# Pattern: VENDOR ROTATION CARTEL (업체 순번 담합)
+#
+# Classic Korean procurement cartel: a fixed pool of vendors takes turns
+# winning at the same institution — each vendor has a dominant quarter
+# while the others "stand aside." This is called 순번제 담합 or 돌려먹기.
+#
+# Signal: At an institution with 10+ bids and 3+ competing vendors,
+# if each distinct vendor's wins cluster into non-overlapping time
+# windows (Q1/Q2/Q3/Q4), the probability of this occurring by random
+# competition is astronomically low.
+#
+# Algorithm: Group wins by quarter; measure vendor specialization per
+# quarter (Herfindahl index of wins). If each quarter has 1-2 dominant
+# vendors AND the dominant vendors differ across quarters → rotation.
+# ════════════════════════════════════════════════════════════════════
+print('🔍 Pattern: Vendor Rotation Cartel...')
+
+# Build: inst → list of (quarter, winner, amt, bid_no, name, date)
+_inst_wins: dict[str, list] = defaultdict(list)
+for b in bids:
+    inst = str(b.get('dminsttNm', '')).strip()
+    date = str(b.get('fnlSucsfDate', ''))[:10]
+    winner = str(b.get('bidwinnrNm', '')).strip()
+    try:
+        amt = float(b.get('sucsfbidAmt', 0) or 0)
+    except (ValueError, TypeError):
+        amt = 0.0
+    if not inst or not date or not winner or amt < 10_000_000:
+        continue
+    try:
+        month = int(date[5:7]) if len(date) >= 7 else 0
+    except ValueError:
+        month = 0
+    if month == 0:
+        continue
+    quarter = (month - 1) // 3 + 1  # 1=Q1(Jan-Mar), 2=Q2(Apr-Jun), ...
+    _inst_wins[inst].append({
+        'quarter': quarter, 'winner': winner, 'amt': amt,
+        'bid_no': str(b.get('bidNtceNo', '')),
+        'name': str(b.get('bidNtceNm', '')),
+        'date': date,
+    })
+
+from collections import Counter as _RotCounter
+
+for inst, wins in _inst_wins.items():
+    if len(wins) < 12:  # need volume for rotation signal
+        continue
+    # Skip government affiliates and cooperatives
+    if is_govt_affiliate(inst) or is_cooperative(inst):
+        continue
+
+    # Count wins by (vendor, quarter)
+    vq_counts: dict[tuple, int] = defaultdict(int)
+    q_totals: dict[int, int] = defaultdict(int)
+    vendor_totals: dict[str, int] = defaultdict(int)
+    for w in wins:
+        vq_counts[(w['winner'], w['quarter'])] += 1
+        q_totals[w['quarter']] += 1
+        vendor_totals[w['winner']] += 1
+
+    unique_vendors = set(vendor_totals.keys())
+    unique_quarters = set(q_totals.keys())
+
+    # Need 3+ vendors AND 3+ quarters
+    if len(unique_vendors) < 3 or len(unique_quarters) < 3:
+        continue
+
+    # For each quarter, find the dominant vendor (highest share of quarter wins)
+    q_dominant: dict[int, tuple] = {}  # quarter → (vendor, share)
+    for q in unique_quarters:
+        q_wins = {v: vq_counts.get((v, q), 0) for v in unique_vendors}
+        top_vendor = max(q_wins, key=lambda v: q_wins[v])
+        top_share = q_wins[top_vendor] / max(q_totals[q], 1)
+        q_dominant[q] = (top_vendor, top_share)
+
+    # Rotation signal: dominant vendors are DIFFERENT across quarters
+    # AND each quarter has a clearly dominant vendor (≥50% of quarter wins)
+    dominant_vendors = {v for v, _ in q_dominant.values()}
+    dominant_shares = [s for _, s in q_dominant.values()]
+    avg_dominance = sum(dominant_shares) / len(dominant_shares)
+
+    # Strong rotation: different dominant vendor each quarter, each with ≥50% share
+    quarters_with_clear_dominant = sum(1 for s in dominant_shares if s >= 0.50)
+    quarters_dominated_by_different = len(dominant_vendors)
+
+    # Require: ≥3 quarters with clear dominant vendor, AND ≥3 different vendors dominate
+    if quarters_with_clear_dominant < 3 or quarters_dominated_by_different < 3:
+        continue
+    if avg_dominance < 0.50:
+        continue
+
+    # Filter out institutions where one vendor just has an overwhelmingly large share
+    # (single-vendor dominance is zero_competition / vendor_concentration, not rotation)
+    total_wins = len(wins)
+    top_vendor_overall_share = max(vendor_totals.values()) / total_wins
+    if top_vendor_overall_share > 0.60:
+        continue  # not rotation — just one dominant vendor
+
+    # Score based on how clean the rotation is
+    rotation_score = avg_dominance * quarters_dominated_by_different / len(unique_quarters)
+    total_amt = sum(w['amt'] for w in wins)
+    score = min(88, 45 + rotation_score * 30 + (total_amt / 2e9) * 10)
+
+    # Build evidence: top contracts from each quarter's dominant vendor
+    evidence = []
+    for q in sorted(q_dominant.keys())[:4]:
+        dom_vendor, _ = q_dominant[q]
+        q_contracts = [w for w in wins if w['quarter'] == q and w['winner'] == dom_vendor]
+        q_contracts.sort(key=lambda x: -x['amt'])
+        if q_contracts:
+            c = q_contracts[0]
+            evidence.append(make_contract(
+                c['bid_no'], c['name'], c['amt'], c['winner'],
+                c['date'], f'Q{q} 지배 업체',
+            ))
+
+    rotation_desc = ' → '.join(
+        f'Q{q}:{dom}' for q, (dom, _) in sorted(q_dominant.items())
+    )
+    vendor_list = [v for v, _ in sorted(q_dominant.values())][:4]
+
+    findings.append({
+        'pattern_type': 'vendor_rotation',
+        'severity': 'HIGH',
+        'suspicion_score': round(score),
+        'target_institution': inst,
+        'summary': (
+            f'{inst}에서 업체들이 분기별로 번갈아 낙찰받는 "순번제" 패턴이 감지됩니다. '
+            f'{quarters_dominated_by_different}개 업체가 서로 다른 분기를 나눠 지배하고 있습니다. '
+            f'({rotation_desc[:80]})'
+        ),
+        'detail': {
+            '기관': inst,
+            '분기별_지배업체': {f'Q{q}': v for q, (v, _) in q_dominant.items()},
+            '평균_분기지배율': f'{avg_dominance*100:.0f}%',
+            '순환업체수': quarters_dominated_by_different,
+            '분석기간_총계약수': total_wins,
+            '총계약액': total_amt,
+        },
+        'evidence_contracts': evidence,
+        'innocent_explanation': (
+            '분기별 낙찰 집중은 업종 특성에 따른 자연스러운 현상일 수 있습니다. '
+            '계절성 사업(제설, 냉방, 농번기 등)이나 특정 분기에 집중되는 예산 편성이 '
+            '이 패턴을 만들 수 있습니다. 단, 서로 다른 업체가 서로 다른 분기를 규칙적으로 '
+            '"나눠갖는" 패턴은 사전 합의 없이는 발생하기 어렵습니다.'
+        ),
+        'plain_explanation': (
+            f'{inst}에서 계약을 받아가는 업체들이 마치 순서가 정해진 것처럼 '
+            f'분기별로 번갈아 낙찰받고 있습니다. '
+            f'예를 들어 A업체는 1분기에만, B업체는 2분기에만, C업체는 3분기에만 낙찰받는 식입니다. '
+            f'경쟁 입찰이라면 어느 분기에나 어느 업체든 이길 수 있어야 정상입니다. '
+            f'이런 패턴은 업체들이 사전에 "우리가 돌아가면서 받자"고 합의했음을 강하게 시사합니다.'
+        ),
+        'why_it_matters': (
+            '순번제 담합(돌려먹기)은 입찰담합 중 가장 조직적인 형태로, '
+            '공정거래위원회가 무거운 과징금을 부과하는 유형입니다. '
+            '경쟁이 사실상 사라지면 가격이 높아지고 품질이 낮아집니다. '
+            '2023년 공정위는 건설 분야 순번 담합에 총 892억원 과징금을 부과했습니다.'
+        ),
+        'citizen_impact': (
+            f'담합으로 인해 정상 경쟁 대비 10-20%가 과다 지출된다면, '
+            f'{total_amt/1e8:.1f}억원 규모 계약에서 '
+            f'{total_amt*0.15/1e8:.1f}억원의 세금이 낭비되었을 수 있습니다.'
+        ),
+        'what_should_happen': (
+            f'1) {inst}의 분기별 낙찰 패턴 데이터를 공정거래위원회에 신고 '
+            f'2) 낙찰 업체들 간의 인적·자본 관계 조사 (같은 주소, 임원 겸직 여부) '
+            f'3) 동일 기간에 다른 기관 입찰에서도 동일 업체 그룹이 담합하는지 확인 '
+            f'4) 입찰 참가자 중 낙찰받지 못한 업체(들러리)의 입찰가 분석'
+        ),
+        'related_links': STANDARD_LINKS + [
+            {'title': '공정거래위원회 입찰담합 신고', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
+        ],
+    })
+
+print(f'  Found {len([f for f in findings if f["pattern_type"] == "vendor_rotation"])} vendor rotation findings')
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -3555,7 +3910,7 @@ print('\n🛡️  Applying global innocence filter...')
 FILTERABLE_PATTERNS = frozenset([
     'zero_competition', 'vendor_concentration', 'same_winner_repeat',
     'high_value_sole_source', 'repeated_sole_source', 'amount_spike',
-    'yearend_budget_dump', 'low_bid_competition',
+    'yearend_new_vendor', 'low_bid_competition',
 ])
 
 filtered_findings = []
@@ -3609,14 +3964,37 @@ for f in findings:
         removal_reasons['research_institute'] += 1
         continue
 
-    # Rule 5: yearend_budget_dump for institutions under 5억 total
-    # (Korea's Q4 budget pressure is real but matters most at large scale)
-    if pt == 'yearend_budget_dump':
-        detail = f.get('detail', {})
-        yearend_amt = float(detail.get('연말_총액', detail.get('yearend_amt', 0)) or 0)
-        if yearend_amt < 500_000_000:
-            removal_reasons['yearend_small_amount'] += 1
-            continue
+    # Rule 4b: Government corporations as INSTITUTIONS — their procurement is
+    # specialized (security clearance, continuity, proprietary systems). High
+    # sole-source rates reflect operational constraints, not corruption.
+    if pt in ('repeated_sole_source', 'high_value_sole_source') and is_govt_affiliate(inst):
+        removal_reasons['govt_corp_institution'] += 1
+        continue
+
+    # Rule 4c: Transit, building management, and utility authorities as institutions.
+    # These agencies maintain infrastructure requiring original contractor continuity
+    # (train electronics, building systems, water infrastructure). Sole-source for
+    # OEM maintenance is legally justified and operationally necessary.
+    _TRANSIT_BUILDING_INST_KW = (
+        '교통공사', '도시철도', '지하철공사', '버스공사',
+        '청사관리', '청사운영', '시설관리공단', '시설관리본부', '시설관리소',
+        '공영주차장', '환경시설공단', '자원환경사업소',
+        '조폐공사',
+    )
+    if pt == 'repeated_sole_source' and any(kw in inst for kw in _TRANSIT_BUILDING_INST_KW):
+        removal_reasons['transit_building_inst'] += 1
+        continue
+
+    # Rule 5: high_value_sole_source for local governments: a single sole-source
+    # contract ≥1억 at a local government (시, 군, 구) with score < 50 is not
+    # meaningfully suspicious without additional pattern signals.
+    _LOCAL_GOVT_KW = ('시청', '군청', '구청', '특별자치시', '특별자치도',
+                      '광역시', '도청', '시 ', '군 ', '구 ')
+    if (pt == 'high_value_sole_source' and
+            f.get('suspicion_score', 100) < 50 and
+            any(kw in inst for kw in _LOCAL_GOVT_KW)):
+        removal_reasons['local_govt_routine_sole_source'] += 1
+        continue
 
     filtered_findings.append(f)
 
@@ -3687,7 +4065,8 @@ PATTERN_BASE_CONFIDENCE = {
     'repeated_sole_source': 0.50,   # raised: 90%/10-contract filter removes structural cases
     'contract_splitting': 0.40,
     'low_bid_competition': 0.45,
-    'yearend_budget_dump': 0.40,    # slightly raised: 5억+ filter removes tiny cases
+    'yearend_new_vendor': 0.68,     # specific combo: year-end + new vendor + sole-source
+    'vendor_rotation': 0.75,       # temporal rotation pattern — strong cartel signal
     'high_value_sole_source': 0.60, # raised: 5억 threshold removes routine cases
 }
 
@@ -3944,6 +4323,40 @@ result = {
 for f in findings:
     pt = f['pattern_type']
     result['pattern_counts'][pt] = result['pattern_counts'].get(pt, 0) + 1
+
+# ── News correlation (free, no API cost) ─────────────────────────────────────
+print('\n📰 뉴스 연관성 분석...')
+_news_path = DATA_DIR / 'news-rss.json'
+_inst_news_map: dict = {}
+if _news_path.exists():
+    try:
+        _news_raw = json.loads(_news_path.read_text(encoding='utf-8'))
+        _articles = _news_raw.get('items', _news_raw.get('articles', _news_raw if isinstance(_news_raw, list) else []))
+        for _f in findings:
+            _inst = _f.get('target_institution', '')
+            if not _inst or _inst in _inst_news_map:
+                continue
+            # Match on first 8 chars of institution name (usually unique)
+            _short = _inst[:8]
+            _matched = [
+                {'title': a.get('title', ''), 'link': a.get('link', ''), 'outlet': a.get('outlet_name', '')}
+                for a in _articles
+                if _short in a.get('title', '') or _short in a.get('description', '')
+            ][:3]
+            if _matched:
+                _inst_news_map[_inst] = _matched
+        # Attach to findings
+        _news_linked = 0
+        for _f in findings:
+            _news = _inst_news_map.get(_f.get('target_institution', ''))
+            if _news:
+                _f['related_news'] = _news
+                _news_linked += 1
+        print(f'  {_news_linked}건 발견에 관련 뉴스 연결 ({len(_articles)}건 기사 중)')
+    except Exception as _e:
+        print(f'  ⚠️  뉴스 로드 실패: {_e}')
+else:
+    print('  ⚠️  news-rss.json 없음')
 
 out_path = OUT_DIR / 'audit-results.json'
 with open(out_path, 'w', encoding='utf-8') as f:
