@@ -6,6 +6,8 @@ import { getSeverityColor, getSeverityLabel, formatKRW, formatNumber, formatKeyL
 import PatternBadge from '@/components/audit/PatternBadge';
 import ScoreBar from '@/components/common/ScoreBar';
 import RichText from '@/components/common/RichText';
+import FindingShareBar from '@/components/audit/FindingShareBar';
+import { useAuditEnrich } from '@/hooks/useAuditEnrich';
 
 interface AuditDetailClientProps {
   flag: AuditFlag;
@@ -26,6 +28,19 @@ const patternLabels: Record<string, string> = {
   inflated_pricing: '고가 계약',
   bid_rigging: '입찰 담합',
   revolving_door: '전관예우',
+  ai_anomaly: 'AI 이상탐지',
+  vendor_rotation: '순번 담합',
+  yearend_new_vendor: '연말 신규업체 수의계약',
+  cross_pattern: '복합 패턴',
+  systemic_risk: '체계적 비리 위험',
+  related_companies: '동일 대표/주소 업체',
+  amount_spike: '계약금액 급증',
+  contract_inflation: '계약 금액 부풀리기',
+  price_clustering: '투찰가 군집',
+  network_collusion: '네트워크 담합',
+  sanctioned_vendor: '제재 업체 재수주',
+  same_winner_repeat: '동일업체 반복수주',
+  price_divergence: '가격 이탈',
 };
 
 const patternDescriptions: Record<string, string> = {
@@ -338,6 +353,7 @@ function CorruptionEvidenceSection({ flag }: { flag: AuditFlag }) {
 export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const [expandedContract, setExpandedContract] = useState<number | null>(null);
   const [expandedCase, setExpandedCase] = useState<number | null>(0); // first case expanded by default
+  const { enrich, loading: enrichLoading, result: enrichResult, error: enrichError } = useAuditEnrich(flag);
 
   const score = flag.suspicion_score;
   const patternType = flag.pattern_type;
@@ -359,6 +375,13 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const whatShouldHappen = flag.what_should_happen || '';
   const realCaseExample = flag.real_case_example || '';
   const similarCases = flag.similar_cases || [];
+
+  // AI enrichment fields — prefer live enrichment, fall back to pre-generated
+  const aiHeadline = enrichResult?.ai_headline ?? flag.ai_headline ?? '';
+  const aiNarrative = enrichResult?.ai_narrative ?? flag.ai_narrative ?? '';
+  const aiQuestions = enrichResult?.ai_questions ?? flag.ai_questions ?? [];
+  const aiComparable = enrichResult?.ai_comparable ?? flag.ai_comparable ?? '';
+  const relatedNews = flag.related_news ?? [];
 
   const contractTotal = contracts.reduce((sum, c) => sum + c.amount, 0);
 
@@ -429,6 +452,29 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
           </div>
         </div>
       </div>
+
+      {/* ═══ 내 세금에 무슨 일이? (citizen_impact — first content section) ═══ */}
+      {citizenImpact && (
+        <div className="card mb-6 p-0 overflow-hidden">
+          <div
+            className="px-5 sm:px-6 py-4"
+            style={{ background: 'linear-gradient(135deg, #FFF8EC 0%, #FFF3DC 100%)', borderBottom: '1px solid rgba(255,149,0,0.15)' }}
+          >
+            <h2 className="font-bold text-lg" style={{ color: '#CC7A00' }}>내 세금에 무슨 일이?</h2>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(204,122,0,0.7)' }}>이 사건이 시민 생활에 미치는 영향</p>
+          </div>
+          <div className="p-5 sm:p-6">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-lg">
+                <span aria-hidden="true">&#x20A9;</span>
+              </div>
+              <div>
+                <RichText text={citizenImpact} className="text-sm text-amber-700" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ═══ 1. Header ═══ */}
       <div className="card mb-6 overflow-hidden">
@@ -534,15 +580,83 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
             <div className="flex items-center gap-2 mb-4">
               <h2 className="font-bold text-lg">AI 분석</h2>
               <span className="ai-badge">AI</span>
+              {!aiHeadline && !enrichLoading && (
+                <button
+                  onClick={enrich}
+                  className="ml-auto text-xs px-3 py-1.5 rounded-full font-semibold transition-colors"
+                  style={{ background: 'var(--apple-blue)', color: '#fff' }}
+                >
+                  AI 즉시 분석
+                </button>
+              )}
+              {enrichLoading && (
+                <span className="ml-auto text-xs text-gray-400 animate-pulse">분석 중...</span>
+              )}
             </div>
+            {enrichError && (
+              <div className="bg-red-50 border border-red-200 rounded p-3 mb-3 text-xs text-red-700">
+                분석 실패: {enrichError}
+              </div>
+            )}
 
-            {aiAnalysis ? (
+            {/* AI Headline (from enrich-audit.py) */}
+            {aiHeadline && (
+              <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 mb-3">
+                <p className="text-sm font-bold text-rose-800">{aiHeadline}</p>
+              </div>
+            )}
+
+            {/* AI Narrative */}
+            {aiNarrative ? (
+              <div className="bg-purple-50 rounded-lg p-4 mb-4">
+                <RichText text={aiNarrative} className="text-sm text-gray-700" />
+              </div>
+            ) : aiAnalysis ? (
               <div className="bg-purple-50 rounded-lg p-4 mb-4">
                 <RichText text={aiAnalysis} className="text-sm text-gray-700" />
               </div>
             ) : (
               <div className="text-center py-8 text-gray-400 mb-4">
                 <p className="text-sm">AI 분석 결과가 생성되면 여기에 표시됩니다.</p>
+              </div>
+            )}
+
+            {/* AI Investigation Questions */}
+            {aiQuestions.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                <h3 className="text-sm font-bold text-amber-800 mb-2">감사관이 물어야 할 질문</h3>
+                <ol className="space-y-1.5">
+                  {aiQuestions.map((q, i) => (
+                    <li key={i} className="text-sm text-amber-700 flex gap-2">
+                      <span className="shrink-0 font-bold">{i + 1}.</span>
+                      <span>{q}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {/* AI Comparable Case */}
+            {aiComparable && (
+              <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                <h3 className="text-xs font-bold text-gray-600 mb-1">유사 사례</h3>
+                <p className="text-xs text-gray-600">{aiComparable}</p>
+              </div>
+            )}
+
+            {/* Related News */}
+            {relatedNews.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-xs font-bold text-gray-600 mb-2">관련 뉴스</h3>
+                <div className="space-y-1.5">
+                  {relatedNews.map((n, i) => (
+                    <a key={i} href={n.link} target="_blank" rel="noopener noreferrer"
+                       className="flex items-start gap-2 text-xs text-blue-600 hover:text-blue-800 hover:underline">
+                      <span className="shrink-0 text-gray-400 mt-px">{n.outlet}</span>
+                      <span>{n.title}</span>
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
 

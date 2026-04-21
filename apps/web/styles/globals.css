@@ -94,6 +94,34 @@
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
+  .container-wide {
+    @apply max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-narrow {
+    @apply max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Desktop-only section padding (mobile stays py-8/py-12) */
+  .section-desktop {
+    @apply py-8 md:py-12 lg:py-20;
+  }
+
+  /* Explorer layout: sidebar + main */
+  .explorer-grid {
+    @apply grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-0;
+  }
+
+  /* Detail layout: content + right rail */
+  .detail-grid {
+    @apply grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8;
+  }
+
+  /* Magazine layout: feature grid */
+  .magazine-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6;
+  }
+
   /* ── Apple Card ── */
   .card {
     background: var(--color-surface);
