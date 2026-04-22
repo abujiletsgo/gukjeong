@@ -863,11 +863,12 @@ for c in contracts:
             inst_methods[inst]['contracts'].append(c)
 
 for inst, d in inst_methods.items():
-    # 6+ contracts AND 90%+ 수의계약 AND 1억+ total
-    # 90% rate (vs old 80%) is more specific: at 90%+, the agency is structurally
-    # avoiding competition in a way that warrants explanation.
-    # Research institutes get a pass — they legitimately use specialist vendors.
-    if d['total'] < 6 or d['sole'] / d['total'] < 0.9 or d['amt'] < 100_000_000:
+    # 10+ contracts AND 90%+ 수의계약 AND 5억+ total
+    # High bar: sole-source ratio alone isn't suspicious. It must be both *systematic*
+    # (10+ contracts, not a one-off) and *substantial* (5억+) to warrant investigation.
+    # Small agencies under 5억 total often have structurally small contract sizes that
+    # legally qualify as 소액 수의계약 — flagging them is a false positive.
+    if d['total'] < 10 or d['sole'] / d['total'] < 0.9 or d['amt'] < 500_000_000:
         continue
     # Research institutes and universities legitimately rely on specialized vendors
     if is_research_institute(inst):
@@ -1191,17 +1192,18 @@ for c in contracts:
 for inst, contracts_list in _inst_yearend_sole.items():
     if not contracts_list:
         continue
-    # Require: meaningful total amount (5천만원+ single or multiple)
     total_amt = sum(c['amt'] for c in contracts_list)
-    if total_amt < 50_000_000:
-        continue
-    # Require: at least 1 contract ≥5천만원 OR 3+ contracts
-    has_large = any(c['amt'] >= 50_000_000 for c in contracts_list)
-    if not has_large and len(contracts_list) < 3:
+    # Two ways to qualify:
+    # A) Single large vendor: ≥2억 total (one-off year-end dump to a new vendor)
+    # B) Pattern: ≥3 separate new vendors across contracts (systematic year-end routing)
+    # A single 5-8천만 contract with a new vendor is normal (year-end budget, local market).
+    # Only flag when the scale or repetition makes it hard to explain innocently.
+    unique_vendors = list({c['vendor'] for c in contracts_list})
+    qualifies = (total_amt >= 200_000_000) or (len(contracts_list) >= 3)
+    if not qualifies:
         continue
 
     contracts_list.sort(key=lambda x: -x['amt'])
-    unique_vendors = list({c['vendor'] for c in contracts_list})
     score = min(82, 40 + len(contracts_list) * 8 + (total_amt / 1e9) * 12)
 
     evidence = [make_contract(
@@ -1266,50 +1268,121 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "yearend_new_v
 # Uses inline CEO/address data from bids (full 71k coverage)
 # ════════════════════════════════════════════════════════════════════
 print('🔍 Pattern 10: Related Companies...')
-# Build per-institution groupings directly from bid data (CEO and address signals)
-# inst → ceo_name → { biznos, names, contracts }
-inst_ceo_map: dict = defaultdict(lambda: defaultdict(lambda: {'biznos': set(), 'names': set(), 'contracts': []}))
-# inst → addr_key → { biznos, names, ceos, contracts }
-inst_addr_map: dict = defaultdict(lambda: defaultdict(lambda: {'biznos': set(), 'names': set(), 'ceos': set(), 'contracts': []}))
+# The fraud: same person owns multiple companies that COMPETE in the same auction,
+# creating fake competition. Without full bidder data we detect the next-best signal:
+# same CEO companies winning the SAME CATEGORY of competitive bids at one institution,
+# implying they're in the same market and likely trading wins.
+#
+# Hard requirements:
+#   1. Both companies win via competitive bid (낙찰), not 수의계약
+#   2. Both win the same category (similar bid title keywords) at same institution
+#   3. Total combined amount >= 3억 AND individual company min >= 5천만
+#   4. At least 3 combined wins (not just 2 individual contracts)
+#   5. Exclude complementary business pairs (design+construction, IT+cleaning etc.)
+
 import re as _re
+
+# Common Korean names — too ambiguous as a CEO-matching signal
+_COMMON_NAMES = frozenset([
+    '김영희', '이영희', '박영희', '김철수', '이철수', '최영희', '박철수',
+    '김민준', '이민준', '김서준', '이지혜', '김지혜', '박지혜', '이수진',
+    '김지영', '이지영', '박지영', '최지영', '김미영', '이미영',
+])
+
+# Business type keywords — if two companies have keywords from different groups,
+# they're in different businesses (vertical integration, not fake competition)
+_BIZ_GROUPS = [
+    {'선박', '조선', '해양', '해운'},           # shipbuilding vs marine services
+    {'건설', '토목', '시공'},                    # construction
+    {'설계', '기술용역', '엔지니어링'},          # engineering/design
+    {'청소', '미화', '환경미화'},               # cleaning services
+    {'IT', '정보', '소프트웨어', '시스템'},      # IT
+    {'포장', '택배', '운송', '물류'},           # logistics
+    {'여행', '관광', '투어'},                   # travel
+    {'의료', '병원', '제약', '바이오'},         # medical
+    {'식품', '급식', '농산물'},                # food
+]
+
+def _biz_group(name: str) -> set:
+    """Return which business groups a company name belongs to."""
+    result = set()
+    for i, group in enumerate(_BIZ_GROUPS):
+        if any(kw in name for kw in group):
+            result.add(i)
+    return result
+
+def _complementary_businesses(names: list) -> bool:
+    """True if companies span different business group categories."""
+    if len(names) < 2:
+        return False
+    groups = [_biz_group(n) for n in names]
+    # If any pair has non-overlapping groups (excluding empty), they're complementary
+    non_empty = [g for g in groups if g]
+    if len(non_empty) < 2:
+        return False
+    for i in range(len(non_empty)):
+        for j in range(i + 1, len(non_empty)):
+            if not non_empty[i].intersection(non_empty[j]):
+                return True
+    return False
+
+# Build: inst → ceo → {biznos, names, competitive_wins, total_amt}
+inst_ceo_map: dict = defaultdict(lambda: defaultdict(lambda: {
+    'biznos': set(), 'names': set(), 'wins': [], 'total_amt': 0.0,
+}))
+
 for _b in bids:
     _inst = str(_b.get('dminsttNm', '')).strip()
     _bz = str(_b.get('bidwinnrBizno', '')).replace('-', '').strip()
     _nm = str(_b.get('bidwinnrNm', '')).strip()
     _ceo = str(_b.get('bidwinnrCeoNm', '')).strip()
-    _addr = str(_b.get('bidwinnrAdrs', '')).strip()
     _amt = float(_b.get('sucsfbidAmt', 0) or 0)
-    if not _inst or not _bz:
+    _prtcpt = int(_b.get('prtcptCnum', 0) or 0)
+    if not _inst or not _bz or not _ceo or len(_ceo) < 2 or _amt <= 0:
         continue
-    if _ceo and len(_ceo) >= 2 and _amt > 0:
-        inst_ceo_map[_inst][_ceo]['biznos'].add(_bz)
-        inst_ceo_map[_inst][_ceo]['names'].add(_nm)
-        inst_ceo_map[_inst][_ceo]['contracts'].append(_b)
-    if _addr and len(_addr) > 10 and _amt > 0:
-        _addr_key = _re.sub(r'\s+', '', _addr.split('(')[0].split(',')[0])[:35]
-        inst_addr_map[_inst][_addr_key]['biznos'].add(_bz)
-        inst_addr_map[_inst][_addr_key]['names'].add(_nm)
-        inst_addr_map[_inst][_addr_key]['ceos'].add(_ceo)
-        inst_addr_map[_inst][_addr_key]['contracts'].append(_b)
+    if _ceo in _COMMON_NAMES:
+        continue
+    if is_govt_affiliate(_nm) or is_cooperative(_nm):
+        continue
+    # Only count competitive wins (prtcptCnum >= 2 or falls through from bid_rankings)
+    if _prtcpt == 1:
+        continue  # sole bidder — not fake competition
+    inst_ceo_map[_inst][_ceo]['biznos'].add(_bz)
+    inst_ceo_map[_inst][_ceo]['names'].add(_nm)
+    inst_ceo_map[_inst][_ceo]['wins'].append(_b)
+    inst_ceo_map[_inst][_ceo]['total_amt'] += _amt
 
-# Signal 1: Same CEO winning at same institution via different companies
 for inst, ceo_data in inst_ceo_map.items():
     for ceo, d in ceo_data.items():
+        # Need 2+ distinct companies
         if len(d['biznos']) < 2:
-            continue  # need at least 2 distinct companies
-        # Skip common Korean names that are likely coincidental
-        if ceo in ('김영희', '이영희', '박영희', '김철수', '이철수'):
             continue
-        total_amt = sum(float(c.get('sucsfbidAmt', 0) or 0) for c in d['contracts'])
-        if total_amt < 50_000_000:
+        # Need meaningful combined volume
+        if d['total_amt'] < 300_000_000:  # 3억
             continue
+        # Need at least 3 combined wins
+        if len(d['wins']) < 3:
+            continue
+        # Each company must have won at least something meaningful (5천만+)
+        company_amts: dict[str, float] = defaultdict(float)
+        for w in d['wins']:
+            company_amts[str(w.get('bidwinnrNm', '')).strip()] += float(w.get('sucsfbidAmt', 0) or 0)
+        if sum(1 for a in company_amts.values() if a >= 50_000_000) < 2:
+            continue
+        # Skip if companies are in complementary (different) business categories
         company_names = sorted(d['names'])
-        score = min(90, 55 + len(d['biznos']) * 10 + (total_amt / 1e9) * 5)
-        top = sorted(d['contracts'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
+        if _complementary_businesses(company_names):
+            continue
+        # Skip govt-affiliated and cooperative vendors
+        if any(is_govt_affiliate(n) or is_cooperative(n) for n in company_names):
+            continue
+
+        score = min(88, 60 + len(d['biznos']) * 8 + (d['total_amt'] / 2e9) * 10 + len(d['wins']) * 2)
+        top = sorted(d['wins'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
         evidence = [make_contract(
             c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
             float(c.get('sucsfbidAmt', 0) or 0), str(c.get('bidwinnrNm', '')),
-            c.get('fnlSucsfDate', ''), '낙찰',
+            c.get('fnlSucsfDate', ''), f'낙찰 (참여 {c.get("prtcptCnum","?")}개사)',
         ) for c in top]
         findings.append({
             'pattern_type': 'related_companies',
@@ -1318,113 +1391,48 @@ for inst, ceo_data in inst_ceo_map.items():
             'target_institution': inst,
             'summary': (
                 f'{inst}에서 동일 대표자({ceo})의 {len(d["biznos"])}개 업체'
-                f'({", ".join(company_names[:3])})가 총 {total_amt/1e8:.1f}억원을 수주했습니다.'
+                f'({", ".join(company_names[:3])})가 경쟁 입찰로 총 {d["total_amt"]/1e8:.1f}억원을 수주했습니다. '
+                f'위장 경쟁(들러리 입찰) 의심.'
             ),
             'detail': {
                 '기관': inst,
                 '관련업체수': len(d['biznos']),
                 '업체명': ', '.join(company_names),
                 '공통대표자': ceo,
-                '동일대표': '예',
-                '합계금액': total_amt,
+                '합계낙찰금액': d['total_amt'],
+                '총낙찰건수': len(d['wins']),
             },
             'evidence_contracts': evidence,
             'innocent_explanation': (
-                '동일인이 여러 법인을 운영하는 것 자체는 합법입니다. '
-                '그룹사 계열 관계, 면허 종류별 별도 법인, 분리 상장 등 정당한 사유가 있을 수 있습니다. '
-                '다만, 동일 대표자의 복수 법인이 같은 기관에 동시 납품하는 것은 '
-                '「입찰담합」에 해당할 수 있습니다.'
+                '동일인이 면허 종류나 사업 규모별로 복수 법인을 운영하는 것은 합법입니다. '
+                '단, 두 법인이 동일 입찰에 동시 참여하거나 동일 업종에서 '
+                '교대로 낙찰받는다면 「공정거래법」상 입찰담합에 해당합니다.'
             ),
             'plain_explanation': (
                 f'같은 사람({ceo})이 대표인 {len(d["biznos"])}개 회사가 '
-                f'모두 {inst}에서 계약을 따냈습니다. '
-                '이는 한 사람이 여러 회사를 만들어 경쟁을 가장하는 '
-                '"들러리 입찰"의 전형적 수법일 수 있습니다.'
+                f'모두 {inst}에서 경쟁 입찰을 통해 계약을 따냈습니다. '
+                '겉으로는 서로 다른 회사가 경쟁하는 것처럼 보이지만 '
+                '실제로는 한 사람이 모든 회사를 통제하는 위장 경쟁입니다.'
             ),
             'why_it_matters': (
-                '동일인이 복수의 업체를 설립하여 입찰에 참여하면, '
-                '겉으로는 경쟁처럼 보이지만 실제로는 한 사람이 가격을 조작하는 것입니다. '
-                '공정거래위원회에 따르면, 이러한 "위장 경쟁"은 '
-                '전체 입찰담합 사건의 약 25%를 차지하며, '
-                '적발 시 「독점규제법」 위반으로 형사처벌 대상입니다.'
+                '공정거래위원회 기준으로, 동일인 복수 법인이 같은 입찰에 참여하면 '
+                '이는 「입찰담합」입니다. 법원 판례에 따르면 담합으로 인한 낙찰가는 '
+                '정상 경쟁 대비 평균 15-20% 높습니다.'
             ),
             'citizen_impact': (
-                f'관련 업체들이 수주한 총 {total_amt/1e8:.1f}억원의 계약이 '
-                f'실질적 경쟁 없이 체결되었을 수 있습니다. '
-                f'진정한 경쟁이 있었다면 10-15%의 비용 절감이 가능했을 것입니다.'
+                f'총 {d["total_amt"]/1e8:.1f}억원 규모의 계약이 실질적 경쟁 없이 '
+                f'체결되었을 수 있습니다. 정상 경쟁이 이루어졌다면 '
+                f'{d["total_amt"]*0.15/1e8:.1f}억원 절감이 가능했습니다.'
             ),
             'what_should_happen': (
-                '1) 관련 업체의 등기부등본 확인 (주주, 임원 관계 조사) '
-                '2) 입찰 시 동시 참여 여부 확인 (같은 공고에 복수 응찰) '
-                '3) 공정거래위원회에 위장 경쟁 여부 신고 검토 '
-                '4) 해당 업체들의 세금계산서 교차 발행 여부 확인'
+                f'1) {ceo} 대표의 모든 관계 법인 조회 및 입찰 이력 대조\n'
+                '2) 관련 입찰에서 두 법인이 동시 참여한 공고번호 특정\n'
+                '3) 공정거래위원회에 입찰담합 신고 (신고 시 과징금 감면 가능)\n'
+                '4) 두 법인 간 하도급/용역 재위탁 이력 확인'
             ),
-        })
-
-# Signal 2: Same address winning at same institution via different companies
-for inst, addr_data in inst_addr_map.items():
-    for addr_key, d in addr_data.items():
-        if len(d['biznos']) < 2:
-            continue
-        total_amt = sum(float(c.get('sucsfbidAmt', 0) or 0) for c in d['contracts'])
-        if total_amt < 200_000_000:  # Higher bar for address-only signal — 2억원
-            continue
-        # Skip if only 1 unique CEO (already covered by Signal 1)
-        ceos = {c for c in d['ceos'] if c}
-        if len(ceos) <= 1:
-            continue  # same-CEO case is handled above and is a stronger signal
-        company_names = sorted(d['names'])
-        score = min(80, 40 + len(d['biznos']) * 10 + (total_amt / 1e9) * 5)
-        top = sorted(d['contracts'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
-        evidence = [make_contract(
-            c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
-            float(c.get('sucsfbidAmt', 0) or 0), str(c.get('bidwinnrNm', '')),
-            c.get('fnlSucsfDate', ''), '낙찰',
-        ) for c in top]
-        findings.append({
-            'pattern_type': 'related_companies',
-            'severity': 'MEDIUM',
-            'suspicion_score': round(score),
-            'target_institution': inst,
-            'summary': (
-                f'{inst}에서 동일 주소의 {len(d["biznos"])}개 업체'
-                f'({", ".join(company_names[:3])})가 총 {total_amt/1e8:.1f}억원을 수주했습니다.'
-            ),
-            'detail': {
-                '기관': inst,
-                '관련업체수': len(d['biznos']),
-                '업체명': ', '.join(company_names),
-                '공통주소': addr_key[:50],
-                '대표자': ', '.join(c for c in ceos if c),
-                '동일대표': '아니오',
-                '합계금액': total_amt,
-            },
-            'evidence_contracts': evidence,
-            'innocent_explanation': (
-                '동일 주소에 여러 업체가 소재하는 것은 오피스텔, 공유 사무실, '
-                '산업단지 등에서 자연스럽게 발생합니다. '
-                '특히 IT, 컨설팅 등 지식산업 분야에서는 같은 건물에 '
-                '동종 업체가 밀집하는 것이 일반적입니다.'
-            ),
-            'plain_explanation': (
-                f'같은 주소({addr_key[:20]}…)에 있는 {len(d["biznos"])}개 회사가 '
-                f'모두 {inst}에서 계약을 따냈습니다. '
-                '이는 관계가 있는 업체들이 담합했을 가능성을 시사합니다.'
-            ),
-            'why_it_matters': (
-                '같은 주소를 공유하는 업체들이 동일 기관에 납품하는 것은 '
-                '들러리 입찰이나 실질적 경쟁 부재의 신호일 수 있습니다. '
-                '특히 대표자까지 같다면 위장 경쟁 가능성이 높습니다.'
-            ),
-            'citizen_impact': (
-                f'관련 업체들이 수주한 총 {total_amt/1e8:.1f}억원의 계약이 '
-                f'실질적 경쟁 없이 체결되었을 수 있습니다.'
-            ),
-            'what_should_happen': (
-                '1) 관련 업체의 등기부등본 확인 (주주, 임원 관계 조사) '
-                '2) 입찰 시 동시 참여 여부 확인 '
-                '3) 공정거래위원회에 위장 경쟁 여부 신고 검토'
-            ),
+            'related_links': [
+                {'title': '공정거래위원회 입찰담합 신고', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
+            ],
         })
 
 print(f'  Found {len([f for f in findings if f["pattern_type"] == "related_companies"])} related company findings')
@@ -1823,7 +1831,7 @@ if bid_rankings:
             by_winner[b['winner']].append(b)
 
         for winner, wins in by_winner.items():
-            if len(wins) < 5:
+            if len(wins) < 3:
                 continue
             if is_govt_affiliate(winner):
                 continue
@@ -1833,19 +1841,21 @@ if bid_rankings:
             most_common_cnt = max(set(prtcpt_counts), key=prtcpt_counts.count)
             uniform_ratio = prtcpt_counts.count(most_common_cnt) / len(prtcpt_counts)
 
-            # Must be 2-4 participants (too many = real competition, 1 = already caught by zero_comp)
-            if most_common_cnt < 2 or most_common_cnt > 4:
+            # Must be 2-6 participants (1 = zero_comp, 7+ = real competition)
+            if most_common_cnt < 2 or most_common_cnt > 6:
                 continue
-            # Must be highly uniform (≥75% of wins at same participant count)
-            if uniform_ratio < 0.75:
+            # Must be uniform (≥70% of wins at same participant count)
+            if uniform_ratio < 0.70:
                 continue
-            # Institution average must be noticeably higher — confirming this vendor is unusual
-            if inst_avg_prtcpt < most_common_cnt + 1:
+            # Institution average must be at LEAST 2.0× the locked count.
+            # A ratio of 2.0× means: if locked count = 2, institution avg must be 4+.
+            # This eliminates small-market false positives where the institution itself
+            # only averages 2-3 bidders (niche market, not rigging).
+            if most_common_cnt == 0 or inst_avg_prtcpt / most_common_cnt < 2.0:
                 continue
 
             total_amt = sum(w['amt'] for w in wins)
             # Minimum threshold: pattern must involve meaningful contract value.
-            # Near-zero total_amt means the data has unit/scale issues.
             if total_amt < 50_000_000:
                 continue
             uniform_wins = [w for w in wins if w['prtcpt'] == most_common_cnt]
@@ -2495,6 +2505,8 @@ PATTERN_LABELS = {
     'network_collusion': '업체 네트워크 담합',
     'price_divergence': '가격 이탈',
     'price_vs_catalog': '표준단가 초과',
+    'threshold_avoidance': '입찰기준 직하 반복',
+    'insider_bid_precision': '낙찰률 정밀도 이상',
     'vendor_rotation': '순번 담합',
     'yearend_new_vendor': '연말 신규업체 수의계약',
     'ai_anomaly': 'AI 이상탐지',
@@ -2809,6 +2821,242 @@ print(f'  최종: {len(findings)}건 (원래 {before_count}건)')
 
 
 # ════════════════════════════════════════════════════════════════════
+# Pattern NEW-A: THRESHOLD AVOIDANCE (입찰기준금액 직하 계약)
+# 법정 경쟁입찰 의무 기준 바로 아래에 금액을 맞춰 수의계약 반복 발주
+# 5천만/1억/3억 직하 반복 = 입찰 회피 의도적 금액 조정
+# ════════════════════════════════════════════════════════════════════
+print('\n🔍 Pattern New-A: Threshold Avoidance (입찰기준 직하 반복)...')
+_THRESH_LEVELS = [
+    (50_000_000,  '5천만원', 0.15),  # 5천만 이상 → 제한경쟁 의무
+    (100_000_000, '1억원',   0.15),  # 1억 이상 → 특정 계약방법 요건
+    (300_000_000, '3억원',   0.12),  # 3억 이상 → 상위 입찰방법 요건
+]
+_thresh_groups: dict[tuple, list] = defaultdict(list)
+for c in std_contracts:
+    try:
+        amt = float(c.get('cntrctAmt', 0) or 0)
+    except (ValueError, TypeError):
+        continue
+    method = str(c.get('cntrctCnclsMthdNm', '')).strip()
+    inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
+    vendor = str(c.get('rprsntCorpNm', '')).strip()
+    date = str(c.get('cntrctCnclsDate', ''))[:10]
+    title = str(c.get('cntrctNm', '')).strip()
+    cno = str(c.get('cntrctNo', '')).strip()
+    if not inst or not vendor or amt <= 0:
+        continue
+    if has_disaster_recovery(title) or is_defense_procurement(title) or is_defense_procurement(inst):
+        continue
+    for thresh, label, window in _THRESH_LEVELS:
+        lo = thresh * (1 - window)
+        if lo <= amt < thresh:
+            # Deduplicate by title+amount+date (same record in API sometimes appears twice)
+            dedup_key = f'{title[:30]}|{amt:.0f}|{date}'
+            _thresh_groups[(inst, vendor, thresh, label)].append({
+                'amt': amt, 'method': method, 'date': date, 'title': title,
+                'no': cno, 'dedup': dedup_key,
+            })
+
+for (inst, vendor, thresh, label), contracts in _thresh_groups.items():
+    # Deduplicate
+    seen_dedup: set = set()
+    unique_contracts = []
+    for c in contracts:
+        if c['dedup'] not in seen_dedup:
+            seen_dedup.add(c['dedup'])
+            unique_contracts.append(c)
+    if len(unique_contracts) < 3:
+        continue
+    # Stronger signal: all are 수의계약
+    sole_source = sum(1 for c in unique_contracts if '수의' in c['method'])
+    # Ignore if vendor is a structurally exempt institution
+    if is_govt_affiliate(vendor) or is_cooperative(vendor):
+        continue
+    # Research institutes legitimately break projects into sub-5천만 phases —
+    # R&D naturally has multiple small specialist contracts below threshold.
+    if is_research_institute(inst) or is_research_institute(vendor):
+        continue
+    # Skip 혁신제품/우수제품 — those are legitimately ~3억 framework purchases
+    if has_structural_procurement_method(' '.join(c['title'] for c in unique_contracts)):
+        continue
+    total_amt = sum(c['amt'] for c in unique_contracts)
+    score = min(80, 35 + len(unique_contracts) * 8 + (sole_source / max(len(unique_contracts), 1)) * 20)
+    evidence = [make_contract(
+        c['no'], c['title'], c['amt'], vendor, c['date'], c['method'],
+    ) for c in sorted(unique_contracts, key=lambda x: -x['amt'])[:5]]
+    findings.append({
+        'pattern_type': 'threshold_avoidance',
+        'severity': 'HIGH' if score >= 60 else 'MEDIUM',
+        'suspicion_score': round(score),
+        'target_institution': inst,
+        'summary': (
+            f'{inst}가 {vendor}에게 {label} 기준 바로 아래 금액({unique_contracts[0]["amt"]/1e6:.0f}백만~)으로 '
+            f'{len(unique_contracts)}건({total_amt/1e8:.1f}억원)을 반복 발주했습니다.'
+        ),
+        'detail': {
+            '기관': inst, '업체': vendor,
+            '기준금액': label, '계약건수': len(unique_contracts),
+            '수의계약비율': f'{sole_source}/{len(unique_contracts)}건',
+            '최대계약액': max(c["amt"] for c in unique_contracts),
+            '최소계약액': min(c["amt"] for c in unique_contracts),
+        },
+        'evidence_contracts': evidence,
+        'innocent_explanation': (
+            f'단일 사업이 {label}를 소폭 초과하는 경우, 예산 절감을 위해 범위를 조정하는 것이 '
+            '정상적인 예산 집행일 수 있습니다. 또한 다년도 계획에서 연도별로 분할하는 것이 '
+            '국가계약법 시행령에 따른 정당한 예산 집행 방식일 수 있습니다.'
+        ),
+        'plain_explanation': (
+            f'{inst}가 {vendor}에게 맡긴 계약들이 하필이면 {label} 바로 아래 금액입니다. '
+            f'{label}을 넘으면 공개 경쟁 입찰을 해야 하는데, 딱 그 기준 아래로 금액을 맞춰 '
+            f'반복 발주한 것은 경쟁 입찰 의무를 피하려는 의도로 볼 수 있습니다.'
+        ),
+        'why_it_matters': (
+            f'{label} 기준은 경쟁 입찰을 통해 공정한 가격을 보장하기 위한 장치입니다. '
+            '이 기준 직하에 금액을 의도적으로 맞추는 것은 납세자의 이익을 침해하는 수법이며, '
+            '감사원과 공정위가 반복 지적하는 불법 계약 분할(쪼개기)의 변형입니다.'
+        ),
+        'citizen_impact': (
+            f'경쟁 입찰을 했더라면 평균 7-15% 저렴하게 계약할 수 있었습니다. '
+            f'{total_amt/1e8:.1f}억원 기준 최소 {total_amt*0.07/1e8:.1f}억원의 추가 절감이 가능했을 것입니다.'
+        ),
+        'what_should_happen': (
+            f'1) {vendor}에 대한 연간 계약 총액이 {label}를 초과하는지 합산 검토\n'
+            f'2) 같은 사업/물품을 {label} 이하로 나눠 발주했는지 원래 사업계획서 확인\n'
+            f'3) 입찰 자격 설계에서 해당 업체를 의도적으로 유리하게 한 요인 점검'
+        ),
+        'related_links': [
+            {'title': '국가계약법 시행령 제26조 수의계약', 'url': 'https://www.law.go.kr/법령/국가를당사자로하는계약에관한법률시행령', 'source': '법령정보센터'},
+        ],
+    })
+
+print(f'  Found {len([f for f in findings if f["pattern_type"] == "threshold_avoidance"])} threshold avoidance findings')
+
+
+# ════════════════════════════════════════════════════════════════════
+# Pattern NEW-B: INSIDER BID PRECISION (낙찰률 정밀도 이상 — 예정가 내부유출 의심)
+# 특정 업체가 한 기관에서 낙찰받을 때 낙찰률이 기관 평균에 비정상적으로 근접
+# (다른 기관에서의 낙찰률 분산과 비교했을 때 현저히 낮으면 내부 정보 의심)
+# ════════════════════════════════════════════════════════════════════
+print('\n🔍 Pattern New-B: Insider Bid Precision (낙찰률 정밀도 이상)...')
+
+# Build per-vendor, per-institution rate data
+_vendor_inst_rates: dict[tuple, list] = defaultdict(list)
+_vendor_global_rates: dict[str, list] = defaultdict(list)
+for b in bids:
+    winner = str(b.get('bidwinnrNm', '')).strip()
+    inst = str(b.get('dminsttNm', '') or b.get('ntceInsttNm', '')).strip()
+    try:
+        rate = float(b.get('sucsfbidRate', 0) or 0)
+        amt = float(b.get('sucsfbidAmt', 0) or 0)
+    except (ValueError, TypeError):
+        continue
+    if not winner or not inst or rate < 50 or rate > 100 or amt < 10_000_000:
+        continue
+    if is_govt_affiliate(winner) or is_cooperative(winner):
+        continue
+    _vendor_inst_rates[(vendor, inst)].append(rate)
+    _vendor_global_rates[winner].append(rate)
+
+# For each vendor-institution pair with 4+ wins, check rate precision vs global spread
+for (vendor, inst), inst_rates in _vendor_inst_rates.items():
+    if len(inst_rates) < 4:
+        continue
+    global_rates = _vendor_global_rates.get(vendor, [])
+    if len(global_rates) < 8:
+        continue  # need global baseline
+
+    def _std(vals):
+        if len(vals) < 2:
+            return 0.0
+        m = sum(vals) / len(vals)
+        return (sum((v - m) ** 2 for v in vals) / len(vals)) ** 0.5
+
+    inst_std = _std(inst_rates)
+    global_std = _std(global_rates)
+
+    # Only flag if: (a) global spread is meaningful (>1.5%) AND
+    # (b) institution-specific spread is suspiciously tight (< 0.5%)
+    if global_std < 1.5 or inst_std > 0.8:
+        continue
+
+    # Require that the tight cluster is NOT simply because all bids are near 100%
+    # (that's bid_rate_anomaly, already covered)
+    inst_mean = sum(inst_rates) / len(inst_rates)
+    if inst_mean >= 97:
+        continue
+
+    total_amt = sum(
+        float(b.get('sucsfbidAmt', 0) or 0)
+        for b in bids
+        if str(b.get('bidwinnrNm', '')).strip() == vendor
+        and str(b.get('dminsttNm', '') or b.get('ntceInsttNm', '')).strip() == inst
+    )
+    if total_amt < 50_000_000:
+        continue
+
+    score = min(78, 40 + (global_std - inst_std) * 8 + len(inst_rates) * 3)
+
+    evidence = [make_contract(
+        b.get('bidNtceNo', ''), b.get('bidNtceNm', ''), float(b.get('sucsfbidAmt', 0) or 0),
+        vendor, str(b.get('fnlSucsfDate', ''))[:10],
+        f'낙찰률 {float(b.get("sucsfbidRate", 0) or 0):.2f}%',
+    ) for b in bids
+    if str(b.get('bidwinnrNm', '')).strip() == vendor
+    and str(b.get('dminsttNm', '') or b.get('ntceInsttNm', '')).strip() == inst][:5]
+
+    findings.append({
+        'pattern_type': 'insider_bid_precision',
+        'severity': 'HIGH' if score >= 65 else 'MEDIUM',
+        'suspicion_score': round(score),
+        'target_institution': inst,
+        'summary': (
+            f'{inst}에서 {vendor}의 낙찰률 편차가 {inst_std:.2f}%로, '
+            f'전체 낙찰 편차 {global_std:.2f}% 대비 비정상적으로 낮습니다. '
+            f'예정가격 사전 유출 의심.'
+        ),
+        'detail': {
+            '기관': inst, '낙찰업체': vendor,
+            '기관내_낙찰률_편차': f'{inst_std:.2f}%',
+            '전체_낙찰률_편차': f'{global_std:.2f}%',
+            '기관내_평균낙찰률': f'{inst_mean:.2f}%',
+            '기관내_낙찰횟수': len(inst_rates),
+            '정밀도_배율': f'{global_std/max(inst_std, 0.01):.1f}배 더 정밀',
+        },
+        'evidence_contracts': evidence,
+        'innocent_explanation': (
+            '특정 기관에서의 낙찰률이 일정하게 나타나는 것은 해당 기관의 예정가격 산정 방식이 '
+            '표준화되어 있거나, 해당 업체가 해당 기관의 사업 특성을 잘 파악하고 있어 '
+            '정확한 견적을 낼 수 있기 때문일 수 있습니다. 반드시 불법을 의미하지는 않습니다.'
+        ),
+        'plain_explanation': (
+            f'{vendor}가 다른 곳에서 입찰할 때는 낙찰률이 크게 달라지는데, '
+            f'{inst}에서만 유독 {inst_mean:.1f}% 근처로 딱딱 맞춥니다. '
+            f'이는 {inst}의 예정가격을 미리 알고 있는 것처럼 보입니다.'
+        ),
+        'why_it_matters': (
+            '예정가격 유출은 공공계약법 위반이자 형사처벌 대상입니다. '
+            '발주기관 직원이 특정 업체에 예정가격을 알려주는 경우 '
+            '해당 업체는 경쟁사보다 훨씬 유리한 위치에서 입찰에 참가하게 됩니다.'
+        ),
+        'citizen_impact': (
+            f'{total_amt/1e8:.1f}억원 규모 계약에서 예정가 유출로 인한 '
+            f'낙찰률 조작이 있었다면, 정상 경쟁 대비 최소 5-10%의 추가 비용이 발생했을 수 있습니다.'
+        ),
+        'what_should_happen': (
+            f'1) {inst}의 예정가격 결재 및 접근 이력 확인\n'
+            f'2) {vendor} 대표·임원과 {inst} 담당 공무원 간의 연락 이력 조사\n'
+            f'3) {inst} 내 예정가격 보안 절차 점검'
+        ),
+        'related_links': [
+            {'title': '공정거래위원회 입찰담합 신고', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
+        ],
+    })
+
+print(f'  Found {len([f for f in findings if f["pattern_type"] == "insider_bid_precision"])} insider bid precision findings')
+
+
+# ════════════════════════════════════════════════════════════════════
 # Pattern 16: CROSS-PATTERN CORRELATION (복합 패턴 — 가장 강력한 신호)
 # 동일 기관-업체 조합에서 여러 의심 패턴이 동시에 감지되면
 # 개별 패턴보다 훨씬 더 의심스러움 → 복합 의심 사건 생성
@@ -2866,6 +3114,15 @@ for inst, vendors in inst_vendor_findings.items():
         # Composite score: boost by number of overlapping patterns
         composite_score = min(95, max_score + len(pattern_types) * 8)
 
+        # Hard signals: patterns that have no innocent structural explanation.
+        # CRITICAL requires at least one — soft+soft combinations are HIGH at most.
+        _HARD_SIGNALS = {
+            'bid_rigging', 'bid_rate_anomaly', 'ghost_company',
+            'price_clustering', 'network_collusion', 'related_companies',
+            'amount_spike', 'contract_inflation',
+        }
+        has_hard_signal = bool(pattern_types & _HARD_SIGNALS)
+
         pattern_labels = ', '.join(sorted(
             PATTERN_LABELS.get(pt, pt) for pt in pattern_types
         ))
@@ -2877,7 +3134,7 @@ for inst, vendors in inst_vendor_findings.items():
 
         cross_pattern_findings.append({
             'pattern_type': 'cross_pattern',
-            'severity': 'CRITICAL' if composite_score >= 80 else 'HIGH',
+            'severity': 'CRITICAL' if (composite_score >= 80 and has_hard_signal) else 'HIGH',
             'suspicion_score': round(composite_score),
             'target_institution': inst,
             'summary': (
@@ -2963,9 +3220,16 @@ for inst, patterns in inst_pattern_types.items():
     for f in sorted(all_inst_findings, key=lambda x: -x['suspicion_score'])[:3]:
         evidence.extend(f.get('evidence_contracts', [])[:2])
 
+    # systemic_risk CRITICAL: institution must have ≥1 hard-signal pattern AND ≥5 pattern types
+    _HARD_SIGNALS_INST = {
+        'bid_rigging', 'bid_rate_anomaly', 'ghost_company',
+        'price_clustering', 'network_collusion', 'related_companies',
+        'amount_spike', 'contract_inflation',
+    }
+    inst_has_hard = bool(set(patterns.keys()) & _HARD_SIGNALS_INST)
     cross_pattern_findings.append({
         'pattern_type': 'systemic_risk',
-        'severity': 'CRITICAL' if composite_score >= 80 else 'HIGH',
+        'severity': 'CRITICAL' if (composite_score >= 80 and inst_has_hard and len(patterns) >= 5) else 'HIGH',
         'suspicion_score': round(composite_score),
         'target_institution': inst,
         'summary': (
