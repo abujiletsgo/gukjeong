@@ -70,7 +70,7 @@ function Avatar({
   if (!error) {
     return (
       <img
-        src={`https://www.assembly.go.kr/photo/thumb/${monaCode}.jpg`}
+        src={`/legislators-thumb/${monaCode}.jpg`}
         alt={name}
         onError={() => setError(true)}
         className={`${dim} rounded-full object-cover object-top flex-shrink-0`}

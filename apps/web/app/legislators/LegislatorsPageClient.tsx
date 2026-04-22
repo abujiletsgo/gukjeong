@@ -282,7 +282,7 @@ function MemberAvatar({ monaCode, name, partyColor }: { monaCode: string; name: 
   if (!imgError) {
     return (
       <img
-        src={`https://www.assembly.go.kr/photo/thumb/${monaCode}.jpg`}
+        src={`/legislators-thumb/${monaCode}.jpg`}
         alt={name}
         onError={() => setImgError(true)}
         className="w-12 h-12 rounded-full object-cover object-top"
