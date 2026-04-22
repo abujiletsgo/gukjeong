@@ -868,7 +868,7 @@ for inst, d in inst_methods.items():
     # (10+ contracts, not a one-off) and *substantial* (5억+) to warrant investigation.
     # Small agencies under 5억 total often have structurally small contract sizes that
     # legally qualify as 소액 수의계약 — flagging them is a false positive.
-    if d['total'] < 10 or d['sole'] / d['total'] < 0.9 or d['amt'] < 500_000_000:
+    if d['total'] < 10 or d['sole'] / d['total'] < 0.9 or d['amt'] < 200_000_000:
         continue
     # Research institutes and universities legitimately rely on specialized vendors
     if is_research_institute(inst):
@@ -1199,7 +1199,10 @@ for inst, contracts_list in _inst_yearend_sole.items():
     # A single 5-8천만 contract with a new vendor is normal (year-end budget, local market).
     # Only flag when the scale or repetition makes it hard to explain innocently.
     unique_vendors = list({c['vendor'] for c in contracts_list})
-    qualifies = (total_amt >= 200_000_000) or (len(contracts_list) >= 3)
+    # 1억+ total OR 2+ contracts to new vendors qualifies.
+    # A bathroom renovation or grain purchase under 1억 to a new vendor is normal.
+    # 1억+ or repeated new-vendor contracts at year-end warrant explanation.
+    qualifies = (total_amt >= 100_000_000) or (len(contracts_list) >= 2)
     if not qualifies:
         continue
 
@@ -1344,9 +1347,10 @@ for _b in bids:
         continue
     if is_govt_affiliate(_nm) or is_cooperative(_nm):
         continue
-    # Only count competitive wins (prtcptCnum >= 2 or falls through from bid_rankings)
-    if _prtcpt == 1:
-        continue  # sole bidder — not fake competition
+    # prtcptCnum == 1 means sole bidder (수의계약 or uncontested).
+    # We still flag it: same CEO routing contracts across two companies regardless
+    # of competition method is a real signal. The complementary-business and
+    # amount checks below filter out legitimate multi-company family businesses.
     inst_ceo_map[_inst][_ceo]['biznos'].add(_bz)
     inst_ceo_map[_inst][_ceo]['names'].add(_nm)
     inst_ceo_map[_inst][_ceo]['wins'].append(_b)
