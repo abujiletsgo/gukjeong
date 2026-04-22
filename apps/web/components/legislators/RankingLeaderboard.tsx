@@ -11,19 +11,23 @@ interface RankedLegislator {
   bills_passed: number;
   participation_rate: number;
   absent_rate: number;
+  funding_total: number;        // 정치자금 총 지출액 (원)
+  funding_top_category: string; // 가장 많이 쓴 항목
 }
 
 interface Props {
   legislators: RankedLegislator[];
 }
 
-type TabKey = 'bills_proposed' | 'bills_passed' | 'participation_rate' | 'absent_rate';
+type TabKey = 'bills_proposed' | 'bills_passed' | 'participation_rate' | 'absent_rate' | 'funding_total';
 
-const TABS: { key: TabKey; label: string; unit: string; higherIsWorse: boolean }[] = [
-  { key: 'bills_proposed',    label: '발의 법안 수',  unit: '건',   higherIsWorse: false },
-  { key: 'bills_passed',      label: '통과 법안 수',  unit: '건',   higherIsWorse: false },
-  { key: 'participation_rate', label: '투표 참여율',  unit: '%',    higherIsWorse: false },
-  { key: 'absent_rate',       label: '결석률',        unit: '%',    higherIsWorse: true  },
+const TABS: { key: TabKey; label: string; unit: string; higherIsWorse: boolean; formatFn?: (v: number) => string }[] = [
+  { key: 'bills_proposed',    label: '발의 법안',  unit: '건',   higherIsWorse: false },
+  { key: 'bills_passed',      label: '통과 법안',  unit: '건',   higherIsWorse: false },
+  { key: 'participation_rate', label: '투표 참여율', unit: '%',  higherIsWorse: false },
+  { key: 'absent_rate',       label: '결석률',      unit: '%',   higherIsWorse: true  },
+  { key: 'funding_total',     label: '💸 정치자금 지출', unit: '만원', higherIsWorse: true,
+    formatFn: (v: number) => Math.round(v / 10000).toLocaleString() },
 ];
 
 const PARTY_COLORS: Record<string, string> = {
@@ -107,29 +111,37 @@ function PodiumCard({
   rank,
   metric,
   unit,
+  higherIsWorse,
+  formatFn,
+  subLabel,
 }: {
   leg: RankedLegislator;
   rank: number;
   metric: number;
   unit: string;
+  higherIsWorse: boolean;
+  formatFn?: (v: number) => string;
+  subLabel?: string;
 }) {
   const partyColor = getPartyColor(leg.POLY_NM);
   const isFirst = rank === 0;
+  const displayVal = formatFn ? formatFn(metric) : metric.toLocaleString();
   return (
     <div
       className={`flex flex-col items-center text-center p-4 rounded-xl border transition-shadow hover:shadow-md ${
-        isFirst
-          ? 'border-yellow-300 bg-yellow-50 shadow-sm'
-          : 'border-gray-100 bg-gray-50'
+        isFirst && !higherIsWorse ? 'border-yellow-300 bg-yellow-50 shadow-sm'
+        : isFirst && higherIsWorse ? 'border-red-200 bg-red-50 shadow-sm'
+        : 'border-gray-100 bg-gray-50'
       }`}
     >
       <span className="text-2xl mb-2">{medal(rank)}</span>
       <Avatar monaCode={leg.MONA_CD} name={leg.HG_NM} partyColor={partyColor} size={isFirst ? 'lg' : 'sm'} />
       <p className={`mt-2 font-bold text-gray-900 ${isFirst ? 'text-base' : 'text-sm'}`}>{leg.HG_NM}</p>
       <PartyBadge party={leg.POLY_NM} />
-      <p className={`mt-2 font-extrabold text-gray-800 ${isFirst ? 'text-2xl' : 'text-lg'}`}>
-        {metric.toLocaleString()}<span className="text-xs font-normal text-gray-400 ml-0.5">{unit}</span>
+      <p className={`mt-2 font-extrabold ${isFirst ? 'text-2xl' : 'text-lg'} ${higherIsWorse ? 'text-red-600' : 'text-gray-800'}`}>
+        {displayVal}<span className="text-xs font-normal text-gray-400 ml-0.5">{unit}</span>
       </p>
+      {subLabel && <p className="text-xs text-gray-400 mt-0.5 truncate max-w-full px-1">{subLabel}</p>}
       <p className="text-xs text-gray-400 mt-0.5">{rank + 1}위</p>
     </div>
   );
@@ -142,24 +154,32 @@ function RankRow({
   metric,
   unit,
   higherIsWorse,
+  formatFn,
+  subLabel,
 }: {
   leg: RankedLegislator;
   rank: number;
   metric: number;
   unit: string;
   higherIsWorse: boolean;
+  formatFn?: (v: number) => string;
+  subLabel?: string;
 }) {
   const partyColor = getPartyColor(leg.POLY_NM);
+  const displayVal = formatFn ? formatFn(metric) : metric.toLocaleString();
   return (
     <div className={`flex items-center gap-3 py-2 px-3 rounded-lg ${higherIsWorse ? 'hover:bg-red-50' : 'hover:bg-gray-50'}`}>
       <span className="text-sm font-bold text-gray-400 w-6 text-right flex-shrink-0">{rank + 1}</span>
       <Avatar monaCode={leg.MONA_CD} name={leg.HG_NM} partyColor={partyColor} size="sm" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-gray-900 truncate">{leg.HG_NM}</p>
-        <PartyBadge party={leg.POLY_NM} />
+        <div className="flex items-center gap-1.5">
+          <PartyBadge party={leg.POLY_NM} />
+          {subLabel && <span className="text-xs text-gray-400 truncate">{subLabel}</span>}
+        </div>
       </div>
       <span className={`text-sm font-bold flex-shrink-0 ${higherIsWorse ? 'text-red-600' : 'text-gray-800'}`}>
-        {metric.toLocaleString()}{unit}
+        {displayVal}{unit}
       </span>
     </div>
   );
@@ -179,17 +199,20 @@ export default function RankingLeaderboard({ legislators }: Props) {
   const tab = TABS.find(t => t.key === activeTab)!;
 
   const sorted = useMemo(() => {
-    let pool = partyFilter === '전체'
+    const pool = partyFilter === '전체'
       ? legislators
       : legislators.filter(l => l.POLY_NM === partyFilter);
-
-    // For absent_rate: sort worst first (descending)
-    // For others: sort best first (descending)
-    return [...pool].sort((a, b) => (b[activeTab] as number) - (a[activeTab] as number));
+    // funding_total and absent_rate: sort descending (most = worst)
+    // others: sort descending (most = best)
+    return [...pool]
+      .filter(l => (l[activeTab] as number) > 0)
+      .sort((a, b) => (b[activeTab] as number) - (a[activeTab] as number));
   }, [legislators, activeTab, partyFilter]);
 
   const top3 = sorted.slice(0, 3);
   const rest = sorted.slice(3, 10);
+
+  const isFunding = activeTab === 'funding_total';
 
   return (
     <div className="container-page py-6 sm:py-8">
@@ -197,8 +220,13 @@ export default function RankingLeaderboard({ legislators }: Props) {
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">국회의원 랭킹</h1>
         <p className="text-sm sm:text-base text-gray-500 mt-1.5 leading-relaxed">
-          22대 국회 {legislators.length}명 의원의 발의·통과 법안, 투표 참여율, 결석률을 순위로 확인합니다.
+          22대 국회 {legislators.length}명 의원의 발의·통과 법안, 투표 참여율, 결석률, 정치자금 지출을 순위로 확인합니다.
         </p>
+        {isFunding && (
+          <div className="mt-3 p-3 bg-red-50 border border-red-100 rounded-lg text-xs text-red-700 leading-relaxed">
+            출처: OhmyNews/KA-money (정보공개 청구 데이터) · 중앙선거관리위원회 22대 국회의원 정치자금 지출 내역 · 높을수록 지출이 많음
+          </div>
+        )}
       </div>
 
       {/* Tab bar */}
@@ -209,7 +237,7 @@ export default function RankingLeaderboard({ legislators }: Props) {
             onClick={() => setActiveTab(t.key)}
             className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors whitespace-nowrap ${
               activeTab === t.key
-                ? 'border-gray-900 text-gray-900'
+                ? t.higherIsWorse ? 'border-red-500 text-red-700' : 'border-gray-900 text-gray-900'
                 : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}
           >
@@ -229,6 +257,7 @@ export default function RankingLeaderboard({ legislators }: Props) {
             <option key={p} value={p}>{p}</option>
           ))}
         </select>
+        <span className="ml-3 text-xs text-gray-400">{sorted.length}명</span>
       </div>
 
       {sorted.length === 0 && (
@@ -246,6 +275,9 @@ export default function RankingLeaderboard({ legislators }: Props) {
                 rank={i}
                 metric={leg[activeTab] as number}
                 unit={tab.unit}
+                higherIsWorse={tab.higherIsWorse}
+                formatFn={tab.formatFn}
+                subLabel={isFunding ? leg.funding_top_category : undefined}
               />
             ))}
           </div>
@@ -263,6 +295,8 @@ export default function RankingLeaderboard({ legislators }: Props) {
                     metric={leg[activeTab] as number}
                     unit={tab.unit}
                     higherIsWorse={tab.higherIsWorse}
+                    formatFn={tab.formatFn}
+                    subLabel={isFunding ? leg.funding_top_category : undefined}
                   />
                 ))}
               </div>
@@ -272,7 +306,7 @@ export default function RankingLeaderboard({ legislators }: Props) {
       )}
 
       <p className="text-xs text-gray-400 mt-8 text-center leading-relaxed">
-        출처: 열린국회정보 공개 API. 22대 국회 기준.
+        출처: 열린국회정보 공개 API · OhmyNews/KA-money. 22대 국회 기준.
       </p>
     </div>
   );
