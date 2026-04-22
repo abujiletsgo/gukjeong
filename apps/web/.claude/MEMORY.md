@@ -2,50 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-26 (17:02 UTC) · @Tom Kwon
-**Commit:** fix: Merge duplicate audit link sections into single "직접 확인하기" (de1c20e) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/[id]/AuditDetailClient.tsx | 30 +--------------------------
-  apps/web/tsconfig.tsbuildinfo                 |  2 +-
-  2 files changed, 2 insertions(+), 30 deletions(-)
-
-## 2026-03-27 (03:26 UTC) · @Tom Kwon
-**Commit:** fix: Pin Next.js 14, React 18, recharts 2.12 — revert mobile session version bumps (4e86df2) by Tom Kwon
-**Changed:**
-  apps/web/components/charts/BubbleChart.tsx |  119 +-
-  apps/web/components/charts/RadarChart.tsx  |  111 +-
-  apps/web/package.json                      |   18 +-
-  package-lock.json                          | 2863 +++++++++++++++-------------
-  4 files changed, 1536 insertions(+), 1575 deletions(-)
-
-## 2026-03-27 (03:45 UTC) · @Tom Kwon
-**Commit:** feat: 국제 비교 + 지방자치단체 pages, fact-checked data (c1d9a50) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md                 |   9 +
-  apps/web/app/compare/ComparePageClient.tsx | 390 +++++++++++++++++++++++
-  apps/web/app/compare/page.tsx              |  18 +-
-  apps/web/app/local/[region]/page.tsx       | 329 +++++++++++++++++++-
-  apps/web/app/local/page.tsx                | 313 +++++++++++++++++++
-  apps/web/lib/data.ts                       | 479 ++++++++++++++++++++++++++++-
-  apps/web/lib/types.ts                      |  37 +++
-  apps/web/tsconfig.tsbuildinfo              |   2 +-
-  8 files changed, 1555 insertions(+), 22 deletions(-)
-
-## 2026-03-28 (08:48 UTC) · @Tom Kwon
-**Commit:** fix: Consistent neutral color scheme — blue/red only for political parties (5514260) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md                         | 13 +++++
-  apps/web/app/(home)/page.tsx                       | 18 +++---
-  apps/web/app/audit/AuditPageClient.tsx             |  6 +-
-  apps/web/app/audit/[id]/AuditDetailClient.tsx      | 68 +++++++++++-----------
-  apps/web/app/bills/BillsPageClient.tsx             | 16 ++---
-  apps/web/app/bills/[id]/BillDetailClient.tsx       | 44 +++++++-------
-  apps/web/app/budget/BudgetPageClient.tsx           |  2 +-
-  apps/web/app/budget/[sector]/SectorPageClient.tsx  |  4 +-
-  .../legislators/[id]/LegislatorDetailClient.tsx    | 18 +++---
-  apps/web/app/local/[region]/page.tsx               | 11 ++--
-  ... and 23 more files
-
 ## 2026-03-28 (09:13 UTC) · @Tom Kwon
 **Commit:** feat: Real data pipeline — 열린국회정보 295 legislators + 나라장터 38K contracts (f79358d) by Tom Kwon
 **Changed:**
@@ -286,3 +242,43 @@
 **Changed:**
   apps/web/styles/globals.css | 1 +
   1 file changed, 1 insertion(+)
+
+## 2026-04-20 (01:29 UTC) · @Tom Kwon
+**Commit:** chore: gitignore large data files (>50MB) that stay local-only (564e48d) by Tom Kwon
+**Changed:**
+  .gitignore | 6 ++++++
+  1 file changed, 6 insertions(+)
+
+## 2026-04-21 (18:51 UTC) · @Tom Kwon
+**Commit:** feat: add missing pattern labels + layout system components (e27c418) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx         | 492 ++++++++++++++-----------
+  apps/web/app/audit/[id]/AuditDetailClient.tsx  | 116 +++++-
+  apps/web/components/audit/PatternBadge.tsx     |   3 +
+  apps/web/components/common/FilterSidebar.tsx   |  38 ++
+  apps/web/components/layouts/DetailLayout.tsx   |  21 ++
+  apps/web/components/layouts/ExplorerLayout.tsx |  43 +++
+  apps/web/components/layouts/MagazineLayout.tsx |  23 ++
+  apps/web/styles/globals.css                    |  28 ++
+  8 files changed, 552 insertions(+), 212 deletions(-)
+
+## 2026-04-22 (18:28 UTC) · @Tom Kwon
+**Commit:** feat: default legislators page to ranking view (0bae1df) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 170 ++++++++++++++++++++-
+  1 file changed, 162 insertions(+), 8 deletions(-)
+
+## 2026-04-22 (19:05 UTC) · @Tom Kwon
+**Commit:** feat: serve legislator portraits as 120x160 local thumbnails (bd89efe) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/LegislatorsPageClient.tsx     |   2 +-
+  apps/web/components/legislators/RankingLeaderboard.tsx |   2 +-
+  apps/web/public/legislators-thumb/04T3751T.jpg         | Bin 0 -> 3842 bytes
+  apps/web/public/legislators-thumb/0698755I.jpg         | Bin 0 -> 4267 bytes
+  apps/web/public/legislators-thumb/0R68099X.jpg         | Bin 0 -> 3394 bytes
+  apps/web/public/legislators-thumb/1A82234K.jpg         | Bin 0 -> 3656 bytes
+  apps/web/public/legislators-thumb/1JI2689F.jpg         | Bin 0 -> 3352 bytes
+  apps/web/public/legislators-thumb/1S05899F.jpg         | Bin 0 -> 3160 bytes
+  apps/web/public/legislators-thumb/1SR94244.jpg         | Bin 0 -> 3780 bytes
+  apps/web/public/legislators-thumb/1WE5693J.jpg         | Bin 0 -> 3015 bytes
+  ... and 265 more files

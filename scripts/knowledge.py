@@ -469,6 +469,42 @@ def get_kb() -> KnowledgeBase:
     return _kb_instance
 
 
+def get_parent_agency(inst_name: str) -> str:
+    """
+    Map a regional sub-agency name to its parent body.
+    Used to detect cross-regional patterns (e.g., vendor winning across all 해양경찰청 sub-offices).
+    Returns the original name if no parent mapping applies.
+    """
+    import re as _re
+    name = inst_name.strip()
+
+    # 해양경찰청 regional offices → 해양경찰청
+    if '해양경찰청' in name and any(kw in name for kw in ('중부', '남해', '서해', '동해', '제주', '포항', '여수', '군산', '인천', '부산', '통영', '목포', '태안', '평택')):
+        return '해양경찰청'
+
+    # 교육청 (any province/city prefix)
+    if name.endswith('교육청') or '교육지원청' in name:
+        return '교육청'
+
+    # 지방조달청 → 조달청
+    if '지방조달청' in name or ('조달청' in name and any(kw in name for kw in ('서울', '부산', '대구', '인천', '광주', '대전', '울산', '경기', '강원', '충청', '전라', '경상', '제주'))):
+        return '조달청'
+
+    # 지방환경청 → 환경부
+    if '지방환경청' in name or ('환경청' in name and not name == '환경부'):
+        return '환경부'
+
+    # 지방국토관리청 → 국토교통부
+    if '국토관리청' in name:
+        return '국토교통부'
+
+    # 지방고용노동청 → 고용노동부
+    if '지방고용노동청' in name or '고용노동지청' in name:
+        return '고용노동부'
+
+    return name
+
+
 if __name__ == '__main__':
     kb = get_kb()
     stats = kb.stats()

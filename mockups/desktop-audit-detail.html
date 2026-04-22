@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>반복 수의계약 의심 — 국정투명 AI 감사관</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --apple-blue: #007AFF;
+    --apple-red: #FF3B30;
+    --apple-green: #34C759;
+    --apple-orange: #FF9500;
+    --apple-yellow: #FFCC00;
+    --apple-purple: #AF52DE;
+    --apple-indigo: #5856D6;
+    --apple-teal: #5AC8FA;
+
+    --apple-gray-1: #8E8E93;
+    --apple-gray-2: #AEAEB2;
+    --apple-gray-3: #C7C7CC;
+    --apple-gray-4: #D1D1D6;
+    --apple-gray-5: #E5E5EA;
+    --apple-gray-6: #F2F2F7;
+
+    --color-body: #F2F2F7;
+    --color-surface: #FFFFFF;
+    --color-label: #000000;
+    --color-label-secondary: rgba(60,60,67,0.6);
+    --color-label-tertiary: rgba(60,60,67,0.3);
+    --color-separator: rgba(60,60,67,0.12);
+
+    --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  }
+
+  html {
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-body);
+    color: var(--color-label);
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--apple-gray-3); border-radius: 100px; }
+
+  /* ── Header ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-bottom: 0.5px solid rgba(60,60,67,0.12);
+    height: 52px;
+    display: flex;
+    align-items: center;
+  }
+  .header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .logo-mark {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+  }
+  .logo-text {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-link {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--color-label);
+    padding: 5px 12px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    text-decoration: none;
+  }
+  .nav-link:hover { background: rgba(0,0,0,0.05); color: var(--apple-blue); }
+  .nav-link.active { color: var(--apple-blue); font-weight: 600; }
+
+  /* ── Page Shell ── */
+  .page-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+  }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 0 8px;
+    font-size: 13px;
+    color: var(--color-label-secondary);
+  }
+  .breadcrumb a {
+    color: var(--apple-blue);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb-sep { color: var(--apple-gray-3); font-size: 11px; }
+  .breadcrumb-current { color: var(--color-label); font-weight: 500; }
+
+  /* ── Back Button ── */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--apple-blue);
+    text-decoration: none;
+    padding: 6px 0;
+    margin-bottom: 20px;
+    transition: opacity 0.15s;
+  }
+  .back-btn:hover { opacity: 0.75; }
+
+  /* ── Two-Column Layout ── */
+  .detail-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 28px;
+    align-items: start;
+  }
+
+  .main-col { min-width: 0; }
+
+  .rail-col {
+    position: sticky;
+    top: 68px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── Glass Card ── */
+  .glass-card {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-radius: 16px;
+    padding: 20px;
+    border: 0.5px solid rgba(255,255,255,0.8);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .solid-card {
+    background: var(--color-surface);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  /* ── Pattern Header ── */
+  .pattern-header {
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-radius: 20px;
+    padding: 28px 28px 24px;
+    border: 0.5px solid rgba(255,255,255,0.8);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pattern-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FF3B30 0%, #FF9500 100%);
+  }
+
+  .badge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .pattern-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(255,59,48,0.1);
+    color: #FF3B30;
+    letter-spacing: 0.1px;
+  }
+  .severity-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .severity-critical {
+    background: rgba(255,59,48,0.12);
+    color: #FF3B30;
+    border: 0.5px solid rgba(255,59,48,0.25);
+  }
+  .severity-high {
+    background: rgba(255,149,0,0.12);
+    color: #FF9500;
+    border: 0.5px solid rgba(255,149,0,0.25);
+  }
+  .severity-medium {
+    background: rgba(255,204,0,0.12);
+    color: #B38B00;
+    border: 0.5px solid rgba(255,204,0,0.25);
+  }
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(88,86,214,0.1);
+    color: var(--apple-indigo);
+    letter-spacing: 0.2px;
+  }
+
+  .finding-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    line-height: 1.3;
+    color: var(--color-label);
+    margin-bottom: 16px;
+  }
+
+  .flagged-amount-block {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 16px 20px;
+    background: rgba(255,59,48,0.05);
+    border: 0.5px solid rgba(255,59,48,0.18);
+    border-radius: 12px;
+    margin-bottom: 0;
+  }
+  .flagged-label {
+    font-size: 13px;
+    color: var(--color-label-secondary);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .flagged-value {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    color: #FF3B30;
+    font-variant-numeric: tabular-nums;
+  }
+  .flagged-sub {
+    font-size: 13px;
+    color: var(--color-label-secondary);
+    margin-left: auto;
+  }
+
+  /* ── Section ── */
+  .section-card {
+    background: var(--color-surface);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-label);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .icon-purple { background: rgba(88,86,214,0.1); color: var(--apple-indigo); }
+  .icon-red { background: rgba(255,59,48,0.1); color: #FF3B30; }
+  .icon-blue { background: rgba(0,122,255,0.1); color: var(--apple-blue); }
+  .icon-orange { background: rgba(255,149,0,0.1); color: var(--apple-orange); }
+
+  /* ── AI Analysis Text ── */
+  .analysis-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #1C1C1E;
+  }
+  .analysis-body p { margin-bottom: 14px; }
+  .analysis-body p:last-child { margin-bottom: 0; }
+  .analysis-body strong { font-weight: 700; color: #FF3B30; }
+  .analysis-body .highlight {
+    background: rgba(255,204,0,0.15);
+    border-radius: 4px;
+    padding: 1px 4px;
+    font-weight: 600;
+  }
+
+  /* ── Innocent Section ── */
+  .innocent-block {
+    background: rgba(52,199,89,0.06);
+    border: 0.5px solid rgba(52,199,89,0.22);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+  .innocent-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #248A3D;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .innocent-text {
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(60,60,67,0.75);
+  }
+
+  /* ── Evidence Table ── */
+  .evidence-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .evidence-table thead tr {
+    background: var(--apple-gray-6);
+  }
+  .evidence-table th {
+    padding: 9px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-label-secondary);
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .evidence-table th:first-child { border-radius: 8px 0 0 8px; }
+  .evidence-table th:last-child { border-radius: 0 8px 8px 0; }
+  .evidence-table td {
+    padding: 10px 12px;
+    border-bottom: 0.5px solid var(--color-separator);
+    color: var(--color-label);
+    font-variant-numeric: tabular-nums;
+  }
+  .evidence-table tr:last-child td { border-bottom: none; }
+  .evidence-table tr:hover td { background: rgba(0,0,0,0.015); }
+  .method-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .method-suui { background: rgba(255,59,48,0.1); color: #FF3B30; }
+  .method-general { background: rgba(52,199,89,0.1); color: #248A3D; }
+  .amount-flag { color: #FF3B30; font-weight: 700; }
+
+  /* ── Timeline ── */
+  .timeline-wrap {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .timeline-track {
+    position: relative;
+    height: 64px;
+    min-width: 600px;
+    margin-top: 8px;
+  }
+  .timeline-axis {
+    position: absolute;
+    bottom: 22px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--apple-gray-5);
+    border-radius: 2px;
+  }
+  .timeline-bar {
+    position: absolute;
+    bottom: 22px;
+    height: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s;
+    transform: translateY(50%);
+  }
+  .timeline-bar:hover { transform: translateY(50%) scaleY(1.4); filter: brightness(0.85); }
+  .timeline-bar-suui { background: rgba(255,59,48,0.75); }
+  .timeline-bar-general { background: rgba(52,199,89,0.65); }
+  .timeline-label {
+    position: absolute;
+    bottom: 0;
+    font-size: 10px;
+    color: var(--apple-gray-1);
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+  .timeline-top-label {
+    position: absolute;
+    top: 0;
+    font-size: 10px;
+    color: var(--color-label-secondary);
+    white-space: nowrap;
+    transform: translateX(-50%);
+    font-weight: 600;
+  }
+  .timeline-legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--color-label-secondary);
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 4px;
+  }
+
+  /* ── Related Finding Cards ── */
+  .related-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    background: var(--apple-gray-6);
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s, transform 0.15s;
+    border: 0.5px solid transparent;
+  }
+  .related-card:hover {
+    background: rgba(0,122,255,0.05);
+    border-color: rgba(0,122,255,0.12);
+    transform: translateY(-1px);
+  }
+  .related-card + .related-card { margin-top: 8px; }
+  .related-card-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .related-card-body { flex: 1; min-width: 0; }
+  .related-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-label);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .related-card-meta {
+    font-size: 12px;
+    color: var(--color-label-secondary);
+  }
+  .related-card-amount {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF3B30;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Rail ── */
+  .rail-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-label-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 12px;
+  }
+  .rail-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 0.5px solid var(--color-separator);
+    font-size: 14px;
+    gap: 8px;
+  }
+  .rail-row:last-child { border-bottom: none; }
+  .rail-key {
+    color: var(--color-label-secondary);
+    font-weight: 400;
+    flex-shrink: 0;
+  }
+  .rail-value {
+    color: var(--color-label);
+    font-weight: 600;
+    text-align: right;
+    word-break: break-all;
+  }
+  .rail-value.red { color: #FF3B30; }
+  .rail-value.blue { color: var(--apple-blue); }
+
+  /* Verdict block */
+  .verdict-block {
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }
+  .verdict-critical {
+    background: rgba(255,59,48,0.08);
+    border: 0.5px solid rgba(255,59,48,0.22);
+  }
+  .verdict-label {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+  }
+  .verdict-sub {
+    font-size: 12px;
+    color: var(--color-label-secondary);
+    margin-top: 3px;
+    line-height: 1.5;
+  }
+  .priority-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0 0;
+    border-top: 0.5px solid var(--color-separator);
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #FF3B30;
+  }
+  .priority-dots {
+    display: flex; gap: 3px;
+  }
+  .priority-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,59,48,0.2);
+  }
+  .priority-dot.filled { background: #FF3B30; }
+
+  /* Waste amount */
+  .waste-block {
+    margin-bottom: 12px;
+  }
+  .waste-label {
+    font-size: 12px;
+    color: var(--color-label-secondary);
+    margin-bottom: 4px;
+  }
+  .waste-value {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    color: #FF3B30;
+    font-variant-numeric: tabular-nums;
+  }
+  .waste-sub {
+    font-size: 12px;
+    color: var(--color-label-secondary);
+    margin-top: 2px;
+  }
+
+  /* Rail related link */
+  .rail-related-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    text-decoration: none;
+    border-bottom: 0.5px solid var(--color-separator);
+    transition: background 0.15s;
+    border-radius: 8px;
+  }
+  .rail-related-link:last-child { border-bottom: none; }
+  .rail-related-link:hover { background: rgba(0,122,255,0.04); padding-left: 6px; }
+  .rail-related-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .rail-related-body { flex: 1; min-width: 0; }
+  .rail-related-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--apple-blue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rail-related-meta {
+    font-size: 11px;
+    color: var(--color-label-secondary);
+    margin-top: 1px;
+  }
+
+  /* ── Score Bar ── */
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .score-label { font-size: 12px; color: var(--color-label-secondary); width: 80px; flex-shrink: 0; }
+  .score-track {
+    flex: 1;
+    height: 6px;
+    background: var(--apple-gray-5);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .score-val { font-size: 12px; font-weight: 700; width: 32px; text-align: right; flex-shrink: 0; }
+
+  /* ── Separator ── */
+  .sep {
+    height: 0.5px;
+    background: var(--color-separator);
+    margin: 16px 0;
+    border: none;
+  }
+
+  /* ── Animations ── */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .anim-1 { animation: slideUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.05s both; }
+  .anim-2 { animation: slideUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.12s both; }
+  .anim-3 { animation: slideUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.2s both; }
+  .anim-4 { animation: slideUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.28s both; }
+  .anim-5 { animation: slideUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.36s both; }
+  .anim-rail { animation: slideUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.15s both; }
+
+  /* ── Status tag ── */
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .status-open { background: rgba(255,59,48,0.1); color: #FF3B30; }
+  .status-reviewing { background: rgba(255,149,0,0.1); color: #FF9500; }
+  .status-closed { background: rgba(52,199,89,0.1); color: #248A3D; }
+
+  /* ── Tooltip dots on timeline ── */
+  .tl-dot {
+    position: absolute;
+    bottom: 22px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    transform: translate(-50%, 50%);
+    border: 2px solid white;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     STICKY HEADER
+══════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <a href="mockup-home.html" class="logo">
+      <div class="logo-mark">국</div>
+      <span class="logo-text">국정투명</span>
+    </a>
+    <nav class="header-nav">
+      <a href="mockup-budget.html" class="nav-link">예산·결산</a>
+      <a href="mockup-legislators.html" class="nav-link">국회의원</a>
+      <a href="mockup-bills.html" class="nav-link">법안</a>
+      <a href="mockup-audit.html" class="nav-link active">AI 감사관</a>
+      <a href="mockup-news.html" class="nav-link">뉴스</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     PAGE BODY
+══════════════════════════════════════════════ -->
+<div class="page-container">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="breadcrumb">
+    <a href="mockup-audit.html">AI 감사관</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="mockup-audit.html">조달청</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">반복 수의계약 의심</span>
+  </nav>
+
+  <!-- Back Button -->
+  <a href="mockup-audit.html" class="back-btn">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    감사 목록으로
+  </a>
+
+  <!-- ══ TWO-COLUMN LAYOUT ══ -->
+  <div class="detail-layout">
+
+    <!-- ════════════════════════════
+         LEFT: MAIN CONTENT
+    ════════════════════════════ -->
+    <div class="main-col">
+
+      <!-- 1. Pattern Header Card -->
+      <div class="pattern-header anim-1">
+        <div class="badge-row">
+          <span class="pattern-badge">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v4H4V4zm0 8h16v4H4v-4zm0 8h16v4H4v-4z"/>
+            </svg>
+            반복 수의계약
+          </span>
+          <span class="severity-chip severity-critical">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+              <circle cx="5" cy="5" r="5"/>
+            </svg>
+            CRITICAL
+          </span>
+          <span class="ai-badge">
+            ✦ AI 분석
+          </span>
+          <span class="status-tag status-open" style="margin-left: auto;">조사 대기중</span>
+        </div>
+
+        <h1 class="finding-title">
+          ○○건설(주), 조달청 관할 공사계약 24건 중<br>22건을 수의계약으로 수주 — 구조적 경쟁 회피 의심
+        </h1>
+
+        <div class="flagged-amount-block">
+          <span class="flagged-label">총 계약금액</span>
+          <span class="flagged-value">348억원</span>
+          <span class="flagged-sub">2024.01 ~ 2024.12 &nbsp;·&nbsp; 22건 수의계약</span>
+        </div>
+      </div>
+
+      <!-- 2. AI 분석 내러티브 -->
+      <div class="section-card anim-2">
+        <div class="section-title">
+          <div class="section-icon icon-purple">✦</div>
+          AI 분석 요약
+        </div>
+
+        <div class="analysis-body">
+          <p>
+            2024년 1월부터 12월까지 조달청에 등록된 ○○건설(주)의 공사계약 24건을 분석한 결과,
+            <strong>전체의 91.7%인 22건(총 348억원)</strong>이 경쟁 입찰 없이 수의계약으로 체결되었습니다.
+            국가계약법 시행령 제26조에 따라 단일 사업당 수의계약 허용 금액은 원칙적으로 2,000만원 이하이나,
+            해당 업체는 건당 평균 <span class="highlight">15억 8천만원</span>에 달하는 고액 계약을 반복적으로 수의 방식으로 수주했습니다.
+          </p>
+          <p>
+            특히 2024년 3분기에는 5건의 수의계약이 37일 내에 집중 발주되었으며, 각 계약은 「긴급 시공 필요」를
+            근거로 경쟁 입찰 면제가 적용되었습니다. 그러나 AI가 분석한 해당 계약의
+            사업 내용은 모두 <strong>정기 유지보수 성격</strong>의 반복 업무로, 긴급성 요건에 해당하는지
+            의문이 제기됩니다. 감사원 「수의계약 운용 지침(2023)」에 따르면 긴급성 인정 기준은
+            "예측 불가능한 재해·사고 등 불가피한 사유"에 한정되며, 정기 점검·보수는 원칙적으로 경쟁 입찰을
+            실시해야 합니다.
+          </p>
+          <p>
+            동일 업체에 대한 수의계약 집중 패턴은 <strong>경쟁가격 대비 평균 18~23% 고가 계약</strong>으로
+            이어지는 경향이 있습니다(감사원 2022년 수의계약 실태조사 기준). 단순 추정 시
+            적정가 대비 초과 지출 규모는 <span class="highlight">약 62억 ~ 80억원</span>에 달할 수 있습니다.
+            조달청 담당 부서의 계약심사 위원회 회의록 및 긴급성 판단 근거 서류에 대한
+            현장 검증이 필요합니다.
+          </p>
+        </div>
+
+        <!-- Innocent Explanation -->
+        <div class="innocent-block">
+          <div class="innocent-label">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            무죄 가능성 (Innocent Explanation)
+          </div>
+          <p class="innocent-text">
+            ○○건설(주)은 해당 시설의 준공 업체로서 하자보수 의무 기간 중 동일 시공사가 지속 관리해야 하는
+            법적·기술적 이유가 있을 수 있습니다. 또한 특수 설비(압력용기, 방재설비 등)에 대한
+            전문 면허 보유 업체가 국내에 3개사 미만인 경우 실질적 경쟁이 불가한 상황일 수 있습니다.
+            국가계약법 시행령 제26조 제1항 제4호 "특수한 기술 또는 설비가 필요한 경우" 해당 여부를
+            관계 서류로 확인해야 합니다. <strong>이 분석은 의혹 제기이며 법적 판단이 아닙니다.</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- 3. 위험 지표 스코어 -->
+      <div class="section-card anim-3">
+        <div class="section-title">
+          <div class="section-icon icon-red">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          이상 지표 분석
+        </div>
+
+        <div class="score-row">
+          <span class="score-label">수의계약 비율</span>
+          <div class="score-track">
+            <div class="score-fill" style="width:91.7%; background: linear-gradient(90deg, #FF9500, #FF3B30);"></div>
+          </div>
+          <span class="score-val" style="color:#FF3B30;">91.7%</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">금액 편중도</span>
+          <div class="score-track">
+            <div class="score-fill" style="width:87%; background: linear-gradient(90deg, #FF9500, #FF3B30);"></div>
+          </div>
+          <span class="score-val" style="color:#FF3B30;">87%</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">반복 수주</span>
+          <div class="score-track">
+            <div class="score-fill" style="width:100%; background: linear-gradient(90deg, #FF9500, #FF3B30);"></div>
+          </div>
+          <span class="score-val" style="color:#FF3B30;">22회</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">가격 적정성</span>
+          <div class="score-track">
+            <div class="score-fill" style="width:34%; background: #FF3B30;"></div>
+          </div>
+          <span class="score-val" style="color:#FF3B30;">低</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">심사 투명성</span>
+          <div class="score-track">
+            <div class="score-fill" style="width:22%; background: #FF3B30;"></div>
+          </div>
+          <span class="score-val" style="color:#FF3B30;">低</span>
+        </div>
+
+        <div style="margin-top:14px; padding:12px 14px; background:rgba(255,59,48,0.05); border-radius:10px; border:0.5px solid rgba(255,59,48,0.15);">
+          <div style="font-size:12px; color:var(--apple-gray-1); margin-bottom:4px;">종합 위험 점수</div>
+          <div style="font-size:28px; font-weight:800; color:#FF3B30; letter-spacing:-1px;">94 <span style="font-size:14px; font-weight:500; color:var(--color-label-secondary);">/ 100</span></div>
+          <div style="font-size:12px; color:var(--color-label-secondary); margin-top:2px;">상위 3% 위험 수준 — 즉시 조사 권고</div>
+        </div>
+      </div>
+
+      <!-- 4. 데이터 근거 테이블 -->
+      <div class="section-card anim-3">
+        <div class="section-title">
+          <div class="section-icon icon-blue">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18M10 3v18M14 3v18M3 3h18v18H3z"/>
+            </svg>
+          </div>
+          계약 데이터 근거
+          <span style="margin-left:auto; font-size:12px; font-weight:400; color:var(--color-label-secondary);">출처: 나라장터 공개 데이터</span>
+        </div>
+
+        <div style="overflow-x:auto; margin: 0 -4px;">
+          <table class="evidence-table">
+            <thead>
+              <tr>
+                <th>계약번호</th>
+                <th>계약일</th>
+                <th>계약금액</th>
+                <th>업체명</th>
+                <th>계약방식</th>
+                <th>사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-001847</td>
+                <td>2024.01.15</td>
+                <td class="amount-flag">18억 4천만원</td>
+                <td>○○건설(주)</td>
+                <td><span class="method-badge method-suui">수의계약</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">긴급 시공</td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-002134</td>
+                <td>2024.02.07</td>
+                <td class="amount-flag">12억 9천만원</td>
+                <td>○○건설(주)</td>
+                <td><span class="method-badge method-suui">수의계약</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">전문기술</td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-003022</td>
+                <td>2024.03.20</td>
+                <td class="amount-flag">21억 2천만원</td>
+                <td>○○건설(주)</td>
+                <td><span class="method-badge method-suui">수의계약</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">긴급 시공</td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-004511</td>
+                <td>2024.04.09</td>
+                <td style="font-weight:600; color:#34C759;">4억 1천만원</td>
+                <td>△△종합건설</td>
+                <td><span class="method-badge method-general">일반입찰</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">경쟁입찰</td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-005879</td>
+                <td>2024.05.14</td>
+                <td class="amount-flag">19억 7천만원</td>
+                <td>○○건설(주)</td>
+                <td><span class="method-badge method-suui">수의계약</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">하자보수</td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-007340</td>
+                <td>2024.07.01</td>
+                <td class="amount-flag">33억 5천만원</td>
+                <td>○○건설(주)</td>
+                <td><span class="method-badge method-suui">수의계약</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">긴급 시공</td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-008992</td>
+                <td>2024.08.22</td>
+                <td class="amount-flag">27억 6천만원</td>
+                <td>○○건설(주)</td>
+                <td><span class="method-badge method-suui">수의계약</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">긴급 시공</td>
+              </tr>
+              <tr>
+                <td style="font-family:monospace; font-size:11px; color:var(--color-label-secondary);">2024-조달-010185</td>
+                <td>2024.09.04</td>
+                <td class="amount-flag">24억 4천만원</td>
+                <td>○○건설(주)</td>
+                <td><span class="method-badge method-suui">수의계약</span></td>
+                <td style="font-size:12px; color:var(--color-label-secondary);">긴급 시공</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:10px; font-size:12px; color:var(--color-label-secondary); display:flex; align-items:center; gap:6px;">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          전체 22건 중 대표 8건 표시. 계약번호 클릭 시 나라장터 원본 데이터 연결됩니다.
+        </div>
+      </div>
+
+      <!-- 5. 계약 타임라인 -->
+      <div class="section-card anim-4">
+        <div class="section-title">
+          <div class="section-icon icon-orange">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          계약 이력 타임라인
+          <span style="margin-left:auto; font-size:12px; font-weight:400; color:var(--color-label-secondary);">2024년 1월 → 12월</span>
+        </div>
+
+        <div class="timeline-wrap">
+          <div class="timeline-track">
+            <!-- Axis -->
+            <div class="timeline-axis"></div>
+
+            <!-- Month labels -->
+            <span class="timeline-label" style="left:4.16%;">1월</span>
+            <span class="timeline-label" style="left:12.5%;">2월</span>
+            <span class="timeline-label" style="left:20.8%;">3월</span>
+            <span class="timeline-label" style="left:29.2%;">4월</span>
+            <span class="timeline-label" style="left:37.5%;">5월</span>
+            <span class="timeline-label" style="left:45.8%;">6월</span>
+            <span class="timeline-label" style="left:54.2%;">7월</span>
+            <span class="timeline-label" style="left:62.5%;">8월</span>
+            <span class="timeline-label" style="left:70.8%;">9월</span>
+            <span class="timeline-label" style="left:79.2%;">10월</span>
+            <span class="timeline-label" style="left:87.5%;">11월</span>
+            <span class="timeline-label" style="left:95.8%;">12월</span>
+
+            <!-- Suui contract bars (red) -->
+            <div class="timeline-bar timeline-bar-suui" style="left:3%; width:2.5%;" title="18.4억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:10.5%; width:2.5%;" title="12.9억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:19%; width:2.5%;" title="21.2억 수의계약"></div>
+            <!-- general contract bar (green) -->
+            <div class="timeline-bar timeline-bar-general" style="left:27.5%; width:2%;" title="4.1억 일반입찰"></div>
+            <!-- suui continues -->
+            <div class="timeline-bar timeline-bar-suui" style="left:36%; width:2.5%;" title="19.7억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:43%; width:2%;" title="8.3억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:52.5%; width:3.5%;" title="33.5억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:61%; width:3%;" title="27.6억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:68.5%; width:2.5%;" title="24.4억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:75%; width:2%;" title="11.2억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:78%; width:2.5%;" title="16.8억 수의계약"></div>
+            <!-- general -->
+            <div class="timeline-bar timeline-bar-general" style="left:84%; width:1.8%;" title="3.7억 일반입찰"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:87%; width:2.5%;" title="31.4억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:92%; width:2.5%;" title="22.1억 수의계약"></div>
+            <div class="timeline-bar timeline-bar-suui" style="left:95.5%; width:2.5%;" title="19.9억 수의계약"></div>
+
+            <!-- Top amount labels for notable ones -->
+            <span class="timeline-top-label" style="left:52.5%; color:#FF3B30;">33.5억</span>
+          </div>
+        </div>
+
+        <div class="timeline-legend">
+          <div>
+            <span class="legend-dot" style="background:rgba(255,59,48,0.75);"></span>
+            수의계약 (22건 · 348억원)
+          </div>
+          <div>
+            <span class="legend-dot" style="background:rgba(52,199,89,0.65);"></span>
+            일반입찰 (2건 · 7.8억원)
+          </div>
+          <div style="margin-left:auto; color:var(--color-label-tertiary);">
+            막대 너비 = 계약 기간
+          </div>
+        </div>
+
+        <!-- Cluster alert -->
+        <div style="margin-top:14px; padding:10px 14px; background:rgba(255,149,0,0.07); border:0.5px solid rgba(255,149,0,0.25); border-radius:10px; font-size:13px; color:rgba(60,60,67,0.8); line-height:1.5;">
+          <span style="font-weight:700; color:#FF9500;">⚠ 집중 발주 감지</span> — 2024년 7~9월(37일) 사이 수의계약 5건, 총 115억원이 집중 발주되었습니다.
+          동 기간 조달청 계약 담당자 인사이동 직전 3주와 겹칩니다.
+        </div>
+      </div>
+
+      <!-- 6. 관련 감사 패턴 -->
+      <div class="section-card anim-5">
+        <div class="section-title">
+          <div class="section-icon icon-blue">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+            </svg>
+          </div>
+          같은 업체의 연관 감사 항목
+        </div>
+
+        <a href="#" class="related-card">
+          <div class="related-card-icon" style="background:rgba(255,59,48,0.1);">🔴</div>
+          <div class="related-card-body">
+            <div class="related-card-title">○○건설(주) — 계약 분할 의심 (19건, 1.9억원 이하 반복)</div>
+            <div class="related-card-meta">contract_splitting &nbsp;·&nbsp; HIGH &nbsp;·&nbsp; 2024.Q2–Q3</div>
+          </div>
+          <span class="related-card-amount">37.8억</span>
+        </a>
+
+        <a href="#" class="related-card">
+          <div class="related-card-icon" style="background:rgba(255,149,0,0.1);">🟠</div>
+          <div class="related-card-body">
+            <div class="related-card-title">조달청 — 특정 업체 수의 비율 80% 초과 (6개 관할 사업소)</div>
+            <div class="related-card-meta">vendor_concentration &nbsp;·&nbsp; HIGH &nbsp;·&nbsp; 2024 전체</div>
+          </div>
+          <span class="related-card-amount">892억</span>
+        </a>
+
+        <a href="#" class="related-card">
+          <div class="related-card-icon" style="background:rgba(88,86,214,0.1);">🟣</div>
+          <div class="related-card-body">
+            <div class="related-card-title">○○건설(주) 대표 — 조달청 전 발주담당 재직 이력</div>
+            <div class="related-card-meta">revolving_door &nbsp;·&nbsp; MEDIUM &nbsp;·&nbsp; 전관예우 리스크</div>
+          </div>
+          <span class="related-card-amount" style="color:var(--apple-purple);">확인중</span>
+        </a>
+      </div>
+
+    </div><!-- /main-col -->
+
+
+    <!-- ════════════════════════════
+         RIGHT: METADATA RAIL
+    ════════════════════════════ -->
+    <aside class="rail-col anim-rail">
+
+      <!-- Rail Card 1: 핵심 정보 -->
+      <div class="glass-card">
+        <div class="rail-section-title">핵심 정보</div>
+
+        <div class="rail-row">
+          <span class="rail-key">기관</span>
+          <span class="rail-value blue">조달청</span>
+        </div>
+        <div class="rail-row">
+          <span class="rail-key">업체</span>
+          <span class="rail-value">○○건설(주)</span>
+        </div>
+        <div class="rail-row">
+          <span class="rail-key">사업자번호</span>
+          <span class="rail-value" style="font-family:monospace; font-size:13px;">123-45-67890</span>
+        </div>
+        <div class="rail-row">
+          <span class="rail-key">계약방식</span>
+          <span class="rail-value red">수의계약 91.7%</span>
+        </div>
+        <div class="rail-row">
+          <span class="rail-key">감사 기간</span>
+          <span class="rail-value">2024.01 ~ 12</span>
+        </div>
+        <div class="rail-row">
+          <span class="rail-key">총 계약금액</span>
+          <span class="rail-value red">348억원</span>
+        </div>
+        <div class="rail-row">
+          <span class="rail-key">계약 건수</span>
+          <span class="rail-value">22 / 24건</span>
+        </div>
+        <div class="rail-row" style="border-bottom:none;">
+          <span class="rail-key">심각도</span>
+          <span class="severity-chip severity-critical" style="font-size:11px; padding:2px 10px;">CRITICAL</span>
+        </div>
+      </div>
+
+      <!-- Rail Card 2: 감사 결론 -->
+      <div class="glass-card">
+        <div class="rail-section-title">감사 결론</div>
+
+        <div class="waste-block">
+          <div class="waste-label">추정 낭비액 (경쟁가 대비)</div>
+          <div class="waste-value">62억 ~ 80억원</div>
+          <div class="waste-sub">경쟁입찰 기준가 대비 18~23% 초과 추정</div>
+        </div>
+
+        <div class="verdict-block verdict-critical">
+          <div class="verdict-label" style="color:#FF3B30;">
+            🚨 즉각 조사 요구
+          </div>
+          <div class="verdict-sub">
+            수의계약 집중 패턴 + 가격 적정성 미확인 +
+            긴급성 남용 의심 — 감사원 또는 검찰 의뢰 검토
+          </div>
+        </div>
+
+        <div class="priority-bar">
+          <div class="priority-dots">
+            <div class="priority-dot filled"></div>
+            <div class="priority-dot filled"></div>
+            <div class="priority-dot filled"></div>
+            <div class="priority-dot filled"></div>
+            <div class="priority-dot filled"></div>
+          </div>
+          조사 우선순위: 최상
+        </div>
+      </div>
+
+      <!-- Rail Card 3: AI 신뢰도 -->
+      <div class="glass-card">
+        <div class="rail-section-title">AI 분석 신뢰도</div>
+
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+          <div style="position:relative; width:60px; height:60px; flex-shrink:0;">
+            <svg width="60" height="60" viewBox="0 0 60 60">
+              <circle cx="30" cy="30" r="24" fill="none" stroke="var(--apple-gray-5)" stroke-width="6"/>
+              <circle cx="30" cy="30" r="24" fill="none" stroke="#FF3B30" stroke-width="6"
+                stroke-dasharray="150.8" stroke-dashoffset="22.6"
+                stroke-linecap="round"
+                transform="rotate(-90 30 30)"/>
+            </svg>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#FF3B30;">85%</div>
+          </div>
+          <div>
+            <div style="font-size:14px; font-weight:700; color:var(--color-label); margin-bottom:2px;">높음</div>
+            <div style="font-size:12px; color:var(--color-label-secondary); line-height:1.5;">데이터 기반 패턴 감지.<br>현장 검증 필요.</div>
+          </div>
+        </div>
+
+        <hr class="sep" style="margin:0 0 12px;">
+        <div style="font-size:12px; color:var(--color-label-secondary); line-height:1.6;">
+          <div style="display:flex; gap:6px; margin-bottom:4px;">
+            <span style="color:#34C759;">✓</span> 나라장터 공개 계약 데이터 (22건 전수)
+          </div>
+          <div style="display:flex; gap:6px; margin-bottom:4px;">
+            <span style="color:#34C759;">✓</span> 국가계약법 조문 대조 분석
+          </div>
+          <div style="display:flex; gap:6px; margin-bottom:4px;">
+            <span style="color:#FF9500;">△</span> 내부 결재서류 미확인
+          </div>
+          <div style="display:flex; gap:6px;">
+            <span style="color:#FF9500;">△</span> 계약심사위 회의록 미확인
+          </div>
+        </div>
+      </div>
+
+      <!-- Rail Card 4: 관련 감사 링크 -->
+      <div class="glass-card">
+        <div class="rail-section-title">관련 감사 항목</div>
+
+        <a href="#" class="rail-related-link">
+          <div class="rail-related-dot" style="background:#FF3B30;"></div>
+          <div class="rail-related-body">
+            <div class="rail-related-title">계약 분할 의심</div>
+            <div class="rail-related-meta">○○건설 · 37.8억원 · HIGH</div>
+          </div>
+          <svg width="14" height="14" fill="none" stroke="var(--apple-gray-3)" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="#" class="rail-related-link">
+          <div class="rail-related-dot" style="background:#FF9500;"></div>
+          <div class="rail-related-body">
+            <div class="rail-related-title">업체 집중도 초과</div>
+            <div class="rail-related-meta">조달청 전체 · 892억원 · HIGH</div>
+          </div>
+          <svg width="14" height="14" fill="none" stroke="var(--apple-gray-3)" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="#" class="rail-related-link">
+          <div class="rail-related-dot" style="background:var(--apple-purple);"></div>
+          <div class="rail-related-body">
+            <div class="rail-related-title">전관예우 리스크</div>
+            <div class="rail-related-meta">대표이사 전직 이력 · 확인중</div>
+          </div>
+          <svg width="14" height="14" fill="none" stroke="var(--apple-gray-3)" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <div style="margin-top:14px; padding:10px 12px; background:var(--apple-gray-6); border-radius:10px; font-size:12px; color:var(--color-label-secondary);">
+          이 업체 관련 감사 항목 총 <strong style="color:var(--color-label);">3건</strong> · 위험 점수 합계 <strong style="color:#FF3B30;">94점</strong>
+        </div>
+      </div>
+
+      <!-- Rail Card 5: 액션 -->
+      <div class="solid-card" style="padding:16px;">
+        <button style="
+          width:100%; padding:12px; border-radius:12px;
+          background:var(--apple-blue); color:white;
+          font-size:15px; font-weight:600; font-family:var(--font);
+          border:none; cursor:pointer; margin-bottom:8px;
+          display:flex; align-items:center; justify-content:center; gap:6px;
+          box-shadow: 0 2px 8px rgba(0,122,255,0.3);
+          transition: background 0.15s, transform 0.15s;
+        " onmouseover="this.style.background='#0071EB'" onmouseout="this.style.background='var(--apple-blue)'">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+          감사원에 신고하기
+        </button>
+        <button style="
+          width:100%; padding:11px; border-radius:12px;
+          background:var(--apple-gray-6); color:var(--color-label);
+          font-size:14px; font-weight:500; font-family:var(--font);
+          border:none; cursor:pointer;
+          display:flex; align-items:center; justify-content:center; gap:6px;
+          transition: background 0.15s;
+        " onmouseover="this.style.background='var(--apple-gray-5)'" onmouseout="this.style.background='var(--apple-gray-6)'">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          보고서 다운로드 (PDF)
+        </button>
+        <div style="margin-top:10px; font-size:11px; color:var(--color-label-tertiary); text-align:center; line-height:1.5;">
+          이 분석은 AI 기반 탐지이며 법적 판단이 아닙니다.<br>
+          원본 데이터 출처: 나라장터 공개 API
+        </div>
+      </div>
+
+    </aside><!-- /rail-col -->
+
+  </div><!-- /detail-layout -->
+
+</div><!-- /page-container -->
+
+</body>
+</html>

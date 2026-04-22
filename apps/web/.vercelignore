@@ -2,9 +2,17 @@ data/g2b-winning-bids-historical.json
 data/g2b-bid-rankings.json
 data/g2b-contract-process.json
 data/g2b-contract-changes.json
+data/g2b-contract-details.json
+data/g2b-actual-contracts.json
+data/g2b-winning-bids.json
+data/g2b-contracts.json
+data/g2b-prices.json
 data/dapa-bids.json
 data/dapa-contracts.json
 data/lh-bids.json
 data/lh-contracts.json
 data/g2b-sanctions.json
 data/g2b-shopping-mall.json
+data/bills.json
+# Legislator photos — 308MB, served locally; not needed in Vercel deploy
+public/legislators/

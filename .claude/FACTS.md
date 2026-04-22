@@ -1,5 +1,5 @@
 # Project Facts
-<!-- MANAGED: gukjeong | updated: 2026-04-09 | layer: episodic -->
+<!-- MANAGED: gukjeong | updated: 2026-04-20 | layer: episodic -->
 <!-- Injected at session start as authoritative ground truth. -->
 <!-- Edit freely — hooks auto-maintain this file. -->
 
@@ -25,6 +25,7 @@
 - Key file: `scripts/knowledge.py` [2026-03-31 @Tom Kwon]
 - Key file: `scripts/update-knowledge.py` [2026-03-31 @Tom Kwon]
 - Key file: `apps/web/tailwind.config.ts` [2026-04-09]
+- Key file: `scripts/enrich-audit.py` [2026-04-20]
 
 ## → PATTERNS (confirmed working sequences)
 

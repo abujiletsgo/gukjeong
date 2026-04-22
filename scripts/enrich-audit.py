@@ -34,10 +34,20 @@ AUDIT_PATH = ROOT / 'apps' / 'web' / 'public' / 'data' / 'audit-results.json'
 
 # ── Config ──
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
-MODEL = 'claude-haiku-4-5-20251001'   # Haiku: fast + cheap for batch enrichment
-MAX_WORKERS = 5                        # parallel API calls
+MODEL_STRONG = 'claude-sonnet-4-6'         # Sonnet for CRITICAL/HIGH findings
+MODEL_FAST = 'claude-haiku-4-5-20251001'   # Haiku for MEDIUM/LOW (fast + cheap)
+MAX_WORKERS = 5                             # parallel API calls
 MIN_SCORE_DEFAULT = 65
 MAX_FINDINGS_DEFAULT = 250
+
+# Prompt caching: shared system prompt injected once per batch via cache_control
+SYSTEM_PROMPT = """당신은 대한민국 정부 조달 전문 감사관입니다.
+국가계약법, 지방계약법, 공정거래법, 부정청탁금지법에 정통하며 감사원 실무 경력 15년 이상의 전문가입니다.
+아래 감사 발견 사항을 분석할 때는 다음 원칙을 따르세요:
+1. 무죄 추정 원칙: 구조적으로 설명 가능한 패턴(혁신제품, 연구기관 위탁, 방위사업, 재해복구)은 낮게 평가
+2. 증거 중심 분석: 데이터에 나타난 수치와 패턴에 근거하여 판단
+3. 시민 가독성: 전문 용어를 쉬운 말로 설명
+4. 실무 지향: 감사관이나 기자가 실제로 취할 수 있는 조사 방향 제시"""
 
 PATTERN_LABELS_KR = {
     'ghost_company': '유령회사 의심',
@@ -61,6 +71,8 @@ PATTERN_LABELS_KR = {
     'price_clustering': '가격 담합',
     'network_collusion': '네트워크 담합',
     'vendor_rotation': '업체 순번제',
+    'threshold_avoidance': '입찰기준 직하 반복',
+    'insider_bid_precision': '낙찰률 정밀도 이상',
     'ai_anomaly': 'AI 이상탐지',
 }
 
@@ -105,17 +117,22 @@ def build_finding_context(f: dict) -> str:
 
 
 def enrich_finding(client: anthropic.Anthropic, f: dict) -> dict:
-    """Call Claude to generate real AI analysis for one finding."""
+    """Call Claude to generate real AI analysis for one finding.
+    Uses Sonnet for CRITICAL/HIGH, Haiku for MEDIUM/LOW.
+    Injects shared system prompt with cache_control for token savings.
+    """
     context = build_finding_context(f)
+    severity = f.get('severity', 'MEDIUM')
+    model = MODEL_STRONG if severity in ('CRITICAL', 'HIGH') else MODEL_FAST
 
-    prompt = f"""당신은 한국 정부 조달 전문 감사관입니다. 아래 감사 발견에 대해 분석하세요.
+    user_prompt = f"""아래 감사 발견에 대해 분석하세요.
 
 {context}
 
 다음 JSON 형식으로만 응답하세요 (다른 텍스트 없이):
 {{
   "ai_headline": "기자가 쓸 수 있는 강렬하고 구체적인 한 줄 헤드라인 (40자 이내, 기관명+핵심 의혹 포함)",
-  "ai_narrative": "시민 눈높이에서 쓴 2-3단락 조사 브리핑. 무슨 일이 일어났는지, 왜 의심스러운지, 실제 세금 낭비 가능성을 구체적으로 설명. 총 250자 이내.",
+  "ai_narrative": "시민 눈높이에서 쓴 2-3단락 조사 브리핑. 무슨 일이 일어났는지, 왜 의심스러운지, 실제 세금 낭비 가능성을 구체적으로 설명. 총 300자 이내.",
   "ai_questions": ["감사관이나 기자가 물어야 할 구체적 질문 1", "질문 2", "질문 3"],
   "ai_risk_assessment": "LOW|MEDIUM|HIGH|CRITICAL 중 하나와 한 줄 이유",
   "ai_comparable": "유사한 실제 한국 조달 비리 사례 참조 (있으면). 없으면 null."
@@ -123,12 +140,16 @@ def enrich_finding(client: anthropic.Anthropic, f: dict) -> dict:
 
     try:
         msg = client.messages.create(
-            model=MODEL,
-            max_tokens=600,
-            messages=[{'role': 'user', 'content': prompt}],
+            model=model,
+            max_tokens=700,
+            system=[{
+                'type': 'text',
+                'text': SYSTEM_PROMPT,
+                'cache_control': {'type': 'ephemeral'},  # cache shared context across batch
+            }],
+            messages=[{'role': 'user', 'content': user_prompt}],
         )
         raw = msg.content[0].text.strip()
-        # Extract JSON if wrapped in ```
         if '```' in raw:
             raw = raw.split('```')[1]
             if raw.startswith('json'):
@@ -140,7 +161,7 @@ def enrich_finding(client: anthropic.Anthropic, f: dict) -> dict:
             'ai_questions': result.get('ai_questions', []),
             'ai_risk_assessment': result.get('ai_risk_assessment', ''),
             'ai_comparable': result.get('ai_comparable'),
-            'ai_model': MODEL,
+            'ai_model': model,
             'ai_enriched_at': datetime.utcnow().isoformat() + 'Z',
         }
     except Exception as e:
@@ -433,6 +454,92 @@ def main():
                 print(f'  ✅ {len(new_anomalies)}건 AI 이상탐지 결과 추가됨')
         else:
             print('  ⚠️  계약 데이터 파일 없음 — AI 이상탐지 건너뜀')
+
+    # ── 4. 업체 네트워크 분석 (vendor network synthesis) ────────────────────
+    # Find vendors appearing across many institutions' findings — national rings
+    if not args.anomaly_only and not args.news_only:
+        print('\n🕸️  업체 네트워크 분석...')
+        from collections import Counter as _NetCounter
+        vendor_to_insts: dict[str, set] = {}
+        vendor_to_findings: dict[str, list] = {}
+        for f in findings:
+            # Extract primary vendor from finding
+            detail = f.get('detail', {})
+            vendor = (detail.get('낙찰업체') or detail.get('업체') or
+                      detail.get('낙찰자') or '')
+            if not vendor:
+                for c in f.get('evidence_contracts', []):
+                    vendor = c.get('vendor', '')
+                    if vendor:
+                        break
+            if not vendor or len(vendor) < 2:
+                continue
+            inst = f.get('target_institution', '')
+            if inst:
+                vendor_to_insts.setdefault(vendor, set()).add(inst)
+                vendor_to_findings.setdefault(vendor, []).append(f)
+
+        # Flag vendors appearing in findings across 3+ distinct institutions
+        cross_inst_vendors = [
+            (v, insts, vendor_to_findings[v])
+            for v, insts in vendor_to_insts.items()
+            if len(insts) >= 3
+        ]
+        cross_inst_vendors.sort(key=lambda x: -len(x[1]))
+
+        if cross_inst_vendors:
+            # Ask Claude to synthesize the top vendors as a network report
+            top_vendors_text = '\n'.join(
+                f'- {v}: {len(insts)}개 기관 ({", ".join(list(insts)[:4])}{"..." if len(insts) > 4 else ""}), '
+                f'{len(flist)}건 의심 발견, 패턴: {", ".join(set(f["pattern_type"] for f in flist[:8]))}'
+                for v, insts, flist in cross_inst_vendors[:20]
+            )
+            network_prompt = f"""다음은 여러 정부기관에서 반복 등장하는 업체 목록입니다.
+3개 이상 기관에서 조달 비리 의심 패턴에 연루된 업체들입니다.
+
+{top_vendors_text}
+
+이 데이터를 바탕으로 전국적 조달 비리 링 또는 카르텔 가능성을 분석하세요.
+JSON 형식으로만 응답:
+{{
+  "network_summary": "전체 패턴에 대한 2-3문장 요약",
+  "top_suspects": [
+    {{"vendor": "업체명", "risk": "HIGH|CRITICAL", "reason": "왜 위험한지 한 줄", "institutions": ["기관1", "기관2"]}}
+  ],
+  "investigation_recommendation": "수사기관이나 감사원에 제출할 핵심 조사 방향 (3개)"
+}}"""
+            try:
+                net_msg = client.messages.create(
+                    model=MODEL_STRONG,
+                    max_tokens=800,
+                    system=[{'type': 'text', 'text': SYSTEM_PROMPT, 'cache_control': {'type': 'ephemeral'}}],
+                    messages=[{'role': 'user', 'content': network_prompt}],
+                )
+                net_raw = net_msg.content[0].text.strip()
+                if '```' in net_raw:
+                    net_raw = net_raw.split('```')[1]
+                    if net_raw.startswith('json'):
+                        net_raw = net_raw[4:]
+                net_result = json.loads(net_raw.strip())
+                audit_data['vendor_network_analysis'] = {
+                    'generated_at': datetime.utcnow().isoformat() + 'Z',
+                    'cross_institution_vendors': len(cross_inst_vendors),
+                    'summary': net_result.get('network_summary', ''),
+                    'top_suspects': net_result.get('top_suspects', []),
+                    'investigation_recommendation': net_result.get('investigation_recommendation', ''),
+                    'vendor_list': [
+                        {'vendor': v, 'institution_count': len(insts),
+                         'finding_count': len(flist),
+                         'institutions': sorted(insts)}
+                        for v, insts, flist in cross_inst_vendors[:50]
+                    ],
+                }
+                print(f'  ✅ {len(cross_inst_vendors)}개 다기관 업체 분석 완료')
+                print(f'  네트워크 요약: {net_result.get("network_summary", "")[:100]}')
+            except Exception as e:
+                print(f'  ⚠️  네트워크 분석 실패: {e}')
+        else:
+            print('  다기관 의심 업체 없음')
 
     # ── Save ─────────────────────────────────────────────────────────────────
     audit_data['findings'] = findings

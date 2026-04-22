@@ -198,6 +198,7 @@ export interface AuditFlag {
   target_type?: string;
   target_id?: string;
   target_institution?: string;
+  summary?: string;
   detail?: Record<string, unknown>;
   evidence?: Record<string, unknown>;
   ai_analysis?: string;
@@ -225,6 +226,16 @@ export interface AuditFlag {
   contracts?: AuditContract[];
   // 타임라인
   timeline?: AuditTimelineItem[];
+  // AI 강화 필드 (enrich-audit.py 실행 후)
+  ai_headline?: string;
+  ai_narrative?: string;
+  ai_questions?: string[];
+  ai_risk_assessment?: string;
+  ai_comparable?: string | null;
+  ai_model?: string;
+  ai_enriched_at?: string;
+  // 뉴스 연관
+  related_news?: Array<{ title: string; link: string; outlet: string }>;
 }
 
 export interface SimilarCase {

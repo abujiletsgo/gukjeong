@@ -2,81 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-26 (01:47 UTC) · @Tom Kwon
-**Commit:** feat: Phase 1 MVP — Presidents timeline, Budget viz, AI Audit dashboard (6dc068c) by Tom Kwon
-**Changed:**
-  apps/api/app/routers/audit.py                      |  84 +++++--
-  apps/api/app/routers/budget.py                     |  68 +++++-
-  apps/api/app/routers/presidents.py                 |  81 ++++++-
-  apps/web/app/(home)/page.tsx                       | 212 ++++++++++--------
-  apps/web/app/audit/AuditPageClient.tsx             | 246 +++++++++++++++++++++
-  apps/web/app/audit/[id]/AuditDetailClient.tsx      | 187 ++++++++++++++++
-  apps/web/app/audit/[id]/page.tsx                   |  50 +++--
-  apps/web/app/audit/page.tsx                        |  43 ++--
-  apps/web/app/budget/BudgetPageClient.tsx           | 235 ++++++++++++++++++++
-  apps/web/app/budget/page.tsx                       |  67 +++---
-  ... and 21 more files
-
-## 2026-03-26 (01:49 UTC) · @Tom Kwon
-**Commit:** fix: Full team validation — 61 files fixed across 5 parallel agents (3602160) by Tom Kwon
-**Changed:**
-  .claude/MEMORY.md                                  |   18 +
-  .gitignore                                         |   11 +
-  apps/api/app/config.py                             |    7 +-
-  apps/api/app/dependencies.py                       |    7 +-
-  apps/api/app/models/__init__.py                    |   34 +
-  apps/api/app/models/audit_flag.py                  |    6 +-
-  apps/api/app/models/legislator.py                  |    2 +-
-  apps/api/app/routers/__init__.py                   |    7 +-
-  apps/api/app/routers/auth.py                       |   28 +-
-  apps/api/app/routers/comments.py                   |   10 +-
-  ... and 52 more files
-
-## 2026-03-26 (05:53 UTC) · @Tom Kwon
-**Commit:** feat: Deep presidential accountability — pledges, agenda, report cards, infographics (96069bd) by Tom Kwon
-**Changed:**
-  .claude/MEMORY.md                                  |   15 +
-  apps/api/app/models/__init__.py                    |    6 +-
-  apps/api/app/models/president.py                   |   83 +-
-  apps/api/app/routers/presidents.py                 |  515 +++++++--
-  apps/api/app/schemas/president.py                  |  187 +++-
-  apps/web/.claude/MEMORY.md                         |   18 +
-  .../app/presidents/[id]/PresidentDetailClient.tsx  |  614 ++++++++---
-  apps/web/app/presidents/[id]/page.tsx              |   31 +-
-  apps/web/components/presidents/AgendaProgress.tsx  |  164 +++
-  apps/web/components/presidents/AgendaTreemap.tsx   |  218 ++++
-  ... and 25 more files
-
-## 2026-03-26 (06:39 UTC) · @Tom Kwon
-**Commit:** feat: Phase 2 — Bills tracker, News frames, President comparisons, portraits (802f1df) by Tom Kwon
-**Changed:**
-  apps/api/app/routers/bills.py                      | 251 ++++++++--
-  apps/api/app/routers/news.py                       | 259 ++++++++++-
-  apps/api/app/schemas/bill.py                       |  82 +++-
-  apps/api/app/schemas/news.py                       | 125 ++++-
-  apps/web/app/(home)/page.tsx                       | 129 +++++-
-  apps/web/app/audit/AuditPageClient.tsx             |  38 +-
-  apps/web/app/bills/BillsPageClient.tsx             | 416 +++++++++++++++++
-  apps/web/app/bills/[id]/BillDetailClient.tsx       | 424 +++++++++++++++++
-  apps/web/app/bills/[id]/page.tsx                   |  44 +-
-  apps/web/app/bills/page.tsx                        |  13 +-
-  ... and 25 more files
-
-## 2026-03-26 (08:08 UTC) · @Tom Kwon
-**Commit:** feat: In-depth citizen explanations for all president data + expandable UI (de450b4) by Tom Kwon
-**Changed:**
-  .claude/MEMORY.md                                  |  30 +
-  apps/web/.claude/MEMORY.md                         |  30 +
-  apps/web/.gitignore                                |   1 +
-  .../app/presidents/[id]/PresidentDetailClient.tsx  |   6 +
-  apps/web/components/presidents/AgendaProgress.tsx  |  84 ++-
-  apps/web/components/presidents/PledgeCard.tsx      |  87 ++-
-  apps/web/components/timeline/PolicyTimeline.tsx    | 150 ++++-
-  apps/web/lib/data.ts                               | 625 ++++++++++++++++-----
-  apps/web/lib/types.ts                              |  18 +
-  apps/web/tsconfig.tsbuildinfo                      |   2 +-
-  ... and 1 more files
-
 ## 2026-03-28 (13:44 UTC) · @Tom Kwon
 **Commit:** feat: Voting participation data wired into legislator cards (9208242) by Tom Kwon
 **Changed:**
@@ -251,3 +176,75 @@
 **Changed:**
   apps/web/styles/globals.css | 1 +
   1 file changed, 1 insertion(+)
+
+## 2026-04-14 (14:40 UTC) · @Tom Kwon
+**Commit:** chore: gitignore large data files (>50MB) that stay local-only (564e48d) by Tom Kwon
+**Changed:**
+  .gitignore | 6 ++++++
+  1 file changed, 6 insertions(+)
+
+## 2026-04-21 (18:40 UTC) · @Tom Kwon
+**Commit:** feat: add missing pattern labels + layout system components (e27c418) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx         | 492 ++++++++++++++-----------
+  apps/web/app/audit/[id]/AuditDetailClient.tsx  | 116 +++++-
+  apps/web/components/audit/PatternBadge.tsx     |   3 +
+  apps/web/components/common/FilterSidebar.tsx   |  38 ++
+  apps/web/components/layouts/DetailLayout.tsx   |  21 ++
+  apps/web/components/layouts/ExplorerLayout.tsx |  43 +++
+  apps/web/components/layouts/MagazineLayout.tsx |  23 ++
+  apps/web/styles/globals.css                    |  28 ++
+  8 files changed, 552 insertions(+), 212 deletions(-)
+
+## 2026-04-21 (19:00 UTC) · @Tom Kwon
+**Commit:** fix: stable content-based finding IDs to prevent URL drift on regeneration (b9e16a4) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 10980 +++++++++++++++---------------
+  scripts/generate-audit.py               |    44 +-
+  2 files changed, 5530 insertions(+), 5494 deletions(-)
+
+## 2026-04-21 (19:14 UTC) · @Tom Kwon
+**Commit:** feat: restore legislator photos + add comprehensive 6-category rankings tab (5275d3f) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 268 +++++++++++++++++++--
+  1 file changed, 252 insertions(+), 16 deletions(-)
+
+## 2026-04-22 (16:24 UTC) · @Tom Kwon
+**Commit:** feat: news page — topic cluster view with multi-perspective comparison (8028fe5) by Tom Kwon
+**Changed:**
+  apps/web/app/news/NewsPageClient.tsx | 601 ++++++++++++-----------------------
+  1 file changed, 202 insertions(+), 399 deletions(-)
+
+## 2026-04-22 (16:59 UTC) · @Tom Kwon
+**Commit:** fix: dramatically reduce false positives in audit system (9d0e950) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 351316 +++++++++--------------------
+  scripts/generate-audit.py               |    538 +-
+  2 files changed, 101381 insertions(+), 250473 deletions(-)
+
+## 2026-04-22 (17:47 UTC) · @Tom Kwon
+**Commit:** fix: recalibrate audit thresholds — don't over-suppress real issues (0863369) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 38460 +++++++++++++++++++++++-------
+  scripts/generate-audit.py               |    14 +-
+  2 files changed, 29702 insertions(+), 8772 deletions(-)
+
+## 2026-04-22 (17:51 UTC) · @Tom Kwon
+**Commit:** feat: add 정치자금 지출 tab to ranking page (d7d9cb2) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/ranking/page.tsx          | 55 +++++++++++-----
+  .../components/legislators/RankingLeaderboard.tsx  | 76 ++++++++++++++++------
+  2 files changed, 95 insertions(+), 36 deletions(-)
+
+## 2026-04-22 (17:58 UTC) · @Tom Kwon
+**Commit:** fix: add 의원 랭킹 to global nav + demo mode link (57b37f4) by Tom Kwon
+**Changed:**
+  apps/web/app/layout.tsx                            | 1 +
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 8 ++++++++
+  2 files changed, 9 insertions(+)
+
+## 2026-04-22 (18:03 UTC) · @Tom Kwon
+**Commit:** feat: default legislators page to ranking view (0bae1df) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/LegislatorsPageClient.tsx | 170 ++++++++++++++++++++-
+  1 file changed, 162 insertions(+), 8 deletions(-)

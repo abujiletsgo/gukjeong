@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>AI 감사 탐색기 — 국정투명</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<style>
+/* ─── Reset & Base ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --apple-blue:    #007AFF;
+  --apple-red:     #FF3B30;
+  --apple-green:   #34C759;
+  --apple-orange:  #FF9500;
+  --apple-yellow:  #FFCC00;
+  --apple-purple:  #AF52DE;
+  --apple-indigo:  #5856D6;
+  --apple-teal:    #5AC8FA;
+  --apple-gray-1:  #8E8E93;
+  --apple-gray-2:  #AEAEB2;
+  --apple-gray-3:  #C7C7CC;
+  --apple-gray-4:  #D1D1D6;
+  --apple-gray-5:  #E5E5EA;
+  --apple-gray-6:  #F2F2F7;
+
+  --color-header:           rgba(255,255,255,0.72);
+  --color-body:             #F2F2F7;
+  --color-accent:           #007AFF;
+  --color-surface:          #FFFFFF;
+  --color-label:            #000000;
+  --color-label-secondary:  rgba(60,60,67,0.6);
+  --color-label-tertiary:   rgba(60,60,67,0.3);
+  --color-separator:        rgba(60,60,67,0.12);
+
+  --sev-critical-bg:  rgba(255,59,48,0.10);
+  --sev-critical-fg:  #FF3B30;
+  --sev-high-bg:      rgba(255,149,0,0.10);
+  --sev-high-fg:      #FF9500;
+  --sev-medium-bg:    rgba(255,204,0,0.12);
+  --sev-medium-fg:    #B8860B;
+  --sev-low-bg:       rgba(52,199,89,0.10);
+  --sev-low-fg:       #34C759;
+
+  --header-h: 56px;
+  --summary-h: 64px;
+  --sidebar-w: 280px;
+}
+
+html {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+               'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-body);
+  color: var(--color-label);
+  font-size: 15px;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--apple-gray-3); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: var(--apple-gray-2); }
+
+/* ─── Sticky Header ────────────────────────────────────────────────── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--header-h);
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom: 0.5px solid var(--color-separator);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.site-header-inner {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.site-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-right: 32px;
+  text-decoration: none;
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,122,255,0.3);
+}
+.logo-mark span { color: #fff; font-weight: 700; font-size: 14px; letter-spacing: -0.5px; }
+.logo-text { font-size: 17px; font-weight: 700; color: var(--color-label); letter-spacing: -0.3px; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.nav-link {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-label-secondary);
+  padding: 6px 11px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-link:hover { background: rgba(0,0,0,0.05); color: var(--color-label); }
+.nav-link.active { color: var(--apple-blue); font-weight: 600; background: rgba(0,122,255,0.07); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.search-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--apple-gray-6);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--apple-gray-1);
+  width: 180px;
+  cursor: text;
+}
+.search-pill svg { flex-shrink: 0; }
+
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.btn-sm:active { transform: scale(0.97); }
+.btn-sm-primary {
+  background: var(--apple-blue);
+  color: #fff;
+}
+.btn-sm-primary:hover { background: #0071EB; }
+
+/* ─── Sticky Summary Bar ────────────────────────────────────────────── */
+.summary-bar {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 90;
+  height: var(--summary-h);
+  background: rgba(255,255,255,0.80);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  border-bottom: 0.5px solid var(--color-separator);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.summary-bar-inner {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.summary-total {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.summary-total-num {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-label);
+}
+.summary-total-label {
+  font-size: 13px;
+  color: var(--color-label-secondary);
+}
+
+.summary-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--color-separator);
+  flex-shrink: 0;
+}
+
+.severity-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sev-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px 4px 7px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  border: 1.5px solid transparent;
+  user-select: none;
+}
+.sev-chip:hover { opacity: 0.8; }
+.sev-chip.active { border-color: currentColor; }
+
+.sev-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-critical { background: var(--sev-critical-bg); color: var(--sev-critical-fg); }
+.chip-high     { background: var(--sev-high-bg);     color: var(--sev-high-fg); }
+.chip-medium   { background: var(--sev-medium-bg);   color: var(--sev-medium-fg); }
+.chip-low      { background: var(--sev-low-bg);      color: var(--sev-low-fg); }
+
+.dot-critical { background: var(--sev-critical-fg); }
+.dot-high     { background: var(--sev-high-fg); }
+.dot-medium   { background: var(--sev-medium-fg); }
+.dot-low      { background: var(--sev-low-fg); }
+
+.summary-amount {
+  margin-left: auto;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.summary-amount-label {
+  font-size: 12px;
+  color: var(--color-label-secondary);
+}
+.summary-amount-val {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--sev-critical-fg);
+}
+
+.filter-active-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(0,122,255,0.10);
+  color: var(--apple-blue);
+  cursor: pointer;
+}
+.filter-active-tag:hover { background: rgba(0,122,255,0.16); }
+
+/* ─── Explorer Layout ───────────────────────────────────────────────── */
+.explorer-wrap {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: 0;
+  align-items: start;
+  min-height: calc(100vh - var(--header-h) - var(--summary-h));
+}
+
+/* ─── Sidebar ───────────────────────────────────────────────────────── */
+.sidebar {
+  position: sticky;
+  top: calc(var(--header-h) + var(--summary-h) + 20px);
+  max-height: calc(100vh - var(--header-h) - var(--summary-h) - 40px);
+  overflow-y: auto;
+  padding: 20px 0 20px 0;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sidebar-section {
+  background: var(--color-surface);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-label-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 12px;
+}
+
+/* Checkboxes */
+.filter-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+.filter-check-row:hover { background: var(--apple-gray-6); padding-left: 4px; padding-right: 4px; margin: 0 -4px; }
+
+.filter-checkbox {
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid var(--apple-gray-3);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+.filter-check-row.checked .filter-checkbox {
+  border-color: var(--apple-blue);
+  background: var(--apple-blue);
+}
+.filter-check-row.checked .filter-checkbox::after {
+  content: '';
+  display: block;
+  width: 9px; height: 6px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.filter-sev-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.filter-count {
+  font-size: 12px;
+  color: var(--color-label-tertiary);
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* Pattern list */
+.pattern-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.pattern-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-size: 12.5px;
+}
+.pattern-row:hover { background: var(--apple-gray-6); }
+.pattern-row.selected { background: rgba(0,122,255,0.08); }
+
+.pattern-row-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--apple-gray-3);
+  flex-shrink: 0;
+}
+.pattern-row.selected .pattern-row-dot { background: var(--apple-blue); }
+
+.pattern-label {
+  flex: 1;
+  color: var(--color-label-secondary);
+  line-height: 1.3;
+}
+.pattern-row.selected .pattern-label { color: var(--apple-blue); font-weight: 500; }
+
+.pattern-count {
+  font-size: 11px;
+  color: var(--apple-gray-2);
+  font-variant-numeric: tabular-nums;
+}
+.pattern-row.selected .pattern-count { color: var(--apple-blue); opacity: 0.7; }
+
+/* Amount slider area */
+.amount-slider-wrap {
+  padding: 4px 0 2px;
+}
+.amount-slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--color-label-secondary);
+  margin-bottom: 8px;
+}
+.amount-slider {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, var(--apple-blue) 0%, var(--apple-blue) 60%, var(--apple-gray-4) 60%, var(--apple-gray-4) 100%);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.amount-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2px solid var(--apple-blue);
+  box-shadow: 0 2px 6px rgba(0,122,255,0.3);
+  cursor: pointer;
+}
+
+/* Dept input */
+.dept-input {
+  width: 100%;
+  background: var(--apple-gray-6);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--color-label);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.dept-input:focus {
+  background: var(--color-surface);
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+}
+.dept-input::placeholder { color: var(--apple-gray-2); }
+
+.reset-link {
+  font-size: 12px;
+  color: var(--apple-blue);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.reset-link:hover { opacity: 0.7; }
+
+/* ─── Main Content ──────────────────────────────────────────────────── */
+.main-content {
+  padding: 20px 0 40px 20px;
+  min-width: 0;
+}
+
+/* Sort bar */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.sort-label {
+  font-size: 12px;
+  color: var(--color-label-secondary);
+  font-weight: 500;
+  margin-right: 2px;
+}
+
+.sort-btn {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-label-secondary);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s;
+}
+.sort-btn:hover { background: var(--apple-gray-6); color: var(--color-label); }
+.sort-btn.active {
+  background: var(--apple-blue);
+  color: #fff;
+}
+
+.sort-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--color-separator);
+}
+
+.view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  background: var(--apple-gray-6);
+  border-radius: 8px;
+  padding: 2px;
+}
+.view-btn {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--apple-gray-1);
+  transition: background 0.12s, color 0.12s;
+}
+.view-btn.active { background: var(--color-surface); color: var(--color-label); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+.result-count {
+  font-size: 12px;
+  color: var(--color-label-secondary);
+  margin-left: 6px;
+}
+
+/* ─── Card Grid ─────────────────────────────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* ─── Finding Card ──────────────────────────────────────────────────── */
+.finding-card {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.finding-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.05);
+  transform: translateY(-2px);
+}
+
+/* Left accent bar */
+.finding-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 16px 0 0 16px;
+}
+.card-critical::before { background: var(--sev-critical-fg); }
+.card-high::before     { background: var(--sev-high-fg); }
+.card-medium::before   { background: var(--sev-medium-fg); }
+.card-low::before      { background: var(--sev-low-fg); }
+
+/* Card top row */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pattern-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-critical { background: var(--sev-critical-bg); color: var(--sev-critical-fg); }
+.badge-high     { background: var(--sev-high-bg);     color: var(--sev-high-fg); }
+.badge-medium   { background: var(--sev-medium-bg);   color: var(--sev-medium-fg); }
+.badge-low      { background: var(--sev-low-bg);      color: var(--sev-low-fg); }
+
+.sev-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+/* Card title */
+.card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  line-height: 1.38;
+  color: var(--color-label);
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Amount */
+.card-amount {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
+  color: var(--color-label);
+}
+.card-amount .amount-unit {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-label-secondary);
+  margin-left: 2px;
+}
+
+/* Innocent explanation */
+.card-innocent {
+  font-size: 12.5px;
+  color: var(--color-label-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding: 8px 10px;
+  background: var(--apple-gray-6);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border-left: 2px solid var(--apple-gray-4);
+}
+
+/* Card divider */
+.card-divider {
+  height: 0.5px;
+  background: var(--color-separator);
+  margin-bottom: 10px;
+}
+
+/* Card footer */
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.card-institution {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-label);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.card-meta-sep {
+  color: var(--apple-gray-3);
+  font-size: 11px;
+}
+
+.card-date {
+  font-size: 11.5px;
+  color: var(--color-label-tertiary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.card-cta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--apple-blue);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.finding-card:hover .card-cta { opacity: 0.7; }
+
+/* Verdict badge */
+.verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+.verdict-suspicious { background: rgba(255,59,48,0.10); color: var(--sev-critical-fg); }
+.verdict-investigate { background: rgba(255,149,0,0.10); color: var(--sev-high-fg); }
+.verdict-legitimate { background: rgba(52,199,89,0.10); color: var(--sev-low-fg); }
+
+/* ─── Pagination ────────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+.page-btn {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-label-secondary);
+  background: var(--color-surface);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s;
+}
+.page-btn:hover { background: var(--apple-gray-6); color: var(--color-label); }
+.page-btn.active { background: var(--apple-blue); color: #fff; box-shadow: 0 2px 8px rgba(0,122,255,0.3); }
+.page-btn.nav-arrow { color: var(--apple-gray-1); }
+
+/* ─── Animations ────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.finding-card { animation: fadeUp 0.35s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+.finding-card:nth-child(1)  { animation-delay: 0.02s; }
+.finding-card:nth-child(2)  { animation-delay: 0.05s; }
+.finding-card:nth-child(3)  { animation-delay: 0.08s; }
+.finding-card:nth-child(4)  { animation-delay: 0.11s; }
+.finding-card:nth-child(5)  { animation-delay: 0.14s; }
+.finding-card:nth-child(6)  { animation-delay: 0.17s; }
+.finding-card:nth-child(7)  { animation-delay: 0.20s; }
+.finding-card:nth-child(8)  { animation-delay: 0.23s; }
+.finding-card:nth-child(9)  { animation-delay: 0.26s; }
+.finding-card:nth-child(10) { animation-delay: 0.29s; }
+.finding-card:nth-child(11) { animation-delay: 0.32s; }
+.finding-card:nth-child(12) { animation-delay: 0.35s; }
+
+/* ─── Inline interaction helpers ───────────────────────────────────── */
+.sidebar-section input[type=checkbox] { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!--  STICKY HEADER                                                    -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <!-- Logo -->
+    <a href="mockup-home.html" class="site-logo">
+      <div class="logo-mark"><span>국</span></div>
+      <span class="logo-text">국정투명</span>
+    </a>
+
+    <!-- Nav -->
+    <nav class="nav-links">
+      <a href="mockup-budget.html" class="nav-link">예산</a>
+      <a href="mockup-legislators.html" class="nav-link">국회의원</a>
+      <a href="mockup-bills.html" class="nav-link">법안</a>
+      <a href="mockup-audit.html" class="nav-link active">AI 감사</a>
+      <a href="mockup-news.html" class="nav-link">뉴스</a>
+    </nav>
+
+    <!-- Right -->
+    <div class="header-right">
+      <div class="search-pill">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none">
+          <path d="M17.5 17.5l-4-4m0 0a6 6 0 10-8.485-8.485A6 6 0 0013.5 13.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        검색…
+      </div>
+      <button class="btn-sm btn-sm-primary">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10 2a1 1 0 01.894.553l7 14A1 1 0 0117 18H3a1 1 0 01-.894-1.447l7-14A1 1 0 0110 2z"/>
+        </svg>
+        데이터 내보내기
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!--  STICKY SUMMARY BAR                                               -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="summary-bar">
+  <div class="summary-bar-inner">
+
+    <!-- Total -->
+    <div class="summary-total">
+      <span class="summary-total-num">1,711</span>
+      <span class="summary-total-label">건 탐지</span>
+    </div>
+
+    <div class="summary-divider"></div>
+
+    <!-- Severity chips -->
+    <div class="severity-chips">
+      <div class="sev-chip chip-critical active">
+        <span class="sev-dot dot-critical"></span>
+        CRITICAL 190
+      </div>
+      <div class="sev-chip chip-high active">
+        <span class="sev-dot dot-high"></span>
+        HIGH 786
+      </div>
+      <div class="sev-chip chip-medium">
+        <span class="sev-dot dot-medium"></span>
+        MEDIUM 693
+      </div>
+      <div class="sev-chip chip-low">
+        <span class="sev-dot dot-low"></span>
+        LOW 42
+      </div>
+    </div>
+
+    <div class="summary-divider"></div>
+
+    <!-- Active filter tag -->
+    <div class="filter-active-tag">
+      <svg width="10" height="10" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v2.586l-4 4V17a1 1 0 01-1.447.894l-4-2A1 1 0 017 15V9.586l-4-4V3z" clip-rule="evenodd"/>
+      </svg>
+      필터 2개 적용 중
+      <svg width="9" height="9" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+
+    <!-- Total amount -->
+    <div class="summary-amount" style="margin-left:auto">
+      <span class="summary-amount-label">총 의심 금액</span>
+      <span class="summary-amount-val">61,253억원</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!--  EXPLORER BODY                                                    -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="explorer-wrap">
+
+  <!-- ── LEFT SIDEBAR ────────────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-right:2px;">
+      <span style="font-size:17px;font-weight:700;letter-spacing:-0.3px;">필터</span>
+      <button class="reset-link">
+        <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+        </svg>
+        필터 초기화
+      </button>
+    </div>
+
+    <!-- Severity Filter -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">심각도</div>
+
+      <label class="filter-check-row checked">
+        <div class="filter-checkbox"></div>
+        <span class="filter-sev-label">
+          <span class="sev-dot dot-critical" style="width:8px;height:8px;border-radius:50%;"></span>
+          <span style="color:var(--sev-critical-fg);font-size:12px;font-weight:700;">CRITICAL</span>
+        </span>
+        <span class="filter-count" style="color:var(--sev-critical-fg);">190</span>
+      </label>
+
+      <label class="filter-check-row checked">
+        <div class="filter-checkbox"></div>
+        <span class="filter-sev-label">
+          <span class="sev-dot dot-high" style="width:8px;height:8px;border-radius:50%;"></span>
+          <span style="color:var(--sev-high-fg);font-size:12px;font-weight:700;">HIGH</span>
+        </span>
+        <span class="filter-count" style="color:var(--sev-high-fg);">786</span>
+      </label>
+
+      <label class="filter-check-row">
+        <div class="filter-checkbox"></div>
+        <span class="filter-sev-label">
+          <span class="sev-dot dot-medium" style="width:8px;height:8px;border-radius:50%;"></span>
+          <span style="color:var(--sev-medium-fg);font-size:12px;font-weight:700;">MEDIUM</span>
+        </span>
+        <span class="filter-count">693</span>
+      </label>
+
+      <label class="filter-check-row">
+        <div class="filter-checkbox"></div>
+        <span class="filter-sev-label">
+          <span class="sev-dot dot-low" style="width:8px;height:8px;border-radius:50%;"></span>
+          <span style="color:var(--sev-low-fg);font-size:12px;font-weight:700;">LOW</span>
+        </span>
+        <span class="filter-count">42</span>
+      </label>
+    </div>
+
+    <!-- Pattern Type Filter -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">패턴 유형</div>
+      <div class="pattern-list">
+        <div class="pattern-row selected">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">단독입찰</span>
+          <span class="pattern-count">248</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">반복 수의계약</span>
+          <span class="pattern-count">187</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">동일 업체 반복 낙찰</span>
+          <span class="pattern-count">163</span>
+        </div>
+        <div class="pattern-row selected">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">고액 수의계약</span>
+          <span class="pattern-count">142</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">낙찰률 이상</span>
+          <span class="pattern-count">118</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">업체 집중</span>
+          <span class="pattern-count">97</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">연말 예산 집행</span>
+          <span class="pattern-count">89</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">담합 의심</span>
+          <span class="pattern-count">76</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">금액 이상 급증</span>
+          <span class="pattern-count">68</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">계약 분할</span>
+          <span class="pattern-count">61</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">유령업체 의심</span>
+          <span class="pattern-count">54</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">신생업체 대형 낙찰</span>
+          <span class="pattern-count">49</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">네트워크 담합</span>
+          <span class="pattern-count">43</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">복합 패턴</span>
+          <span class="pattern-count">38</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">시스템적 위험</span>
+          <span class="pattern-count">35</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">계약 금액 부풀리기</span>
+          <span class="pattern-count">31</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">가격 집중</span>
+          <span class="pattern-count">27</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">관련 업체</span>
+          <span class="pattern-count">22</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">제재 업체</span>
+          <span class="pattern-count">18</span>
+        </div>
+        <div class="pattern-row">
+          <div class="pattern-row-dot"></div>
+          <span class="pattern-label">저가 경쟁</span>
+          <span class="pattern-count">14</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount Range -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">계약 금액 범위</div>
+      <div class="amount-slider-wrap">
+        <div class="amount-slider-label">
+          <span>0원</span>
+          <span style="color:var(--apple-blue);font-weight:600;">~600억원</span>
+        </div>
+        <input type="range" class="amount-slider" min="0" max="100" value="60">
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--color-label-tertiary);">
+          <span>최소 금액</span>
+          <span>1,200억원+</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Filter -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">기관 검색</div>
+      <input type="text" class="dept-input" placeholder="기관명 입력…" value="">
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:5px;">
+        <span style="font-size:11px;background:rgba(0,122,255,0.08);color:var(--apple-blue);padding:2px 8px;border-radius:100px;cursor:pointer;">한국수자원공사</span>
+        <span style="font-size:11px;background:var(--apple-gray-6);color:var(--color-label-secondary);padding:2px 8px;border-radius:100px;cursor:pointer;">국방부</span>
+        <span style="font-size:11px;background:var(--apple-gray-6);color:var(--color-label-secondary);padding:2px 8px;border-radius:100px;cursor:pointer;">교육부</span>
+      </div>
+    </div>
+
+    <!-- Reset -->
+    <div style="padding: 4px 2px;">
+      <button class="reset-link" style="font-size:13px;">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+        </svg>
+        모든 필터 초기화
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Sort bar -->
+    <div class="sort-bar">
+      <span class="sort-label">정렬:</span>
+      <button class="sort-btn active">심각도순</button>
+      <button class="sort-btn">금액순</button>
+      <button class="sort-btn">날짜순</button>
+      <button class="sort-btn">신뢰도순</button>
+
+      <div class="sort-sep"></div>
+      <span class="result-count">976건 표시 중</span>
+
+      <!-- View toggle -->
+      <div class="view-toggle">
+        <!-- Grid view (active) -->
+        <button class="view-btn active" title="격자 보기">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+        </button>
+        <!-- List view -->
+        <button class="view-btn" title="목록 보기">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="cards-grid">
+
+      <!-- ─ Card 1: CRITICAL / 단독입찰 ─ -->
+      <article class="finding-card card-critical">
+        <div class="card-top">
+          <span class="pattern-badge badge-critical">단독입찰</span>
+          <span class="verdict-badge verdict-suspicious">의심</span>
+        </div>
+        <div class="card-title">동일업체 반복 수의계약 — 한국수자원공사</div>
+        <div class="card-amount">348<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">입찰 참여 자격을 갖춘 전문업체가 1개사뿐인 특수 공종으로, 경쟁 입찰 실시 자체가 어려운 구조였을 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">한국수자원공사</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.11.14</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 2: CRITICAL / 고액 수의계약 ─ -->
+      <article class="finding-card card-critical">
+        <div class="card-top">
+          <span class="pattern-badge badge-critical">고액 수의계약</span>
+          <span class="verdict-badge verdict-suspicious">의심</span>
+        </div>
+        <div class="card-title">경쟁 없이 체결된 방산 소프트웨어 개발 계약 — 국방부</div>
+        <div class="card-amount">1,204<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">방산 보안 등급으로 인해 지정된 업체만 계약 가능한 법적 제약이 존재할 수 있으며, 이 경우 수의계약이 합법적 절차일 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">국방부</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.09.03</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 3: HIGH / 낙찰률 이상 ─ -->
+      <article class="finding-card card-high">
+        <div class="card-top">
+          <span class="pattern-badge badge-high">낙찰률 이상</span>
+          <span class="verdict-badge verdict-investigate">조사 필요</span>
+        </div>
+        <div class="card-title">낙찰률 98.7% — 도로공사 아스팔트 포장 공사</div>
+        <div class="card-amount">87<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">예정가격이 시장 실제 단가를 정확히 반영한 결과로, 투명한 견적 산정이 이루어진 경우 높은 낙찰률은 정상적일 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">한국도로공사</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.08.22</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 4: HIGH / 연말 예산 집행 ─ -->
+      <article class="finding-card card-high">
+        <div class="card-top">
+          <span class="pattern-badge badge-high">연말 예산 집행</span>
+          <span class="verdict-badge verdict-investigate">조사 필요</span>
+        </div>
+        <div class="card-title">12월 27일 집중 계약 체결 — 교육부 IT 인프라</div>
+        <div class="card-amount">213<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">연도별 예산 이월 제한 규정에 따라 미집행 예산을 연말에 집중 사용하는 것은 부처 전반에서 발생하는 구조적 현상으로 볼 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">교육부</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.12.27</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 5: CRITICAL / 담합 의심 ─ -->
+      <article class="finding-card card-critical">
+        <div class="card-top">
+          <span class="pattern-badge badge-critical">담합 의심</span>
+          <span class="verdict-badge verdict-suspicious">의심</span>
+        </div>
+        <div class="card-title">입찰 가격 99.2% 일치 — 건설 컨소시엄 3개사</div>
+        <div class="card-amount">562<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">동일한 설계도면 및 BIM 데이터를 참조해 견적을 산출한 경우, 유사한 전문 업체 간 가격이 수렴할 가능성이 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">국토교통부</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.07.15</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 6: HIGH / 신생업체 대형 낙찰 ─ -->
+      <article class="finding-card card-high">
+        <div class="card-top">
+          <span class="pattern-badge badge-high">신생업체 대형 낙찰</span>
+          <span class="verdict-badge verdict-investigate">조사 필요</span>
+        </div>
+        <div class="card-title">설립 8개월 업체에 클라우드 전환 사업 수주 — 행안부</div>
+        <div class="card-amount">94<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">기존 대기업 임직원들이 설립한 스핀오프 기업의 경우 실질적인 역량은 업력보다 높을 수 있으며, 경쟁 입찰에서 정당하게 낙찰될 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">행정안전부</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.10.08</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 7: CRITICAL / 복합 패턴 ─ -->
+      <article class="finding-card card-critical">
+        <div class="card-top">
+          <span class="pattern-badge badge-critical">복합 패턴</span>
+          <span class="verdict-badge verdict-suspicious">의심</span>
+        </div>
+        <div class="card-title">동일 업체·분할 발주·연말 집행 동시 탐지 — 환경부</div>
+        <div class="card-amount">436<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">대규모 환경 정화 사업의 경우 사업 특성상 단계별 발주와 특정 전문업체 반복 활용이 불가피한 경우가 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">환경부</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.12.19</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 8: MEDIUM / 계약 분할 ─ -->
+      <article class="finding-card card-medium">
+        <div class="card-top">
+          <span class="pattern-badge badge-medium">계약 분할</span>
+          <span class="verdict-badge verdict-investigate">조사 필요</span>
+        </div>
+        <div class="card-title">3일 간격 2억원 × 8건 — 서울시 공원관리사업소</div>
+        <div class="card-amount">16<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">공원별 위치와 사업 내용이 달라 별도 계약이 필요했을 수 있으며, 각 계약이 독립된 사업이라면 분할 발주가 합리적입니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">서울특별시</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.06.03</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 9: HIGH / 업체 집중 ─ -->
+      <article class="finding-card card-high">
+        <div class="card-top">
+          <span class="pattern-badge badge-high">업체 집중</span>
+          <span class="verdict-badge verdict-investigate">조사 필요</span>
+        </div>
+        <div class="card-title">A 업체 단독 3년 연속 선정 — 보건복지부 통계시스템</div>
+        <div class="card-amount">127<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">기존 시스템 구축 업체의 경우 유지보수 및 고도화 사업에서 기술 연속성 확보를 위해 재선정되는 것이 기술적으로 합리적일 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">보건복지부</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.04.11</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 10: MEDIUM / 금액 이상 급증 ─ -->
+      <article class="finding-card card-medium">
+        <div class="card-top">
+          <span class="pattern-badge badge-medium">금액 이상 급증</span>
+          <span class="verdict-badge verdict-investigate">조사 필요</span>
+        </div>
+        <div class="card-title">전년 대비 340% 급증 — 과기부 AI 연구개발 사업</div>
+        <div class="card-amount">78<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">정부의 AI 투자 확대 정책 기조에 따른 예산 증액으로, 사업 범위 확장이 반영된 정상적인 증가일 가능성이 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">과학기술정보통신부</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.03.20</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 11: CRITICAL / 네트워크 담합 ─ -->
+      <article class="finding-card card-critical">
+        <div class="card-top">
+          <span class="pattern-badge badge-critical">네트워크 담합</span>
+          <span class="verdict-badge verdict-suspicious">의심</span>
+        </div>
+        <div class="card-title">법인 임원 3명 겹침 — 건설사 컨소시엄 낙찰 패턴</div>
+        <div class="card-amount">891<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">동종 업계의 퇴직 임원들이 복수 법인에 자문 역할로 등재되는 경우가 많으며, 이는 반드시 실질적 이해관계 공유를 의미하지 않을 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">조달청</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.05.30</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+      <!-- ─ Card 12: LOW / 저가 경쟁 ─ -->
+      <article class="finding-card card-low">
+        <div class="card-top">
+          <span class="pattern-badge badge-low">저가 경쟁</span>
+          <span class="verdict-badge verdict-legitimate">정상</span>
+        </div>
+        <div class="card-title">예정가 대비 43% 낙찰 — 지자체 청소 용역 입찰</div>
+        <div class="card-amount">4<span class="amount-unit">억원</span></div>
+        <div class="card-innocent">다수 업체가 경쟁 참여한 일반경쟁입찰에서의 저가 낙찰로, 적정 서비스 품질이 계약서에 명시된 경우 시장 경쟁의 결과로 볼 수 있습니다.</div>
+        <div class="card-divider"></div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-institution">인천광역시</span>
+            <span class="card-meta-sep">·</span>
+            <span class="card-date">2025.02.14</span>
+          </div>
+          <span class="card-cta">자세히 보기 →</span>
+        </div>
+      </article>
+
+    </div>
+    <!-- /cards-grid -->
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button class="page-btn nav-arrow">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">4</button>
+      <button class="page-btn">5</button>
+      <span style="font-size:13px;color:var(--apple-gray-2);padding:0 4px;">…</span>
+      <button class="page-btn">82</button>
+      <button class="page-btn nav-arrow">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- Subtle footer note -->
+<div style="text-align:center;padding:24px;font-size:12px;color:var(--color-label-tertiary);border-top:0.5px solid var(--color-separator);margin-top:8px;">
+  출처: 나라장터 (조달청) 공개 계약 데이터 · AI 분석 기간: 2023–2026 · 탐지된 패턴이 반드시 비리를 의미하지 않습니다
+</div>
+
+<script>
+// Sort buttons
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// View toggle
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Severity chip toggle
+document.querySelectorAll('.sev-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    this.classList.toggle('active');
+  });
+});
+
+// Filter check rows
+document.querySelectorAll('.filter-check-row').forEach(row => {
+  row.addEventListener('click', function() {
+    this.classList.toggle('checked');
+  });
+});
+
+// Pattern rows
+document.querySelectorAll('.pattern-row').forEach(row => {
+  row.addEventListener('click', function() {
+    this.classList.toggle('selected');
+  });
+});
+
+// Page buttons
+document.querySelectorAll('.page-btn:not(.nav-arrow)').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Amount slider live update
+const slider = document.querySelector('.amount-slider');
+const sliderMax = document.querySelector('.amount-slider-label span:last-child');
+if (slider && sliderMax) {
+  slider.addEventListener('input', function() {
+    const val = Math.round(this.value * 12);
+    sliderMax.textContent = '~' + val + '억원';
+    const pct = this.value + '%';
+    this.style.background = `linear-gradient(to right, var(--apple-blue) 0%, var(--apple-blue) ${pct}, var(--apple-gray-4) ${pct}, var(--apple-gray-4) 100%)`;
+  });
+}
+</script>
+</body>
+</html>
