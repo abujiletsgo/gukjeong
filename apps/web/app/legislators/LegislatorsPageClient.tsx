@@ -282,7 +282,7 @@ function MemberAvatar({ monaCode, name, partyColor }: { monaCode: string; name: 
   if (!imgError) {
     return (
       <img
-        src={`/legislators/${monaCode}.jpg`}
+        src={`https://www.assembly.go.kr/photo/thumb/${monaCode}.jpg`}
         alt={name}
         onError={() => setImgError(true)}
         className="w-12 h-12 rounded-full object-cover object-top"
@@ -1240,6 +1240,14 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
           <p className="text-sm sm:text-base text-gray-500 mt-1.5 leading-relaxed">
             22대 국회 {rawLegislators.length}명 의원의 법안 발의, 본회의 참여를 공개 데이터로 확인합니다.
           </p>
+          <div className="mt-3">
+            <Link
+              href="/legislators/ranking"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+            >
+              🏆 랭킹 보기
+            </Link>
+          </div>
         </div>
 
         {/* ═══ Layer 1: Overview Dashboard ═══ */}

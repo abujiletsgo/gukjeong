@@ -16,6 +16,8 @@ import ssl
 import sys
 import os
 import re
+import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
@@ -36,20 +38,50 @@ DATA_GO_KR_KEY = os.environ.get(
 ASSEMBLY_KEY = os.environ.get('ASSEMBLY_API_KEY', 'c5d3b64dc8d9419fac113114b6fb97c9')
 ECOS_KEY = os.environ.get('ECOS_API_KEY', 'UTL8M4BXGPPLQAQE2W9T')
 
+# ── Global rate limiter ──
+# Caps concurrent HTTP connections to apis.data.go.kr to avoid 429s.
+# All fetch_json / fetch_text calls share this semaphore, so even when
+# multiple ThreadPoolExecutors are running in parallel they collectively
+# stay within the limit.
+_CONCURRENCY = 6          # max simultaneous in-flight requests
+_REQUEST_GAP = 0.08       # minimum seconds between any two requests (≈12 req/s peak)
+_http_sem = threading.Semaphore(_CONCURRENCY)
+_http_lock = threading.Lock()
+_last_req_ts: float = 0.0
+
+
+def _rate_limited_open(url, timeout):
+    """Acquire semaphore + enforce minimum inter-request gap, then open URL."""
+    global _last_req_ts
+    with _http_sem:
+        with _http_lock:
+            gap = _REQUEST_GAP - (time.monotonic() - _last_req_ts)
+            if gap > 0:
+                time.sleep(gap)
+            _last_req_ts = time.monotonic()
+        req = urllib.request.Request(url, headers={
+            'Accept': 'application/json',
+            'User-Agent': 'GukjeongTumyeong/fetch-data',
+        })
+        return urllib.request.urlopen(req, timeout=timeout, context=ctx)
+
 
 def fetch_json(url, timeout=20):
-    req = urllib.request.Request(url, headers={
-        'Accept': 'application/json',
-        'User-Agent': 'GukjeongTumyeong/fetch-data',
-    })
-    resp = urllib.request.urlopen(req, timeout=timeout, context=ctx)
+    resp = _rate_limited_open(url, timeout)
     return json.loads(resp.read().decode('utf-8'))
 
 
 def fetch_text(url, timeout=15):
-    req = urllib.request.Request(url, headers={'User-Agent': 'GukjeongTumyeong/fetch-data'})
-    resp = urllib.request.urlopen(req, timeout=timeout, context=ctx)
-    return resp.read().decode('utf-8', errors='replace')
+    global _last_req_ts
+    with _http_sem:
+        with _http_lock:
+            gap = _REQUEST_GAP - (time.monotonic() - _last_req_ts)
+            if gap > 0:
+                time.sleep(gap)
+            _last_req_ts = time.monotonic()
+        req = urllib.request.Request(url, headers={'User-Agent': 'GukjeongTumyeong/fetch-data'})
+        resp = urllib.request.urlopen(req, timeout=timeout, context=ctx)
+        return resp.read().decode('utf-8', errors='replace')
 
 
 def save(filename, data):
@@ -241,6 +273,66 @@ def fetch_bills():
     print(f'  ✅ {len(all_bills)} bills')
 
 
+def fetch_bill_vote_results():
+    """열린국회정보 — 본회의 의결 결과 (22대)"""
+    print('\n🗳️  본회의 의결 결과 (22대)')
+    ENDPOINT = 'https://open.assembly.go.kr/portal/openapi/nwbpacrgavhjryiph'
+
+    def _fetch_page(page):
+        url = f'{ENDPOINT}?KEY={ASSEMBLY_KEY}&Type=json&pIndex={page}&pSize=100&AGE=22'
+        try:
+            d = fetch_json(url)
+            for k in d:
+                if isinstance(d[k], list) and len(d[k]) > 1:
+                    return page, d[k][1].get('row', [])
+            return page, []
+        except Exception:
+            return page, []
+
+    # Page 1 first
+    _, rows_p1 = _fetch_page(1)
+    if not rows_p1:
+        print('  ⚠️  No data returned')
+        return
+
+    all_rows = list(rows_p1)
+    print(f'  Page 1: {len(rows_p1)} rows')
+
+    # Paginate until empty (no list_total_count available)
+    page = 2
+    while len(rows_p1) == 100:
+        results = {}
+        with ThreadPoolExecutor(max_workers=10) as pool:
+            futs = {pool.submit(_fetch_page, p): p for p in range(page, page + 10)}
+            for fut in as_completed(futs):
+                p, rows = fut.result()
+                results[p] = rows
+        new_rows = []
+        for p in sorted(results):
+            if results[p]:
+                new_rows.extend(results[p])
+            else:
+                break
+        if not new_rows:
+            break
+        all_rows.extend(new_rows)
+        rows_p1 = results.get(page, [])  # update to check if last batch was full
+        page += 10
+        print(f'  Total so far: {len(all_rows)}')
+        if len(new_rows) < 10 * 100:  # less than full batch means we hit the end
+            break
+
+    save('bill-vote-results.json', {
+        'source': 'open.assembly.go.kr',
+        'endpoint': 'nwbpacrgavhjryiph',
+        'description': '22대 국회 본회의 의결 결과',
+        'fetched_at': now_iso(),
+        'totalCount': len(all_rows),
+        'items': all_rows,
+    })
+    print(f'  ✅ {len(all_rows)} bill vote records')
+
+
 def fetch_ecos():
     print('\n📊 한국은행 ECOS — 경제지표')
     url = f'https://ecos.bok.or.kr/api/KeyStatisticList/{ECOS_KEY}/json/kr/1/200'
@@ -333,7 +425,7 @@ def fetch_g2b_companies():
 
     all_corps = []
     done = 0
-    with ThreadPoolExecutor(max_workers=20) as pool:
+    with ThreadPoolExecutor(max_workers=10) as pool:
         futs = {pool.submit(_lookup, bz): bz for bz in target_biznos}
         for fut in as_completed(futs):
             all_corps.extend(fut.result())
@@ -518,7 +610,7 @@ def fetch_g2b_winning_bids():
                 f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
-            items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+            items.extend(fetch_koneps_pages(tmpl, max_pages=100))
         return month_label, items
 
     all_items = []
@@ -567,7 +659,7 @@ def fetch_g2b_contract_details():
                 f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
-            items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+            items.extend(fetch_koneps_pages(tmpl, max_pages=100))
         return month_label, items
 
     all_items = []
@@ -599,7 +691,7 @@ def fetch_g2b_contract_process():
 
     이 API는 날짜 범위 쿼리를 지원하지 않음 — ntceNo(입찰공고번호)를 기본 키로 사용해야 함.
     g2b-contract-details.json 및 g2b-winning-bids.json에서 ntceNo를 추출하여
-    ThreadPoolExecutor(max_workers=20)로 병렬 조회함.
+    ThreadPoolExecutor(max_workers=10)로 병렬 조회함.
     """
     print('\n🔄 나라장터 — 계약과정통합공개 (per-ntceNo lookup)')
 
@@ -672,10 +764,10 @@ def fetch_g2b_contract_process():
         except Exception:
             return []
 
-    # 5. ThreadPoolExecutor(max_workers=20) — same pattern as fetch_g2b_companies
+    # 5. ThreadPoolExecutor(max_workers=10) — same pattern as fetch_g2b_companies
     all_items = []
     done = 0
-    with ThreadPoolExecutor(max_workers=20) as pool:
+    with ThreadPoolExecutor(max_workers=10) as pool:
         futs = {pool.submit(_lookup, ntce): ntce for ntce in target_ntces}
         for fut in as_completed(futs):
             all_items.extend(fut.result())
@@ -829,6 +921,61 @@ def fetch_official_assets():
     print(f'  ✅ {len(all_items)} asset disclosure records')
 
 
+def fetch_political_funding():
+    """OhmyNews/KA-money — 22대 국회의원 정치자금 수입지출 공개 데이터"""
+    print('\n💰 정치자금 수입지출 (OhmyNews/KA-money)')
+
+    # expenditure detail file (70k+ rows: date, description, amount, recipient, category per member)
+    xlsx_url = 'https://raw.githubusercontent.com/OhmyNews/KA-money/master/2024_KAPF-22.xlsx'
+
+    try:
+        import openpyxl
+        from io import BytesIO
+    except ImportError:
+        print('  ⚠️  openpyxl 미설치 — pip install openpyxl 후 재실행')
+        return
+
+    req = urllib.request.Request(xlsx_url, headers={
+        'User-Agent': 'GukjeongTumyeong/fetch-data',
+    })
+    ctx_dl = ssl.create_default_context()
+    ctx_dl.check_hostname = False
+    ctx_dl.verify_mode = ssl.CERT_NONE
+    resp = urllib.request.urlopen(req, timeout=30, context=ctx_dl)
+    raw_bytes = resp.read()
+    print(f'  Downloaded: {len(raw_bytes):,} bytes')
+
+    wb = openpyxl.load_workbook(BytesIO(raw_bytes), read_only=True, data_only=True)
+    ws = wb.active
+
+    rows = list(ws.iter_rows(values_only=True))
+    if not rows:
+        print('  ⚠️  빈 시트')
+        return
+
+    # First row = headers
+    headers = [str(h).strip() if h else f'col_{i}' for i, h in enumerate(rows[0])]
+    records = []
+    for row in rows[1:]:
+        if all(v is None for v in row):
+            continue
+        rec = {}
+        for h, v in zip(headers, row):
+            if v is not None:
+                rec[h] = str(v) if not isinstance(v, (int, float)) else v
+        records.append(rec)
+
+    save('political-funding.json', {
+        'source': 'github.com/OhmyNews/KA-money',
+        'description': '22대 국회의원 정치자금 수입지출 내역',
+        'fetched_at': now_iso(),
+        'totalCount': len(records),
+        'headers': headers,
+        'items': records,
+    })
+    print(f'  ✅ {len(records)} 정치자금 records')
+
+
 def fetch_news():
     print('\n📰 뉴스 RSS 피드')
     feeds = [
@@ -907,7 +1054,7 @@ def fetch_g2b_bid_rankings():
                 f'?serviceKey={{KEY}}&numOfRows=100&pageNo={{PAGE}}&type=json'
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
-            items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+            items.extend(fetch_koneps_pages(tmpl, max_pages=100))
         return month_label, items
 
     all_items = []
@@ -1013,7 +1160,7 @@ def fetch_historical_bids():
                 f'&inqryDiv=1&inqryBgnDt={start}&inqryEndDt={end}'
             )
             try:
-                items.extend(fetch_koneps_pages(tmpl, max_pages=20))
+                items.extend(fetch_koneps_pages(tmpl, max_pages=100))
             except Exception as e:
                 print(f'  ⚠️  {month_label} {category} 중단: {e}')
         return month_label, items
@@ -1127,7 +1274,7 @@ def fetch_targeted_companies():
 
     new_corps = []
     done = 0
-    with ThreadPoolExecutor(max_workers=20) as pool:
+    with ThreadPoolExecutor(max_workers=10) as pool:
         futs = {pool.submit(_lookup, bz): bz for bz in new_biznos}
         for fut in as_completed(futs):
             new_corps.extend(fut.result())
@@ -1477,6 +1624,7 @@ def fetch_lh_bids(output_dir=None):
 FETCHERS = {
     'legislators': fetch_legislators,
     'bills': fetch_bills,
+    'bill-votes': fetch_bill_vote_results,  # 본회의 의결 결과
     'ecos': fetch_ecos,
     'g2b': fetch_g2b_bids,
     'contracts': fetch_g2b_contracts,
@@ -1489,6 +1637,7 @@ FETCHERS = {
     'prices': fetch_g2b_prices,
     'stats': fetch_procurement_stats,
     'assets': fetch_official_assets,
+    'political-funding': fetch_political_funding,  # 22대 의원 정치자금 수입지출
     'news': fetch_news,
     'bid-rankings': fetch_g2b_bid_rankings,
     'contract-changes': fetch_g2b_contract_changes,
