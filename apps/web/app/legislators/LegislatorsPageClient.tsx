@@ -881,7 +881,7 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
   const [loading, setLoading] = useState(false);
 
   // Page-level tab state
-  const [pageLevelTab, setPageLevelTab] = useState<'overview' | 'ranking'>('overview');
+  const [pageLevelTab, setPageLevelTab] = useState<'overview' | 'ranking'>('ranking');
   const [rankCategory, setRankCategory] = useState('composite');
 
   // Filter state
@@ -1240,15 +1240,167 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
           <p className="text-sm sm:text-base text-gray-500 mt-1.5 leading-relaxed">
             22대 국회 {rawLegislators.length}명 의원의 법안 발의, 본회의 참여를 공개 데이터로 확인합니다.
           </p>
-          <div className="mt-3">
-            <Link
-              href="/legislators/ranking"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-            >
-              🏆 랭킹 보기
-            </Link>
-          </div>
         </div>
+
+        {/* ── Live mode tab bar ── */}
+        <div className="flex gap-1 mb-6 border-b border-gray-100">
+          {([
+            { key: 'ranking', label: '🏆 랭킹' },
+            { key: 'overview', label: '전체 목록' },
+          ] as const).map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setPageLevelTab(tab.key)}
+              className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+                pageLevelTab === tab.key
+                  ? 'border-gray-900 text-gray-900'
+                  : 'border-transparent text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+          <Link
+            href="/legislators/ranking"
+            className="ml-auto px-3 py-2 text-xs text-gray-400 hover:text-gray-600 transition-colors self-center"
+          >
+            전체 랭킹 페이지 →
+          </Link>
+        </div>
+
+        {/* ── Live mode ranking tab ── */}
+        {pageLevelTab === 'ranking' && (() => {
+          const vp = votingRecords?.participation ?? {};
+          const cat = RANK_CATEGORIES.find(c => c.key === rankCategory) ?? RANK_CATEGORIES[5];
+          const pool = rankCategory === 'bills_pass_rate'
+            ? rawLegislators.filter(l => (l.bills_proposed ?? 0) > 0)
+            : rawLegislators;
+
+          const getScore = (l: typeof rawLegislators[0]) => {
+            const voting = vp[l.MONA_CD];
+            switch (rankCategory) {
+              case 'bills_proposed': return l.bills_proposed ?? 0;
+              case 'bills_pass_rate': {
+                const p = l.bills_proposed ?? 0;
+                return p > 0 ? Math.round(((l.bills_passed ?? 0) / p) * 100) : 0;
+              }
+              case 'attendance': return voting ? Math.round(voting.participation_rate) : 0;
+              case 'contrarian': {
+                if (!voting) return 0;
+                const t = voting.yes + voting.no + voting.abstain;
+                return t > 0 ? Math.round((voting.no / t) * 100) : 0;
+              }
+              case 'absenteeism': return voting ? Math.round(100 - voting.participation_rate) : 0;
+              default: { // composite
+                const proposals = Math.min(100, (l.bills_proposed ?? 0) * 2);
+                const pr = (l.bills_proposed ?? 0) > 0 ? ((l.bills_passed ?? 0) / (l.bills_proposed ?? 1)) * 100 : 0;
+                const att = voting ? voting.participation_rate : 50;
+                return Math.round(proposals * 0.4 + pr * 0.3 + att * 0.3);
+              }
+            }
+          };
+          const scored = pool
+            .map(l => ({ leg: l, score: getScore(l) }))
+            .sort((a, b) => cat.higherIsBetter ? b.score - a.score : a.score - b.score);
+
+          const top10 = scored.slice(0, 10);
+          const bottom10 = [...scored].reverse().slice(0, 10);
+
+          const rankColor = (i: number) =>
+            i === 0 ? '#FFD700' : i === 1 ? '#C0C0C0' : i === 2 ? '#CD7F32' : '#9CA3AF';
+
+          return (
+            <div>
+              <div className="card mb-6 text-center py-5 bg-gradient-to-r from-gray-900 to-gray-700 text-white">
+                <p className="text-base sm:text-lg font-bold tracking-wide">국민들은 당신의 모든 것을 보고 있다</p>
+                <p className="text-xs text-gray-300 mt-1">22대 국회의원 실시간 활동 랭킹 — 공개 데이터 기반</p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 mb-6">
+                {RANK_CATEGORIES.map(c => (
+                  <button
+                    key={c.key}
+                    onClick={() => setRankCategory(c.key)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                      rankCategory === c.key
+                        ? 'bg-gray-900 text-white border-gray-900'
+                        : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+
+              <p className="text-xs text-gray-400 mb-4">{cat.sublabel}</p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="card">
+                  <h3 className="text-sm font-bold text-gray-800 mb-3">
+                    🥇 상위 10명 <span className="text-xs font-normal text-gray-400 ml-1">{cat.higherIsBetter ? '높은 순' : '낮은 순'}</span>
+                  </h3>
+                  <div className="space-y-0.5">
+                    {top10.map((entry, i) => {
+                      const pColor = getPartyColor(entry.leg.POLY_NM);
+                      return (
+                        <div key={entry.leg.MONA_CD} className="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-gray-50">
+                          <span className="text-lg font-extrabold w-7 text-right flex-shrink-0" style={{ color: rankColor(i) }}>{i + 1}</span>
+                          <div className="flex-shrink-0 rounded-full overflow-hidden ring-1 ring-gray-200 w-9 h-9">
+                            <MemberAvatar monaCode={entry.leg.MONA_CD} name={entry.leg.HG_NM} partyColor={pColor} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-semibold text-sm text-gray-900 mr-1">{entry.leg.HG_NM}</span>
+                            <span className="inline-block text-[10px] px-1.5 py-0.5 rounded-full text-white font-medium" style={{ backgroundColor: pColor }}>
+                              {(entry.leg.POLY_NM || '무소속').replace('더불어민주당','민주').replace('국민의힘','국힘').replace('조국혁신당','조혁').slice(0,4)}
+                            </span>
+                            {entry.leg.ORIG_NM && <div className="text-[11px] text-gray-400 truncate">{entry.leg.ORIG_NM}</div>}
+                          </div>
+                          <span className="text-base font-bold flex-shrink-0 text-gray-800">{cat.format(entry.score)}</span>
+                        </div>
+                      );
+                    })}
+                    {top10.length === 0 && <p className="text-sm text-gray-400 py-4 text-center">데이터 없음</p>}
+                  </div>
+                </div>
+
+                <div className="card border-red-100">
+                  <h3 className="text-sm font-bold text-gray-800 mb-3">
+                    ⚠️ 하위 10명 <span className="text-xs font-normal text-red-400 ml-1">주의</span>
+                  </h3>
+                  <div className="space-y-0.5">
+                    {bottom10.map((entry, i) => {
+                      const pColor = getPartyColor(entry.leg.POLY_NM);
+                      return (
+                        <div key={entry.leg.MONA_CD} className="flex items-center gap-3 py-2.5 px-3 rounded-lg bg-red-50">
+                          <span className="text-sm font-bold w-7 text-right flex-shrink-0 text-red-400">{scored.length - i}</span>
+                          <div className="flex-shrink-0 rounded-full overflow-hidden ring-1 ring-red-200 w-9 h-9">
+                            <MemberAvatar monaCode={entry.leg.MONA_CD} name={entry.leg.HG_NM} partyColor={pColor} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-semibold text-sm text-gray-900 mr-1">{entry.leg.HG_NM}</span>
+                            <span className="inline-block text-[10px] px-1.5 py-0.5 rounded-full text-white font-medium" style={{ backgroundColor: pColor }}>
+                              {(entry.leg.POLY_NM || '무소속').replace('더불어민주당','민주').replace('국민의힘','국힘').replace('조국혁신당','조혁').slice(0,4)}
+                            </span>
+                            {entry.leg.ORIG_NM && <div className="text-[11px] text-gray-400 truncate">{entry.leg.ORIG_NM}</div>}
+                          </div>
+                          <span className="text-base font-bold flex-shrink-0 text-red-500">{cat.format(entry.score)}</span>
+                        </div>
+                      );
+                    })}
+                    {bottom10.length === 0 && <p className="text-sm text-gray-400 py-4 text-center">데이터 없음</p>}
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-400 mt-6 text-center">
+                출처: 열린국회정보 공개 API. 데이터 기준: 22대 국회 개원 이후.
+              </p>
+            </div>
+          );
+        })()}
+
+        {/* ── Live mode overview tab ── */}
+        {pageLevelTab === 'overview' && <>
 
         {/* ═══ Layer 1: Overview Dashboard ═══ */}
 
@@ -1474,6 +1626,8 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
           {realData?.timestamp && <>({realData.timestamp} 기준) </>}
           법안 발의 현황은 22대 국회 기준이며, 본회의 표결 데이터는 최근 {totalBillsAnalyzed > 0 ? `${totalBillsAnalyzed}건` : ''} 기준입니다.
         </p>
+        </>}
+
       </div>
     );
   }
