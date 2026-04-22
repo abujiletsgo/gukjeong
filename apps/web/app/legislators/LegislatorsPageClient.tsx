@@ -1490,6 +1490,14 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
         <p className="text-sm sm:text-base text-gray-500 mt-1.5 leading-relaxed">
           22대 국회 {legislators.length}명의 의원이 실제로 무엇을 하고 있는지 공개 데이터로 확인합니다.
         </p>
+        <div className="mt-3">
+          <Link
+            href="/legislators/ranking"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+          >
+            🏆 랭킹 보기
+          </Link>
+        </div>
       </div>
 
       {/* ── Page-level tabs ── */}

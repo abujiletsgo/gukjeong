@@ -57,6 +57,7 @@ const NAV_LINKS = [
   { href: '/budget', label: '예산' },
   { href: '/bills', label: '법안' },
   { href: '/legislators', label: '국회의원' },
+  { href: '/legislators/ranking', label: '의원 랭킹' },
   { href: '/audit', label: 'AI 감사' },
   { href: '/news', label: '뉴스' },
 ];
