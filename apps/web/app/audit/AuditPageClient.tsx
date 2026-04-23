@@ -867,12 +867,15 @@ function AuditPageClientInner({
 
   // Top offenders for priority mode
   const topOffenders = useMemo(() => {
-    const byInst = new Map<string, { count: number; patterns: Set<string>; maxScore: number; totalAmt: number }>();
+    const byInst = new Map<string, { count: number; patterns: Set<string>; maxScore: number; totalAmt: number; topId?: string }>();
     enrichedFindings.forEach(f => {
       const e = byInst.get(f.target_institution) ?? { count: 0, patterns: new Set<string>(), maxScore: 0, totalAmt: 0 };
       e.count++;
       e.patterns.add(f.pattern_type);
-      e.maxScore = Math.max(e.maxScore, f.suspicion_score ?? 0);
+      if ((f.suspicion_score ?? 0) >= e.maxScore) {
+        e.maxScore = f.suspicion_score ?? 0;
+        e.topId = f.id;
+      }
       e.totalAmt += (f.deduplicated_contracts ?? []).reduce((s: number, c) => s + (c.amount ?? 0), 0);
       byInst.set(f.target_institution, e);
     });
@@ -885,6 +888,7 @@ function AuditPageClientInner({
         patternTypes: Array.from(v.patterns),
         suspicionScore: v.maxScore,
         totalAmount: v.totalAmt,
+        topFindingId: v.topId,
       }));
   }, [enrichedFindings]);
 
@@ -1035,22 +1039,35 @@ function AuditPageClientInner({
       {entryMode === 'priority' && (
         <div className="space-y-3 mb-4">
           <p className="text-xs text-gray-500 mb-2">
-            의심 건수 기준 상위 10개 기관입니다.
+            의심 건수 기준 상위 10개 기관입니다. 클릭하면 상세 감사 내역을 볼 수 있습니다.
           </p>
-          {topOffenders.map((offender, idx) => (
-            <div key={offender.institution} className="flex items-center gap-3">
-              <span
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 text-white ${
-                  idx === 0 ? 'bg-red-600' : idx === 1 ? 'bg-red-500' : idx === 2 ? 'bg-red-400' : 'bg-gray-300'
-                }`}
+          {topOffenders.map((offender, idx) => {
+            const href = offender.topFindingId ? `/audit/${offender.topFindingId}` : undefined;
+            return (
+              <a
+                key={offender.institution}
+                href={href}
+                className="flex items-center gap-3 group"
+                style={{ textDecoration: 'none' }}
+                onClick={!href ? (e) => {
+                  e.preventDefault();
+                  setSearchQuery(offender.institution);
+                  setEntryMode('recent');
+                } : undefined}
               >
-                {idx + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <TopOffenderCard {...offender} />
-              </div>
-            </div>
-          ))}
+                <span
+                  className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 text-white ${
+                    idx === 0 ? 'bg-red-600' : idx === 1 ? 'bg-red-500' : idx === 2 ? 'bg-red-400' : 'bg-gray-300'
+                  }`}
+                >
+                  {idx + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <TopOffenderCard {...offender} />
+                </div>
+              </a>
+            );
+          })}
         </div>
       )}
 
@@ -1180,12 +1197,19 @@ function AuditPageClientInner({
               const totalAmt = instFindings.reduce((sum, f) =>
                 sum + f.deduplicated_contracts.reduce((s, c) => s + (c.amount || 0), 0), 0);
 
+              const topFinding = instFindings.sort((a, b) => b.adjusted_score - a.adjusted_score)[0];
+              const headerHref = topFinding?.id ? `/audit/${topFinding.id}` : undefined;
+
               return (
                 <div key={inst} className="card overflow-hidden border-l-4" style={{ borderLeftColor: riskColor }}>
-                  {/* Institution header */}
-                  <div className="flex items-start justify-between gap-4 mb-3">
+                  {/* Institution header — links to top finding */}
+                  <a
+                    href={headerHref}
+                    className={`flex items-start justify-between gap-4 mb-3 rounded-lg -mx-1 px-1 py-1 transition-colors ${headerHref ? 'hover:bg-gray-50 cursor-pointer group' : ''}`}
+                    onClick={headerHref ? undefined : (e) => e.preventDefault()}
+                  >
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base text-gray-900">{inst}</h3>
+                      <h3 className={`font-bold text-base text-gray-900 ${headerHref ? 'group-hover:text-rose-700 transition-colors' : ''}`}>{inst}</h3>
                       <div className="flex items-center gap-2 flex-wrap mt-1.5">
                         {patternTypes.map(pt => (
                           <PatternBadge key={pt} pattern={pt} size="sm" />
@@ -1197,14 +1221,21 @@ function AuditPageClientInner({
                         </p>
                       )}
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-2xl font-bold" style={{ color: riskColor }}>
-                        {maxScore}
+                    <div className="text-right flex-shrink-0 flex items-center gap-2">
+                      <div>
+                        <div className="text-2xl font-bold" style={{ color: riskColor }}>
+                          {maxScore}
+                        </div>
+                        <div className="text-[10px] text-gray-400">{maxRisk.risk_label}</div>
+                        <div className="text-[10px] text-gray-400 mt-0.5">{instFindings.length}건 탐지</div>
                       </div>
-                      <div className="text-[10px] text-gray-400">{maxRisk.risk_label}</div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">{instFindings.length}건 탐지</div>
+                      {headerHref && (
+                        <svg className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                      )}
                     </div>
-                  </div>
+                  </a>
 
                   {/* Each finding as a clickable card */}
                   <div className="space-y-2">
