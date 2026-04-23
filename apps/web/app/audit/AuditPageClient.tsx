@@ -268,6 +268,11 @@ const PATTERN_CATEGORIES: {
     description: '11-12월에 해당 연도 거래 이력이 전혀 없던 신규 업체와 수의계약 체결',
   },
   {
+    key: 'rebid_same_winner',
+    label: '재입찰 동일낙찰',
+    description: '입찰 재공고(재입찰/재공고)에서 1차와 동일한 업체가 다시 낙찰되는 패턴 (입찰 설계 조작 의심)',
+  },
+  {
     key: 'price_divergence',
     label: '가격 이탈',
     description: '동일 업체가 다른 기관 대비 특정 기관에만 현저히 높은 가격을 청구한 패턴',

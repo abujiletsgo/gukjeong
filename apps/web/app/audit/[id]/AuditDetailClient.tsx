@@ -41,6 +41,7 @@ const patternLabels: Record<string, string> = {
   sanctioned_vendor: '제재 업체 재수주',
   same_winner_repeat: '동일업체 반복수주',
   price_divergence: '가격 이탈',
+  rebid_same_winner: '재입찰 동일낙찰',
 };
 
 const patternDescriptions: Record<string, string> = {
@@ -55,6 +56,7 @@ const patternDescriptions: Record<string, string> = {
   high_value_sole_source: '1억원 이상의 계약이 경쟁 입찰 없이 수의계약으로 체결된 건입니다.',
   yearend_spike: '연말(4분기)에 연간 예산의 40% 이상을 집중 집행하는 패턴입니다.',
   bid_rigging: '동일한 입찰 참여 업체 조합이 5회 이상 반복되는 패턴입니다. 입찰 담합 가능성이 있습니다.',
+  rebid_same_winner: '재공고(재입찰) 이후에도 1차와 동일한 업체가 낙찰되는 패턴입니다. 재공고의 목적은 공정한 재경쟁인데, 결과가 동일하다면 입찰 설계 조작이 의심됩니다.',
 };
 
 // 계약 방법 라벨 색상

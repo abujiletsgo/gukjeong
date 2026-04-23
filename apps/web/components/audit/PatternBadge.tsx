@@ -148,6 +148,13 @@ const PatternIcon = ({ type, size = 14 }: { type: string; size?: number }) => {
           <path d="M6.34 6.34l1.42 1.42M16.24 16.24l1.42 1.42M6.34 17.66l1.42-1.42M16.24 7.76l1.42-1.42"/>
         </svg>
       );
+    case 'rebid_same_winner':
+      return (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M1 4v6h6"/>
+          <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+        </svg>
+      );
     default:
       return (
         <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -184,6 +191,7 @@ const PATTERN_CONFIG: Record<string, { label: string; bg: string; color: string 
   price_vs_catalog:     { label: '표준단가 초과',   bg: 'rgba(255,59,48,0.12)',   color: 'var(--apple-red)' },
   vendor_rotation:      { label: '순번 담합',       bg: 'rgba(255,59,48,0.12)',   color: 'var(--apple-red)' },
   yearend_new_vendor:   { label: '연말 신규업체',   bg: 'rgba(255,149,0,0.10)',   color: 'var(--apple-orange)' },
+  rebid_same_winner:    { label: '재입찰 동일낙찰', bg: 'rgba(255,59,48,0.12)',   color: 'var(--apple-red)' },
   ai_anomaly:           { label: 'AI 이상탐지',     bg: 'rgba(10,132,255,0.10)',  color: 'var(--apple-blue, #007AFF)' },
   yearend_spike:        { label: '연말 급증',       bg: 'rgba(255,149,0,0.10)',   color: 'var(--apple-orange)' },
   inflated_pricing:     { label: '고가 계약',       bg: 'rgba(255,59,48,0.10)',   color: 'var(--apple-red)' },
