@@ -1035,6 +1035,34 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
         </div>
       )}
 
+      {/* ═══ 언론 보도 / 관련 링크 ═══ */}
+      {relatedLinks.length > 0 && (
+        <div className="card mt-6">
+          <h2 className="font-bold text-lg mb-3">언론 보도 및 출처</h2>
+          <div className="space-y-2">
+            {relatedLinks.map((link, i) => (
+              <a
+                key={i}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+              >
+                <div className="shrink-0 w-6 h-6 rounded bg-gray-200 group-hover:bg-gray-300 flex items-center justify-center mt-0.5 transition-colors">
+                  <svg className="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 group-hover:text-rose-700 transition-colors leading-snug">{link.title}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{link.source}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 관련 자료 — "직접 확인하기"로 통합 (원시 데이터 섹션에 포함) */}
 
       {/* ═══ 7. 유사 감사 사례 (Similar Cases) ═══ */}
