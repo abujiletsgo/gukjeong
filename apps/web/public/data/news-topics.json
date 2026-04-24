@@ -1,0 +1,868 @@
+{
+  "generated_at": "2026-04-23T08:21:27Z",
+  "source_file": "news-rss.json",
+  "source_fetched_at": "2026-04-21T17:43:23Z",
+  "total_topics": 15,
+  "topics": [
+    {
+      "id": "topic-907150ba2b3c",
+      "title": "‘중앙은행 정체성’ 최다 언급한 신현송… 물가-금융안정 의지",
+      "event_date": "Wed, 22 Ap",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": true,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "‘중앙은행 정체성’ 최다 언급한 신현송… 물가-금융안정 의지",
+          "link": "https://www.donga.com/news/Economy/article/all/20260421/133785070/2",
+          "pubDate": "Wed, 22 Apr 2026 00:30:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/21/133786733.1.jpg' align='left' vspace='10' hspace='10'>21일 취임한 신현송 한국은행 총재는 “중동 전쟁에 따른 불확실성이 한층 커진 만큼 신중하고 유연한 통화정책으로 물가 안정과 금융 안정을 도모해야 한다”고 ",
+          "spectrum_score": 4.0,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "물가 압력 속 취임한 신현송 “신중하고 유연한 통화정책”",
+          "link": "https://www.khan.co.kr/article/202604212105025/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "한은 총재 “금융 안정을” 첫 일성인플레 조짐에 첫 금리 조정 촉각미 연준 의장 변화도 영향 미칠 듯신현송 한국은행 총재가 21일 서울 중구 한은 별관에서 열린 취임식에서 취임사를 하고 있다. 사진공동취재단신현송 한국은행 총재가 21일 4년 임기를 시작하면서 “신중하고 유연한 통화정책 운영을 통해 물가 안정과 금융 안정을 도모해 나가야 한다”고 밝혔다.전쟁",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-75e9595c8fa9",
+      "title": "하나금융, 금감원과 손잡고 청년 금융인재 양성 선포식",
+      "event_date": "Wed, 22 Ap",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": true,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "하나금융, 금융인재 양성 선포식-본선대회 열어",
+          "link": "https://www.donga.com/news/Economy/article/all/20260421/133785063/2",
+          "pubDate": "Wed, 22 Apr 2026 00:30:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/21/133784326.4.jpg' align='left' vspace='10' hspace='10'>하나금융지주는 20일 서울 명동사옥에서 차세대 금융 인재를 키우기 위한 ‘하나 청년 금융인재 양성 프로젝트’ 선포식을 열고 프로젝트 최종 참여자를 뽑기 위한",
+          "spectrum_score": 4.0,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "하나금융, 금감원과 손잡고 청년 금융인재 양성 선포식",
+          "link": "https://www.khan.co.kr/article/202604212125005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "하나금융그룹은 전날 서울 명동 사옥에서 ‘하나 청년 금융인재 양성 프로젝트’ 선포식을 열었다고 21일 밝혔다.금융감독원과 구글, 아마존웹서비스(AWS), 마이크로소프트가 후원하는 이 프로젝트는 금융산업을 이끌어갈 차세대 리더를 육성하는 실무형 프로그램이다. ESG(환경·사회·지배구조)와 인공지능(AI), 데이터 분석 교육을 강화했다.선포식에 앞서 이번 프로",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-b225a492363b",
+      "title": "현대차, ‘인도 맞춤형’ 3륜 전기차 만든다… 8년 협의 결실",
+      "event_date": "Wed, 22 Ap",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": true,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "현대차, ‘인도 맞춤형’ 3륜 전기차 만든다… 8년 협의 결실",
+          "link": "https://www.donga.com/news/Economy/article/all/20260421/133784701/2",
+          "pubDate": "Wed, 22 Apr 2026 00:30:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/21/133784303.4.jpg' align='left' vspace='10' hspace='10'>현대자동차가 인도 현지 업체와 공동으로 인도 시장에 최적화한 3륜 전기차를 개발한다. 정의선 현대차 회장과 나렌드라 모디 인도 총리의 8년간의 협의가 결실을",
+          "spectrum_score": 4.0,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "현대차, 인도 마이크로모빌리티 시장 진출…8년 숙원 풀었다",
+          "link": "https://www.khan.co.kr/article/202604212109005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "현지 생산업체와 친환경 ‘삼륜전기차’ 공동 개발·상용화 협약 체결현대자동차가 인도 삼륜차 생산업체와 개발 협약을 맺고 마이크로모빌리티 시장 공략에 나섰다. 2018년부터 인도의 친환경 이동수단 사업에 관심을 쏟았던 현대차그룹은 8년 만에 숙원을 이루게 됐다.현대차는 20일(현지시간) 인도에서 삼륜차 생산업체인 TVS 모터 컴퍼니와 ‘삼륜 전기차(EV)의 개",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-f6c858bb693e",
+      "title": "[여담야담] 정동영 '구성' 발언 파장…이 대통령 \"기밀 유출 주장은 잘못\"",
+      "event_date": "Wed, 22 Ap",
+      "category": "center",
+      "article_count": 9,
+      "outlet_count": 3,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "\"'미국 기밀 누설' 주장은 잘못\"…\"미군 사령관이 항의\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008527231&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Wed, 22 Apr 2026 00:47:00 +0900",
+          "description": "이재명 대통령이 SNS를 통해 북한 구성에 핵시설이 있다는 건 이미 널리 알려진 사실이라면서 기밀누설 주장은 잘못이라고 반박했습니다. 이에 대해…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "\"'미국 기밀 누설' 주장은 잘못\"…\"미군 사령관이 항의\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008527084&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 21:32:00 +0900",
+          "description": "미국이 최근, 우리 측에 제공하던 대북 정보의 일부를 제한하기 시작했습니다. 정동영 통일장관이 지난달 초 했던 이 발언을, 문제 삼는 것으로 전해졌습니다.[ 영변과 &#39;구성&#39;, 강선에 있는 우라늄 농축시설, HEU 북의 우라늄 농축은 90%짜리 무기급 우라늄입니다.]핵심은 &#39;구성에 핵시설이 있다&#39;는 언급이 미국의 기밀정보에 기반했",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "[여담야담] 정동영 '구성' 발언 파장…이 대통령 \"기밀 유출 주장은 잘못\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008526844&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 16:06:00 +0900",
+          "description": "&#39;SBS &lt;주영진 뉴스브리핑&gt;&#39; &#9632; &lt;주영진 뉴스브리핑&gt; &#9632; 진행 : 주영진 앵커&#9632; 이기헌 더불어…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "[여담야담] \"후보도 없는데\" 국힘, 경기도 독자 선대위 구성…서울도 '탈장동혁'",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008526780&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 15:40:00 +0900",
+          "description": "&#39;SBS &lt;주영진 뉴스브리핑&gt;&#39; &#9632; &lt;주영진 뉴스브리핑&gt; &#9632; 진행 : 주영진 앵커&#9632; 이기헌 더불어…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "정부, 장관 '구성' 발언 보안 조사…정보 유출 정황 못 찾아",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008526480&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 12:57:00 +0900",
+          "description": "&#9650; 정동영 통일부 장관이 20일 오후 외부 일정을 마친 뒤 서울 광화문 정부서울청사에 도착하고 있다정부가 정동영 통일부 장관의 구성 …",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "한병도, 정동영 '구성 핵시설' 언급에 \"비밀 아냐…국힘이 침소봉대\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008526187&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 10:40:00 +0900",
+          "description": "&#9650; 더불어민주당 한병도 원내대표가 21일 국회에서 열린 원내대책회의에서 발언하고 있다.민주당 한병도 원내대표는 21일 정동영 통일부 …",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "‘각자도생’ 국힘 후보들…경기지역 의원들도 “독자 선대위”",
+          "link": "https://www.khan.co.kr/article/202604212047015/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "김선교·김은혜·안철수 등 6인“후보도 못 정해…유례없는 위기”장동혁 지도부 손절 움직임 가속우리대로 간다 김선교 의원(왼쪽) 등 국민의힘 경기 지역구 의원 6명이 21일 수도권 민심에 맞는 독자 선대위를 꾸리자는 기자회견을 하기 위해 국회 소통관에 들어서고 있다.  박민규 선임기자 parkyu@kyunghyang.com국민의힘 경기 지역 의원 전원이 21일",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "장동혁 8박10일 방미 미스터리…국힘 후보들은 각자도생 [공덕포차]",
+          "link": "https://www.hani.co.kr/arti/politics/politics_general/1255271.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "정동영 ‘북 핵시설 발언’ 파장…전문가들 “안보, 초당적 협력해야”",
+          "link": "https://www.hani.co.kr/arti/politics/defense/1255254.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-15a3220dc92a",
+      "title": "수년 걸릴 ‘미-이란 협상’ 난제…핵농축·제재 해제·호르무즈 통행료",
+      "event_date": "Tue,21 Apr",
+      "category": "progressive",
+      "article_count": 4,
+      "outlet_count": 3,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "미군, 인도양서 이란연계 유조선 나포…협상 목전 봉쇄범위 확대",
+          "link": "https://www.segye.com/newsView/20260421519566",
+          "pubDate": "Tue,21 Apr 2026 23:07:58 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/04/21/20260421519568.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  미군이 이란과의 2차 종전협상을 앞두고 인도태평양 사령부 책임 구역 내에서 이란과 연계된 제재 대상 선박을 나포했다.\n \n 미국 국방부는 21일(현지시간) 엑스(",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "미군, 인도양에서 이란 연계 선박 나포",
+          "link": "https://www.khan.co.kr/article/202604212059001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "미국 국방부 엑스 갈무리미군이 이란과의 2차 종전협상을 앞두고 인도태평양 해상에서 이란과 연계된 제재 선박을 나포했다.미국 국방부는 21일(현지시간) 엑스에서 “밤사이 미군은 인도·태평양사령부 책임 구역 내에서 무국적 제재 선박인 동력 유조선 티파니호에 대해 임검권(소속이 밝혀지지 않은 선박이나 군함 등에 대해 공해상에서 경찰권을 행사할 수 있는 권한)을 ",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "수년 걸릴 ‘미-이란 협상’ 난제…핵농축·제재 해제·호르무즈 통행료",
+          "link": "https://www.hani.co.kr/arti/international/arabafrica/1255281.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "협상 앞둔 이란, 온건-강경 충돌…호르무즈 열어도 군부가 재봉쇄",
+          "link": "https://www.hani.co.kr/arti/international/arabafrica/1255265.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-01cb7ff5b8a5",
+      "title": "하림 ‘NS쇼핑’, 홈플러스 익스프레스 매각 우선협상대상자 선정",
+      "event_date": "Tue,21 Apr",
+      "category": "progressive",
+      "article_count": 3,
+      "outlet_count": 3,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "하림 ‘NS쇼핑’, 홈플러스 익스프레스 매각 우선협상대상자 선정",
+          "link": "https://www.segye.com/newsView/20260421518361",
+          "pubDate": "Tue,21 Apr 2026 23:00:00 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/04/21/20260421518360.png\" align=\"left\" vspace=\"10\" hspace=\"10\">  홈플러스 익스프레스 매각 본입찰에 하림그룹 산하 NS쇼핑이 우선협상대상자로 지정됐다.\n \n21일 유통업계에 따르면 이날 오후 3시 홈플러스 슈퍼마켓 사업부(SSM",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "홈플러스 익스프레스 우선협상대상자로 NS홈쇼핑 선정",
+          "link": "https://www.khan.co.kr/article/202604212218005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "홈플러스는 기업형 슈퍼마켓(SSM) 사업부인 ‘홈플러스 익스프레스’ 매각의 우선협상대상자에 하림그룹 계열사인 NS홈쇼핑이 선정됐다고 밝혔다. 1년여 동안 이어온 홈플러스 회생 작업에도 속도가 붙을 것으로 예상된다.홈플러스는 21일 “금일 마감된 홈플러스 익스프레스 공개입찰 결과, NS홈쇼핑을 우선협상대상자로 지정하기로 했다”며 “세부 내용에 대한 협상을 조",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "하림그룹, 홈플러스 익스프레스 인수 우선협상대상자로 선정",
+          "link": "https://www.hani.co.kr/arti/economy/consumer/1255277.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-da36513fc079",
+      "title": "청와대 \"한-인도 정상회담, 글로벌사우스 외교 본격 가동 알려\"",
+      "event_date": "Tue, 21 Ap",
+      "category": "center",
+      "article_count": 3,
+      "outlet_count": 1,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "이 대통령, 하노이 도착…내일 한-베트남 정상회담 예정",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008527174&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 21:16:00 +0900",
+          "description": "&#9650; 베트남을 국빈 방문한 이재명 대통령과 김혜경 여사가 21일 하노이 노이바이 국제공항에 도착한 공군 1호기에서 내려 이동하고 있다인…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "이 대통령, 인도 일정 마무리…베트남 하노이로 출발",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008526913&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 16:34:00 +0900",
+          "description": "&#9650; 이재명 대통령과 나렌드라 모디 인도 총리가 20일 인도 뉴델리 대통령궁에서 열린 드로우파디 무르무 인도 대통령 주최 국빈 만찬에서…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "청와대 \"한-인도 정상회담, 글로벌사우스 외교 본격 가동 알려\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008525946&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 09:30:00 +0900",
+          "description": "&#9650; 이재명 대통령과 나렌드라 모디 인도 총리가 20일 뉴델리 영빈관에서 소인수 정상회담을 하고 있다.청와대는 이재명 대통령과 나렌드라…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        }
+      ]
+    },
+    {
+      "id": "topic-53c7309cf5c1",
+      "title": "[사설] 전문성·공정성 외면한 문화예술계 ‘보은 인사’",
+      "event_date": "Tue,21 Apr",
+      "category": "conservative",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "[사설] 전문성·공정성 외면한 문화예술계 ‘보은 인사’",
+          "link": "https://www.segye.com/newsView/20260421515760",
+          "pubDate": "Tue,21 Apr 2026 23:15:49 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/04/21/20260421517376.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  이재명정부의 문화예술계 ‘보은 인사’ 논란이 커지고 있다. 진보성향 시민단체인 문화연대는 어제 청와대 앞에서 성명을 발표하고 공공 문화예술기관 인사의 기준과 원칙",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "[횡설수설/이진영]문화예술계 ‘보은-코드인사’",
+          "link": "https://www.donga.com/news/Opinion/article/all/20260421/133786107/2",
+          "pubDate": "Tue, 21 Apr 2026 23:18:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/21/133786106.2.jpg' align='left' vspace='10' hspace='10'>문화예술계는 보은 인사, 코드 인사가 특히 심한 분야다. 성과 측정이 상대적으로 어려워 ‘문화적 소양’이 있으면 아무나 할 수 있다고 오해하기 때문일 것이다",
+          "spectrum_score": 4.0,
+          "category": "conservative"
+        }
+      ]
+    },
+    {
+      "id": "topic-56822841b147",
+      "title": "원불교 나상호 교정원장 “종교가 자기 성장에만 몰두해선 안된다”",
+      "event_date": "Tue,21 Apr",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "원불교 나상호 교정원장 “종교가 자기 성장에만 몰두해선 안된다”",
+          "link": "https://www.segye.com/newsView/20260421519662",
+          "pubDate": "Tue,21 Apr 2026 23:03:22 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/04/21/20260421519971.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  “한국은 세계에서 가장 빠르게 성장한 나라입니다. 급성장과 도시화 속에서 고립된 상황이 야기됐습니다. 정부도 이 속도를 다 수용하지 못했고, 종교도 자기 성장에만",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "원불교 교정원장 “국민 생명존중·마음회복 활동 나설 것”",
+          "link": "https://www.khan.co.kr/article/202604212131015/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "28일 ‘대각개교절’ 앞두고 메시지원불교 나상호 교정원장(사진)은 원불교 최대 경축일인 대각개교절(4월28일)을 앞둔 21일 서울 동작구 원불교 소태산 기념관에서 “현대사회의 아픔을 치유하고 평화로운 세상을 만들기 위한 종교적 본분을 다하겠다”면서 “국민들의 생명존중과 마음회복을 위해 종단 차원의 대응에 나서겠다”고 밝혔다.나 원장이 우선적으로 제시한 실천",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-f12af6eb0c17",
+      "title": "‘하동 주택 화재’ 70대 사망…용의자 사위도 숨진 채 발견",
+      "event_date": "Tue,21 Apr",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "‘하동 주택 화재’ 70대 사망…용의자 사위도 숨진 채 발견",
+          "link": "https://www.segye.com/newsView/20260421518309",
+          "pubDate": "Tue,21 Apr 2026 23:00:00 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/04/21/20260421518308.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  경남 하동군 한 주택 화재 현장에서 70대 여성이 숨진 채 발견됐는데 용의자인 이 여성의 사위도 숨진 채 발견돼 경찰이 경위를 파악하고 있다.\n \n21일 경남경찰",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "따로 사는 장모·사위 각각 숨진 채 발견",
+          "link": "https://www.hani.co.kr/arti/area/yeongnam/1255256.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-f3a0364d2bfc",
+      "title": "[사설]‘쿠팡 김범석 총수 지정’ 이달 결론… 차별도, 특혜도 없어야",
+      "event_date": "Tue, 21 Ap",
+      "category": "center",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "[사설]‘쿠팡 김범석 총수 지정’ 이달 결론… 차별도, 특혜도 없어야",
+          "link": "https://www.donga.com/news/Opinion/article/all/20260421/133786112/2",
+          "pubDate": "Tue, 21 Apr 2026 23:24:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/20/133772393.1.jpg' align='left' vspace='10' hspace='10'>공정거래위원회가 쿠팡의 동일인(총수)을 쿠팡 법인에서 창업주인 김범석 쿠팡 Inc 의장으로 변경할지를 두고 막바지 검토 중이라고 한다. 공정위는 법정 시한인",
+          "spectrum_score": 4.0,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "[단독] \"쿠팡 김범석 신변 보장돼야 외교·안보 고위급 협의\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008527086&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Tue, 21 Apr 2026 21:32:00 +0900",
+          "description": "미국 측이 우리 정부에, 쿠팡 총수인 김범석 의장의 법적 안전이 보장되지 않을 경우, 한미 고위급 협의 진행이 어렵단 뜻을 전달한 걸로 저희 취재 결과, 파악됐습니다.",
+          "spectrum_score": 2.8,
+          "category": "center"
+        }
+      ]
+    },
+    {
+      "id": "topic-c471632e9bd3",
+      "title": "[2026년 04월 22일 날씨]전국 미세먼지 장막에 숨이 턱…남부엔 봄비",
+      "event_date": "2024.10.29",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "jtbc",
+          "outlet_name": "JTBC",
+          "title": "[날씨] 전국 쾌청한 하늘…낮 동안은 따뜻해요",
+          "link": "https://news.jtbc.co.kr/article/article.aspx?news_id=NB12220969",
+          "pubDate": "2024.10.29",
+          "description": "흐린 듯한 날씨에 구름이 볕을 가려주면서 종일 선선했는데요. 저녁까지 일부 수도권에는 약한 비도 내렸습니다.반면, 내일(30일)부터는 전국에 쾌청한 하늘이 드러나겠고요. 낮 기온도 20도를 넘어서면서 오늘보다",
+          "spectrum_score": 2.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "[2026년 04월 22일 날씨]전국 미세먼지 장막에 숨이 턱…남부엔 봄비",
+          "link": "https://www.khan.co.kr/article/202604212055005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-57337970f214",
+      "title": "트럼프 “휴전 연장 원하지 않아”···2차 협상 참여 확정짓지 않는 이란에 “수 차례 휴전 위반”",
+      "event_date": "2026-04-23",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "트럼프 “휴전 연장 원하지 않아”···2차 협상 참여 확정짓지 않는 이란에 “수 차례 휴전 위반”",
+          "link": "https://www.khan.co.kr/article/202604212120001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "도널드 트럼프 미국 대통령이 지난 18일(현지시간) 워싱턴 백악관 집무실에서 정신 건강 치료 연구에 대해 이야기하고 있다. 로이터연합뉴스도널드 트럼프 미국 대통령이 미국과 이란의 2차 종전협상을 앞두고 이란과의 휴전 연장을 원하지 않는다고 밝혔다. 또 이란의 휴전 위반을 주장했다.도널드 트럼프 대통령은 21일(현지시간) CNBC 인터뷰에서 “내 생각에 그들",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "휴전 하루 연장, 종전협상 향하는 미-이란",
+          "link": "https://www.hani.co.kr/arti/international/arabafrica/1255266.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-66fdee3ba622",
+      "title": "미·쿠바, 10년 만에 양자 회담…에너지 봉쇄 조치 해제될까",
+      "event_date": "2026-04-23",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "미·쿠바, 10년 만에 양자 회담…에너지 봉쇄 조치 해제될까",
+          "link": "https://www.khan.co.kr/article/202604212100005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "쿠바 “서로 존중하며 전문적 대화 나눠”…미국은 개혁 단행 요구미국의 경제 제재로 갈등을 겪고 있는 미국과 쿠바가 지난 10일(현지시간) 쿠바 수도 아바나에서 양자 회담을 진행했다고 AFP·로이터통신이 20일 보도했다. 미국 대표단이 쿠바를 방문한 것은 2016년 이후 처음이다.알레한드로 가르시아 델 토로 쿠바 외교부 미국 담당 부국장도 공산당 기관지 그란",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "미-쿠바, 10년 만에 아바나서 회담…“외교적 합의 가능성 신호”",
+          "link": "https://www.hani.co.kr/arti/international/america/1255253.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-2c596db447d4",
+      "title": "치매 진단 기초연금 수급자가 원할 경우 현금성 자산 10억까지 국가가 맡아 관리",
+      "event_date": "2026-04-23",
+      "category": "progressive",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": null,
+      "key_facts": null,
+      "fact_check": null,
+      "citizen_takeaway": null,
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "치매 진단 기초연금 수급자가 원할 경우 현금성 자산 10억까지 국가가 맡아 관리",
+          "link": "https://www.khan.co.kr/article/202604212054005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "‘치매 머니’ 공공신탁 시범 실시치매나 경도인지장애로 재산 관리에 어려움을 겪는 고령층을 대상으로 국가가 재산을 대신 관리해주는 제도가 시행된다. 보건복지부는 21일 국민연금공단이 재산을 관리·보호하는 공공신탁 방식의 ‘치매 안심 재산 관리 서비스’ 시범사업을 실시한다고 밝혔다.주요 대상은 치매나 경도인지장애로 경제적 학대를 당할 위험이 있는 기초연금 수급",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "[Q＆A] 국가가 치매 어르신 재산 관리…누가 신청하고 어떤 서비스 받나",
+          "link": "https://www.hani.co.kr/arti/society/rights/1255274.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    }
+  ]
+}

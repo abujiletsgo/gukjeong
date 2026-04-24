@@ -6,6 +6,7 @@
  */
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import type { NewsTopicsResponse } from './types';
 
 const DATA_DIR = join(process.cwd(), 'data');
 
@@ -117,5 +118,16 @@ export function getLocalOfficialAssets() {
     return cached<Record<string, unknown>>('official-assets.json');
   } catch {
     return { source: '', fetched_at: '', totalCount: 0, items: [] };
+  }
+}
+
+const PUBLIC_DATA_DIR = join(process.cwd(), 'public', 'data');
+
+export function getLocalNewsTopics(): NewsTopicsResponse {
+  try {
+    const raw = readFileSync(join(PUBLIC_DATA_DIR, 'news-topics.json'), 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return { generated_at: '', source_file: '', source_fetched_at: '', total_topics: 0, topics: [] };
   }
 }

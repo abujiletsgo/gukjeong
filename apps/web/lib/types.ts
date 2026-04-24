@@ -584,3 +584,46 @@ export interface ApiResponse<T> {
   page?: number;
   message?: string;
 }
+
+export interface NewsTopicFrame {
+  emphasis: string | null;
+  headline: string | null;
+  tone: string | null;
+}
+
+export interface NewsTopicArticle {
+  outlet_id: string;
+  outlet_name: string;
+  title: string;
+  link?: string;
+  pubDate?: string;
+  description?: string;
+  spectrum_score: number;
+  category: 'progressive' | 'center' | 'conservative';
+}
+
+export interface NewsTopic {
+  id: string;
+  title: string;
+  event_date: string;
+  category: string;
+  article_count: number;
+  outlet_count: number;
+  has_multiple_perspectives: boolean;
+  ai_summary: string | null;
+  key_facts: string[] | null;
+  fact_check: string | null;
+  citizen_takeaway: string | null;
+  progressive_frame: NewsTopicFrame;
+  conservative_frame: NewsTopicFrame;
+  moderate_frame: NewsTopicFrame;
+  articles: NewsTopicArticle[];
+}
+
+export interface NewsTopicsResponse {
+  generated_at: string;
+  source_file: string;
+  source_fetched_at: string;
+  total_topics: number;
+  topics: NewsTopic[];
+}
