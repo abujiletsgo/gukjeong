@@ -19,6 +19,7 @@ npm run db:migrate       # Alembic upgrade head
 npm run db:seed          # Seed presidents, media, fiscal data
 uv run scripts/generate-audit.py   # Regenerate audit-results.json from G2B data
 uv run scripts/fetch-data.py       # Fetch fresh data from data.go.kr APIs
+uv run scripts/accumulate.py       # Accumulate historical G2B data (run daily, --months N)
 ```
 
 ## Architecture
