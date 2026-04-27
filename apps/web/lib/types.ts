@@ -236,6 +236,15 @@ export interface AuditFlag {
   ai_enriched_at?: string;
   // 뉴스 연관
   related_news?: Array<{ title: string; link: string; outlet: string }>;
+  // 뉴스 보도 (enrich-audit.py agent 실행 후)
+  news_coverage?: {
+    searched_at?: string;
+    articles?: Array<{ title: string; url: string; source: string; snippet?: string }>;
+    ai_summary?: string;
+    coverage_level?: 'significant' | 'moderate' | 'minimal' | 'none';
+    investigation_status?: 'confirmed' | 'suspected' | 'cleared' | 'unknown';
+    key_findings_from_news?: string;
+  };
 }
 
 export interface SimilarCase {

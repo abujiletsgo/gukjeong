@@ -21,11 +21,20 @@ Claude가 하는 일:
 import anthropic
 import json
 import os
+import ssl
 import sys
 import time
+import xml.etree.ElementTree as ET
+import urllib.parse
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from email.utils import parsedate_to_datetime
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
+
+_ssl_ctx = ssl.create_default_context()
+_ssl_ctx.check_hostname = False
+_ssl_ctx.verify_mode = ssl.CERT_NONE
 
 # ── Paths ──
 ROOT = Path(__file__).parent.parent
@@ -85,7 +94,9 @@ def load_audit() -> dict:
 
 
 def save_audit(data: dict):
-    data['metadata']['ai_enriched_at'] = datetime.utcnow().isoformat() + 'Z'
+    if 'metadata' not in data:
+        data['metadata'] = {}
+    data['metadata']['ai_enriched_at'] = datetime.now(timezone.utc).isoformat()
     AUDIT_PATH.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
     print(f'  ✅ Saved {AUDIT_PATH} ({AUDIT_PATH.stat().st_size // 1024} KB)')
 
@@ -162,7 +173,7 @@ def enrich_finding(client: anthropic.Anthropic, f: dict) -> dict:
             'ai_risk_assessment': result.get('ai_risk_assessment', ''),
             'ai_comparable': result.get('ai_comparable'),
             'ai_model': model,
-            'ai_enriched_at': datetime.utcnow().isoformat() + 'Z',
+            'ai_enriched_at': datetime.now(timezone.utc).isoformat() + 'Z',
         }
     except Exception as e:
         print(f'  ⚠️  Enrichment failed for {f.get("id","?")}: {e}')
@@ -278,7 +289,7 @@ def run_ai_anomaly_detection(client: anthropic.Anthropic, findings: list, contra
 
         try:
             msg = client.messages.create(
-                model=MODEL,
+                model=MODEL_FAST,
                 max_tokens=400,
                 messages=[{'role': 'user', 'content': prompt}],
             )
@@ -329,7 +340,7 @@ def run_ai_anomaly_detection(client: anthropic.Anthropic, findings: list, contra
                 'why_it_matters': 'AI가 규칙 기반 시스템이 탐지하지 못한 패턴을 발견했습니다.',
                 'what_should_happen': '전문 감사관이 해당 계약들을 직접 검토해야 합니다.',
                 'ai_model': MODEL,
-                'ai_enriched_at': datetime.utcnow().isoformat() + 'Z',
+                'ai_enriched_at': datetime.now(timezone.utc).isoformat() + 'Z',
             })
             print(f'  ✅ {inst}: {result.get("anomaly_type")} (신뢰도 {result.get("confidence",0)*100:.0f}%)')
         except Exception as e:
@@ -338,6 +349,209 @@ def run_ai_anomaly_detection(client: anthropic.Anthropic, findings: list, contra
 
     print(f'  AI 이상탐지: {len(new_findings)}건 신규 발견')
     return new_findings
+
+
+_NEWS_SOURCE_MAP = {
+    'chosun': '조선일보', 'joongang': '중앙일보', 'donga': '동아일보',
+    'hani': '한겨레', 'khan': '경향신문', 'ohmynews': '오마이뉴스',
+    'yna': '연합뉴스', 'yonhapnews': '연합뉴스', 'newsis': '뉴시스',
+    'mt': '머니투데이', 'hankyung': '한국경제', 'mk': '매일경제',
+    'sedaily': '서울경제', 'nocutnews': '노컷뉴스', 'news1': '뉴스1',
+    'jtbc': 'JTBC', 'kbs': 'KBS', 'mbc': 'MBC', 'sbs': 'SBS',
+    'pressian': '프레시안', 'mediatoday': '미디어오늘', 'sisain': '시사IN',
+}
+
+
+def _guess_news_source(url: str) -> str:
+    lower = url.lower()
+    for k, v in _NEWS_SOURCE_MAP.items():
+        if k in lower:
+            return v
+    parts = lower.split('/')
+    return parts[2].replace('www.', '') if len(parts) > 2 else '언론사'
+
+
+def gnews_search(query: str, max_results: int = 8) -> list[dict]:
+    """Search Korean news via Google News RSS. No API key needed."""
+    encoded = urllib.parse.quote(query)
+    url = f'https://news.google.com/rss/search?q={encoded}&hl=ko&gl=KR&ceid=KR:ko'
+    try:
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            'Accept': 'application/rss+xml,application/xml,text/xml,*/*',
+        })
+        with urllib.request.urlopen(req, timeout=12, context=_ssl_ctx) as resp:
+            raw = resp.read().decode('utf-8', errors='replace')
+        root = ET.fromstring(raw)
+        articles = []
+        for item in root.findall('.//item')[:max_results]:
+            title  = (item.findtext('title') or '').strip()
+            link   = (item.findtext('link')  or '').strip()
+            pub    = (item.findtext('pubDate') or '').strip()
+            src_el = item.find('source')
+            source = src_el.text.strip() if src_el is not None and src_el.text else _guess_news_source(link)
+            desc   = (item.findtext('description') or '').strip()[:250]
+            date_str = ''
+            try:
+                date_str = parsedate_to_datetime(pub).strftime('%Y-%m-%d')
+            except Exception:
+                date_str = pub[:10] if len(pub) >= 10 else ''
+            if title and link:
+                articles.append({'title': title, 'url': link, 'source': source,
+                                  'date': date_str, 'snippet': desc})
+        return articles
+    except Exception as e:
+        return []
+
+
+def build_news_coverage(client_obj: anthropic.Anthropic, inst: str, vendor: str,
+                        pattern_types: list, summaries: list, articles: list) -> dict:
+    """Call Claude Haiku to synthesize news articles into a structured news_coverage block."""
+    arts_text = '\n'.join(
+        f'  [{a["source"]}] ({a["date"]}) {a["title"]}\n    {a["snippet"]}'
+        for a in articles[:6]
+    ) if articles else '  (뉴스 검색 결과 없음)'
+
+    findings_text = '\n'.join(f'  - {s[:200]}' for s in summaries[:4])
+
+    prompt = f"""당신은 한국 정부 조달 비리 분석 전문가입니다.
+
+## 감사 대상
+기관: {inst}
+업체: {vendor or '(특정 업체 없음)'}
+의심 패턴: {', '.join(set(pattern_types))}
+
+## AI 감사 발견사항
+{findings_text}
+
+## 뉴스 검색 결과
+{arts_text}
+
+아래 JSON으로만 응답 (markdown 없이):
+{{
+  "ai_summary": "이 기관/업체의 뉴스 보도와 감사 발견을 연결하는 2-3문장 시민 친화적 요약. 기자가 쓸 수 있는 수준.",
+  "coverage_level": "significant|moderate|minimal|none",
+  "coverage_note": "뉴스 보도 수준 설명 한 문장 (없으면 없는 이유)",
+  "key_findings_from_news": ["뉴스에서 드러난 핵심 사실 1", "핵심 사실 2"],
+  "investigation_status": "수사중|기소|유죄판결|무죄|감사원조사|국감질의|언론보도만|미확인"
+}}"""
+
+    try:
+        resp = client_obj.messages.create(
+            model=MODEL_FAST,
+            max_tokens=500,
+            messages=[{'role': 'user', 'content': prompt}],
+        )
+        text = resp.content[0].text.strip()
+        if '```' in text:
+            text = text.split('```')[1]
+            if text.startswith('json'):
+                text = text[4:]
+        return json.loads(text.strip())
+    except Exception as e:
+        # Fallback: generate basic summary from article titles without Claude API
+        if articles:
+            sources = list(dict.fromkeys(a['source'] for a in articles[:4]))
+            titles = [a['title'] for a in articles[:3]]
+            n = len(articles)
+            level = 'significant' if n >= 5 else 'moderate' if n >= 3 else 'minimal'
+            # Detect investigation keywords in titles
+            invest_kw = {'수사': '수사중', '기소': '기소', '유죄': '유죄판결', '무죄': '무죄',
+                         '감사원': '감사원조사', '국감': '국감질의', '국정감사': '국감질의'}
+            status = '언론보도만'
+            all_titles = ' '.join(a['title'] for a in articles)
+            for kw, val in invest_kw.items():
+                if kw in all_titles:
+                    status = val
+                    break
+            return {
+                'ai_summary': (
+                    f'{inst}에 대해 {", ".join(sources[:3])} 등 {n}건의 언론 보도가 확인됩니다. '
+                    f'주요 보도: {titles[0][:60]}' +
+                    (f' 외 {n-1}건.' if n > 1 else '.')
+                ),
+                'coverage_level': level,
+                'coverage_note': f'{n}건 기사 발견 (ANTHROPIC_API_KEY 설정 시 AI 요약 생성 가능)',
+                'key_findings_from_news': [t[:80] for t in titles[:2]],
+                'investigation_status': status,
+            }
+        return {
+            'ai_summary': f'{inst}에 대한 관련 언론 보도가 검색되지 않았습니다.',
+            'coverage_level': 'none',
+            'coverage_note': '검색 결과 없음',
+            'key_findings_from_news': [],
+            'investigation_status': '미확인',
+        }
+
+
+def enrich_live_news(client_obj: anthropic.Anthropic, findings: list, top_n: int = 300):
+    """
+    For each unique (institution, vendor) pair in the top N high-priority findings:
+    1. Search Google News RSS
+    2. Call Claude to synthesize → news_coverage block
+    3. Attach to all findings for that pair
+    """
+    print(f'\n📰 실시간 뉴스 검색 + AI 요약 (상위 {top_n}건)...')
+
+    sev_w = {'CRITICAL': 4, 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1}
+
+    def _score(f):
+        amt = f.get('total_amount', 0) or sum(
+            c.get('amount', 0) for c in f.get('evidence_contracts', []))
+        return sev_w.get(f.get('severity', ''), 0) * 1000 + f.get('suspicion_score', 0)
+
+    eligible = [f for f in findings
+                if sev_w.get(f.get('severity', ''), 0) >= 3  # HIGH or CRITICAL
+                and not f.get('news_coverage')]
+    eligible.sort(key=_score, reverse=True)
+
+    # Group by (institution, primary vendor)
+    from collections import defaultdict
+    pair_map: dict = defaultdict(list)
+    for f in eligible[:top_n]:
+        inst = f.get('target_institution', '')
+        vendors = [c.get('vendor', '') for c in f.get('evidence_contracts', []) if c.get('vendor')]
+        v = vendors[0] if vendors else ''
+        pair_map[(inst, v)].append(f)
+
+    pairs = sorted(pair_map.items(), key=lambda x: max(_score(f) for f in x[1]), reverse=True)
+    print(f'  고유 기관·업체 쌍: {len(pairs)}개')
+
+    enriched = 0
+    for idx, ((inst, vendor), flist) in enumerate(pairs, 1):
+        query = f'{inst} {vendor} 비리 조달 감사'.strip()
+        articles = gnews_search(query, max_results=8)
+        if not articles and vendor:
+            articles = gnews_search(f'{inst} 감사 비리', max_results=5)
+        time.sleep(0.25)
+
+        synthesis = build_news_coverage(
+            client_obj, inst, vendor,
+            [f.get('pattern_type', '') for f in flist],
+            [f.get('summary', '') for f in flist],
+            articles,
+        )
+
+        nc = {
+            'searched_at':   datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+            'query_used':    query,
+            'articles':      articles[:6],
+            'ai_summary':    synthesis.get('ai_summary', ''),
+            'coverage_level': synthesis.get('coverage_level', 'none'),
+            'coverage_note': synthesis.get('coverage_note', ''),
+            'key_findings_from_news': synthesis.get('key_findings_from_news', []),
+            'investigation_status':  synthesis.get('investigation_status', '미확인'),
+        }
+        for f in flist:
+            f['news_coverage'] = nc
+        enriched += len(flist)
+
+        level = synthesis.get('coverage_level', '?')
+        status = synthesis.get('investigation_status', '?')
+        print(f'  [{idx:03d}] {inst[:25]} / {vendor[:20] or "-"} → {len(articles)}건 뉴스 | {level} | {status}')
+
+    print(f'  ✅ {enriched}건 news_coverage 추가')
+    return enriched
 
 
 def main():
@@ -447,7 +661,7 @@ def main():
                     nf['target_id'] = nf['id']
                     nf['target_type'] = 'institution'
                     nf['status'] = 'active'
-                    nf['created_at'] = datetime.utcnow().isoformat() + 'Z'
+                    nf['created_at'] = datetime.now(timezone.utc).isoformat() + 'Z'
                     nf['verdict'] = '조사 필요'
                     nf['priority_tier'] = 2
                 findings.extend(new_anomalies)
@@ -522,7 +736,7 @@ JSON 형식으로만 응답:
                         net_raw = net_raw[4:]
                 net_result = json.loads(net_raw.strip())
                 audit_data['vendor_network_analysis'] = {
-                    'generated_at': datetime.utcnow().isoformat() + 'Z',
+                    'generated_at': datetime.now(timezone.utc).isoformat() + 'Z',
                     'cross_institution_vendors': len(cross_inst_vendors),
                     'summary': net_result.get('network_summary', ''),
                     'top_suspects': net_result.get('top_suspects', []),
@@ -541,19 +755,27 @@ JSON 형식으로만 응답:
         else:
             print('  다기관 의심 업체 없음')
 
+    # ── 5. 실시간 뉴스 검색 + AI 요약 ────────────────────────────────────────
+    if not args.anomaly_only:
+        enrich_live_news(client, findings, top_n=300)
+
     # ── Save ─────────────────────────────────────────────────────────────────
     audit_data['findings'] = findings
     save_audit(audit_data)
 
     # Summary
-    ai_enriched = sum(1 for f in findings if f.get('ai_headline'))
-    ai_anomaly = sum(1 for f in findings if f.get('pattern_type') == 'ai_anomaly')
-    news_linked = sum(1 for f in findings if f.get('related_news'))
+    ai_enriched  = sum(1 for f in findings if f.get('ai_headline'))
+    ai_anomaly   = sum(1 for f in findings if f.get('pattern_type') == 'ai_anomaly')
+    news_linked  = sum(1 for f in findings if f.get('related_news'))
+    news_covered = sum(1 for f in findings if f.get('news_coverage'))
+    sig_covered  = sum(1 for f in findings if (f.get('news_coverage') or {}).get('coverage_level') in ('significant', 'moderate'))
     print(f'\n📊 완료:')
-    print(f'   AI 강화 발견: {ai_enriched}건')
-    print(f'   AI 이상탐지: {ai_anomaly}건')
-    print(f'   뉴스 연결: {news_linked}건')
-    print(f'   총 발견: {len(findings)}건')
+    print(f'   AI 강화 발견 (headline+narrative): {ai_enriched}건')
+    print(f'   AI 이상탐지:                       {ai_anomaly}건')
+    print(f'   RSS 뉴스 연결:                      {news_linked}건')
+    print(f'   실시간 뉴스 검색 완료:              {news_covered}건')
+    print(f'     → 유의미한 언론 보도 확인:        {sig_covered}건')
+    print(f'   총 발견:                            {len(findings)}건')
 
 
 if __name__ == '__main__':

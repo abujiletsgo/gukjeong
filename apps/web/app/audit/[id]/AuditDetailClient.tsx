@@ -384,6 +384,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const aiQuestions = enrichResult?.ai_questions ?? flag.ai_questions ?? [];
   const aiComparable = enrichResult?.ai_comparable ?? flag.ai_comparable ?? '';
   const relatedNews = flag.related_news ?? [];
+  const newsCoverage = flag.news_coverage ?? null;
 
   const contractTotal = contracts.reduce((sum, c) => sum + c.amount, 0);
 
@@ -646,7 +647,50 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
               </div>
             )}
 
-            {/* Related News */}
+            {/* News Coverage (from agent enrichment) */}
+            {newsCoverage && (newsCoverage.articles?.length || newsCoverage.ai_summary) && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-xs font-bold text-gray-600">언론 보도</h3>
+                  {newsCoverage.coverage_level && newsCoverage.coverage_level !== 'none' && (
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                      newsCoverage.coverage_level === 'significant' ? 'bg-rose-100 text-rose-700' :
+                      newsCoverage.coverage_level === 'moderate' ? 'bg-amber-100 text-amber-700' :
+                      'bg-gray-100 text-gray-500'
+                    }`}>
+                      {newsCoverage.coverage_level === 'significant' ? '주요 보도' :
+                       newsCoverage.coverage_level === 'moderate' ? '일부 보도' : '단신'}
+                    </span>
+                  )}
+                  {newsCoverage.investigation_status && newsCoverage.investigation_status !== 'unknown' && (
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                      newsCoverage.investigation_status === 'confirmed' ? 'bg-red-100 text-red-700' :
+                      newsCoverage.investigation_status === 'suspected' ? 'bg-orange-100 text-orange-700' :
+                      'bg-green-100 text-green-700'
+                    }`}>
+                      {newsCoverage.investigation_status === 'confirmed' ? '수사 확인' :
+                       newsCoverage.investigation_status === 'suspected' ? '의혹 제기' : '해소'}
+                    </span>
+                  )}
+                </div>
+                {newsCoverage.ai_summary && newsCoverage.ai_summary !== '관련 보도 없음' && (
+                  <p className="text-xs text-gray-600 bg-gray-50 rounded p-2 mb-2 leading-relaxed">{newsCoverage.ai_summary}</p>
+                )}
+                {(newsCoverage.articles?.length ?? 0) > 0 && (
+                  <div className="space-y-1">
+                    {newsCoverage.articles!.map((a, i) => (
+                      <a key={i} href={a.url} target="_blank" rel="noopener noreferrer"
+                         className="flex items-start gap-2 text-xs text-blue-600 hover:text-blue-800 hover:underline group">
+                        <span className="shrink-0 text-gray-400 mt-px group-hover:text-gray-600">{a.source}</span>
+                        <span className="flex-1">{a.title}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Related News (legacy) */}
             {relatedNews.length > 0 && (
               <div className="mb-4">
                 <h3 className="text-xs font-bold text-gray-600 mb-2">관련 뉴스</h3>

@@ -57,6 +57,114 @@ def get_contract_name(c):
     return str(c.get('cntrctNm', '') or c.get('cnstwkNm', '') or c.get('bidNtceNm', '') or c.get('prdctClsfcNoNm', '') or '').strip()
 
 
+def _f(v, d=0.0):
+    """Safe float — handles None, empty string, and '########' API artifacts."""
+    try:
+        return float(v) if v not in (None, '', '########') else d
+    except (ValueError, TypeError):
+        return d
+
+
+def _i(v, d=0):
+    """Safe int — handles None, empty string, and '########' API artifacts."""
+    try:
+        return int(v) if v not in (None, '', '########') else d
+    except (ValueError, TypeError):
+        return d
+
+
+# ── Institution Context Registry ─────────────────────────────────────────────
+# Institutions where certain patterns are structurally normal, not suspicious.
+# Without this, central procurement agencies, defense, and research institutions
+# flood findings with false positives.
+INST_CONTEXT = {
+    # 조달청: Central procurement AGENT — executes contracts on behalf of others.
+    # High vendor concentration, repeat winners, and low competition are BY DESIGN
+    # (단가계약, 다수공급자계약, 종합쇼핑몰). Suspicious signals: bid_rate_anomaly,
+    # price_clustering, contract_inflation, bid_rigging.
+    'central_procurement': {
+        'keywords': ['조달청'],
+        'suppress': {'same_winner_repeat', 'low_bid_competition', 'vendor_concentration',
+                     'repeated_sole_source', 'yearend_new_vendor'},
+        'allow': {'bid_rate_anomaly', 'price_clustering', 'contract_inflation',
+                  'bid_rigging', 'related_companies', 'cross_pattern'},
+        'score_divisor': 2.5,  # halve suspicion scores for remaining patterns
+    },
+    # Defense: legitimate sole-source due to national security + limited domestic makers
+    'defense': {
+        'keywords': ['방위사업청', '국방부', '군수사령부', '육군', '해군', '공군',
+                     '해병대', '방산', '군수'],
+        'suppress': {'zero_competition', 'high_value_sole_source', 'repeated_sole_source',
+                     'same_winner_repeat', 'low_bid_competition'},
+        'allow': {'bid_rate_anomaly', 'contract_inflation', 'price_clustering',
+                  'bid_rigging', 'cross_pattern'},
+        'score_divisor': 2.0,
+    },
+    # Medical/Research: specialized equipment, IP-specific software, limited certified vendors
+    'medical_research': {
+        'keywords': ['병원', '보건', '질병관리', '연구원', '연구소', '과학기술',
+                     '대학교', '대학원', '학교', '의료원'],
+        'suppress': {'high_value_sole_source', 'same_winner_repeat'},
+        'allow': {'bid_rate_anomaly', 'contract_inflation', 'zero_competition',
+                  'bid_rigging', 'cross_pattern', 'contract_splitting'},
+        'score_divisor': 1.5,
+    },
+    # Utility infrastructure: limited certified contractors for critical systems
+    'utility': {
+        'keywords': ['한국전력', '한전', '수자원공사', '가스공사', '도로공사',
+                     '철도공사', '코레일', '공항공사', '항만'],
+        'suppress': {'same_winner_repeat', 'low_bid_competition'},
+        'allow': {'bid_rate_anomaly', 'contract_inflation', 'price_clustering',
+                  'bid_rigging', 'cross_pattern'},
+        'score_divisor': 1.5,
+    },
+}
+
+# Methods where "same winner" is structurally expected and not suspicious
+_NON_COMPETITIVE_METHODS = {
+    '단가계약', '다수공급자계약', '종합쇼핑몰', 'MAS계약', '협상에의한계약',
+    '수의계약', '긴급계약', '재해복구', '소액수의계약',
+}
+
+
+def get_inst_type(inst: str) -> str | None:
+    """Return institution context key if inst matches a known category."""
+    for ctx_key, ctx in INST_CONTEXT.items():
+        if any(kw in inst for kw in ctx['keywords']):
+            return ctx_key
+    return None
+
+
+def is_suppressed(pattern: str, inst: str) -> bool:
+    """Return True if this pattern should be skipped for this institution type."""
+    ctx_key = get_inst_type(inst)
+    if ctx_key is None:
+        return False
+    return pattern in INST_CONTEXT[ctx_key].get('suppress', set())
+
+
+def adjusted_score(score: float, inst: str) -> float:
+    """Divide suspicion score by the institution's false-positive divisor."""
+    ctx_key = get_inst_type(inst)
+    if ctx_key is None:
+        return score
+    return score / INST_CONTEXT[ctx_key].get('score_divisor', 1.0)
+
+
+def requesting_institution(record: dict) -> str:
+    """
+    For contracts where 조달청 is the executing agency but another agency
+    actually requested the procurement, return the requesting agency.
+    Prevents false attribution of suspicious patterns to 조달청 itself.
+    """
+    contracting = str(record.get('cntrctInsttNm', '')).strip()
+    requesting  = str(record.get('dminsttNm', record.get('ntceInsttNm', ''))).strip()
+    # If 조달청 is the executor but there's a distinct requesting agency, use that
+    if '조달청' in contracting and requesting and requesting != contracting:
+        return requesting
+    return contracting or requesting
+
+
 def make_contract(no, name, amount, vendor, date, method, reason='', url=''):
     """Build an evidence contract object."""
     return {
@@ -350,7 +458,7 @@ for c in std_contracts:
     bizno = str(c.get('rprsntCorpBizrno', '')).strip().replace('-', '')
     corp = corp_map.get(bizno, {})
     emp = int(corp.get('emplyeNum', -1) or -1)
-    amt = float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('cntrctAmt'))
     name = str(c.get('rprsntCorpNm', '')).strip()
     inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
     title = str(get_contract_name(c)).strip()
@@ -496,13 +604,13 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "ghost_company
 print('🔍 Pattern 2: Zero Competition...')
 zero_comp = []
 for b in bids:
-    participants = int(b.get('prtcptCnum', 0) or 0)
-    amt = float(b.get('sucsfbidAmt', 0) or 0)
+    participants = _i(b.get('prtcptCnum'))
+    amt = _f(b.get('sucsfbidAmt'))
     if participants == 1 and amt > 1_000_000_000:  # 10억+ only
         winner = str(b.get('bidwinnrNm', '')).strip()
         inst = str(b.get('ntceInsttNm', b.get('dminsttNm', ''))).strip()
         title = str(b.get('bidNtceNm', '')).strip()
-        rate = float(b.get('sucsfbidRate', 0) or 0)
+        rate = _f(b.get('sucsfbidRate'))
         zero_comp.append({
             'winner': winner, 'inst': inst, 'title': title,
             'amt': amt, 'rate': rate,
@@ -601,9 +709,9 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "zero_competit
 print('🔍 Pattern 3: Bid Rate Anomaly...')
 high_rate = []
 for b in bids:
-    rate = float(b.get('sucsfbidRate', 0) or 0)
-    amt = float(b.get('sucsfbidAmt', 0) or 0)
-    participants = int(b.get('prtcptCnum', 0) or 0)
+    rate = _f(b.get('sucsfbidRate'))
+    amt = _f(b.get('sucsfbidAmt'))
+    participants = _i(b.get('prtcptCnum'))
     # Single-bidder high rate is NOT anomalous — it's a negotiated/sole-source price.
     # Only flag 2+ bidders at 99.5%+ (indicates possible price leak to ALL participants)
     # Exclude: rate exactly 100.0 with 10+ participants → structural 복수예비가격 system
@@ -701,7 +809,7 @@ for c in std_contracts:
     opbiz = str(corp.get('opbizDt', ''))[:10]
     rgst = str(corp.get('rgstDt', ''))[:10]
     actual_date = opbiz if opbiz and opbiz > '1900' else rgst
-    amt = float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('cntrctAmt'))
     name = str(c.get('rprsntCorpNm', '')).strip()
     inst = str(c.get('cntrctInsttNm', '')).strip()
     title = str(get_contract_name(c)).strip()
@@ -782,7 +890,7 @@ inst_totals = defaultdict(lambda: {'count': 0, 'amt': 0})
 for c in std_contracts:
     inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
     vendor = str(c.get('rprsntCorpNm', '')).strip()
-    amt = float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('cntrctAmt'))
     if inst and vendor:
         inst_vendors[inst][vendor]['count'] += 1
         inst_vendors[inst][vendor]['amt'] += amt
@@ -805,11 +913,11 @@ for inst, vendors in inst_vendors.items():
         if is_cooperative(vendor):
             continue
         score = min(80, 30 + ratio * 40 + (vd['amt'] / 1e9) * 5)
-        top_contracts = sorted(vd['contracts'], key=lambda x: -float(x.get('cntrctAmt', 0) or 0))[:5]
+        top_contracts = sorted(vd['contracts'], key=lambda x: -_f(x.get('cntrctAmt')))[:5]
 
         evidence = [make_contract(
             c.get('cntrctNo', ''), get_contract_name(c),
-            float(c.get('cntrctAmt', 0) or 0), vendor,
+            _f(c.get('cntrctAmt')), vendor,
             c.get('cntrctCnclsDate', ''), c.get('cntrctCnclsMthdNm', ''),
             c.get('prvtcntrctRsn', ''),
         ) for c in top_contracts]
@@ -855,7 +963,7 @@ for c in contracts:
     inst = str(c.get('cntrctInsttNm', '')).strip()
     # thtmCntrctAmt is populated in contract-details; cntrctAmt is the fallback
     # when using actual-contracts (thtmCntrctAmt is often empty there)
-    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('thtmCntrctAmt')) or _f(c.get('cntrctAmt'))
     if inst:
         inst_methods[inst]['total'] += 1
         inst_methods[inst]['amt'] += amt
@@ -865,11 +973,10 @@ for c in contracts:
 
 for inst, d in inst_methods.items():
     # 10+ contracts AND 90%+ 수의계약 AND 5억+ total
-    # High bar: sole-source ratio alone isn't suspicious. It must be both *systematic*
-    # (10+ contracts, not a one-off) and *substantial* (5억+) to warrant investigation.
-    # Small agencies under 5억 total often have structurally small contract sizes that
-    # legally qualify as 소액 수의계약 — flagging them is a false positive.
     if d['total'] < 10 or d['sole'] / d['total'] < 0.9 or d['amt'] < 200_000_000:
+        continue
+    # Skip structurally-explained institution types (조달청 executes 수의계약 on behalf of agencies)
+    if is_suppressed('repeated_sole_source', inst):
         continue
     # Research institutes and universities legitimately rely on specialized vendors
     if is_research_institute(inst):
@@ -891,8 +998,8 @@ for inst, d in inst_methods.items():
     score = min(75, 25 + ratio * 30 + d['sole'] * 2)
 
     top = sorted(d['contracts'],
-                 key=lambda x: -(float(x.get('thtmCntrctAmt', 0) or 0) or
-                                  float(x.get('cntrctAmt', 0) or 0)))[:5]
+                 key=lambda x: -(_f(x.get('thtmCntrctAmt')) or
+                                  _f(x.get('cntrctAmt'))))[:5]
     evidence = []
     _top_vendors = set()
     for c in top:
@@ -906,7 +1013,7 @@ for inst, d in inst_methods.items():
         if not vendor:
             vendor = str(c.get('rprsntCorpNm', '')).strip()
         _top_vendors.add(vendor)
-        amt_ev = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
+        amt_ev = _f(c.get('thtmCntrctAmt')) or _f(c.get('cntrctAmt'))
         evidence.append(make_contract(
             c.get('untyCntrctNo', c.get('cntrctNo', '')), get_contract_name(c),
             amt_ev, vendor,
@@ -965,7 +1072,7 @@ def extract_vendor(c):
 
 split_by_inst = defaultdict(list)
 for c in contracts:
-    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('thtmCntrctAmt')) or _f(c.get('cntrctAmt'))
     method = str(c.get('cntrctCnclsMthdNm', ''))
     inst = str(c.get('cntrctInsttNm', '')).strip()
     if '수의' in method and lower <= amt < THRESHOLD and inst:
@@ -1001,14 +1108,14 @@ for inst, items in split_by_inst.items():
     title_counts = _Counter(titles)
     has_repeated_title = title_counts.most_common(1)[0][1] >= 2 if title_counts else False
 
-    total_amt = sum(float(c.get('thtmCntrctAmt', 0) or 0) for c in items)
+    total_amt = sum(_f(c.get('thtmCntrctAmt')) for c in items)
     score = min(80, 25 + top_count * 10 + (1 if has_repeated_title else 0) * 15)
 
     evidence = [make_contract(
         c.get('untyCntrctNo', ''), get_contract_name(c),
-        float(c.get('thtmCntrctAmt', 0) or 0), extract_vendor(c),
+        _f(c.get('thtmCntrctAmt')), extract_vendor(c),
         c.get('cntrctCnclsDate', ''), '수의계약',
-    ) for c in sorted(top_vendor_contracts, key=lambda x: -float(x.get('thtmCntrctAmt', 0) or 0))[:5]]
+    ) for c in sorted(top_vendor_contracts, key=lambda x: -_f(x.get('thtmCntrctAmt')))[:5]]
 
     findings.append({
         'pattern_type': 'contract_splitting',
@@ -1050,8 +1157,8 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "contract_spli
 print('🔍 Pattern 8: Low Bid Competition...')
 low_comp_winners = defaultdict(list)
 for b in bids:
-    participants = int(b.get('prtcptCnum', 0) or 0)
-    amt = float(b.get('sucsfbidAmt', 0) or 0)
+    participants = _i(b.get('prtcptCnum'))
+    amt = _f(b.get('sucsfbidAmt'))
     winner = str(b.get('bidwinnrNm', '')).strip()
     if 2 <= participants <= 3 and amt > 100_000_000 and winner:  # 1억+ (was 5천만)
         low_comp_winners[winner].append(b)
@@ -1060,8 +1167,8 @@ for winner, items in low_comp_winners.items():
     # 5+ wins with thin 2-3 person competition
     if len(items) < 5:
         continue
-    items.sort(key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))
-    total_amt = sum(float(b.get('sucsfbidAmt', 0) or 0) for b in items)
+    items.sort(key=lambda x: -_f(x.get('sucsfbidAmt')))
+    total_amt = sum(_f(b.get('sucsfbidAmt')) for b in items)
     # Min 3억 total — below this could just be a preferred local vendor
     if total_amt < 300_000_000:
         continue
@@ -1072,12 +1179,18 @@ for winner, items in low_comp_winners.items():
 
     evidence = [make_contract(
         b.get('bidNtceNo', ''), b.get('bidNtceNm', ''),
-        float(b.get('sucsfbidAmt', 0) or 0), winner,
+        _f(b.get('sucsfbidAmt')), winner,
         str(b.get('fnlSucsfDate', ''))[:10],
         f"경쟁 {int(b.get('prtcptCnum', 0))}개사",
     ) for b in items[:5]]
 
     inst = str(items[0].get('ntceInsttNm', items[0].get('dminsttNm', ''))).strip()
+
+    # Skip structurally-explained institutions (조달청, defense, etc.)
+    if is_suppressed('low_bid_competition', inst):
+        continue
+
+    score = adjusted_score(score, inst)
 
     findings.append({
         'pattern_type': 'low_bid_competition',
@@ -1092,7 +1205,7 @@ for winner, items in low_comp_winners.items():
             '낙찰업체': winner,
             '기관': inst,
             '반복낙찰_건수': len(items),
-            '평균_참여업체수': round(sum(int(b.get('prtcptCnum', 0) or 0) for b in items) / len(items), 1),
+            '평균_참여업체수': round(sum(_i(b.get('prtcptCnum')) for b in items) / len(items), 1),
             '반복낙찰_총액': total_amt,
         },
         'evidence_contracts': evidence,
@@ -1161,7 +1274,7 @@ for c in contracts:
     if not vendor:
         vendor = str(c.get('rprsntCorpNm', '')).strip()
     method = str(c.get('cntrctCnclsMthdNm', '')).strip()
-    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('thtmCntrctAmt')) or _f(c.get('cntrctAmt'))
     title = str(get_contract_name(c)).strip()
     cno = str(c.get('untyCntrctNo', c.get('cntrctNo', ''))).strip()
 
@@ -1192,6 +1305,10 @@ for c in contracts:
 
 for inst, contracts_list in _inst_yearend_sole.items():
     if not contracts_list:
+        continue
+    # 조달청 processes year-end orders from hundreds of agencies simultaneously —
+    # structural volume, not corruption
+    if is_suppressed('yearend_new_vendor', inst):
         continue
     total_amt = sum(c['amt'] for c in contracts_list)
     # Two ways to qualify:
@@ -1340,8 +1457,8 @@ for _b in bids:
     _bz = str(_b.get('bidwinnrBizno', '')).replace('-', '').strip()
     _nm = str(_b.get('bidwinnrNm', '')).strip()
     _ceo = str(_b.get('bidwinnrCeoNm', '')).strip()
-    _amt = float(_b.get('sucsfbidAmt', 0) or 0)
-    _prtcpt = int(_b.get('prtcptCnum', 0) or 0)
+    _amt = _f(_b.get('sucsfbidAmt'))
+    _prtcpt = _i(_b.get('prtcptCnum'))
     if not _inst or not _bz or not _ceo or len(_ceo) < 2 or _amt <= 0:
         continue
     if _ceo in _COMMON_NAMES:
@@ -1371,7 +1488,7 @@ for inst, ceo_data in inst_ceo_map.items():
         # Each company must have won at least something meaningful (5천만+)
         company_amts: dict[str, float] = defaultdict(float)
         for w in d['wins']:
-            company_amts[str(w.get('bidwinnrNm', '')).strip()] += float(w.get('sucsfbidAmt', 0) or 0)
+            company_amts[str(w.get('bidwinnrNm', '')).strip()] += _f(w.get('sucsfbidAmt'))
         if sum(1 for a in company_amts.values() if a >= 50_000_000) < 2:
             continue
         # Skip if companies are in complementary (different) business categories
@@ -1383,10 +1500,10 @@ for inst, ceo_data in inst_ceo_map.items():
             continue
 
         score = min(88, 60 + len(d['biznos']) * 8 + (d['total_amt'] / 2e9) * 10 + len(d['wins']) * 2)
-        top = sorted(d['wins'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:5]
+        top = sorted(d['wins'], key=lambda x: -_f(x.get('sucsfbidAmt')))[:5]
         evidence = [make_contract(
             c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
-            float(c.get('sucsfbidAmt', 0) or 0), str(c.get('bidwinnrNm', '')),
+            _f(c.get('sucsfbidAmt')), str(c.get('bidwinnrNm', '')),
             c.get('fnlSucsfDate', ''), f'낙찰 (참여 {c.get("prtcptCnum","?")}개사)',
         ) for c in top]
         findings.append({
@@ -1452,7 +1569,7 @@ print('🔍 Pattern 11: High-Value Sole Source...')
 hvss_by_inst = defaultdict(list)
 for c in contracts:
     method = str(c.get('cntrctCnclsMthdNm', ''))
-    amt = float(c.get('thtmCntrctAmt', 0) or 0) or float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('thtmCntrctAmt')) or _f(c.get('cntrctAmt'))
     inst = str(c.get('cntrctInsttNm', '')).strip()
     title = get_contract_name(c)
     # 3억 threshold — below this, 수의계약 is often legally permitted (§26 exemptions).
@@ -1561,35 +1678,45 @@ inst_winner_bids = defaultdict(lambda: defaultdict(list))
 for b in bids:
     winner = str(b.get('bidwinnrNm', '')).strip()
     inst = str(b.get('ntceInsttNm', b.get('dminsttNm', ''))).strip()
-    amt = float(b.get('sucsfbidAmt', 0) or 0)
+    amt = _f(b.get('sucsfbidAmt'))
     if winner and inst and amt > 10_000_000:
         inst_winner_bids[inst][winner].append(b)
 
 for inst, winners in inst_winner_bids.items():
+    # Skip structurally-explained institutions (조달청 runs 단가계약/MAS by design)
+    if is_suppressed('same_winner_repeat', inst):
+        continue
     for winner, items in winners.items():
         # 6+ wins at same institution (was 5, slightly raised to reduce noise)
         if len(items) < 6:
             continue
-        total_amt = sum(float(b.get('sucsfbidAmt', 0) or 0) for b in items)
+        total_amt = sum(_f(b.get('sucsfbidAmt')) for b in items)
         # Min 5억 total — smaller repeat business is often just a regular supplier
         if total_amt < 500_000_000:
             continue
         # Skip cooperatives — they naturally dominate in their regional domain
         if is_cooperative(winner):
             continue
-        avg_rate = sum(float(b.get('sucsfbidRate', 0) or 0) for b in items) / len(items) if items else 0
+        # Skip if the majority of wins used non-competitive contract methods
+        # (단가계약, MAS, 종합쇼핑몰 — repeat wins are expected by design)
+        non_comp = sum(1 for b in items
+                       if any(m in str(b.get('cntrctMthdNm', b.get('bidMthdNm', '')))
+                              for m in _NON_COMPETITIVE_METHODS))
+        if non_comp / len(items) > 0.6:
+            continue
+        avg_rate = sum(_f(b.get('sucsfbidRate')) for b in items) / len(items) if items else 0
         score = min(80, 25 + len(items) * 5 + (total_amt / 2e9) * 10)
         # High bid rate (95%+) combined with repeat wins is a genuine concern:
         # it suggests either price info leakage OR a vendor who has captured a process.
         if avg_rate >= 95:
             score = min(85, score + 8)
 
-        items.sort(key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))
+        items.sort(key=lambda x: -_f(x.get('sucsfbidAmt')))
         evidence = [make_contract(
             b.get('bidNtceNo', ''), b.get('bidNtceNm', ''),
-            float(b.get('sucsfbidAmt', 0) or 0), winner,
+            _f(b.get('sucsfbidAmt')), winner,
             str(b.get('fnlSucsfDate', ''))[:10],
-            f"낙찰률 {float(b.get('sucsfbidRate', 0) or 0):.1f}%",
+            f"낙찰률 {_f(b.get('sucsfbidRate')):.1f}%",
         ) for b in items[:5]]
 
         findings.append({
@@ -1653,7 +1780,7 @@ for c in bids:
     inst = str(c.get('dminsttNm', '')).strip()
     vendor = str(c.get('bidwinnrNm', '')).strip()
     year = str(c.get('fnlSucsfDate', c.get('rlOpengDt', '')))[:4]
-    amt = float(c.get('sucsfbidAmt', 0) or 0)
+    amt = _f(c.get('sucsfbidAmt'))
     if inst and vendor and year.isdigit() and amt > 0:
         inst_vendor_yearly[inst][vendor][year]['amt'] += amt
         inst_vendor_yearly[inst][vendor][year]['bids'].append(c)
@@ -1707,12 +1834,12 @@ for inst, vendors in inst_vendor_yearly.items():
             is_partial_year = (curr_year == _current_year)
 
             # Add actual contract evidence — the specific bids that make up the spike
-            curr_bids_sorted = sorted(curr_data['bids'], key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))
+            curr_bids_sorted = sorted(curr_data['bids'], key=lambda x: -_f(x.get('sucsfbidAmt')))
             evidence = [make_contract(
                 b.get('bidNtceNo', ''), b.get('bidNtceNm', ''),
-                float(b.get('sucsfbidAmt', 0) or 0), vendor,
+                _f(b.get('sucsfbidAmt')), vendor,
                 str(b.get('fnlSucsfDate', ''))[:10],
-                f"낙찰 (낙찰률 {float(b.get('sucsfbidRate', 0) or 0):.1f}%)",
+                f"낙찰 (낙찰률 {_f(b.get('sucsfbidRate')):.1f}%)",
             ) for b in curr_bids_sorted[:5]]
 
             partial_note = (
@@ -1811,7 +1938,7 @@ if bid_rankings:
         except (ValueError, TypeError):
             amt, rate = 0.0, 0.0
         try:
-            prtcpt = int(r.get('prtcptCnum', 0) or 0)
+            prtcpt = _i(r.get('prtcptCnum'))
         except (ValueError, TypeError):
             prtcpt = 0
         if winner and prtcpt > 0 and amt > 0:
@@ -1948,8 +2075,8 @@ if contract_changes:
     for ch in contract_changes:
         # totCntrctAmt = total after all change orders; thtmCntrctAmt = original this-term amount
         # cntrctNm or cnstwkNm or servcNm for title; corpList for vendor
-        orig_amt = float(ch.get('thtmCntrctAmt', 0) or 0)
-        new_amt = float(ch.get('totCntrctAmt', 0) or 0)
+        orig_amt = _f(ch.get('thtmCntrctAmt'))
+        new_amt = _f(ch.get('totCntrctAmt'))
         # Also try before/after fields if present
         if not orig_amt:
             orig_amt = float(ch.get('bfchgCntrctAmt', ch.get('orgnlCntrctAmt', 0)) or 0)
@@ -2214,7 +2341,7 @@ def assign_verdict(finding: dict) -> tuple[str, str, str]:
 
     # ── amount_spike ──
     if pattern == 'amount_spike':
-        ratio = float(detail.get('증가비율', 0) or 0)
+        ratio = _f(detail.get('증가비율'))
         if ratio > 4:
             return ('suspicious', f'전년 대비 {ratio:.1f}배 급증. 사업 규모 변화 없이 계약액만 폭증한 경우 의심.', key_evidence)
         return ('investigate', '계약액 급증. 신규 사업 또는 예산 변경 여부 확인 필요.', key_evidence)
@@ -2840,7 +2967,7 @@ _THRESH_LEVELS = [
 _thresh_groups: dict[tuple, list] = defaultdict(list)
 for c in std_contracts:
     try:
-        amt = float(c.get('cntrctAmt', 0) or 0)
+        amt = _f(c.get('cntrctAmt'))
     except (ValueError, TypeError):
         continue
     method = str(c.get('cntrctCnclsMthdNm', '')).strip()
@@ -2953,8 +3080,8 @@ for b in bids:
     winner = str(b.get('bidwinnrNm', '')).strip()
     inst = str(b.get('dminsttNm', '') or b.get('ntceInsttNm', '')).strip()
     try:
-        rate = float(b.get('sucsfbidRate', 0) or 0)
-        amt = float(b.get('sucsfbidAmt', 0) or 0)
+        rate = _f(b.get('sucsfbidRate'))
+        amt = _f(b.get('sucsfbidAmt'))
     except (ValueError, TypeError):
         continue
     if not winner or not inst or rate < 50 or rate > 100 or amt < 10_000_000:
@@ -2993,7 +3120,7 @@ for (vendor, inst), inst_rates in _vendor_inst_rates.items():
         continue
 
     total_amt = sum(
-        float(b.get('sucsfbidAmt', 0) or 0)
+        _f(b.get('sucsfbidAmt'))
         for b in bids
         if str(b.get('bidwinnrNm', '')).strip() == vendor
         and str(b.get('dminsttNm', '') or b.get('ntceInsttNm', '')).strip() == inst
@@ -3004,9 +3131,9 @@ for (vendor, inst), inst_rates in _vendor_inst_rates.items():
     score = min(78, 40 + (global_std - inst_std) * 8 + len(inst_rates) * 3)
 
     evidence = [make_contract(
-        b.get('bidNtceNo', ''), b.get('bidNtceNm', ''), float(b.get('sucsfbidAmt', 0) or 0),
+        b.get('bidNtceNo', ''), b.get('bidNtceNm', ''), _f(b.get('sucsfbidAmt')),
         vendor, str(b.get('fnlSucsfDate', ''))[:10],
-        f'낙찰률 {float(b.get("sucsfbidRate", 0) or 0):.2f}%',
+        f'낙찰률 {_f(b.get("sucsfbidRate")):.2f}%',
     ) for b in bids
     if str(b.get('bidwinnrNm', '')).strip() == vendor
     and str(b.get('dminsttNm', '') or b.get('ntceInsttNm', '')).strip() == inst][:5]
@@ -3309,7 +3436,7 @@ if sanctions_set:
             continue
         name = str(c.get('bidwinnrNm', '')).strip()
         inst = str(c.get('dminsttNm', '')).strip()
-        amt = float(c.get('sucsfbidAmt', 0) or 0)
+        amt = _f(c.get('sucsfbidAmt'))
         title = str(c.get('bidNtceNm', '')).strip()
         method = '낙찰'
         cno = str(c.get('bidNtceNo', '')).strip()
@@ -3392,11 +3519,11 @@ _inst_rate_bids: dict[str, list[dict]] = defaultdict(list)
 for b in bids:
     inst = str(b.get('dminsttNm', '')).strip()
     try:
-        rate = float(b.get('sucsfbidRate', 0) or 0)
+        rate = _f(b.get('sucsfbidRate'))
     except (ValueError, TypeError):
         continue
     try:
-        amt = float(b.get('sucsfbidAmt', 0) or 0)
+        amt = _f(b.get('sucsfbidAmt'))
     except (ValueError, TypeError):
         amt = 0.0
     winner = str(b.get('bidwinnrNm', '')).strip()
@@ -3612,7 +3739,7 @@ for cluster in clusters:
             continue
         # Multiple companies from same cluster serving same institution
         total_amt = sum(
-            float(c.get('sucsfbidAmt', 0) or 0)
+            _f(c.get('sucsfbidAmt'))
             for bz_list in bz_contracts.values()
             for c in bz_list
         )
@@ -3636,10 +3763,10 @@ for cluster in clusters:
 
         evidence = []
         for bz, contracts_list in bz_contracts.items():
-            for c in sorted(contracts_list, key=lambda x: -float(x.get('sucsfbidAmt', 0) or 0))[:2]:
+            for c in sorted(contracts_list, key=lambda x: -_f(x.get('sucsfbidAmt')))[:2]:
                 evidence.append(make_contract(
                     c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
-                    float(c.get('sucsfbidAmt', 0) or 0), company_names.get(bz, c.get('bidwinnrNm', bz)),
+                    _f(c.get('sucsfbidAmt')), company_names.get(bz, c.get('bidwinnrNm', bz)),
                     c.get('fnlSucsfDate', ''), '낙찰',
                 ))
 
@@ -3727,7 +3854,7 @@ for b in bids:
     date = str(b.get('fnlSucsfDate', ''))[:10]
     winner = str(b.get('bidwinnrNm', '')).strip()
     try:
-        amt = float(b.get('sucsfbidAmt', 0) or 0)
+        amt = _f(b.get('sucsfbidAmt'))
     except (ValueError, TypeError):
         amt = 0.0
     if not inst or not date or not winner or amt < 10_000_000:
@@ -3909,7 +4036,7 @@ vendor_cat_data = defaultdict(lambda: defaultdict(list))
 
 for c in std_contracts:
     vendor = str(c.get('rprsntCorpNm', '')).strip()
-    amt = float(c.get('cntrctAmt', 0) or 0)
+    amt = _f(c.get('cntrctAmt'))
     title = get_contract_name(c)
     inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
     if not vendor or not inst or amt < 5_000_000:
@@ -4089,7 +4216,7 @@ else:
         bsns = str(c.get('bsnsDivNm', '')).strip()
         if bsns != '물품':
             continue
-        contract_amt = float(c.get('cntrctAmt', 0) or 0)
+        contract_amt = _f(c.get('cntrctAmt'))
         if contract_amt < 10_000_000:  # skip below 1천만원
             continue
         name = str(c.get('cntrctNm', '')).strip()
@@ -4243,7 +4370,7 @@ for _bid_no, _group in _bid_groups.items():
         continue
     _seen_rebid.add(_key)
 
-    _prtcpt_counts = [int(g.get('prtcptCnum', 0) or 0) for g in _group_sorted]
+    _prtcpt_counts = [_i(g.get('prtcptCnum')) for g in _group_sorted]
     _avg_participants = sum(_prtcpt_counts) / len(_prtcpt_counts) if _prtcpt_counts else 0
     _rounds = len(_group_sorted)
     _amt = float(_group_sorted[-1].get('sucsfbidAmt', 0) or 0)
@@ -4267,10 +4394,10 @@ for _bid_no, _group in _bid_groups.items():
 
     _contracts = []
     for _g in _group_sorted:
-        _a = float(_g.get('sucsfbidAmt', 0) or 0)
+        _a = _f(_g.get('sucsfbidAmt'))
         _d = str(_g.get('fnlSucsfDate', '') or _g.get('rlOpengDt', ''))[:10]
         _ord = _g.get('bidNtceOrd', '') or _g.get('rbidNo', '0')
-        _p = int(_g.get('prtcptCnum', 0) or 0)
+        _p = _i(_g.get('prtcptCnum'))
         _contracts.append(make_contract(
             _g.get('bidNtceNo', ''), _name, _a, _winner, _d,
             f'경쟁입찰 (참여 {_p}개사, {_rounds}차 공고 중 {_ord}차)',
@@ -4347,10 +4474,10 @@ for (_canonical_name, _inst), _group in _name_groups.items():
         continue
     _seen_rebid.add(_key)
 
-    _prtcpt_counts2 = [int(g.get('prtcptCnum', 0) or 0) for g in _group]
+    _prtcpt_counts2 = [_i(g.get('prtcptCnum')) for g in _group]
     _avg_p = sum(_prtcpt_counts2) / len(_prtcpt_counts2) if _prtcpt_counts2 else 0
     _rounds2 = len(_group)
-    _amt2 = max(float(g.get('sucsfbidAmt', 0) or 0) for g in _group)
+    _amt2 = max(_f(g.get('sucsfbidAmt')) for g in _group)
     _is_event2 = any(kw in _canonical_name for kw in ['행사', '축제', '박람회', '공연', '대행', '기념', '개막', '엑스포'])
 
     _score2 = 65 + (15 if _rounds2 >= 3 else 8) + (15 if _avg_p <= 1.5 else 8 if _avg_p <= 2.5 else 0) + (15 if _is_event2 else 0)
@@ -4358,9 +4485,9 @@ for (_canonical_name, _inst), _group in _name_groups.items():
 
     _ev_contracts = []
     for _g in sorted(_group, key=lambda x: x.get('bidNtceNm', '')):
-        _a = float(_g.get('sucsfbidAmt', 0) or 0)
+        _a = _f(_g.get('sucsfbidAmt'))
         _d = str(_g.get('fnlSucsfDate', '') or '')[:10]
-        _p2 = int(_g.get('prtcptCnum', 0) or 0)
+        _p2 = _i(_g.get('prtcptCnum'))
         _bid_label = _g.get('bidNtceNm', '')[-6:]  # e.g. "(2차)"
         _ev_contracts.append(make_contract(
             _g.get('bidNtceNo', ''), _g.get('bidNtceNm', ''), _a, _winner, _d,
@@ -5193,6 +5320,100 @@ if _news_path.exists():
         print(f'  ⚠️  뉴스 로드 실패: {_e}')
 else:
     print('  ⚠️  news-rss.json 없음')
+
+# ── Institution context enrichment ───────────────────────────────────────────
+# For every finding, attach a summary of ALL known data for that institution
+# from the full accumulated store. Grows richer as accumulate.py runs daily.
+print('\n🔍 기관별 전체 데이터 컨텍스트 연결...')
+
+_inst_context: dict = {}  # institution → context summary
+
+def _build_inst_context():
+    # Index all contracts/bids by institution
+    _inst_contracts: dict = defaultdict(list)
+    _inst_bids: dict = defaultdict(list)
+
+    for c in std_contracts:
+        inst = str(c.get('dminsttNm', c.get('ntceInsttNm', c.get('instNm', ''))))
+        if inst:
+            _inst_contracts[inst].append(c)
+    for c in contracts:
+        inst = str(c.get('dminsttNm', c.get('ntceInsttNm', '')))
+        if inst:
+            _inst_contracts[inst].append(c)
+    for b in bids:
+        inst = str(b.get('ntceInsttNm', b.get('dminsttNm', '')))
+        if inst:
+            _inst_bids[inst].append(b)
+
+    for inst in set(f.get('target_institution', '') for f in findings):
+        if not inst:
+            continue
+        # Fuzzy match: check both exact and first-10-char prefix matches
+        short = inst[:10]
+        ctrs = _inst_contracts.get(inst, []) or [
+            c for k, v in _inst_contracts.items() if k[:10] == short for c in v
+        ]
+        bds = _inst_bids.get(inst, []) or [
+            b for k, v in _inst_bids.items() if k[:10] == short for b in v
+        ]
+        if not ctrs and not bds:
+            continue
+
+        amounts = [float(c.get('cntrctAmt', c.get('presmptPrce', 0)) or 0) for c in ctrs]
+        bid_amts = [float(b.get('presmptPrce', b.get('sucsfbidAmt', 0)) or 0) for b in bds]
+        vendors = list({
+            str(c.get('cntrctor', c.get('bidwinrNm', c.get('rprsntCorpNm', ''))))
+            for c in ctrs + bds
+            if c.get('cntrctor') or c.get('bidwinrNm') or c.get('rprsntCorpNm')
+        })[:20]
+
+        # Top vendors by total contract amount
+        vendor_totals: dict = defaultdict(float)
+        for c in ctrs:
+            v = str(c.get('cntrctor', c.get('bidwinrNm', c.get('rprsntCorpNm', ''))))
+            a = _f(c.get('cntrctAmt'))
+            if v:
+                vendor_totals[v] += a
+        top_vendors = sorted(vendor_totals.items(), key=lambda x: -x[1])[:5]
+
+        _inst_context[inst] = {
+            'total_contracts_in_store': len(ctrs),
+            'total_bids_in_store': len(bds),
+            'total_amount_all_contracts': sum(amounts),
+            'avg_contract_amount': sum(amounts) / len(amounts) if amounts else 0,
+            'unique_vendors': len(vendors),
+            'top_vendors_by_amount': [{'vendor': v, 'total': t} for v, t in top_vendors],
+            'date_range': {
+                'earliest': min(
+                    (str(c.get('cntrctCnclsDt', c.get('opengDt', '')))[:10]
+                     for c in ctrs + bds
+                     if c.get('cntrctCnclsDt') or c.get('opengDt')),
+                    default='',
+                ),
+                'latest': max(
+                    (str(c.get('cntrctCnclsDt', c.get('opengDt', '')))[:10]
+                     for c in ctrs + bds
+                     if c.get('cntrctCnclsDt') or c.get('opengDt')),
+                    default='',
+                ),
+            },
+        }
+
+_build_inst_context()
+
+enriched = 0
+for _f in findings:
+    ctx = _inst_context.get(_f.get('target_institution', ''))
+    if ctx:
+        _f['institution_context'] = ctx
+        enriched += 1
+    # Tag institution type so frontend can show structural context disclaimer
+    inst_type = get_inst_type(_f.get('target_institution', ''))
+    if inst_type:
+        _f['institution_type'] = inst_type
+
+print(f'  {enriched}건 발견에 기관 전체 컨텍스트 첨부 ({len(_inst_context)} 기관)')
 
 out_path = OUT_DIR / 'audit-results.json'
 with open(out_path, 'w', encoding='utf-8') as f:
