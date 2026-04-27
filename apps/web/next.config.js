@@ -14,6 +14,16 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.go.kr' },
     ],
   },
+  // Exclude large data files from serverless function bundles.
+  // All pages that read these files use static generation (build-time only).
+  experimental: {
+    outputFileTracingExcludes: {
+      '*': [
+        './data/**/*',
+        './public/data/**/*',
+      ],
+    },
+  },
 };
 
 module.exports = nextConfig;
