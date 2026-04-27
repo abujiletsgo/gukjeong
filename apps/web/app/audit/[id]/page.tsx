@@ -21,8 +21,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
+// Pre-render only top 200 findings; the rest are generated on first request (ISR)
+export const dynamicParams = true;
+
 export function generateStaticParams() {
-  return getAuditFlags().map(f => ({ id: f.id }));
+  return getAuditFlags()
+    .sort((a, b) => (b.suspicion_score ?? 0) - (a.suspicion_score ?? 0))
+    .slice(0, 200)
+    .map(f => ({ id: f.id }));
 }
 
 export default async function AuditDetailPage({ params }: { params: Promise<{ id: string }> }) {
