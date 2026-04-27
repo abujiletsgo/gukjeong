@@ -30,7 +30,7 @@ export default function TopOffenderCard({
 }: TopOffenderCardProps) {
   return (
     <div
-      className="rounded-xl p-4 flex items-start gap-4 border"
+      className="rounded-xl p-4 flex items-start gap-4 border transition-all group-hover:shadow-md"
       style={{
         background: '#FFFFFF',
         borderColor: 'var(--apple-gray-5)',

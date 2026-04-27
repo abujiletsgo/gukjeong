@@ -724,7 +724,7 @@ function AuditPageClientInner({
   const [activeCategory, setActiveCategory] = useState<PatternCategory>('all');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [verdictFilter, setVerdictFilter] = useState<'all' | 'suspicious' | 'investigate'>('suspicious');
+  const [verdictFilter, setVerdictFilter] = useState<'all' | 'suspicious' | 'investigate'>('all');
   const [tierFilter, setTierFilter] = useState<'all' | '1' | '2'>('all');
 
   // Fetch real data on mount (only in live mode)
@@ -807,7 +807,7 @@ function AuditPageClientInner({
       }
       return true;
     });
-  }, [enrichedFindings, activeCategory, severityFilter, searchQuery]);
+  }, [enrichedFindings, activeCategory, severityFilter, verdictFilter, tierFilter, searchQuery]);
 
   // Risk level breakdown for active category
   const riskBreakdown = useMemo(() => {
@@ -1044,21 +1044,20 @@ function AuditPageClientInner({
       {entryMode === 'priority' && (
         <div className="space-y-3 mb-4">
           <p className="text-xs text-gray-500 mb-2">
-            의심 건수 기준 상위 10개 기관입니다. 클릭하면 상세 감사 내역을 볼 수 있습니다.
+            의심 건수 기준 상위 10개 기관입니다. 클릭하면 해당 기관의 전체 감사 내역을 볼 수 있습니다.
           </p>
           {topOffenders.map((offender, idx) => {
-            const href = offender.topFindingId ? `/audit/${offender.topFindingId}` : undefined;
             return (
-              <a
+              <button
                 key={offender.institution}
-                href={href}
-                className="flex items-center gap-3 group"
-                style={{ textDecoration: 'none' }}
-                onClick={!href ? (e) => {
-                  e.preventDefault();
+                type="button"
+                className="flex items-center gap-3 group w-full text-left"
+                style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                onClick={() => {
                   setSearchQuery(offender.institution);
+                  setActiveCategory('all');
                   setEntryMode('recent');
-                } : undefined}
+                }}
               >
                 <span
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0 text-white ${
@@ -1070,7 +1069,7 @@ function AuditPageClientInner({
                 <div className="flex-1 min-w-0">
                   <TopOffenderCard {...offender} />
                 </div>
-              </a>
+              </button>
             );
           })}
         </div>
