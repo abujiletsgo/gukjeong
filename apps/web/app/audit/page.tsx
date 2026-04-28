@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { getDepartmentScores, getAuditFlags } from '@/lib/data';
 
-// ISR: 감사 데이터는 6시간마다 재생성
-export const revalidate = 21600;
+// Dynamic: audit-results.json is 104MB — too large for Vercel ISR fallback (19MB limit)
+export const dynamic = 'force-dynamic';
 import AuditPageClient from './AuditPageClient';
 
 export const metadata: Metadata = {
