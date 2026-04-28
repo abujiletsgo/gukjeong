@@ -273,6 +273,29 @@ for br in bid_rankings_raw:
 corp_map = {str(c.get('bizno', '')): c for c in companies_raw}
 company_name_map = {str(c.get('corpNm', '')): c for c in companies_raw if c.get('corpNm')}
 
+# ── Enrich name→bizno and CEO→companies from contract-details corpList ──
+# corpList format: "[seq^role^type^name^ceo^country^pct^name2^^bizno]"
+# Parsing this gives us 90K+ name→bizno mappings vs the 35 in companies API.
+import re as _re_corp
+_corplist_name_to_bizno: dict[str, str] = {}
+_corplist_ceo_to_names: dict[str, set] = defaultdict(set)
+for _cd in contracts:
+    _cl = str(_cd.get('corpList', ''))
+    if not _cl or _cl == '[]':
+        continue
+    for _entry in _re_corp.findall(r'\[?(\d+\^[^\]]+)\]?', _cl):
+        _parts = _entry.split('^')
+        if len(_parts) < 10:
+            continue
+        _cn = _parts[3].strip()
+        _ceo = _parts[4].strip()
+        _bz = _parts[9].strip().replace('-', '').replace(' ', '')
+        if _cn and _bz and len(_bz) == 10 and _bz.isdigit():
+            _corplist_name_to_bizno[_cn] = _bz
+            if _ceo and len(_ceo) >= 2:
+                _corplist_ceo_to_names[_ceo].add(_cn)
+print(f'  corpList enrichment: {len(_corplist_name_to_bizno)} name→bizno, {len(_corplist_ceo_to_names)} CEO mappings')
+
 # Build bid_lookup: bidNtceNo -> list of bidder dicts (from g2b-bid-rankings opengCorpInfo)
 bid_lookup: dict[str, list[dict]] = {}
 for _br in bid_rankings_raw:
@@ -1561,6 +1584,136 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "related_compa
 
 
 # ════════════════════════════════════════════════════════════════════
+# Pattern 10-B: SAME-ADDRESS MULTI-COMPANY (동일주소 복수업체 낙찰)
+#
+# Multiple DISTINCT company names winning from the same institution,
+# all sharing the same physical business address.
+# Unlike CEO matching (Pattern 10), this detects shell-company networks
+# where different people front companies at the same address — typical
+# for 페이퍼컴퍼니 (paper company) fraud rings.
+# Uses bidwinnrAdrs directly from winning-bids (100% coverage).
+# ════════════════════════════════════════════════════════════════════
+
+# Define STANDARD_LINKS early so patterns 10-B onward can reference it
+STANDARD_LINKS = [
+    {'title': '나라장터에서 해당 기관 계약 검색', 'url': 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', 'source': '나라장터'},
+    {'title': '감사원 감사결과 검색', 'url': 'https://www.bai.go.kr/bai/result/list', 'source': '감사원'},
+]
+
+print('🔍 Pattern 10-B: Same-Address Multi-Company...')
+
+def _normalize_adrs(adrs: str) -> str:
+    """Normalize address for matching: lowercase, strip spaces, remove floor/unit suffixes."""
+    a = adrs.strip()
+    a = _re_corp.sub(r',?\s*\d+층.*$', '', a)
+    a = _re_corp.sub(r',?\s*\d+-\d+호.*$', '', a)
+    a = _re_corp.sub(r'\s+', ' ', a)
+    return a.strip()
+
+# Build: inst → adrs → {companies, biznos, total_amt}
+inst_adrs_map: dict = defaultdict(lambda: defaultdict(lambda: {
+    'names': set(), 'biznos': set(), 'wins': [], 'total_amt': 0.0,
+}))
+
+for _b in bids:
+    _inst = str(_b.get('dminsttNm', '')).strip()
+    _bz = str(_b.get('bidwinnrBizno', '')).replace('-', '').strip()
+    _nm = str(_b.get('bidwinnrNm', '')).strip()
+    _adrs = str(_b.get('bidwinnrAdrs', '')).strip()
+    _amt = _f(_b.get('sucsfbidAmt'))
+    if not _inst or not _bz or not _nm or not _adrs or _amt < 10_000_000:
+        continue
+    if is_govt_affiliate(_nm) or is_cooperative(_nm):
+        continue
+    _norm_adrs = _normalize_adrs(_adrs)
+    if len(_norm_adrs) < 10:  # too short = uninformative
+        continue
+    inst_adrs_map[_inst][_norm_adrs]['names'].add(_nm)
+    inst_adrs_map[_inst][_norm_adrs]['biznos'].add(_bz)
+    inst_adrs_map[_inst][_norm_adrs]['wins'].append(_b)
+    inst_adrs_map[_inst][_norm_adrs]['total_amt'] += _amt
+
+_same_adrs_findings = 0
+for _inst, _adrs_data in inst_adrs_map.items():
+    if is_suppressed('related_companies', _inst):
+        continue
+    for _adrs, _d in _adrs_data.items():
+        if len(_d['names']) < 2:
+            continue
+        if _d['total_amt'] < 200_000_000:  # 2억 minimum
+            continue
+        if len(_d['wins']) < 3:
+            continue
+        company_names = sorted(_d['names'])
+        if _complementary_businesses(company_names):
+            continue
+        if any(is_govt_affiliate(n) for n in company_names):
+            continue
+
+        _score = min(90, 55 + len(_d['names']) * 8 + (_d['total_amt'] / 2e9) * 10)
+        _score = adjusted_score(_score, _inst)
+        if _score < 45:
+            continue
+
+        _top = sorted(_d['wins'], key=lambda x: -_f(x.get('sucsfbidAmt')))[:5]
+        _evidence = [make_contract(
+            c.get('bidNtceNo', ''), str(c.get('bidNtceNm', '')),
+            _f(c.get('sucsfbidAmt')), str(c.get('bidwinnrNm', '')),
+            str(c.get('fnlSucsfDate', c.get('rlOpengDt', '')))[:10],
+            f'낙찰 (참여 {c.get("prtcptCnum", "?")}개사)',
+        ) for c in _top]
+
+        findings.append({
+            'pattern_type': 'related_companies',
+            'severity': 'HIGH' if len(_d['names']) >= 3 else 'MEDIUM',
+            'suspicion_score': round(_score),
+            'target_institution': _inst,
+            'summary': (
+                f'{_inst}에서 동일 주소({_adrs[:30]}…) 소재 '
+                f'{len(_d["names"])}개 업체({", ".join(sorted(_d["names"])[:3])})가 '
+                f'총 {_d["total_amt"]/1e8:.1f}억원 수주.'
+            ),
+            'detail': {
+                '기관': _inst,
+                '공유_주소': _adrs,
+                '업체_수': len(_d['names']),
+                '업체_목록': sorted(_d['names']),
+                '총_계약금액': f'{_d["total_amt"]:,.0f}원',
+                '계약_건수': len(_d['wins']),
+            },
+            'evidence_contracts': _evidence,
+            'innocent_explanation': (
+                '동일 주소는 공유 오피스, 협동조합 단지, 또는 지역 산업단지일 수 있습니다. '
+                '합법적인 계열사 또는 독립적으로 운영되는 업체들이 같은 건물에 '
+                '입주한 경우도 있습니다.'
+            ),
+            'plain_explanation': (
+                f'{_inst}에서 계약을 따낸 {len(_d["names"])}개 업체가 같은 주소를 공유합니다. '
+                '서로 다른 회사가 같은 주소를 쓴다면 실제로는 한 사람이 여러 이름으로 '
+                '운영하는 페이퍼컴퍼니일 수 있습니다.'
+            ),
+            'citizen_impact': (
+                '복수의 페이퍼컴퍼니를 동원하면 경쟁 입찰에서도 들러리를 세울 수 있습니다. '
+                '결국 공공기관은 선택지가 있다고 믿지만, 실제로는 한 사람만 이익을 봅니다.'
+            ),
+            'why_it_matters': (
+                '주소 공유 복수업체는 가장 흔한 유령업체 사기 패턴 중 하나입니다. '
+                '사업자 등록은 쉽지만 실제 운영은 하나의 주체가 담당합니다.'
+            ),
+            'what_should_happen': (
+                '국세청에서 해당 주소로 등록된 사업자 현황을 조회하고, '
+                '각 업체의 실제 운영 여부(직원, 설비, 통장 등)를 확인해야 합니다.'
+            ),
+            'related_links': STANDARD_LINKS + [
+                {'title': '국세청 사업자등록 상태 조회', 'url': 'https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/sf/a/a/UTESFAAF99.xml', 'source': '국세청 홈택스'},
+            ],
+        })
+        _same_adrs_findings += 1
+
+print(f'  Found {_same_adrs_findings} same-address multi-company findings')
+
+
+# ════════════════════════════════════════════════════════════════════
 # Pattern 11: HIGH-VALUE SOLE SOURCE (고액 수의계약)
 # 1억원+ 수의계약 — 법적 한도 대폭 초과
 # ════════════════════════════════════════════════════════════════════
@@ -1784,6 +1937,28 @@ for c in bids:
     if inst and vendor and year.isdigit() and amt > 0:
         inst_vendor_yearly[inst][vendor][year]['amt'] += amt
         inst_vendor_yearly[inst][vendor][year]['bids'].append(c)
+
+# Supplement amount_spike with contract-details data (311K records, 2014-2026).
+# This dramatically improves year-over-year baseline accuracy vs the 12-month bids window.
+_cd_seen_keys: set[str] = set()  # deduplicate by (inst, vendor, year, amount)
+for _cd in contracts:
+    _cd_inst = str(_cd.get('cntrctInsttNm', '')).strip()
+    _cd_amt = _f(_cd.get('thtmCntrctAmt')) or _f(_cd.get('totCntrctAmt'))
+    _cd_date = str(_cd.get('cntrctCnclsDate', ''))[:4]
+    if not _cd_inst or not _cd_amt or not _cd_date or not _cd_date.isdigit():
+        continue
+    # Parse vendor from corpList
+    _cd_cl = str(_cd.get('corpList', ''))
+    for _entry in _re_corp.findall(r'\[?(\d+\^[^\]]+)\]?', _cd_cl):
+        _parts = _entry.split('^')
+        if len(_parts) >= 4 and _parts[3].strip():
+            _cd_vendor = _parts[3].strip()
+            _dedup_key = f'{_cd_inst}|{_cd_vendor}|{_cd_date}|{int(_cd_amt)}'
+            if _dedup_key not in _cd_seen_keys:
+                _cd_seen_keys.add(_dedup_key)
+                inst_vendor_yearly[_cd_inst][_cd_vendor][_cd_date]['amt'] += _cd_amt
+                # No bid object available, but we mark the source
+            break  # take first (main contractor) entry only
 
 # NOTE on data range: bids covers roughly 12 months (2025-full + 2026-partial Jan-Mar).
 # Comparing 2025 full-year to 2026 Jan-Mar is misleading unless 2026 already exceeds 2025 total.
@@ -2171,11 +2346,6 @@ print(f'  Found {len([f for f in findings if f["pattern_type"] == "contract_infl
 # ════════════════════════════════════════════════════════════════════
 print('\n📝 Adding rich narrative fields...')
 
-STANDARD_LINKS = [
-    {'title': '나라장터에서 해당 기관 계약 검색', 'url': 'https://www.g2b.go.kr:8081/ep/tbid/tbidList.do', 'source': '나라장터'},
-    {'title': '감사원 감사결과 검색', 'url': 'https://www.bai.go.kr/bai/result/list', 'source': '감사원'},
-]
-
 PATTERN_EXTRA_LINK = {
     'ghost_company': {'title': '국세청 사업자등록 상태 조회', 'url': 'https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/sf/a/a/UTESFAAF99.xml', 'source': '국세청 홈택스'},
     'zero_competition': {'title': '열린재정 세출 현황', 'url': 'https://www.openfiscaldata.go.kr/op/ko/sd/UOPKOSDA01', 'source': '열린재정'},
@@ -2198,6 +2368,8 @@ PATTERN_EXTRA_LINK = {
     'sanctioned_vendor': {'title': '나라장터 부정당제재업체', 'url': 'https://www.g2b.go.kr:8081/ep/co/cntrbRsttInfo.do', 'source': '나라장터'},
     'price_clustering': {'title': '공정거래위원회 입찰담합 신고', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
     'network_collusion': {'title': '공정거래위원회 위장 경쟁 신고', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
+    'geographic_concentration': {'title': '감사원 감사청구', 'url': 'https://www.bai.go.kr/bai/citizen/request', 'source': '감사원'},
+    'short_bid_window': {'title': '국가법령정보센터 (국가계약법 시행령)', 'url': 'https://www.law.go.kr/법령/국가를당사자로하는계약에관한법률시행령', 'source': '법령정보'},
 }
 
 
@@ -2643,6 +2815,8 @@ PATTERN_LABELS = {
     'yearend_new_vendor': '연말 신규업체 수의계약',
     'rebid_same_winner': '재입찰 동일업체 낙찰',
     'ai_anomaly': 'AI 이상탐지',
+    'geographic_concentration': '지역 편중 낙찰',
+    'short_bid_window': '단기 입찰기간',
 }
 
 import hashlib as _hashlib
@@ -4344,6 +4518,13 @@ _seen_rebid: set = set()
 for _bid_no, _group in _bid_groups.items():
     if len(_group) < 2:
         continue
+    # CRITICAL: Only flag true re-bids where bidNtceOrd or rbidNo differs.
+    # If only bidClsfcNo differs (same ord, different lot), it's multi-lot procurement —
+    # one company winning all lots is normal (volume/capacity advantage), not suspicious.
+    _ords = set(g.get('bidNtceOrd', '') for g in _group)
+    _rbids = set(g.get('rbidNo', '') for g in _group)
+    if len(_ords) == 1 and len(_rbids) == 1:
+        continue  # same ord + same rbid = multi-lot (different bidClsfcNo), not a re-bid
     # Sort by bidNtceOrd / rbidNo to get chronological order
     _group_sorted = sorted(_group, key=lambda x: (
         str(x.get('bidNtceOrd', '') or '').zfill(3),
@@ -4533,6 +4714,275 @@ for (_canonical_name, _inst), _group in _name_groups.items():
     _rebid_findings += 1
 
 print(f'  Found {_rebid_findings} rebid_same_winner findings')
+
+
+# ════════════════════════════════════════════════════════════════════
+# Pattern 23-A: SHORT BID WINDOW (단기 입찰기간)
+#
+# Large contracts (> 1억원) with a bid window of < 3 calendar days,
+# excluding legitimate emergency (긴급계약, 재해복구) cases.
+# Under 국가계약법 시행령 §35, open competitive bids for contracts
+# above the threshold require at least 10 days of notice.
+# Very short windows indicate that a vendor was pre-selected and the
+# public tender is a formality ("들러리 공고").
+#
+# Uses g2b-contracts.json (bid announcements with presmptPrce and
+# bidBeginDate/bidClseDate). These are OPEN or recently closed bids.
+# ════════════════════════════════════════════════════════════════════
+print('🔍 Pattern 23-A: Short Bid Window Detection...')
+
+_EMERGENCY_KEYWORDS = frozenset([
+    '긴급', '재해복구', '응급', '재난', '집중호우', '태풍', '지진',
+    '침수', '홍수', '산사태', '피해복구', '재난대응',
+])
+
+_short_window_findings = 0
+try:
+    _bid_notices = load('g2b-contracts.json')['items']
+except Exception:
+    _bid_notices = []
+
+from datetime import datetime as _dt
+
+for _bn in _bid_notices:
+    _begin = str(_bn.get('bidBeginDate', '')).strip()
+    _close = str(_bn.get('bidClseDate', '')).strip()
+    _budget = _f(_bn.get('asignBdgtAmt'))
+    _est = _f(_bn.get('presmptPrce'))
+    _method = str(_bn.get('cntrctCnclsMthdNm', '')).strip()
+    _nm = str(_bn.get('bidNtceNm', '')).strip()
+    _inst = str(_bn.get('ntceInsttNm', '')).strip()
+    _no = str(_bn.get('bidNtceNo', '')).strip()
+    _url = str(_bn.get('bidNtceUrl', '')).strip()
+
+    if not _begin or not _close or _budget < 100_000_000:
+        continue
+    if any(kw in _nm for kw in _EMERGENCY_KEYWORDS):
+        continue
+    if '긴급' in _method or '수의' in _method:
+        continue
+    if is_suppressed('short_bid_window', _inst):
+        continue
+
+    try:
+        _begin_dt = _dt.strptime(_begin[:10], '%Y-%m-%d')
+        _close_dt = _dt.strptime(_close[:10], '%Y-%m-%d')
+        _days = (_close_dt - _begin_dt).days
+    except ValueError:
+        continue
+
+    if _days > 3:
+        continue
+
+    _score = min(80, 50 + max(0, (3 - _days)) * 10 + (_budget / 1e9) * 5)
+    if is_govt_affiliate(_inst):
+        _score /= 2
+    if _score < 40:
+        continue
+
+    findings.append({
+        'pattern_type': 'short_bid_window',
+        'severity': 'HIGH' if _days == 0 else 'MEDIUM',
+        'suspicion_score': round(_score),
+        'target_institution': _inst,
+        'summary': (
+            f'{_inst}가 {_budget/1e8:.1f}억원 규모 입찰 공고를 '
+            f'{_days}일 만에 마감. 실질적 경쟁 기회 제공 불가.'
+        ),
+        'detail': {
+            '기관': _inst,
+            '계약명': _nm,
+            '입찰기간': f'{_begin} ~ {_close} ({_days}일)',
+            '예산금액': f'{_budget:,.0f}원',
+            '예정가격': f'{_est:,.0f}원' if _est else '미공개',
+            '계약방식': _method,
+            '법적요건': '국가계약법 시행령 §35 — 경쟁입찰 최소 10일 공고',
+        },
+        'evidence_contracts': [make_contract(
+            _no, _nm, _budget, '(낙찰 전)', _begin, _method,
+            url=_url or f'https://www.g2b.go.kr',
+        )],
+        'innocent_explanation': (
+            '긴급 조달의 경우 법령상 단기 입찰이 허용됩니다. '
+            f'해당 기관이 법 제26조 예외 사유(긴급·재해복구 등)를 인정받았다면 '
+            '정상 절차일 수 있습니다. 하지만 예외 적용 근거가 문서화되어야 합니다.'
+        ),
+        'plain_explanation': (
+            f'{_inst}가 {_budget/1e8:.1f}억원 계약에 대해 {_days}일짜리 입찰 공고를 냈습니다. '
+            '정상적인 경쟁 입찰이면 최소 10일 이상 공고해야 합니다. '
+            '단 며칠의 입찰 기간은 사전에 낙찰 업체를 내정해 놓은 '
+            '"들러리 입찰"의 전형적인 패턴입니다.'
+        ),
+        'citizen_impact': (
+            '입찰 기간이 너무 짧으면 많은 업체들이 참여하지 못합니다. '
+            '결국 사전에 준비된 특정 업체만 낙찰될 가능성이 높아지고, '
+            '세금이 낭비됩니다.'
+        ),
+        'why_it_matters': (
+            '단기 입찰은 "허위 경쟁"의 대표적인 수법입니다. '
+            '법적으로는 경쟁 입찰 형식을 갖추면서도, '
+            '실제로는 특정 업체만 참여 가능하도록 시간을 제한합니다.'
+        ),
+        'what_should_happen': (
+            '감사원이나 조달청이 해당 기관의 긴급 조달 인정 근거를 확인해야 합니다. '
+            '반복적으로 단기 입찰을 진행한 기관은 조달 절차 감사 대상이 되어야 합니다.'
+        ),
+        'related_links': STANDARD_LINKS + [
+            {'title': '국가법령정보센터 (국가계약법 시행령)', 'url': 'https://www.law.go.kr/법령/국가를당사자로하는계약에관한법률시행령', 'source': '법령정보'},
+        ],
+    })
+    _short_window_findings += 1
+
+print(f'  Found {_short_window_findings} short_bid_window findings')
+
+
+# ════════════════════════════════════════════════════════════════════
+# Pattern 23: GEOGRAPHIC CONCENTRATION (지역 편중 낙찰)
+#
+# A government institution in Region A consistently awards contracts to
+# companies from a distant Region B, bypassing local suppliers.
+# Or: ALL contracts of an institution go to companies sharing the
+# same city, despite no geographic justification.
+# Uses bidwinnrAdrs (winner's company address) from winning-bids.
+# ════════════════════════════════════════════════════════════════════
+print('🔍 Pattern 23: Geographic Concentration (지역 편중 낙찰)...')
+
+def _extract_region(adrs: str) -> str:
+    """Extract sido (시도) from address string."""
+    adrs = adrs.strip()
+    for sido in ['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종',
+                 '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주']:
+        if adrs.startswith(sido) or f'{sido}특별' in adrs or f'{sido}광역' in adrs:
+            return sido
+    return ''
+
+def _extract_inst_region(inst_nm: str) -> str:
+    """Infer institution region from name."""
+    for sido in ['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종',
+                 '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주']:
+        if sido in inst_nm:
+            return sido
+    return ''
+
+_geo_inst: dict[str, list[dict]] = defaultdict(list)
+for _b in bids:
+    _inst = str(_b.get('dminsttNm', '')).strip()
+    _adrs = str(_b.get('bidwinnrAdrs', '')).strip()
+    _winner = str(_b.get('bidwinnrNm', '')).strip()
+    _amt = _f(_b.get('sucsfbidAmt'))
+    _date = str(_b.get('rlOpengDt', '') or _b.get('fnlSucsfDate', ''))[:10]
+    _bid_no = str(_b.get('bidNtceNo', ''))
+    _bid_nm = str(_b.get('bidNtceNm', ''))
+    _method = str(_b.get('cntrctCnclsMthdNm', ''))
+    if not _inst or not _adrs or not _winner or _amt < 10_000_000:
+        continue
+    _region = _extract_region(_adrs)
+    if not _region:
+        continue
+    _geo_inst[_inst].append({
+        'winner': _winner,
+        'region': _region,
+        'adrs': _adrs,
+        'amt': _amt,
+        'date': _date,
+        'bid_no': _bid_no,
+        'bid_nm': _bid_nm,
+        'method': _method,
+    })
+
+_geo_findings = 0
+for _inst, _inst_bids in _geo_inst.items():
+    if len(_inst_bids) < 5:
+        continue
+    if is_suppressed('geographic_concentration', _inst):
+        continue
+    if is_govt_affiliate(_inst):
+        continue
+
+    _inst_region = _extract_inst_region(_inst)
+    _total_amt = sum(b['amt'] for b in _inst_bids)
+
+    # Count by region
+    _region_amts: dict[str, float] = defaultdict(float)
+    _region_counts: dict[str, int] = defaultdict(int)
+    for _b2 in _inst_bids:
+        _region_amts[_b2['region']] += _b2['amt']
+        _region_counts[_b2['region']] += 1
+
+    # Find dominant out-of-region pattern
+    for _reg, _reg_amt in _region_amts.items():
+        _reg_count = _region_counts[_reg]
+        _reg_pct = _reg_amt / _total_amt if _total_amt > 0 else 0
+        _count_pct = _reg_count / len(_inst_bids)
+
+        # Must dominate: >80% of contracts AND amount by one out-of-region area
+        if _reg_pct < 0.80 or _count_pct < 0.75:
+            continue
+        # Must be out-of-region (institution region != winner region), or no institution region found
+        if _inst_region and _reg == _inst_region:
+            continue
+        if _total_amt < 200_000_000:
+            continue
+
+        _reg_bids = [b for b in _inst_bids if b['region'] == _reg]
+        _score = min(85, 40 + _reg_pct * 20 + (_total_amt / 1e9) * 5 + _reg_count * 2)
+        _score = adjusted_score(_score, _inst)
+        if _score < 45:
+            continue
+
+        _evidence = [make_contract(
+            b['bid_no'], b['bid_nm'], b['amt'], b['winner'], b['date'], b['method'],
+        ) for b in sorted(_reg_bids, key=lambda x: -x['amt'])[:5]]
+
+        findings.append({
+            'pattern_type': 'geographic_concentration',
+            'severity': 'MEDIUM' if _reg_pct < 0.92 else 'HIGH',
+            'suspicion_score': round(_score),
+            'target_institution': _inst,
+            'summary': (
+                f'{_inst}가 {len(_reg_bids)}건({_reg_pct:.0%})의 계약을 '
+                f'{_reg} 소재 업체들에만 발주. '
+                f'총 {_total_amt/1e8:.0f}억원 중 {_reg_amt/1e8:.0f}억원 집중.'
+            ),
+            'detail': {
+                '기관': _inst,
+                '기관_지역': _inst_region or '미확인',
+                '낙찰_집중_지역': _reg,
+                '집중_비율': f'{_reg_pct:.1%}',
+                '해당_건수': f'{_reg_count}건 / {len(_inst_bids)}건',
+                '집중_금액': f'{_reg_amt:,.0f}원',
+                '총_계약금액': f'{_total_amt:,.0f}원',
+            },
+            'evidence_contracts': _evidence,
+            'innocent_explanation': (
+                f'{_reg} 지역 업체들이 해당 분야에서 압도적인 경쟁력을 가질 경우 '
+                f'지역 편중은 자연스러운 결과일 수 있습니다. '
+                f'특수 기술, 지역 물류 이점, 대규모 생산시설 집중 등이 원인일 수 있습니다.'
+            ),
+            'plain_explanation': (
+                f'{_inst}의 계약 중 {_reg_pct:.0%}({_reg_count}건)이 {_reg} 소재 업체들에 몰렸습니다. '
+                f'기관과 수주 업체의 지역이 다를 경우, 지역 내 적격 업체를 배제하고 '
+                f'특정 지역 업체를 선호하는 구조적 편향이 있을 수 있습니다.'
+            ),
+            'citizen_impact': (
+                f'정부 기관이 계약을 발주할 때는 원칙적으로 모든 적격 업체에게 공정한 기회를 줘야 합니다. '
+                f'특정 지역 업체로의 쏠림은 지역 중소기업의 기회를 박탈할 수 있습니다.'
+            ),
+            'why_it_matters': (
+                f'지역 편중 패턴은 담당자가 특정 지역 업체와 유착했거나, '
+                f'입찰 조건을 해당 업체에 유리하게 설계했을 때 나타납니다.'
+            ),
+            'what_should_happen': (
+                f'해당 기간 입찰 공고의 참가 자격 조건, 심사 위원 구성, '
+                f'낙찰 업체와 담당자의 관계를 감사해야 합니다.'
+            ),
+            'related_links': STANDARD_LINKS + [
+                {'title': '공정거래위원회 입찰담합 신고', 'url': 'https://www.ftc.go.kr/www/selectReportUserView.do?key=10', 'source': '공정거래위원회'},
+            ],
+        })
+        _geo_findings += 1
+
+print(f'  Found {_geo_findings} geographic_concentration findings')
 
 
 # ════════════════════════════════════════════════════════════════════

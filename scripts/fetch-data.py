@@ -1303,6 +1303,103 @@ def fetch_targeted_companies():
     print(f'  ✅ {len(new_corps)}개 신규 프로필 추가 (총 {len(unique)}개)')
 
 
+def fetch_top_companies():
+    """낙찰금액 상위 5,000개 업체 프로필 조회 — 유령업체·신생업체 패턴 정밀화
+
+    targeted-companies가 감사 결과 업체만 조회하는 반면,
+    이 함수는 낙찰금액 기준 상위 업체를 직접 조회합니다.
+    ghost_company / new_company_big_win 패턴의 근거 강화.
+    """
+    print('\n🏢 낙찰금액 상위 업체 프로필 조회 (top-companies)')
+
+    # Step 1: Rank all winners by total bid amount from winning-bids
+    winning_path = DATA_DIR / 'g2b-winning-bids.json'
+    if not winning_path.exists():
+        print('  ⚠️  g2b-winning-bids.json 없음')
+        return
+    with open(winning_path, encoding='utf-8') as f:
+        wb = json.load(f)
+    items = wb.get('items', [])
+
+    from collections import defaultdict
+    bz_amounts: dict[str, float] = defaultdict(float)
+    bz_name: dict[str, str] = {}
+    for it in items:
+        bz = str(it.get('bidwinnrBizno', '')).strip().replace('-', '')
+        if not bz or len(bz) != 10 or not bz.isdigit():
+            continue
+        try:
+            amt = float(it.get('sucsfbidAmt') or 0)
+        except (ValueError, TypeError):
+            amt = 0.0
+        bz_amounts[bz] += amt
+        if bz not in bz_name:
+            bz_name[bz] = str(it.get('bidwinnrNm', '')).strip()
+
+    # Sort by total amount desc, take top 5000
+    top_biznos = [bz for bz, _ in sorted(bz_amounts.items(), key=lambda x: -x[1])[:5000]]
+    print(f'  낙찰금액 상위 {len(top_biznos)}개 bizno 대상')
+
+    # Step 2: Filter to those not already in companies.json
+    companies_path = DATA_DIR / 'g2b-companies.json'
+    if companies_path.exists():
+        with open(companies_path, encoding='utf-8') as f:
+            existing = json.load(f)
+    else:
+        existing = {'items': []}
+    have_biznos = {str(c.get('bizno', '')).strip() for c in existing.get('items', [])}
+    new_biznos = [bz for bz in top_biznos if bz not in have_biznos]
+    print(f'  신규 조회 대상: {len(new_biznos)}개 bizno')
+
+    if not new_biznos:
+        print('  ✅ 이미 모두 조회됨')
+        return
+
+    def _lookup(bizno):
+        url = (
+            f'https://apis.data.go.kr/1230000/ao/UsrInfoService02'
+            f'/getPrcrmntCorpBasicInfo02?serviceKey={DATA_GO_KR_KEY}'
+            f'&bizno={bizno}&inqryDiv=3&numOfRows=1&pageNo=1&type=json'
+        )
+        try:
+            d = fetch_json(url)
+            body = d.get('response', {}).get('body', {})
+            items = body.get('items', [])
+            if not isinstance(items, list):
+                items = [items] if items else []
+            return items
+        except Exception:
+            return []
+
+    new_corps = []
+    done = 0
+    with ThreadPoolExecutor(max_workers=20) as pool:
+        futs = {pool.submit(_lookup, bz): bz for bz in new_biznos}
+        for fut in as_completed(futs):
+            new_corps.extend(fut.result())
+            done += 1
+            if done % 500 == 0:
+                print(f'  조회 {done}/{len(new_biznos)} (확보 {len(new_corps)}개)')
+
+    merged = existing.get('items', []) + new_corps
+    seen_bz: set[str] = set()
+    unique: list = []
+    for c in merged:
+        bz = str(c.get('bizno', '')).strip()
+        if bz not in seen_bz:
+            seen_bz.add(bz)
+            unique.append(c)
+
+    save('g2b-companies.json', {
+        'source': 'data.go.kr',
+        'endpoint': 'getPrcrmntCorpBasicInfo02 (top-companies)',
+        'fetched_at': now_iso(),
+        'totalCount': len(unique),
+        'items': unique,
+    })
+    print(f'  ✅ {len(new_corps)}개 신규 프로필 추가 (총 {len(unique)}개)')
+
+
 def fetch_shopping_mall_prices():
     """종합쇼핑몰 품목정보 — MltiSpcPrdctInfoService
 
@@ -1630,6 +1727,7 @@ FETCHERS = {
     'contracts': fetch_g2b_contracts,
     'companies': fetch_g2b_companies,
     'targeted-companies': fetch_targeted_companies,
+    'top-companies': fetch_top_companies,
     'sanctions': fetch_g2b_sanctions,
     'winning-bids': fetch_g2b_winning_bids,
     'contract-details': fetch_g2b_contract_details,

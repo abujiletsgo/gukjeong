@@ -2,91 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-28 (13:44 UTC) · @Tom Kwon
-**Commit:** feat: Voting participation data wired into legislator cards (9208242) by Tom Kwon
-**Changed:**
-  apps/web/app/legislators/LegislatorsPageClient.tsx | 211 +++++++++++++++++++--
-  apps/web/tsconfig.tsbuildinfo                      |   2 +-
-  2 files changed, 199 insertions(+), 14 deletions(-)
-
-## 2026-03-28 (15:21 UTC) · @Tom Kwon
-**Commit:** feat: Context-aware AI audit — stop flagging LPG as corruption (1ac2afd) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx | 394 +++++++++++------
-  apps/web/lib/audit/context.ts          | 779 +++++++++++++++++++++++++++++++++
-  apps/web/lib/audit/patterns.ts         |  42 +-
-  docs/audit-patterns.md                 |  97 +++-
-  4 files changed, 1143 insertions(+), 169 deletions(-)
-
-## 2026-03-28 (15:53 UTC) · @Tom Kwon
-**Commit:** fix: News page — add context, summaries, frame analysis to each story (367cf3d) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md             |  15 ++
-  apps/web/app/audit/AuditPageClient.tsx | 408 ++++++++++++++++-----------------
-  apps/web/app/news/NewsPageClient.tsx   |  77 ++++++-
-  apps/web/tsconfig.tsbuildinfo          |   2 +-
-  4 files changed, 290 insertions(+), 212 deletions(-)
-
-## 2026-03-28 (15:54 UTC) · @Tom Kwon
-**Commit:** style: Restore old audit layout — heatmap, dropdowns, pattern grid (2215b2b) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx | 11 ++++++++---
-  1 file changed, 8 insertions(+), 3 deletions(-)
-
-## 2026-03-28 (15:56 UTC) · @Tom Kwon
-**Commit:** fix: audit PatternCategory type error — replace high_value_sole_source with all (209ce51) by Tom Kwon
-**Changed:**
-  .claude/MEMORY.md                      | 15 +++++++++++++++
-  apps/web/.claude/MEMORY.md             |  9 +++++++++
-  apps/web/app/audit/AuditPageClient.tsx | 16 ++++++++--------
-  apps/web/tsconfig.tsbuildinfo          |  2 +-
-  4 files changed, 33 insertions(+), 9 deletions(-)
-
-## 2026-03-28 (16:04 UTC) · @Tom Kwon
-**Commit:** fix: JSX syntax error in news center articles (2c244b9) by Tom Kwon
-**Changed:**
-  apps/web/app/news/NewsPageClient.tsx | 6 ++----
-  apps/web/tsconfig.tsbuildinfo        | 2 +-
-  2 files changed, 3 insertions(+), 5 deletions(-)
-
-## 2026-03-28 (16:05 UTC) · @Tom Kwon
-**Commit:** fix: Audit page — add 'all' tab, fix category filter, restore high_value_sole_source (e6d27da) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx | 15 ++++++++++++---
-  1 file changed, 12 insertions(+), 3 deletions(-)
-
-## 2026-03-29 (13:13 UTC) · @Tom Kwon
-**Commit:** data: Real bid analysis — 500 construction bids, repeat winners, low competition (000ebf7) by Tom Kwon
-**Changed:**
-  .claude/FACTS.md                       |   1 +
-  .claude/MEMORY.md                      |  13 +
-  apps/web/.claude/MEMORY.md             |  13 +
-  apps/web/public/data/bid-analysis.json | 459 +++++++++++++++++++++++++++++++++
-  apps/web/tsconfig.tsbuildinfo          |   2 +-
-  scripts/dispatch-api-subscription.md   | 191 ++++++++++++++
-  6 files changed, 678 insertions(+), 1 deletion(-)
-
-## 2026-03-29 (14:04 UTC) · @Tom Kwon
-**Commit:** feat: Wire all 8 data.go.kr API services — winning bids, contracts, prices, assets (183c383) by Tom Kwon
-**Changed:**
-  apps/web/data/g2b-companies.json        | 12508 ++++++
-  apps/web/data/g2b-contract-details.json | 65008 +++++++++++++++++++++++++++++
-  apps/web/data/g2b-contract-process.json |     7 +
-  apps/web/data/g2b-prices.json           | 65084 ++++++++++++++++++++++++++++++
-  apps/web/data/g2b-winning-bids.json     | 33008 +++++++++++++++
-  apps/web/data/official-assets.json      |  1152 +
-  apps/web/data/procurement-stats.json    |    11 +
-  apps/web/lib/g2b/client.ts              |    95 +-
-  apps/web/lib/local-data.ts              |    56 +
-  scripts/fetch-data.py                   |   354 +
-  ... and 1 more files
-
-## 2026-03-29 (14:09 UTC) · @Tom Kwon
-**Commit:** fix: Audit page — fallback gracefully when static JSON unavailable (46e29bd) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx | 45 ++++++++++++++++++----------------
-  1 file changed, 24 insertions(+), 21 deletions(-)
-
 ## 2026-03-29 (15:10 UTC) · @Tom Kwon
 **Commit:** fix: Move all hooks before early returns — React error #310 (aad372a) by Tom Kwon
 **Changed:**
@@ -248,3 +163,89 @@
 **Changed:**
   apps/web/app/legislators/LegislatorsPageClient.tsx | 170 ++++++++++++++++++++-
   1 file changed, 162 insertions(+), 8 deletions(-)
+
+## 2026-04-22 (19:09 UTC) · @Tom Kwon
+**Commit:** feat: audit enrichment API, new audit components, desktop mockups (d3d026c) by Tom Kwon
+**Changed:**
+  .claude/FACTS.md                              |    3 +-
+  .claude/MEMORY.md                             |  147 +-
+  apps/web/.claude/MEMORY.md                    |   84 +-
+  apps/web/.vercelignore                        |    8 +
+  apps/web/app/api/audit/enrich/route.ts        |  131 ++
+  apps/web/components/audit/AuditHero.tsx       |  121 ++
+  apps/web/components/audit/FindingShareBar.tsx |   73 +
+  apps/web/components/audit/RegionSearch.tsx    |  103 ++
+  apps/web/components/audit/TopOffenderCard.tsx |   77 +
+  apps/web/data/news-rss.json                   | 1852 ++++++++++++-------------
+  ... and 12 more files
+
+## 2026-04-23 (07:56 UTC) · @Tom Kwon
+**Commit:** fix: make AI 감사 priority tab cards clickable (c0f5fc1) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx | 81 +++++++++++++++++++++++-----------
+  1 file changed, 56 insertions(+), 25 deletions(-)
+
+## 2026-04-23 (08:25 UTC) · @Tom Kwon
+**Commit:** feat: add 여수 expo corruption findings + media sources section (de1a748) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/[id]/AuditDetailClient.tsx |     28 +
+  apps/web/public/data/audit-results.json       | 180950 +----------------------
+  2 files changed, 29 insertions(+), 180949 deletions(-)
+
+## 2026-04-23 (08:26 UTC) · @Tom Kwon
+**Commit:** feat: pattern 22 rebid_same_winner + yeosu media findings (44ed2aa) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx        |      5 +
+  apps/web/app/audit/[id]/AuditDetailClient.tsx |      2 +
+  apps/web/components/audit/PatternBadge.tsx    |      8 +
+  apps/web/public/data/audit-results.json       | 261077 ++++++++++++++++++++++-
+  scripts/generate-audit.py                     |    426 +-
+  5 files changed, 261508 insertions(+), 10 deletions(-)
+
+## 2026-04-24 (09:34 UTC) · @Tom Kwon
+**Commit:** feat: add 잼버리·대장동 media-reported findings (6116a6d) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 2889 +++++++++++++++----------------
+  scripts/generate-audit.py               |  124 ++
+  2 files changed, 1539 insertions(+), 1474 deletions(-)
+
+## 2026-04-27 (05:48 UTC) · @Tom Kwon
+**Commit:** feat: redesign live news mode to match demo — topic cards with 진보/중도/보수 frames (b35cdd5) by Tom Kwon
+**Changed:**
+  apps/web/app/api/news/topics/route.ts       |   9 +
+  apps/web/app/news/NewsPageClient.tsx        | 620 ++------------------
+  apps/web/components/news/LiveTopicCard.tsx  | 217 +++++++
+  apps/web/components/news/SpectrumColumn.tsx | 115 ++++
+  apps/web/lib/local-data.ts                  |  12 +
+  apps/web/lib/types.ts                       |  43 ++
+  apps/web/public/data/news-topics.json       | 868 ++++++++++++++++++++++++++++
+  scripts/generate-news-topics.py             | 340 +++++++++++
+  8 files changed, 1666 insertions(+), 558 deletions(-)
+
+## 2026-04-27 (06:24 UTC) · @Tom Kwon
+**Commit:** feat: add news_coverage UI + 조달청 false-positive fix + safe numeric helpers (16af522) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/[id]/AuditDetailClient.tsx |  46 +++-
+  apps/web/lib/types.ts                         |   9 +
+  scripts/enrich-audit.py                       | 250 +++++++++++++++++-
+  scripts/generate-audit.py                     | 365 +++++++++++++++++++++-----
+  4 files changed, 583 insertions(+), 87 deletions(-)
+
+## 2026-04-27 (08:05 UTC) · @Tom Kwon
+**Commit:** data: update audit-results.json with 176 AI-enriched findings (072832f) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 261018 +----------------------------
+  1 file changed, 1 insertion(+), 261017 deletions(-)
+
+## 2026-04-27 (09:00 UTC) · @Tom Kwon
+**Commit:** fix: make 최우선 조사기관 cards clickable + fix pattern tab empty results (aec9c56) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx        | 23 +++++++++++------------
+  apps/web/components/audit/TopOffenderCard.tsx |  2 +-
+  2 files changed, 12 insertions(+), 13 deletions(-)
+
+## 2026-04-27 (09:13 UTC) · @Tom Kwon
+**Commit:** fix: rename turbo.json pipeline → tasks for Turbo 2.0 compatibility (da4b787) by Tom Kwon
+**Changed:**
+  turbo.json | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)

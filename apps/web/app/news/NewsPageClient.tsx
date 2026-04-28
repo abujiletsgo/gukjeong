@@ -93,6 +93,22 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
     return result;
   }, [events, categoryFilter, sortBy]);
 
+  const filteredTopics = useMemo(() => {
+    let result = [...(topicsData?.topics ?? [])];
+    if (categoryFilter !== '전체') {
+      result = result.filter(t => t.category === categoryFilter);
+    }
+    if (sortBy === 'latest') {
+      result.sort((a, b) => (b.event_date ?? '').localeCompare(a.event_date ?? ''));
+    } else {
+      result.sort((a, b) => (b.article_count ?? 0) - (a.article_count ?? 0));
+    }
+    return result;
+  }, [topicsData, categoryFilter, sortBy]);
+
+  const truncate = (text: string, maxLen: number) =>
+    text.length > maxLen ? text.slice(0, maxLen) + '...' : text;
+
   /* ================================================================
      LIVE MODE
      ================================================================ */
@@ -101,15 +117,15 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
     const allArticles = topicsData?.topics.flatMap(t => t.articles) ?? [];
     const liveArticleCount = allArticles.length;
     const liveTopicCount = topicsData?.total_topics ?? 0;
-    const liveMultiplePerspectives = topicsData?.topics.filter(t => t.has_multiple_perspectives).length ?? 0;
     const liveOutletCount = new Set(allArticles.map(a => a.outlet_id)).size;
+    const liveFirstTopic = filteredTopics[0] ?? topicsData?.topics[0];
 
     return (
       <div className="container-page py-8">
         {/* ── Header ── */}
-        <h1 className="section-title">뉴스</h1>
+        <h1 className="section-title">뉴스 프레임 비교</h1>
         <p className="text-gray-600 mb-6">
-          한국 주요 언론사의 정치·경제·정부 관련 실시간 기사
+          같은 사건에 대한 서로 다른 미디어의 보도 프레임을 비교합니다.
         </p>
 
         {/* Real data banner */}
@@ -128,10 +144,14 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
 
         {/* ── KPI Section ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <KPI label="수집된 기사" value={liveArticleCount.toLocaleString()} />
-          <KPI label="이슈 클러스터" value={`${liveTopicCount}건`} />
-          <KPI label="다양한 시각" value={`${liveMultiplePerspectives}건`} />
+          <KPI label="이슈 클러스터" value={String(liveTopicCount)} />
+          <KPI label="총 기사 수" value={liveArticleCount.toLocaleString()} />
           <KPI label="모니터링 매체" value={String(liveOutletCount)} />
+          <KPI
+            label="오늘의 주요 이슈"
+            value={liveFirstTopic ? truncate(liveFirstTopic.title, 16) : '-'}
+            className="col-span-2 lg:col-span-1"
+          />
         </div>
 
         {/* ── Media Spectrum Bar ── */}
@@ -151,21 +171,65 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
           </div>
         )}
 
-        {/* ── Topic cluster list ── */}
+        {/* ── Filters ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+          {/* Category Filter */}
+          <div className="flex flex-wrap gap-2">
+            <span className="text-sm font-medium text-gray-700 self-center mr-1">분야:</span>
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setCategoryFilter(cat)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  categoryFilter === cat
+                    ? 'bg-gray-900 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Sort */}
+          <div className="sm:ml-auto flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-700">정렬:</span>
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as SortOption)}
+              className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {SORT_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* ── Result count ── */}
         {topicsData && (
+          <p className="text-sm text-gray-400 mb-4">{filteredTopics.length}건의 이슈</p>
+        )}
+
+        {/* ── Topic cluster list ── */}
+        {topicsData && filteredTopics.length > 0 && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-sm font-semibold text-gray-700">
-                {topicsData.total_topics}개 이슈
-              </h2>
-            </div>
-            {topicsData.topics.map(topic => (
+            {filteredTopics.map(topic => (
               <LiveTopicCard key={topic.id} cluster={topic} />
             ))}
           </div>
         )}
 
-        {/* ── Empty state ── */}
+        {/* ── Empty state (filtered) ── */}
+        {!liveLoading && filteredTopics.length === 0 && topicsData && (
+          <div className="card text-center py-16">
+            <p className="text-gray-400">해당 분야의 뉴스 이벤트가 없습니다.</p>
+          </div>
+        )}
+
+        {/* ── Empty state (no data) ── */}
         {!liveLoading && !topicsData && (
           <div className="card text-center py-16">
             <p className="text-gray-400">
@@ -197,9 +261,6 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
       return next;
     });
   };
-
-  const truncate = (text: string, maxLen: number) =>
-    text.length > maxLen ? text.slice(0, maxLen) + '...' : text;
 
   return (
     <div className="container-page py-8">

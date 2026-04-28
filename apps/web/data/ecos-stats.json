@@ -1,63 +1,63 @@
 {
   "source": "ecos.bok.or.kr",
   "endpoint": "KeyStatisticList",
-  "fetched_at": "2026-04-10T17:45:32Z",
+  "fetched_at": "2026-04-26T16:06:29Z",
   "totalCount": 101,
   "items": [
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "한국은행 기준금리",
       "DATA_VALUE": "2.5",
-      "CYCLE": "20260410",
+      "CYCLE": "20260424",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "콜금리(익일물)",
-      "DATA_VALUE": "2.54",
-      "CYCLE": "20260409",
+      "DATA_VALUE": "2.539",
+      "CYCLE": "20260423",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "KORIBOR(3개월)",
-      "DATA_VALUE": "2.8",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "2.78",
+      "CYCLE": "20260424",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "CD수익률(91일)",
       "DATA_VALUE": "2.82",
-      "CYCLE": "20260410",
+      "CYCLE": "20260424",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "통안증권수익률(364일)",
-      "DATA_VALUE": "2.873",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "2.886",
+      "CYCLE": "20260424",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "국고채수익률(3년)",
-      "DATA_VALUE": "3.36",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "3.496",
+      "CYCLE": "20260424",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "국고채수익률(5년)",
-      "DATA_VALUE": "3.511",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "3.683",
+      "CYCLE": "20260424",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "시장금리",
       "KEYSTAT_NAME": "회사채수익률(3년,AA-)",
-      "DATA_VALUE": "4.018",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "4.145",
+      "CYCLE": "20260424",
       "UNIT_NAME": "%"
     },
     {
@@ -77,15 +77,15 @@
     {
       "CLASS_NAME": "예금/대출금",
       "KEYSTAT_NAME": "예금은행총예금(말잔)",
-      "DATA_VALUE": "2148225.3",
-      "CYCLE": "202601",
+      "DATA_VALUE": "2198188.3",
+      "CYCLE": "202602",
       "UNIT_NAME": "십억원"
     },
     {
       "CLASS_NAME": "예금/대출금",
       "KEYSTAT_NAME": "예금은행대출금(말잔)",
-      "DATA_VALUE": "2495243.3",
-      "CYCLE": "202601",
+      "DATA_VALUE": "2505840",
+      "CYCLE": "202602",
       "UNIT_NAME": "십억원"
     },
     {
@@ -98,85 +98,85 @@
     {
       "CLASS_NAME": "예금/대출금",
       "KEYSTAT_NAME": "가계대출연체율",
-      "DATA_VALUE": "0.42",
-      "CYCLE": "202601",
+      "DATA_VALUE": "0.45",
+      "CYCLE": "202602",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "통화량",
       "KEYSTAT_NAME": "M1(협의통화, 평잔)",
-      "DATA_VALUE": "1344634.7",
-      "CYCLE": "202601",
+      "DATA_VALUE": "1353998.5",
+      "CYCLE": "202602",
       "UNIT_NAME": "십억원"
     },
     {
       "CLASS_NAME": "통화량",
       "KEYSTAT_NAME": "M2(광의통화, 평잔)",
-      "DATA_VALUE": "4101033.6",
-      "CYCLE": "202601",
+      "DATA_VALUE": "4112230.2",
+      "CYCLE": "202602",
       "UNIT_NAME": "십억원"
     },
     {
       "CLASS_NAME": "통화량",
       "KEYSTAT_NAME": "Lf(평잔)",
-      "DATA_VALUE": "6099167.7",
-      "CYCLE": "202601",
+      "DATA_VALUE": "6148776.7",
+      "CYCLE": "202602",
       "UNIT_NAME": "십억원"
     },
     {
       "CLASS_NAME": "통화량",
       "KEYSTAT_NAME": "L(말잔)",
-      "DATA_VALUE": "7739611.7",
-      "CYCLE": "202601",
+      "DATA_VALUE": "7863938.5",
+      "CYCLE": "202602",
       "UNIT_NAME": "십억원"
     },
     {
       "CLASS_NAME": "환율",
       "KEYSTAT_NAME": "원/달러 환율(종가)",
-      "DATA_VALUE": "1482.5",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "1484.5",
+      "CYCLE": "20260424",
       "UNIT_NAME": "원"
     },
     {
       "CLASS_NAME": "환율",
       "KEYSTAT_NAME": "원/엔(100엔) 환율(매매기준율)",
-      "DATA_VALUE": "931.19",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "927",
+      "CYCLE": "20260424",
       "UNIT_NAME": "원"
     },
     {
       "CLASS_NAME": "환율",
       "KEYSTAT_NAME": "원/유로 환율(매매기준율)",
-      "DATA_VALUE": "1732.22",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "1729.86",
+      "CYCLE": "20260424",
       "UNIT_NAME": "원"
     },
     {
       "CLASS_NAME": "환율",
       "KEYSTAT_NAME": "원/위안 환율(종가)",
-      "DATA_VALUE": "216.91",
-      "CYCLE": "20260410",
+      "DATA_VALUE": "216.99",
+      "CYCLE": "20260424",
       "UNIT_NAME": "원"
     },
     {
       "CLASS_NAME": "주식",
       "KEYSTAT_NAME": "코스피지수",
-      "DATA_VALUE": "5778.01",
-      "CYCLE": "20260409",
+      "DATA_VALUE": "6475.63",
+      "CYCLE": "20260424",
       "UNIT_NAME": "1980.01.04=100 "
     },
     {
       "CLASS_NAME": "주식",
       "KEYSTAT_NAME": "코스닥지수",
-      "DATA_VALUE": "1076",
-      "CYCLE": "20260409",
+      "DATA_VALUE": "1203.84",
+      "CYCLE": "20260424",
       "UNIT_NAME": "1996.07.01=1000"
     },
     {
       "CLASS_NAME": "주식",
       "KEYSTAT_NAME": "주식거래대금(KOSPI)",
-      "DATA_VALUE": "548",
-      "CYCLE": "202602",
+      "DATA_VALUE": "633",
+      "CYCLE": "202603",
       "UNIT_NAME": "조원"
     },
     {
@@ -189,50 +189,50 @@
     {
       "CLASS_NAME": "채권",
       "KEYSTAT_NAME": "채권거래대금",
-      "DATA_VALUE": "51.8",
+      "DATA_VALUE": "114.3",
       "CYCLE": "202604",
       "UNIT_NAME": "조원"
     },
     {
       "CLASS_NAME": "채권",
       "KEYSTAT_NAME": "국고채발행액",
-      "DATA_VALUE": "17869",
-      "CYCLE": "202601",
+      "DATA_VALUE": "21712",
+      "CYCLE": "202602",
       "UNIT_NAME": "십억원"
     },
     {
       "CLASS_NAME": "성장률",
       "KEYSTAT_NAME": "경제성장률(실질, 계절조정 전기대비)",
-      "DATA_VALUE": "-0.2",
-      "CYCLE": "2025Q4",
+      "DATA_VALUE": "1.7",
+      "CYCLE": "2026Q1",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "성장률",
       "KEYSTAT_NAME": "민간소비증감률(실질, 계절조정 전기대비)",
-      "DATA_VALUE": "0.3",
-      "CYCLE": "2025Q4",
+      "DATA_VALUE": "0.5",
+      "CYCLE": "2026Q1",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "성장률",
       "KEYSTAT_NAME": "설비투자증감률(실질, 계절조정 전기대비)",
-      "DATA_VALUE": "-1.7",
-      "CYCLE": "2025Q4",
+      "DATA_VALUE": "4.8",
+      "CYCLE": "2026Q1",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "성장률",
       "KEYSTAT_NAME": "건설투자증감률(실질, 계절조정 전기대비)",
-      "DATA_VALUE": "-3.5",
-      "CYCLE": "2025Q4",
+      "DATA_VALUE": "2.8",
+      "CYCLE": "2026Q1",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "성장률",
       "KEYSTAT_NAME": "재화의 수출 증감률(실질, 계절조정 전기대비)",
-      "DATA_VALUE": "-1.6",
-      "CYCLE": "2025Q4",
+      "DATA_VALUE": "5.6",
+      "CYCLE": "2026Q1",
       "UNIT_NAME": "%"
     },
     {
@@ -413,8 +413,8 @@
     {
       "CLASS_NAME": "심리지표",
       "KEYSTAT_NAME": "소비자심리지수",
-      "DATA_VALUE": "107",
-      "CYCLE": "202603",
+      "DATA_VALUE": "99.2",
+      "CYCLE": "202604",
       "UNIT_NAME": null
     },
     {
@@ -483,29 +483,29 @@
     {
       "CLASS_NAME": "고용",
       "KEYSTAT_NAME": "실업률",
-      "DATA_VALUE": "3.4",
-      "CYCLE": "202602",
+      "DATA_VALUE": "3",
+      "CYCLE": "202603",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "고용",
       "KEYSTAT_NAME": "고용률",
-      "DATA_VALUE": "61.8",
-      "CYCLE": "202602",
+      "DATA_VALUE": "62.7",
+      "CYCLE": "202603",
       "UNIT_NAME": "%"
     },
     {
       "CLASS_NAME": "고용",
       "KEYSTAT_NAME": "경제활동인구",
-      "DATA_VALUE": "29406",
-      "CYCLE": "202602",
+      "DATA_VALUE": "29679",
+      "CYCLE": "202603",
       "UNIT_NAME": "천명"
     },
     {
       "CLASS_NAME": "고용",
       "KEYSTAT_NAME": "취업자수",
-      "DATA_VALUE": "28413",
-      "CYCLE": "202602",
+      "DATA_VALUE": "28795",
+      "CYCLE": "202603",
       "UNIT_NAME": "천명"
     },
     {
@@ -588,29 +588,29 @@
     {
       "CLASS_NAME": "통관수출입",
       "KEYSTAT_NAME": "수출금액지수",
-      "DATA_VALUE": "158.6",
-      "CYCLE": "202602",
+      "DATA_VALUE": "202.4",
+      "CYCLE": "202603",
       "UNIT_NAME": "2020=100"
     },
     {
       "CLASS_NAME": "통관수출입",
       "KEYSTAT_NAME": "수입금액지수",
-      "DATA_VALUE": "133.5",
-      "CYCLE": "202602",
+      "DATA_VALUE": "153.76",
+      "CYCLE": "202603",
       "UNIT_NAME": "2020=100"
     },
     {
       "CLASS_NAME": "통관수출입",
       "KEYSTAT_NAME": "순상품교역조건지수",
-      "DATA_VALUE": "104.25",
-      "CYCLE": "202602",
+      "DATA_VALUE": "113.69",
+      "CYCLE": "202603",
       "UNIT_NAME": "2020=100"
     },
     {
       "CLASS_NAME": "통관수출입",
       "KEYSTAT_NAME": "소득교역조건지수",
-      "DATA_VALUE": "135.41",
-      "CYCLE": "202602",
+      "DATA_VALUE": "168.61",
+      "CYCLE": "202603",
       "UNIT_NAME": "2020=100"
     },
     {
@@ -658,22 +658,22 @@
     {
       "CLASS_NAME": "소비자/생산자 물가",
       "KEYSTAT_NAME": "생산자물가지수",
-      "DATA_VALUE": "123.25",
-      "CYCLE": "202602",
+      "DATA_VALUE": "125.24",
+      "CYCLE": "202603",
       "UNIT_NAME": "2020=100"
     },
     {
       "CLASS_NAME": "수출입 물가",
       "KEYSTAT_NAME": "수출물가지수",
-      "DATA_VALUE": "148.98",
-      "CYCLE": "202602",
+      "DATA_VALUE": "173.86",
+      "CYCLE": "202603",
       "UNIT_NAME": "2020=100"
     },
     {
       "CLASS_NAME": "수출입 물가",
       "KEYSTAT_NAME": "수입물가지수",
-      "DATA_VALUE": "145.39",
-      "CYCLE": "202602",
+      "DATA_VALUE": "169.38",
+      "CYCLE": "202603",
       "UNIT_NAME": "2020=100"
     },
     {

@@ -1,9 +1,35 @@
 {
   "source": "data.go.kr",
   "service": "ApiPetyService",
-  "fetched_at": "2026-04-10T19:20:03Z",
-  "totalCount": 196,
+  "fetched_at": "2026-04-24T12:34:21Z",
+  "totalCount": 198,
   "items": [
+    {
+      "pdfFilePath": "/ezpdf/customLayout.jsp?contentId=I0000000000000001776842961001000&tocId=I0000000000000001776650098435000&isTocOrder=N&name=%EC%A0%95%EB%B6%80%EA%B3%B5%EC%A7%81%EC%9E%90%EC%9C%A4%EB%A6%AC%EC%9C%84%EC%9B%90%ED%9A%8C%EA%B3%B5%EA%B3%A0%EC%A0%9C2026-5%ED%98%B8%28%EC%9E%AC%EC%82%B0%EA%B3%B5%EA%B0%9C%EB%AA%A9%EB%A1%9D%28%EC%88%98%EC%8B%9C%29%EA%B4%80%EB%B3%B4+%EA%B2%8C%EC%9E%AC%29",
+      "rvsnRsnMainCn": "",
+      "cntntSj": "정부공직자윤리위원회공고제2026-5호(재산공개목록(수시)관보 게재)",
+      "crtnYn": "아니오",
+      "hopePblictDt": "2026.04.24",
+      "cmplatSeNm": "공고",
+      "cntntSeqNo": "I0000000000000001776650098435000",
+      "pblcnInstNm": "인사혁신처",
+      "basisLawNm": "공직자윤리법 제10조",
+      "ofcttBookNm": "정호",
+      "themaSe": "02"
+    },
+    {
+      "pdfFilePath": "/ezpdf/customLayout.jsp?contentId=I0000000000000001776817296297000&tocId=I0000000000000001775716907252000&isTocOrder=N&name=%EB%8C%80%EB%B2%95%EC%9B%90%EA%B3%B5%EC%A7%81%EC%9E%90%EC%9C%A4%EB%A6%AC%EC%9C%84%EC%9B%90%ED%9A%8C+%EA%B3%B5%EA%B3%A0%EC%A0%9C2026-93%ED%98%B8%28%EC%9E%AC%EC%82%B0%EB%93%B1%EB%A1%9D%28%EB%B3%80%EB%8F%99%29%EC%82%AC%ED%95%AD+%EA%B3%B5%EA%B0%9C%29",
+      "rvsnRsnMainCn": "",
+      "cntntSj": "대법원공직자윤리위원회 공고제2026-93호(재산등록(변동)사항 공개)",
+      "crtnYn": "아니오",
+      "hopePblictDt": "2026.04.23",
+      "cmplatSeNm": "법원",
+      "cntntSeqNo": "I0000000000000001775716907252000",
+      "pblcnInstNm": "대법원",
+      "basisLawNm": "공직자윤리법 제10조",
+      "ofcttBookNm": "정호",
+      "themaSe": "02"
+    },
     {
       "pdfFilePath": "/ezpdf/customLayout.jsp?contentId=I0000000000000001774341705935000&tocId=I0000000000000001773810165035000&isTocOrder=N&name=%EB%8C%80%EB%B2%95%EC%9B%90%EA%B3%B5%EC%A7%81%EC%9E%90%EC%9C%A4%EB%A6%AC%EC%9C%84%EC%9B%90%ED%9A%8C+%EA%B3%B5%EA%B3%A0%EC%A0%9C2026-59%ED%98%B8%28%EC%9E%AC%EC%82%B0%EB%93%B1%EB%A1%9D%28%EB%B3%80%EB%8F%99%29%EC%82%AC%ED%95%AD+%EA%B3%B5%EA%B0%9C%29",
       "rvsnRsnMainCn": "",

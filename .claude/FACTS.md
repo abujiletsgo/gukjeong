@@ -1,5 +1,5 @@
 # Project Facts
-<!-- MANAGED: gukjeong | updated: 2026-04-20 | layer: episodic -->
+<!-- MANAGED: gukjeong | updated: 2026-04-27 | layer: episodic -->
 <!-- Injected at session start as authoritative ground truth. -->
 <!-- Edit freely — hooks auto-maintain this file. -->
 
@@ -26,6 +26,9 @@
 - Key file: `scripts/update-knowledge.py` [2026-03-31 @Tom Kwon]
 - Key file: `apps/web/tailwind.config.ts` [2026-04-09]
 - Key file: `scripts/enrich-audit.py` [2026-04-20]
+- Key file: `scripts/generate-news-topics.py` [2026-04-23]
+- Key file: `scripts/accumulate.py` [2026-04-26]
+- Key file: `scripts/generate-legislator-scores.py` [2026-04-27]
 
 ## → PATTERNS (confirmed working sequences)
 

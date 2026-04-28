@@ -2,83 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-28 (09:13 UTC) · @Tom Kwon
-**Commit:** feat: Real data pipeline — 열린국회정보 295 legislators + 나라장터 38K contracts (f79358d) by Tom Kwon
-**Changed:**
-  apps/web/app/api/legislators/real/bills/route.ts |  70 +++
-  apps/web/app/api/legislators/real/route.ts       | 130 ++++
-  apps/web/app/legislators/real/page.tsx           | 732 +++++++++++++++++++++++
-  apps/web/lib/assembly/client.ts                  | 279 +++++++++
-  apps/web/tsconfig.tsbuildinfo                    |   2 +-
-  5 files changed, 1212 insertions(+), 1 deletion(-)
-
-## 2026-03-28 (09:26 UTC) · @Tom Kwon
-**Commit:** feat: Live data pipelines — real RSS news, ECOS economy, verified audit patterns (139bef4) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md                       |  10 +
-  apps/web/app/api/economy/route.ts                |  35 +++
-  apps/web/app/api/news/live/route.ts              |  37 +++
-  apps/web/app/news/live/LiveNewsClient.tsx        | 337 +++++++++++++++++++++++
-  apps/web/app/news/live/page.tsx                  |  27 ++
-  apps/web/components/economy/EconomyDashboard.tsx | 211 ++++++++++++++
-  apps/web/lib/ecos/client.ts                      | 237 ++++++++++++++++
-  apps/web/lib/news/rss.ts                         | 234 ++++++++++++++++
-  apps/web/tsconfig.tsbuildinfo                    |   2 +-
-  9 files changed, 1129 insertions(+), 1 deletion(-)
-
-## 2026-03-28 (09:32 UTC) · @Tom Kwon
-**Commit:** feat: Global demo/live toggle — real data is default, demo is opt-in (cc40585) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md                    | 14 ++++++++++
-  apps/web/app/layout.tsx                       | 26 ++++++++++---------
-  apps/web/components/common/DataModeBanner.tsx | 30 ++++++++++++++++++++++
-  apps/web/components/common/DataModeToggle.tsx | 21 +++++++++++++++
-  apps/web/lib/context/DataModeContext.tsx      | 37 +++++++++++++++++++++++++++
-  apps/web/lib/hooks/useRealData.ts             | 31 ++++++++++++++++++++++
-  apps/web/tsconfig.tsbuildinfo                 |  2 +-
-  7 files changed, 148 insertions(+), 13 deletions(-)
-
-## 2026-03-28 (09:59 UTC) · @Tom Kwon
-**Commit:** feat: 76 real audit findings from 3200 contracts + more photos (9102b22) by Tom Kwon
-**Changed:**
-  apps/web/public/data/audit-results.json  | 4304 ++++++++++++++++++++++++++----
-  apps/web/public/legislators/0698755I.jpg |  Bin 0 -> 21547618 bytes
-  apps/web/public/legislators/0R68099X.jpg |  Bin 0 -> 57410 bytes
-  apps/web/public/legislators/2385336L.jpg |  Bin 0 -> 376070 bytes
-  apps/web/public/legislators/25G2571T.jpg |  Bin 0 -> 559103 bytes
-  apps/web/public/legislators/2NV6751W.jpg |  Bin 0 -> 653927 bytes
-  apps/web/public/legislators/2S73768V.jpg |  Bin 0 -> 342953 bytes
-  apps/web/public/legislators/3LP22204.jpg |  Bin 0 -> 894314 bytes
-  apps/web/public/legislators/3ZR4438W.jpg |  Bin 0 -> 5560717 bytes
-  apps/web/public/legislators/4T026790.jpg |  Bin 0 -> 1103197 bytes
-  ... and 53 more files
-
-## 2026-03-28 (10:15 UTC) · @Tom Kwon
-**Commit:** feat: Real data is now DEFAULT — audit, legislators, news all show live data (b062b71) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md                         |  15 +
-  apps/web/app/(home)/HomeRealDataOverlay.tsx        |  65 ++
-  apps/web/app/(home)/page.tsx                       |   7 +
-  apps/web/app/audit/AuditPageClient.tsx             | 659 ++++++++++++++++----
-  apps/web/app/legislators/LegislatorsPageClient.tsx | 661 ++++++++++++++++++---
-  apps/web/app/news/NewsPageClient.tsx               | 176 +++++-
-  apps/web/components/audit/PatternBadge.tsx         |   1 +
-  apps/web/public/legislators/1S05899F.jpg           | Bin 0 -> 273486 bytes
-  apps/web/public/legislators/3C23171A.jpg           | Bin 0 -> 106405 bytes
-  apps/web/public/legislators/3NI5978A.jpg           | Bin 0 -> 680297 bytes
-  ... and 31 more files
-
-## 2026-03-28 (12:51 UTC) · @Tom Kwon
-**Commit:** fix: Remove live data banner, fix gender stat, filter news keywords, rich audit UI (9fa8d5b) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md                         |   15 +
-  apps/web/app/audit/AuditPageClient.tsx             | 1240 +++++++++++---------
-  apps/web/app/legislators/LegislatorsPageClient.tsx |    6 +-
-  apps/web/components/common/DataModeBanner.tsx      |   13 +-
-  apps/web/lib/news/rss.ts                           |   21 +-
-  apps/web/tsconfig.tsbuildinfo                      |    2 +-
-  6 files changed, 735 insertions(+), 562 deletions(-)
-
 ## 2026-03-28 (13:02 UTC) · @Tom Kwon
 **Commit:** feat: Rich legislator page with real bill data — photos, activity tracking, expandable details (5559938) by Tom Kwon
 **Changed:**
@@ -282,3 +205,52 @@
   apps/web/public/legislators-thumb/1SR94244.jpg         | Bin 0 -> 3780 bytes
   apps/web/public/legislators-thumb/1WE5693J.jpg         | Bin 0 -> 3015 bytes
   ... and 265 more files
+
+## 2026-04-23 (07:44 UTC) · @Tom Kwon
+**Commit:** feat: audit enrichment API, new audit components, desktop mockups (d3d026c) by Tom Kwon
+**Changed:**
+  .claude/FACTS.md                              |    3 +-
+  .claude/MEMORY.md                             |  147 +-
+  apps/web/.claude/MEMORY.md                    |   84 +-
+  apps/web/.vercelignore                        |    8 +
+  apps/web/app/api/audit/enrich/route.ts        |  131 ++
+  apps/web/components/audit/AuditHero.tsx       |  121 ++
+  apps/web/components/audit/FindingShareBar.tsx |   73 +
+  apps/web/components/audit/RegionSearch.tsx    |  103 ++
+  apps/web/components/audit/TopOffenderCard.tsx |   77 +
+  apps/web/data/news-rss.json                   | 1852 ++++++++++++-------------
+  ... and 12 more files
+
+## 2026-04-24 (09:31 UTC) · @Tom Kwon
+**Commit:** feat: add 잼버리·대장동 media-reported findings (6116a6d) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 2889 +++++++++++++++----------------
+  scripts/generate-audit.py               |  124 ++
+  2 files changed, 1539 insertions(+), 1474 deletions(-)
+
+## 2026-04-27 (08:44 UTC) · @Tom Kwon
+**Commit:** fix: limit generateStaticParams to top 200 findings to prevent build timeout (7a67ebf) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/[id]/page.tsx | 8 +++++++-
+  1 file changed, 7 insertions(+), 1 deletion(-)
+
+## 2026-04-27 (08:57 UTC) · @Tom Kwon
+**Commit:** chore: tidy — add accumulate.py + state file, update CLAUDE.md commands (bba52a3) by Tom Kwon
+**Changed:**
+  CLAUDE.md                            |   1 +
+  apps/web/data/accumulator-state.json |  86 ++++++++
+  scripts/accumulate.py                | 367 +++++++++++++++++++++++++++++++++++
+  3 files changed, 454 insertions(+)
+
+## 2026-04-27 (08:57 UTC) · @Tom Kwon
+**Commit:** fix: make 최우선 조사기관 cards clickable + fix pattern tab empty results (aec9c56) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/AuditPageClient.tsx        | 23 +++++++++++------------
+  apps/web/components/audit/TopOffenderCard.tsx |  2 +-
+  2 files changed, 12 insertions(+), 13 deletions(-)
+
+## 2026-04-27 (09:14 UTC) · @Tom Kwon
+**Commit:** fix: rename turbo.json pipeline → tasks for Turbo 2.0 compatibility (da4b787) by Tom Kwon
+**Changed:**
+  turbo.json | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
