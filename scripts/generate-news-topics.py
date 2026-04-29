@@ -130,10 +130,11 @@ def call_claude(cluster_title: str, articles: list) -> dict:
 {{
   "ai_summary": "2-3문장 핵심 요약 (100자 이내)",
   "key_facts": ["사실1", "사실2", "사실3"],
-  "progressive_frame": {{"emphasis": "...", "headline": "\\"...\\"", "tone": "..."}},
-  "moderate_frame": {{"emphasis": "...", "headline": "\\"...\\"", "tone": "..."}},
-  "conservative_frame": {{"emphasis": "...", "headline": "\\"...\\"", "tone": "..."}},
-  "citizen_takeaway": "시민 핵심 takeaway (50자 이내)"
+  "progressive_frame": {{"emphasis": "진보 시각 설명 (50자)", "headline": "진보 매체 대표 헤드라인", "tone": "긍정적|비판적|우려|중립 중 하나"}},
+  "moderate_frame": {{"emphasis": "중도 시각 설명 (50자)", "headline": "중도 매체 대표 헤드라인", "tone": "긍정적|비판적|우려|중립 중 하나"}},
+  "conservative_frame": {{"emphasis": "보수 시각 설명 (50자)", "headline": "보수 매체 대표 헤드라인", "tone": "긍정적|비판적|우려|중립 중 하나"}},
+  "citizen_takeaway": "시민이 알아야 할 핵심 (80자 이내)",
+  "category": "경제|정치|사회|과학기술|복지|외교|환경|기타 중 가장 적합한 하나"
 }}"""
 
     system_prompt = (
@@ -170,6 +171,7 @@ def null_ai_fields() -> dict:
         'progressive_frame': null_frame(),
         'moderate_frame': null_frame(),
         'conservative_frame': null_frame(),
+        'category': None,
     }
 
 
@@ -187,6 +189,7 @@ def analyze_cluster(cluster_title: str, articles: list) -> dict:
                 'progressive_frame': result.get('progressive_frame', null_frame()),
                 'moderate_frame': result.get('moderate_frame', null_frame()),
                 'conservative_frame': result.get('conservative_frame', null_frame()),
+                'category': result.get('category', None),
             }
         except (json.JSONDecodeError, KeyError, IndexError) as e:
             print(f'  [parse error attempt {attempt+1}] {cluster_title[:40]}: {e}')
@@ -212,9 +215,8 @@ def process_cluster(cluster: dict, idx: int) -> dict:
     pub_dates = [a.get('pubDate', '') for a in articles if a.get('pubDate')]
     event_date = pub_dates[0][:10] if pub_dates else datetime.now(timezone.utc).date().isoformat()
 
-    # Determine category from most common non-empty category
-    cats = [a.get('category', '') for a in articles if a.get('category')]
-    category = max(set(cats), key=cats.count) if cats else 'general'
+    # category will be set by Claude; placeholder until AI fields are merged
+    category = 'general'
 
     outlet_ids = {a.get('outlet_id', '') for a in articles}
 
@@ -241,7 +243,7 @@ def process_cluster(cluster: dict, idx: int) -> dict:
         'id': topic_id(title),
         'title': title,
         'event_date': event_date,
-        'category': category,
+        'category': ai_fields.get('category') or category,
         'article_count': len(articles),
         'outlet_count': len(outlet_ids),
         'has_multiple_perspectives': has_multiple,

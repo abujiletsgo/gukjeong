@@ -129,17 +129,17 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
         </p>
 
         {/* Real data banner */}
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <div>
             <p className="text-sm font-semibold text-emerald-800">실시간 RSS 피드</p>
+            <p className="text-xs text-emerald-600 mt-0.5">
+              {topicsData?.source_fetched_at
+                ? new Date(topicsData.source_fetched_at).toLocaleString('ko-KR')
+                : '로딩 중'}{' '}
+              기준 · {liveOutletCount}개 언론사 모니터링 중
+            </p>
           </div>
-          <p className="text-xs text-emerald-600 mt-1">
-            {topicsData?.source_fetched_at
-              ? new Date(topicsData.source_fetched_at).toLocaleString('ko-KR')
-              : ''}{' '}
-            기준 | {liveOutletCount}개 언론사 모니터링 중
-          </p>
         </div>
 
         {/* ── KPI Section ── */}
@@ -156,20 +156,10 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
 
         {/* ── Media Spectrum Bar ── */}
         <div className="card mb-8">
-          <h2 className="font-bold text-lg mb-2">미디어 스펙트럼</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            각 매체의 정치적 성향을 학술 연구 기반으로 분류한 스펙트럼입니다.
-          </p>
+          <h2 className="font-bold text-base mb-3">미디어 스펙트럼</h2>
           <MediaSpectrum outlets={outlets} />
+          <p className="text-xs text-gray-400 mt-2">스펙트럼 분류는 학술 연구 기반 참고 분류입니다.</p>
         </div>
-
-        {/* ── Loading ── */}
-        {liveLoading && (
-          <div className="text-center py-20 text-gray-400">
-            <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-emerald-500 rounded-full mx-auto mb-4" />
-            <p>실시간 뉴스 피드를 불러오는 중...</p>
-          </div>
-        )}
 
         {/* ── Filters ── */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
@@ -210,12 +200,20 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
 
         {/* ── Result count ── */}
         {topicsData && (
-          <p className="text-sm text-gray-400 mb-4">{filteredTopics.length}건의 이슈</p>
+          <p className="text-sm text-gray-400 mb-5">{filteredTopics.length}건의 이슈</p>
+        )}
+
+        {/* ── Loading ── */}
+        {liveLoading && (
+          <div className="text-center py-20 text-gray-400">
+            <div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-emerald-500 rounded-full mx-auto mb-4" />
+            <p>AI가 뉴스를 분석하는 중...</p>
+          </div>
         )}
 
         {/* ── Topic cluster list ── */}
         {topicsData && filteredTopics.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-4 fade-in">
             {filteredTopics.map(topic => (
               <LiveTopicCard key={topic.id} cluster={topic} />
             ))}
@@ -232,9 +230,7 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
         {/* ── Empty state (no data) ── */}
         {!liveLoading && !topicsData && (
           <div className="card text-center py-16">
-            <p className="text-gray-400">
-              실시간 뉴스 피드를 불러올 수 없습니다.
-            </p>
+            <p className="text-gray-400">실시간 뉴스 피드를 불러올 수 없습니다.</p>
           </div>
         )}
 
