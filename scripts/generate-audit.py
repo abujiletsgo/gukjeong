@@ -208,6 +208,23 @@ try:
 except Exception:
     std_contracts = []
 
+# reason_map kept for Pattern 1/other patterns that use g2b-actual-contracts.json directly
+# (Pattern 6 now classifies via baseLawNm+baseDtls — see _classify_reason_from_law below)
+reason_map: dict[str, str] = {}
+for _c in std_contracts:
+    if str(_c.get('cntrctCnclsMthdNm', '')).strip() != '수의계약':
+        continue
+    _rsn = str(_c.get('prvtcntrctRsn', '')).strip()
+    if not _rsn:
+        continue
+    _cno = str(_c.get('cntrctNo', '')).strip()
+    _ucno = str(_c.get('untyCntrctNo', '')).strip()
+    if _cno:
+        reason_map[_cno] = _rsn
+    if _ucno and _ucno != _cno:
+        reason_map[_ucno] = _rsn
+print(f'  Reason codes loaded: {len(reason_map)} sole-source contracts (actual-contracts)')
+
 # Fallback: if contract-details is empty, use actual-contracts — both have the
 # same key fields (cntrctCnclsMthdNm, cntrctInsttNm, thtmCntrctAmt, rprsntCorpNm).
 # contract-details covers 12 months; actual-contracts covers recent weeks but
@@ -217,7 +234,12 @@ if not contracts and std_contracts:
     print('  ⚠️  g2b-contract-details.json missing — using g2b-actual-contracts.json as fallback')
 
 try:
-    sanctions_raw = load('g2b-sanctions.json')['items']
+    _sanc_raw = load('g2b-sanctions.json')
+    sanctions_raw = _sanc_raw.get('items', []) if isinstance(_sanc_raw, dict) else []
+    if not sanctions_raw:
+        # Try scraped fallback
+        _sanc2 = load('g2b-sanctions-scraped.json')
+        sanctions_raw = _sanc2.get('items', []) if isinstance(_sanc2, dict) else []
 except Exception:
     sanctions_raw = []
 try:
@@ -464,6 +486,90 @@ def is_research_institute(name: str) -> bool:
 
 def is_cooperative(vendor: str) -> bool:
     return any(kw in vendor for kw in COOPERATIVE_KEYWORDS)
+
+
+def _classify_reason(rsn: str) -> str:
+    """Classify 수의계약 사유 into suppression buckets."""
+    if not rsn:
+        return 'unknown'
+    r = rsn.lower()
+    if any(k in r for k in ('경쟁은 입찰', '일반경쟁', '제한경쟁')):
+        return 'competitive'  # not sole-source at all
+    if any(k in r for k in ('소규모', '2천만원', '4억원', '소액', '금액미만', '3천만원', '5천만원')):
+        return 'small_threshold'
+    if any(k in r for k in ('재해', '긴급', '천재지변', '재난')):
+        return 'emergency'
+    if any(k in r for k in ('특허', '전용실시', '독점공급', '독점생산')):
+        return 'patent_ip'
+    if any(k in r for k in ('국가안보', '군사', '보안', '안보')):
+        return 'security'
+    if any(k in r for k in ('소기업', '소상공인', '판로지원', '사회적기업', '장애인기업')):
+        return 'sme_preference'
+    if any(k in r for k in ('추가계약', '동일조건', '원계약')):
+        return 'follow_on'  # continuation of existing contract
+    return 'other'
+
+
+def _classify_reason_from_law(law: str, dtls: str) -> str:
+    """Classify 수의계약 사유 from baseLawNm + baseDtls (contract-details format).
+
+    g2b-contract-details.json has no prvtcntrctRsn but has baseLawNm (99.7% coverage)
+    and baseDtls — use those instead of the broken reason_map join.
+    """
+    law = str(law or '').strip()
+    dtls = str(dtls or '').strip()
+    combined = law + ' ' + dtls
+
+    # --- baseDtls text patterns (more specific, check first) ---
+    if any(k in dtls for k in ('2천만원 이하', '소액', '금액 미만')):
+        return 'small_threshold'
+    if any(k in dtls for k in ('4억원', '2억원', '1억6천만원', '1억 6천만원',
+                                '3억원', '1억원 이하', '물품 또는 용역 이하')):
+        return 'small_threshold'
+    if any(k in dtls for k in ('소기업', '소상공인', '여성기업', '장애인기업',
+                                '사회적기업', '자활기업', '마을기업', '판로지원')):
+        return 'sme_preference'
+    if any(k in dtls for k in ('경쟁입찰을 실시했으나 입찰자가 1인', '재공고입찰',
+                                '1인만 유효한 입찰')):
+        return 'competitive'
+    if any(k in dtls for k in ('생산자가 1인', '특허', '독점공급', '독점생산',
+                                '전용실시')):
+        return 'patent_ip'
+    if any(k in dtls for k in ('긴급', '재해', '천재지변', '재난')):
+        return 'emergency'
+    if any(k in dtls for k in ('국가안보', '군사', '보안')):
+        return 'security'
+    if any(k in dtls for k in ('추가계약', '원계약', '동일조건')):
+        return 'follow_on'
+
+    # Additional baseDtls patterns (supplement the first block above)
+    if any(k in dtls for k in ('5천만원 이하', '1천만원 이하', '금액미만')):
+        return 'small_threshold'
+    if any(k in dtls for k in ('중증장애인', '조달청우수제품', '우수조달물품', '성능인증',
+                                '혁신제품', '농공단지')):
+        return 'follow_on'  # preferred product programs (structurally legitimate)
+    if any(k in dtls for k in ('생산자 또는 소지자가 1인', '부품공급', '설비확충',
+                                '제조공급자가 설치', '호환성')):
+        return 'follow_on'
+
+    # --- baseLawNm article patterns (handle both 005호 and 05호 zero-padding) ---
+    # 국가계약법 시행령 제26조1항5호 / 지방계약법 제25조1항5호 = 소액 수의계약
+    if _re_corp.search(r'(025|026)조.*(005호|05호)', law) or _re_corp.search(r'(제25조|제26조)제1항5호', law):
+        return 'small_threshold'
+    # 국가계약법 시행령 제27조 / 지방계약법 제26조 = 재공고 후 수의계약 (competitive failure)
+    if _re_corp.search(r'027조|제27조', law) or _re_corp.search(r'026조.*001항', law):
+        return 'competitive'
+    # 국가계약법 제23조 / 지방계약법 제25조1항8호 = SME/사회적기업 우대
+    if _re_corp.search(r'023조.*(008호|08호)|025조.*(008호|08호)', law) or _re_corp.search(r'(제23조|제25조).*8호', law):
+        return 'sme_preference'
+    # 지방계약법 제22조7호 / 022조007호 = 단독 생산자 (타법령 위탁, 독점)
+    if _re_corp.search(r'022조.*(007호|07호)', law) or _re_corp.search(r'제22조.*7호', law):
+        return 'follow_on'
+    # 국가계약법 제26조1항2호/3호/4호 = 특수성, 특허
+    if _re_corp.search(r'026조.*(00[234]호|0[234]호)|제26조제1항[234]호', law):
+        return 'patent_ip'
+
+    return 'other'
 
 
 def has_structural_procurement_method(text: str) -> bool:
@@ -1048,6 +1154,35 @@ for inst, d in inst_methods.items():
     if _named_vendors and all(is_cooperative(v) for v in _named_vendors):
         continue
 
+    # Analyze reason codes for this institution's sole-source contracts
+    # Classify each contract's sole-source reason via baseLawNm + baseDtls
+    # (reason_map join has <0.1% overlap with contract-details IDs — use direct field lookup)
+    _rsn_buckets: dict[str, int] = {}
+    for _sc in d.get('contracts', []):
+        _bucket = _classify_reason_from_law(
+            _sc.get('baseLawNm', ''), _sc.get('baseDtls', ''))
+        if _bucket != 'other':  # 'other' = no signal, don't count
+            _rsn_buckets[_bucket] = _rsn_buckets.get(_bucket, 0) + 1
+
+    _total_with_rsn = sum(_rsn_buckets.values())
+    _legitimate_count = sum(_rsn_buckets.get(b, 0) for b in ('small_threshold', 'emergency', 'patent_ip', 'security'))
+    _sme_count = _rsn_buckets.get('sme_preference', 0)
+    _legitimate_ratio = _legitimate_count / max(_total_with_rsn, 1) if _total_with_rsn > 0 else 0.0
+
+    # Suppress if 80%+ of contracts are structurally legitimate
+    if _legitimate_ratio >= 0.80 and _total_with_rsn >= 3:
+        continue
+
+    # Downgrade if 50-80% legitimate
+    if _legitimate_ratio >= 0.50 and _total_with_rsn >= 3:
+        score = max(25, int(score * 0.7))
+        if score < 30:
+            continue
+
+    # Downgrade if majority SME-preference
+    if _sme_count / max(_total_with_rsn, 1) >= 0.60 and _total_with_rsn >= 3:
+        score = max(25, int(score * 0.6))
+
     findings.append({
         'pattern_type': 'repeated_sole_source',
         'severity': 'HIGH' if ratio >= 0.95 else 'MEDIUM',
@@ -1063,6 +1198,7 @@ for inst, d in inst_methods.items():
             '수의계약_건수': d['sole'],
             '수의계약_비율': f'{ratio*100:.1f}%',
             '수의계약_총액': d['amt'],
+            '수의계약_사유_분류': _rsn_buckets if _rsn_buckets else None,
         },
         'evidence_contracts': evidence,
         'innocent_explanation': (

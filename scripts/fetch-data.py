@@ -569,6 +569,154 @@ def fetch_g2b_sanctions():
 
     print(f'  Summary: Strategy1={strategy1_count}, Strategy2={strategy2_count}, Strategy3/4 added separately above')
 
+    if all_items:
+        pass  # already have data — skip strategies 5-8
+    else:
+        # Strategy 5: Try at/ service prefix
+        print('  Strategy 5: at/UsrInfoService02/getUnptRsttCorpInfo02 (at/ prefix)')
+        try:
+            url5 = (
+                f'{G2B_BASE}/at/UsrInfoService02/getUnptRsttCorpInfo02'
+                f'?serviceKey={DATA_GO_KR_KEY}&numOfRows=100&pageNo=1&type=json'
+            )
+            d5 = fetch_json(url5)
+            body5 = d5.get('response', {}).get('body', {})
+            items5 = body5.get('items', [])
+            if not isinstance(items5, list):
+                items5 = [items5] if items5 else []
+            total5 = int(body5.get('totalCount', 0))
+            print(f'  [DEBUG] at/ prefix totalCount={total5}, page1 items={len(items5)}')
+            if items5:
+                all_items.extend(items5)
+                total_pages5 = min(50, (total5 + 99) // 100)
+                if total_pages5 > 1:
+                    def _fetch5(page):
+                        u = (
+                            f'{G2B_BASE}/at/UsrInfoService02/getUnptRsttCorpInfo02'
+                            f'?serviceKey={DATA_GO_KR_KEY}&numOfRows=100&pageNo={page}&type=json'
+                        )
+                        try:
+                            r = fetch_json(u)
+                            b = r.get('response', {}).get('body', {})
+                            its = b.get('items', [])
+                            if not isinstance(its, list):
+                                its = [its] if its else []
+                            return its
+                        except Exception:
+                            return []
+                    with ThreadPoolExecutor(max_workers=4) as pool:
+                        futs5 = {pool.submit(_fetch5, p): p for p in range(2, total_pages5 + 1)}
+                        for fut in as_completed(futs5):
+                            all_items.extend(fut.result())
+            print(f'  Strategy 5 at/ prefix: {len(all_items)}건')
+        except Exception as e5:
+            print(f'  Strategy 5 at/ prefix: error — {str(e5)[:100]}')
+
+        if all_items:
+            pass  # got data
+        else:
+            # Strategy 6: Try inqryDiv=4
+            print('  Strategy 6: getUnptRsttCorpInfo02 inqryDiv=4')
+            try:
+                url6 = (
+                    f'{G2B_BASE}/ao/UsrInfoService02/getUnptRsttCorpInfo02'
+                    f'?serviceKey={DATA_GO_KR_KEY}&numOfRows=100&pageNo=1&type=json&inqryDiv=4'
+                )
+                d6 = fetch_json(url6)
+                body6 = d6.get('response', {}).get('body', {})
+                items6 = body6.get('items', [])
+                if not isinstance(items6, list):
+                    items6 = [items6] if items6 else []
+                raw6 = json.dumps(d6)
+                print(f'  [DEBUG] inqryDiv=4 raw response (first 500 chars): {raw6[:500]}')
+                all_items.extend(items6)
+                print(f'  Strategy 6 inqryDiv=4: +{len(items6)}건')
+            except Exception as e6:
+                print(f'  Strategy 6 inqryDiv=4: error — {str(e6)[:100]}')
+
+        if all_items:
+            pass  # got data
+        else:
+            # Strategy 7: Try getCntrctRsttInfo method name
+            print('  Strategy 7: ao/UsrInfoService02/getCntrctRsttInfo')
+            try:
+                url7 = (
+                    f'{G2B_BASE}/ao/UsrInfoService02/getCntrctRsttInfo'
+                    f'?serviceKey={DATA_GO_KR_KEY}&numOfRows=100&pageNo=1&type=json'
+                )
+                d7 = fetch_json(url7)
+                body7 = d7.get('response', {}).get('body', {})
+                items7 = body7.get('items', [])
+                if not isinstance(items7, list):
+                    items7 = [items7] if items7 else []
+                raw7 = json.dumps(d7)
+                print(f'  [DEBUG] getCntrctRsttInfo raw response (first 500 chars): {raw7[:500]}')
+                all_items.extend(items7)
+                print(f'  Strategy 7 getCntrctRsttInfo: +{len(items7)}건')
+            except Exception as e7:
+                print(f'  Strategy 7 getCntrctRsttInfo: error — {str(e7)[:100]}')
+
+        if all_items:
+            pass  # got data
+        else:
+            # Strategy 8: Per-bizno lookup on top winning-bid companies
+            print('  Strategy 8: per-bizno lookup on top g2b-winning-bids vendors')
+            try:
+                winning_path = DATA_DIR / 'g2b-winning-bids.json'
+                if winning_path.exists():
+                    with open(winning_path, encoding='utf-8') as _wf:
+                        _wb = json.load(_wf)
+                    from collections import defaultdict
+                    _bz_amounts: dict = defaultdict(float)
+                    for _it in _wb.get('items', []):
+                        _bz = str(_it.get('bidwinnrBizno', '')).strip().replace('-', '')
+                        if not _bz or len(_bz) != 10 or not _bz.isdigit():
+                            continue
+                        try:
+                            _amt = float(_it.get('sucsfbidAmt') or 0)
+                        except (ValueError, TypeError):
+                            _amt = 0.0
+                        _bz_amounts[_bz] += _amt
+                    top5_biznos = [bz for bz, _ in sorted(_bz_amounts.items(), key=lambda x: -x[1])[:5]]
+                    print(f'  Strategy 8 probe bizno list: {top5_biznos}')
+
+                    def _probe_bizno(bizno):
+                        u = (
+                            f'{G2B_BASE}/ao/UsrInfoService02/getUnptRsttCorpInfo02'
+                            f'?serviceKey={DATA_GO_KR_KEY}&bizno={bizno}'
+                            f'&numOfRows=10&pageNo=1&type=json'
+                        )
+                        try:
+                            r = fetch_json(u)
+                            b = r.get('response', {}).get('body', {})
+                            its = b.get('items', [])
+                            if not isinstance(its, list):
+                                its = [its] if its else []
+                            return its
+                        except Exception:
+                            return []
+
+                    probe_items = []
+                    for _bz5 in top5_biznos:
+                        probe_items.extend(_probe_bizno(_bz5))
+
+                    if probe_items:
+                        # Any probe returned data — fetch all top 100 in parallel
+                        all_items.extend(probe_items)
+                        top100_biznos = [bz for bz, _ in sorted(_bz_amounts.items(), key=lambda x: -x[1])[:100]]
+                        remaining100 = [bz for bz in top100_biznos if bz not in top5_biznos]
+                        with ThreadPoolExecutor(max_workers=5) as pool:
+                            futs8 = {pool.submit(_probe_bizno, bz): bz for bz in remaining100}
+                            for fut in as_completed(futs8):
+                                all_items.extend(fut.result())
+                        print(f'  Strategy 8 per-bizno: {len(all_items)}건')
+                    else:
+                        print(f'  Strategy 8 per-bizno: 0건 (all probes returned empty)')
+                else:
+                    print('  Strategy 8: g2b-winning-bids.json not found — skipped')
+            except Exception as e8:
+                print(f'  Strategy 8 per-bizno: error — {str(e8)[:100]}')
+
     # Deduplicate by bizno
     seen = set()
     unique = []
