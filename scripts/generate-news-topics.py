@@ -258,6 +258,93 @@ def process_cluster(cluster: dict, idx: int) -> dict:
     }
 
 
+ARCHIVE_PATH = DATA_DIR / 'news-archive.json'
+
+
+def load_archive() -> dict:
+    """Load the historical topic archive, or return empty structure."""
+    try:
+        with open(ARCHIVE_PATH, encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {'topics': [], 'updated_at': ''}
+
+
+def save_archive(archive: dict) -> None:
+    archive['updated_at'] = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    with open(ARCHIVE_PATH, 'w', encoding='utf-8') as f:
+        json.dump(archive, f, ensure_ascii=False, indent=2)
+
+
+def merge_into_archive(archive: dict, new_topics: list) -> list:
+    """Merge new topics into archive. Returns the updated topic list.
+
+    Rules:
+    - Existing topic (same id): update article list, keep AI fields if already set.
+    - New topic: add to front of archive.
+    - Archive capped at 200 topics (oldest removed).
+    """
+    by_id = {t['id']: t for t in archive.get('topics', [])}
+
+    for nt in new_topics:
+        tid = nt['id']
+        if tid in by_id:
+            existing = by_id[tid]
+            # Merge articles (deduplicate by link)
+            seen_links = {a.get('link') for a in existing['articles']}
+            for a in nt['articles']:
+                if a.get('link') not in seen_links:
+                    existing['articles'].append(a)
+                    seen_links.add(a.get('link'))
+            existing['article_count'] = len(existing['articles'])
+            # Only overwrite AI fields if new topic has them and existing doesn't
+            if nt.get('ai_summary') and not existing.get('ai_summary'):
+                for field in ('ai_summary', 'key_facts', 'fact_check', 'citizen_takeaway',
+                              'progressive_frame', 'moderate_frame', 'conservative_frame', 'category'):
+                    existing[field] = nt.get(field, existing.get(field))
+        else:
+            by_id[tid] = nt
+
+    # Re-sort: newest event_date first, then has_multiple_perspectives
+    merged = sorted(by_id.values(),
+                    key=lambda t: (t.get('event_date', ''), t['has_multiple_perspectives']),
+                    reverse=True)
+    return merged[:200]
+
+
+def build_topic_from_cluster(cluster: dict, idx: int) -> dict:
+    """Build a NewsTopic dict without AI analysis (for archive/fallback)."""
+    articles = cluster['articles']
+    title = build_cluster_title(articles)
+    pub_dates = [a.get('pubDate', '') for a in articles if a.get('pubDate')]
+    event_date = pub_dates[0][:10] if pub_dates else datetime.now(timezone.utc).date().isoformat()
+    outlet_ids = {a.get('outlet_id', '') for a in articles}
+    topic_articles = []
+    for a in articles:
+        score = a.get('spectrum_score', 3.0)
+        topic_articles.append({
+            'outlet_id': a.get('outlet_id', ''),
+            'outlet_name': a.get('outlet_name', ''),
+            'title': a.get('title', ''),
+            'link': a.get('link'),
+            'pubDate': a.get('pubDate'),
+            'description': a.get('description'),
+            'spectrum_score': score,
+            'category': spectrum_category(score),
+        })
+    return {
+        'id': topic_id(title),
+        'title': title,
+        'event_date': event_date,
+        'category': 'general',
+        'article_count': len(articles),
+        'outlet_count': len(outlet_ids),
+        'has_multiple_perspectives': cluster['has_multiple_perspectives'],
+        **null_ai_fields(),
+        'articles': topic_articles,
+    }
+
+
 def main():
     print('뉴스 토픽 생성기 시작')
 
@@ -274,7 +361,7 @@ def main():
     clusters = cluster_articles(items)
     print(f'  클러스터: {len(clusters)}개 (2개 이상, 최대 15개)')
 
-    # Analyze clusters in parallel
+    # Analyze clusters in parallel (AI enrichment)
     topics = [None] * len(clusters)
     with ThreadPoolExecutor(max_workers=5) as pool:
         futs = {
@@ -287,55 +374,33 @@ def main():
                 topics[idx] = fut.result()
             except Exception as e:
                 print(f'  [fatal cluster error idx={idx}] {e}')
-                # Build a minimal topic with null AI fields
-                cluster = clusters[idx]
-                articles = cluster['articles']
-                title = build_cluster_title(articles)
-                outlet_ids = {a.get('outlet_id', '') for a in articles}
-                topic_articles = []
-                for a in articles:
-                    score = a.get('spectrum_score', 3.0)
-                    topic_articles.append({
-                        'outlet_id': a.get('outlet_id', ''),
-                        'outlet_name': a.get('outlet_name', ''),
-                        'title': a.get('title', ''),
-                        'link': a.get('link'),
-                        'pubDate': a.get('pubDate'),
-                        'description': a.get('description'),
-                        'spectrum_score': score,
-                        'category': spectrum_category(score),
-                    })
-                topics[idx] = {
-                    'id': topic_id(title),
-                    'title': title,
-                    'event_date': datetime.now(timezone.utc).date().isoformat(),
-                    'category': 'general',
-                    'article_count': len(articles),
-                    'outlet_count': len(outlet_ids),
-                    'has_multiple_perspectives': cluster['has_multiple_perspectives'],
-                    **null_ai_fields(),
-                    'articles': topic_articles,
-                }
+                topics[idx] = build_topic_from_cluster(clusters[idx], idx)
 
-    # Filter out any None entries (shouldn't happen, but safety)
     topics = [t for t in topics if t is not None]
-
-    # Re-sort: has_multiple_perspectives first, then article_count desc
     topics.sort(key=lambda t: (0 if t['has_multiple_perspectives'] else 1, -t['article_count']))
 
+    # ── Accumulate into archive ──
+    archive = load_archive()
+    merged = merge_into_archive(archive, topics)
+    archive['topics'] = merged
+    save_archive(archive)
+    print(f'  아카이브: {len(merged)}개 토픽 누적 → {ARCHIVE_PATH}')
+
+    # ── Write recent topics to public/data (top 20 for the web) ──
+    recent = merged[:20]
     output = {
         'generated_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
         'source_file': 'news-rss.json',
         'source_fetched_at': source_fetched_at,
-        'total_topics': len(topics),
-        'topics': topics,
+        'total_topics': len(recent),
+        'topics': recent,
     }
 
     out_path = OUT_DIR / 'news-topics.json'
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f'\n완료: {len(topics)}개 토픽 → {out_path}')
+    print(f'완료: 최신 {len(recent)}개 토픽 → {out_path}')
 
 
 if __name__ == '__main__':
