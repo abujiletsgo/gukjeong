@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useCallback } from 'react';
-import type { Legislator } from '@/lib/types';
+import type { Legislator, LegislatorBill } from '@/lib/types';
 import Link from 'next/link';
 import WordsVsActions from '@/components/legislators/WordsVsActions';
 
@@ -397,6 +397,122 @@ function ExpandableList<T>({
   );
 }
 
+// ── Bill detail modal ──
+function BillDetailModal({ bill, onClose }: { bill: LegislatorBill; onClose: () => void }) {
+  const statusCls = bill.passed
+    ? 'bg-emerald-100 text-emerald-700'
+    : bill.PROC_RESULT === '대안반영폐기' || bill.PROC_RESULT === '수정안반영폐기'
+    ? 'bg-blue-100 text-blue-700'
+    : bill.PROC_RESULT === '철회' || bill.PROC_RESULT === '폐기'
+    ? 'bg-rose-100 text-rose-700'
+    : 'bg-amber-100 text-amber-700';
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm px-0 sm:px-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* drag handle (mobile) */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        </div>
+
+        <div className="px-5 pb-6 pt-3 sm:pt-5">
+          {/* header */}
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-bold text-gray-900 leading-snug">
+                {bill.law_name || bill.BILL_NAME}
+              </h2>
+              {bill.amendment_type && (
+                <p className="text-xs text-gray-500 mt-0.5">{bill.amendment_type}</p>
+              )}
+            </div>
+            <button
+              onClick={onClose}
+              className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="닫기"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          {/* metadata chips */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className={`px-2.5 py-0.5 rounded text-xs font-medium ${statusCls}`}>
+              {bill.status_label || bill.PROC_RESULT || '심의 중'}
+            </span>
+            {bill.area && (
+              <span className="px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                {bill.area}
+              </span>
+            )}
+            {bill.PROPOSE_DT && (
+              <span className="text-xs text-gray-400 self-center">{bill.PROPOSE_DT} 발의</span>
+            )}
+          </div>
+
+          {/* plain title (AI) */}
+          {bill.plain_title && (
+            <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+              <p className="text-xs font-semibold text-gray-500 mb-1">쉽게 말하면</p>
+              <p className="text-sm text-gray-800">{bill.plain_title}</p>
+            </div>
+          )}
+
+          {/* summary (AI) */}
+          {bill.summary && (
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-gray-500 mb-1">법안 내용</p>
+              <p className="text-sm text-gray-700 leading-relaxed">{bill.summary}</p>
+            </div>
+          )}
+
+          {/* who_affected (AI) */}
+          {bill.who_affected && (
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-gray-500 mb-1">영향 받는 대상</p>
+              <p className="text-sm text-gray-700">{bill.who_affected}</p>
+            </div>
+          )}
+
+          {/* co-sponsors */}
+          {bill.co_proposer_names && (
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-gray-500 mb-1">
+                공동발의 {bill.co_sponsor_count > 0 ? `(${bill.co_sponsor_count}명)` : ''}
+              </p>
+              <p className="text-xs text-gray-500 leading-relaxed">{bill.co_proposer_names}</p>
+            </div>
+          )}
+
+          {/* original bill link */}
+          {bill.DETAIL_LINK && (
+            <a
+              href={bill.DETAIL_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 flex items-center gap-1.5 text-xs text-accent hover:underline"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              국회 의안정보시스템에서 원문 보기
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Status badge for bills ──
 function BillStatusBadge({ status }: { status: string }) {
   let cls = 'bg-gray-100 text-gray-600';
@@ -543,6 +659,9 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
     setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
+  // Bill detail popup
+  const [selectedBill, setSelectedBill] = useState<LegislatorBill | null>(null);
+
   // 같은 위원회 동료
   const committeeColleagues = useMemo(() => {
     if (!legislator.committee) return [];
@@ -563,10 +682,12 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
     [attendance, legislator.id],
   );
 
-  const billItems = useMemo(
-    () => generateBillItems(billsProposed, legislator.id),
-    [billsProposed, legislator.id],
-  );
+  const billItems = useMemo(() => {
+    if (legislator.recent_bills && legislator.recent_bills.length > 0) {
+      return legislator.recent_bills;
+    }
+    return null;
+  }, [legislator.recent_bills]);
 
   const speechItems = useMemo(
     () => generateSpeechItems(speechCount, legislator.id, topics),
@@ -580,6 +701,11 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
 
   return (
     <div className="container-page py-6 sm:py-8 space-y-6">
+      {/* ── Bill detail popup modal ── */}
+      {selectedBill && (
+        <BillDetailModal bill={selectedBill} onClose={() => setSelectedBill(null)} />
+      )}
+
       {/* ── 뒤로가기 + 헤더 ── */}
       <div>
         <Link href="/legislators" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
@@ -722,35 +848,39 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
           </div>
         )}
 
-        {openSections['bills'] && billItems.length > 0 && (
+        {openSections['bills'] && billItems && billItems.length > 0 && (
           <div className="mt-4 pt-4 border-t border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">발의 법안 목록</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">
+              발의 법안 목록
+              <span className="text-xs font-normal text-gray-400 ml-2">법안을 클릭하면 상세 내용을 볼 수 있습니다</span>
+            </h3>
             <ExpandableList
               items={billItems}
               initialCount={10}
               renderItem={(bill, i) => (
-                <div
+                <button
                   key={i}
-                  className="flex items-start justify-between gap-2 py-2.5 px-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded transition-colors"
+                  onClick={() => setSelectedBill(bill)}
+                  className="w-full flex items-start justify-between gap-2 py-2.5 px-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 rounded transition-colors text-left group"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      {bill.linkedBillId ? (
-                        <Link
-                          href={`/bills/${bill.linkedBillId}`}
-                          className="text-sm font-medium text-accent hover:text-accent/80 hover:underline"
-                        >
-                          {bill.title}
-                        </Link>
-                      ) : (
-                        <span className="text-sm font-medium text-gray-800">{bill.title}</span>
+                      <span className="text-sm font-medium text-gray-800 group-hover:text-accent transition-colors truncate">
+                        {bill.law_name || bill.BILL_NAME}
+                      </span>
+                      {bill.area && (
+                        <span className="text-[11px] text-gray-400 shrink-0">{bill.area}</span>
                       )}
-                      <span className="text-[11px] text-gray-400">{bill.role}</span>
                     </div>
-                    <span className="text-xs text-gray-400 font-mono">{bill.date}</span>
+                    <span className="text-xs text-gray-400 font-mono">{bill.PROPOSE_DT}</span>
                   </div>
-                  <BillStatusBadge status={bill.status} />
-                </div>
+                  <div className="shrink-0 flex items-center gap-1.5">
+                    <BillStatusBadge status={bill.status_label || bill.PROC_RESULT || '심의 중'} />
+                    <svg className="text-gray-300 group-hover:text-gray-400 transition-colors" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </div>
+                </button>
               )}
             />
             <InfoBox>
@@ -761,6 +891,11 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
                 열린국회정보에서 원문 확인
               </ExternalLink>
             </div>
+          </div>
+        )}
+        {openSections['bills'] && !billItems && (
+          <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-400">
+            법안 데이터를 불러오는 중입니다.
           </div>
         )}
       </div>

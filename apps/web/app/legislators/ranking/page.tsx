@@ -24,7 +24,11 @@ export default function LegislatorsRankingPage() {
     );
   }
 
-  const legislators: ScoredLegislator[] = scoresData.legislators ?? [];
+  // Strip recent_bills — only needed on the detail page, not the leaderboard
+  const legislators: ScoredLegislator[] = (scoresData.legislators ?? []).map(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ({ recent_bills: _bills, ...rest }: Record<string, unknown>) => rest as unknown as ScoredLegislator,
+  );
   const summary = scoresData.summary;
 
   return <RankingLeaderboard legislators={legislators} summary={summary} />;

@@ -117,6 +117,24 @@ export interface BillTimelineItem {
   detail?: string;
 }
 
+export interface LegislatorBill {
+  BILL_ID: string;
+  BILL_NAME: string;
+  law_name: string;
+  amendment_type: string;
+  area: string;
+  status_label: string;
+  PROC_RESULT: string;
+  PROPOSE_DT: string;
+  co_sponsor_count: number;
+  co_proposer_names: string;
+  plain_title: string;
+  summary: string;
+  who_affected: string;
+  DETAIL_LINK: string;
+  passed: boolean;
+}
+
 export interface Legislator {
   id: string;
   name: string;
@@ -138,6 +156,8 @@ export interface Legislator {
   asset_total?: number;           // 재산 총액 (억원)
   // 말과 행동 분석
   consistency_details?: ConsistencyItem[];
+  // 발의 법안 목록 (top 50, from legislator-scores.json)
+  recent_bills?: LegislatorBill[];
   // 프로필
   photo_url?: string;
   age?: number;

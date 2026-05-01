@@ -255,6 +255,12 @@ def main():
     bills_raw = load_json(DATA_RAW / 'bills.json')
     funding_raw = load_json(DATA_RAW / 'political-funding.json')
     voting_raw = load_json(DATA_PUBLIC / 'voting-records.json')
+    # Load enriched bill metadata if available (from enrich-bills.py)
+    enriched_raw = load_json(DATA_PUBLIC / 'bills-enriched.json')
+    enriched_by_id: dict[str, dict] = {}
+    if enriched_raw:
+        for eb in (enriched_raw.get('bills') or []):
+            enriched_by_id[eb['BILL_ID']] = eb
 
     legislators = (raw_leg or {}).get('items', [])
     bills = (bills_raw or {}).get('items', [])
@@ -293,6 +299,8 @@ def main():
     print('📜 법안 분석 중...')
     PASSED = {'원안가결', '수정가결'}
     PARTIAL = {'대안반영폐기', '수정안반영폐기'}  # bill was incorporated — partial legislative credit
+    PASSED_MAP = {'원안가결': '통과 (원안)', '수정가결': '통과 (수정)', '대안반영폐기': '대안 반영',
+                  '수정안반영폐기': '수정안 반영', '철회': '철회', '폐기': '폐기'}
 
     BillStats = lambda: {
         'total': 0, 'passed': 0, 'partial': 0, 'pending': 0,
@@ -300,6 +308,7 @@ def main():
         'passed_month': 0, 'passed_year': 0,
         'areas': defaultdict(int),
         'bipartisan': 0, 'bipartisan_parties': set(),
+        'bill_records': [],  # list of compact bill records for UI display
     }
     bills_by_mona: dict[str, dict] = defaultdict(BillStats)
     cosponsor_count: dict[str, int] = defaultdict(int)
@@ -335,6 +344,26 @@ def main():
         if cross_party:
             b['bipartisan'] += 1
             b['bipartisan_parties'].update(p for p in co_parties_set if p and p != lead_party)
+
+        # Compact bill record for UI popup (top 50 by date stored per legislator)
+        enriched = enriched_by_id.get(bill.get('BILL_ID', ''), {})
+        b['bill_records'].append({
+            'BILL_ID': bill.get('BILL_ID', ''),
+            'BILL_NAME': bill.get('BILL_NAME', ''),
+            'law_name': enriched.get('law_name') or bill.get('BILL_NAME', ''),
+            'amendment_type': enriched.get('amendment_type', ''),
+            'area': enriched.get('area') or area,
+            'status_label': enriched.get('status_label') or (result or '심의 중'),
+            'PROC_RESULT': result,
+            'PROPOSE_DT': bill.get('PROPOSE_DT', ''),
+            'co_sponsor_count': len([m for m in (bill.get('PUBL_MONA_CD') or '').split(',') if m.strip()]),
+            'co_proposer_names': (bill.get('PUBL_PROPOSER', '') or '')[:80],
+            'plain_title': enriched.get('plain_title', ''),
+            'summary': enriched.get('summary', ''),
+            'who_affected': enriched.get('who_affected', ''),
+            'DETAIL_LINK': bill.get('DETAIL_LINK', ''),
+            'passed': passed,
+        })
 
         if dt:
             for period, cutoff in cutoffs.items():
@@ -527,6 +556,13 @@ def main():
             'effective_percentile': round(effective_pct),
             'bipartisan_percentile': round(bipartisan_pct),
             'grade': letter_grade(activity_score),
+
+            # Recent bills (top 50 by propose date) for UI popup
+            'recent_bills': sorted(
+                b['bill_records'],
+                key=lambda r: r.get('PROPOSE_DT', '') or '',
+                reverse=True,
+            )[:50],
         })
 
     # ── Global rankings ──

@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { getLegislatorById, getLegislators } from '@/lib/data';
 import LegislatorDetailClient from './LegislatorDetailClient';
 import Link from 'next/link';
-import type { Legislator, ConsistencyItem } from '@/lib/types';
+import type { Legislator, ConsistencyItem, LegislatorBill } from '@/lib/types';
 
 // Convert a scored legislator record to the Legislator interface
 function scoreToLegislator(raw: Record<string, unknown>): Legislator {
@@ -34,6 +34,7 @@ function scoreToLegislator(raw: Record<string, unknown>): Legislator {
     consistency_score: Number(raw.words_vs_actions_score ?? 0),
     consistency_details: consistencyDetails.length > 0 ? consistencyDetails : undefined,
     career_summary: raw.primary_area ? `주요 입법 분야: ${raw.primary_area}` : undefined,
+    recent_bills: (raw.recent_bills as LegislatorBill[] | undefined) ?? undefined,
   };
 }
 
