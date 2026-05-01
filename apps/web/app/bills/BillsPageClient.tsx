@@ -299,7 +299,7 @@ function BillCard({ bill }: { bill: Bill }) {
 /*  Main Component                                                     */
 /* ------------------------------------------------------------------ */
 
-export default function BillsPageClient({ bills }: { bills: Bill[] }) {
+export default function BillsPageClient({ bills, totalCount }: { bills: Bill[]; totalCount?: number }) {
   const [categoryFilter, setCategoryFilter] = useState<string>('전체');
   const [statusFilter, setStatusFilter] = useState<string>('전체');
   const [sortKey, setSortKey] = useState<SortKey>('latest');
@@ -322,17 +322,18 @@ export default function BillsPageClient({ bills }: { bills: Bill[] }) {
         </p>
       </div>
 
-      {/* ── Disclaimer ── */}
-      <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600 flex-shrink-0 mt-0.5">
-          <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-        <p className="text-xs text-amber-800 leading-relaxed">
-          현재 표시된 법안은 22대 국회의 <strong>주요 법안 {bills.length}건</strong>입니다.
-          열린국회정보 API 연동 후 전체 법안을 제공할 예정입니다.
-          <a href="/about#data" className="underline font-semibold ml-1">데이터 출처 →</a>
-        </p>
-      </div>
+      {/* ── Data note ── */}
+      {totalCount && totalCount > bills.length && (
+        <div className="flex items-start gap-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500 flex-shrink-0 mt-0.5">
+            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p className="text-xs text-blue-800 leading-relaxed">
+            22대 국회 전체 <strong>{totalCount.toLocaleString()}건</strong> 중 최근 발의 <strong>{bills.length}건</strong>을 표시합니다.
+            열린국회정보 API 실시간 연동 데이터입니다.
+          </p>
+        </div>
+      )}
 
       {/* ── Issue Category Cards ── */}
       <section>
