@@ -38,21 +38,33 @@ function scoreToLegislator(raw: Record<string, unknown>): Legislator {
   };
 }
 
-function loadScoredLegislator(monaCode: string): Legislator | undefined {
+function loadScoredData(): Array<Record<string, unknown>> {
   const p = path.join(process.cwd(), 'public/data', 'legislator-scores.json');
-  if (!fs.existsSync(p)) return undefined;
+  if (!fs.existsSync(p)) return [];
   try {
     const data = JSON.parse(fs.readFileSync(p, 'utf-8')) as { legislators: Array<Record<string, unknown>> };
-    const found = data.legislators.find(l => l.MONA_CD === monaCode);
-    return found ? scoreToLegislator(found) : undefined;
+    return data.legislators ?? [];
   } catch {
-    return undefined;
+    return [];
   }
+}
+
+function loadScoredLegislator(monaCode: string, scored: Array<Record<string, unknown>>): Legislator | undefined {
+  const found = scored.find(l => l.MONA_CD === monaCode);
+  return found ? scoreToLegislator(found) : undefined;
+}
+
+function mergeRecentBills(legislator: Legislator, name: string, scored: Array<Record<string, unknown>>): Legislator {
+  if (legislator.recent_bills) return legislator;
+  const match = scored.find(l => String(l.HG_NM) === name);
+  if (!match?.recent_bills) return legislator;
+  return { ...legislator, recent_bills: match.recent_bills as LegislatorBill[] };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const legislator = getLegislatorById(id) ?? loadScoredLegislator(id);
+  const scored = loadScoredData();
+  const legislator = getLegislatorById(id) ?? loadScoredLegislator(id, scored);
   return {
     title: legislator ? `${legislator.name} 의원 활동 현황` : '국회의원 활동 현황',
     description: legislator ? `${legislator.name} 의원의 출석률, 법안 발의, 말행일치도 현황` : '국회의원 활동 현황',
@@ -61,8 +73,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function LegislatorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  // Try seed data first, then fall back to real scored data by MONA_CD
-  const legislator = getLegislatorById(id) ?? loadScoredLegislator(id);
+  const scored = loadScoredData();
+  // Try seed data first (leg-001 IDs), then fall back to real scored data by MONA_CD
+  const base = getLegislatorById(id) ?? loadScoredLegislator(id, scored);
+  // Merge recent_bills from scored data (seed data doesn't have them)
+  const legislator = base ? mergeRecentBills(base, base.name, scored) : undefined;
   const allLegislators = getLegislators();
 
   if (!legislator) {
