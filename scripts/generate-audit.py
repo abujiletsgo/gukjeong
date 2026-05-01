@@ -582,7 +582,18 @@ def has_structural_procurement_method(text: str) -> bool:
 # 종업원 0-1명 업체가 3천만원 이상 계약 수주
 # ════════════════════════════════════════════════════════════════════
 print('\n🔍 Pattern 1: Ghost Companies...')
+
+def _extract_corplist_bizno(corp_list: str) -> str:
+    """Extract 10-digit bizno from corpList field (contract-details format)."""
+    if not corp_list or '^' not in corp_list:
+        return ''
+    parts = corp_list.split('^')
+    last = parts[-1].rstrip(']').strip().replace('-', '')
+    return last if last.isdigit() and len(last) == 10 else ''
+
 ghost_by_inst = defaultdict(list)
+
+# Source A: g2b-actual-contracts (has rprsntCorpBizrno directly)
 for c in std_contracts:
     bizno = str(c.get('rprsntCorpBizrno', '')).strip().replace('-', '')
     corp = corp_map.get(bizno, {})
@@ -626,6 +637,66 @@ for c in std_contracts:
             'bizno': bizno, 'rgst': corp.get('rgstDt', ''),
             'company_age_months': _company_age_months,
         })
+
+# Source B: g2b-contract-details (corpList has bizno in parts[-1])
+# Dedup key: set of (bizno, untyCntrctNo) already added from Source A
+_ghost_seen: set = {(g['bizno'], g['cno']) for gs in ghost_by_inst.values() for g in gs}
+for c in contracts:
+    bizno = _extract_corplist_bizno(str(c.get('corpList', '')))
+    if not bizno:
+        continue
+    corp = corp_map.get(bizno, {})
+    emp = int(corp.get('emplyeNum', -1) or -1)
+    if not (emp >= 0 and emp <= 1):
+        continue
+    amt = _f(c.get('thtmCntrctAmt')) or _f(c.get('totCntrctAmt'))
+    if amt <= 50_000_000:
+        continue
+    inst = str(c.get('cntrctInsttNm', '')).strip()
+    if not inst:
+        continue
+    cno = str(c.get('untyCntrctNo', '')).strip()
+    if (bizno, cno) in _ghost_seen:
+        continue
+    _ghost_seen.add((bizno, cno))
+
+    # Extract vendor name from corpList: parts[3]
+    parts = str(c.get('corpList', '')).split('^')
+    name = parts[3].strip() if len(parts) > 3 else bizno
+
+    title = str(get_contract_name(c)).strip()
+    method = str(c.get('cntrctCnclsMthdNm', '')).strip()
+    date = str(c.get('cntrctCnclsDate', '')).strip()
+
+    is_textbook = any(kw in title for kw in ['교과용 도서', '교과서', '교과용도서'])
+    is_school_food = any(kw in title for kw in ['급식', '식자재', '간식', '돌봄'])
+    is_uniform = any(kw in title for kw in ['교복', '체육복', '학생복'])
+    is_disaster = has_disaster_recovery(title)
+    is_defense = is_defense_procurement(title) or is_defense_procurement(inst)
+    if is_textbook or is_school_food or is_uniform or is_disaster or is_defense:
+        continue
+
+    _opbiz = str(corp.get('opbizDt', '') or '')[:10]
+    _contract_date = date[:10] if date else ''
+    _company_age_months = None
+    if _opbiz and _contract_date and _opbiz >= '2000-01-01':
+        try:
+            from datetime import date as _dt
+            _od = _dt.fromisoformat(_opbiz)
+            _cd = _dt.fromisoformat(_contract_date) if _contract_date else _dt.today()
+            _company_age_months = max(0, (_cd.year - _od.year) * 12 + (_cd.month - _od.month))
+        except ValueError:
+            pass
+
+    ghost_by_inst[inst].append({
+        'corp': name, 'emp': emp, 'amt': amt, 'title': title,
+        'method': method, 'reason': _classify_reason_from_law(c.get('baseLawNm', ''), c.get('baseDtls', '')),
+        'date': date, 'cno': cno,
+        'bizno': bizno, 'rgst': corp.get('rgstDt', ''),
+        'company_age_months': _company_age_months,
+    })
+
+print(f'  Ghost candidates from contract-details: {sum(len(v) for v in ghost_by_inst.values())}')
 
 for inst, items in ghost_by_inst.items():
     if not items:
@@ -1005,6 +1076,60 @@ for c in std_contracts:
         ),
     })
 
+# Source B: g2b-contract-details (corpList bizno)
+_p4_seen: set = set()
+for c in contracts:
+    bizno = _extract_corplist_bizno(str(c.get('corpList', '')))
+    if not bizno or bizno in _p4_seen:
+        continue
+    corp = corp_map.get(bizno, {})
+    opbiz = str(corp.get('opbizDt', ''))[:10]
+    rgst = str(corp.get('rgstDt', ''))[:10]
+    actual_date = opbiz if opbiz and opbiz > '1900' else rgst
+    if not actual_date:
+        continue
+    amt = _f(c.get('thtmCntrctAmt')) or _f(c.get('totCntrctAmt'))
+    if amt < 50_000_000:
+        continue
+    inst = str(c.get('cntrctInsttNm', '')).strip()
+    if not inst:
+        continue
+    try:
+        rd = datetime.strptime(actual_date, '%Y-%m-%d')
+        age_years = (now - rd).days / 365
+    except Exception:
+        continue
+    if age_years >= 2 or (opbiz and opbiz <= '1900'):
+        continue
+
+    parts = str(c.get('corpList', '')).split('^')
+    name = parts[3].strip() if len(parts) > 3 else bizno
+    cno = str(c.get('untyCntrctNo', '')).strip()
+    title = str(get_contract_name(c)).strip()
+    method = str(c.get('cntrctCnclsMthdNm', '')).strip()
+    date = str(c.get('cntrctCnclsDate', '')).strip()
+    emp = int(corp.get('emplyeNum', -1) or -1)
+
+    _p4_seen.add(bizno)
+    score = min(80, 30 + (amt / 1e8) * 5 + max(0, (2 - age_years) * 15))
+    if emp >= 0 and emp <= 3:
+        score = min(85, score + 10)
+
+    findings.append({
+        'pattern_type': 'new_company_big_win',
+        'severity': 'HIGH' if score >= 60 else 'MEDIUM',
+        'suspicion_score': round(score),
+        'target_institution': inst,
+        'summary': (
+            f'{inst}에서 설립 {age_years:.1f}년인 신생 업체 {name}에게 '
+            f'{amt/1e8:.1f}억원 규모의 계약을 체결했습니다.'
+        ),
+        'detail': {'기관': inst, '업체': name, '설립일': actual_date,
+                   '설립_경과(년)': round(age_years, 1), '계약금액': amt, '종업원': emp},
+        'evidence_contracts': [make_contract(cno, title, amt, name, date, method)],
+        'innocent_explanation': '창업 기업에 대한 정부 조달 참여 기회 제공 정책으로 합리적일 수 있습니다.',
+    })
+
 print(f'  Found {len([f for f in findings if f["pattern_type"] == "new_company_big_win"])} new company findings')
 
 
@@ -1016,10 +1141,19 @@ print('🔍 Pattern 5: Vendor Concentration...')
 inst_vendors = defaultdict(lambda: defaultdict(lambda: {'count': 0, 'amt': 0, 'contracts': []}))
 inst_totals = defaultdict(lambda: {'count': 0, 'amt': 0})
 
-for c in std_contracts:
-    inst = str(c.get('cntrctInsttNm', c.get('dmndInsttNm', ''))).strip()
-    vendor = str(c.get('rprsntCorpNm', '')).strip()
-    amt = _f(c.get('cntrctAmt'))
+# Use contract-details (20-month window) — far more data than actual-contracts (1 week)
+for c in contracts:
+    inst = str(c.get('cntrctInsttNm', '')).strip()
+    # Extract vendor from corpList (contract-details format)
+    corp_list = str(c.get('corpList', ''))
+    vendor = ''
+    if corp_list and '^' in corp_list:
+        parts = corp_list.split('^')
+        if len(parts) > 3:
+            vendor = parts[3].split('，')[0].strip()
+    if not vendor:
+        vendor = str(c.get('rprsntCorpNm', '')).strip()
+    amt = _f(c.get('thtmCntrctAmt')) or _f(c.get('totCntrctAmt'))
     if inst and vendor:
         inst_vendors[inst][vendor]['count'] += 1
         inst_vendors[inst][vendor]['amt'] += amt
@@ -1042,11 +1176,11 @@ for inst, vendors in inst_vendors.items():
         if is_cooperative(vendor):
             continue
         score = min(80, 30 + ratio * 40 + (vd['amt'] / 1e9) * 5)
-        top_contracts = sorted(vd['contracts'], key=lambda x: -_f(x.get('cntrctAmt')))[:5]
+        top_contracts = sorted(vd['contracts'], key=lambda x: -(_f(x.get('thtmCntrctAmt')) or _f(x.get('totCntrctAmt')) or _f(x.get('cntrctAmt'))))[:5]
 
         evidence = [make_contract(
-            c.get('cntrctNo', ''), get_contract_name(c),
-            _f(c.get('cntrctAmt')), vendor,
+            c.get('untyCntrctNo', c.get('cntrctNo', '')), get_contract_name(c),
+            _f(c.get('thtmCntrctAmt')) or _f(c.get('totCntrctAmt')) or _f(c.get('cntrctAmt')), vendor,
             c.get('cntrctCnclsDate', ''), c.get('cntrctCnclsMthdNm', ''),
             c.get('prvtcntrctRsn', ''),
         ) for c in top_contracts]
