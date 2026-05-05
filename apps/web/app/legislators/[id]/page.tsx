@@ -38,15 +38,30 @@ function scoreToLegislator(raw: Record<string, unknown>): Legislator {
   };
 }
 
+function readJSON(relPath: string): unknown {
+  const p = path.join(process.cwd(), relPath);
+  if (!fs.existsSync(p)) return null;
+  try { return JSON.parse(fs.readFileSync(p, 'utf-8')); } catch { return null; }
+}
+
 function loadScoredData(): Array<Record<string, unknown>> {
-  const p = path.join(process.cwd(), 'public/data', 'legislator-scores.json');
-  if (!fs.existsSync(p)) return [];
-  try {
-    const data = JSON.parse(fs.readFileSync(p, 'utf-8')) as { legislators: Array<Record<string, unknown>> };
-    return data.legislators ?? [];
-  } catch {
-    return [];
-  }
+  const data = readJSON('public/data/legislator-scores.json') as { legislators?: Array<Record<string, unknown>> } | null;
+  return data?.legislators ?? [];
+}
+
+function loadRawByMonaCode(monaCode: string): Legislator | undefined {
+  // Last-resort fallback: raw legislators.json
+  const data = readJSON('data/legislators.json') as { items?: Array<Record<string, unknown>> } | null;
+  const found = (data?.items ?? []).find(l => l.MONA_CD === monaCode);
+  if (!found) return undefined;
+  return {
+    id: String(found.MONA_CD),
+    name: String(found.HG_NM),
+    party: String(found.POLY_NM ?? ''),
+    district: String(found.ORIG_NM ?? ''),
+    committee: String(found.CMIT_NM ?? ''),
+    gender: found.SEX_GBN_NM === '여' ? '여' : '남',
+  };
 }
 
 function loadScoredLegislator(monaCode: string, scored: Array<Record<string, unknown>>): Legislator | undefined {
@@ -64,7 +79,7 @@ function mergeRecentBills(legislator: Legislator, name: string, scored: Array<Re
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const scored = loadScoredData();
-  const legislator = getLegislatorById(id) ?? loadScoredLegislator(id, scored);
+  const legislator = getLegislatorById(id) ?? loadScoredLegislator(id, scored) ?? loadRawByMonaCode(id);
   return {
     title: legislator ? `${legislator.name} 의원 활동 현황` : '국회의원 활동 현황',
     description: legislator ? `${legislator.name} 의원의 출석률, 법안 발의, 말행일치도 현황` : '국회의원 활동 현황',
@@ -74,8 +89,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function LegislatorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const scored = loadScoredData();
-  // Try seed data first (leg-001 IDs), then fall back to real scored data by MONA_CD
-  const base = getLegislatorById(id) ?? loadScoredLegislator(id, scored);
+  // Try seed data (leg-001 IDs) → scored data (MONA_CD) → raw API data fallback
+  const base = getLegislatorById(id) ?? loadScoredLegislator(id, scored) ?? loadRawByMonaCode(id);
   // Merge recent_bills from scored data (seed data doesn't have them)
   const legislator = base ? mergeRecentBills(base, base.name, scored) : undefined;
   const allLegislators = getLegislators();
