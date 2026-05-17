@@ -656,3 +656,76 @@ export interface NewsTopicsResponse {
   total_topics: number;
   topics: NewsTopic[];
 }
+
+/* ── 화제의 감사 (Popular Audit Report) ── */
+export interface PopularTraceEvidence {
+  name: string;
+  vendor: string;
+  amount: number;
+  date: string;
+}
+
+export interface PopularTraceFinding {
+  id: string;
+  pattern_type: string;
+  suspicion_score: number;
+  verdict: string | null;
+  target_institution: string;
+  summary: string;
+  innocent_explanation: string | null;
+  evidence_contracts: PopularTraceEvidence[];
+}
+
+export interface PopularTopicArticle {
+  outlet: string;
+  title: string;
+  link: string;
+  pubDate: string;
+}
+
+export interface PopularEntry {
+  theme_id: string;
+  theme_label: string;
+  category: string;
+  trace_strength: string;
+  caveat: string;
+  popular_topic: {
+    title: string;
+    article_count: number;
+    outlet_count: number;
+    popularity_score: number;
+    from_archive: boolean;
+    articles: PopularTopicArticle[];
+  };
+  analysis: {
+    auditable_angle: string;
+    what_to_check: string[];
+    citizen_impact: string;
+  };
+  traces: {
+    finding_count: number;
+    flagged_evidence_total_won: number;
+    distinct_vendors: number;
+    distinct_institutions: number;
+    date_range: [string, string] | null;
+    top_institutions: { institution: string; findings: number }[];
+    pattern_breakdown: { pattern: string; count: number }[];
+    top_findings: PopularTraceFinding[];
+  };
+}
+
+export interface PopularReport {
+  generated_at: string;
+  title: string;
+  subtitle: string;
+  method: string;
+  news_source_fetched_at: string;
+  audit_findings_total: number;
+  entries: PopularEntry[];
+  popular_but_not_procurement: {
+    title: string;
+    article_count: number;
+    outlet_count: number;
+    reason: string;
+  }[];
+}

@@ -6,7 +6,7 @@
  */
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import type { NewsTopicsResponse } from './types';
+import type { NewsTopicsResponse, PopularReport } from './types';
 
 const DATA_DIR = join(process.cwd(), 'data');
 
@@ -129,5 +129,18 @@ export function getLocalNewsTopics(): NewsTopicsResponse {
     return JSON.parse(raw);
   } catch {
     return { generated_at: '', source_file: '', source_fetched_at: '', total_topics: 0, topics: [] };
+  }
+}
+
+export function getLocalPopularReport(): PopularReport {
+  try {
+    const raw = readFileSync(join(PUBLIC_DATA_DIR, 'popular-report.json'), 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return {
+      generated_at: '', title: '화제의 감사', subtitle: '', method: '',
+      news_source_fetched_at: '', audit_findings_total: 0,
+      entries: [], popular_but_not_procurement: [],
+    };
   }
 }

@@ -59,6 +59,7 @@ const NAV_LINKS = [
   { href: '/legislators', label: '국회의원' },
   { href: '/legislators/ranking', label: '의원 랭킹' },
   { href: '/audit', label: 'AI 감사' },
+  { href: '/popular', label: '화제의 감사' },
   { href: '/news', label: '뉴스' },
 ];
 
