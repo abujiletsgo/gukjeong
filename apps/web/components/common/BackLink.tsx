@@ -41,7 +41,7 @@ export default function BackLink({
     <Link
       href={fallback}
       className={className ?? 'inline-flex items-center gap-1 text-sm text-blue-600 hover:underline'}
-      onClick={(e) => {
+      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
         if (inAppNavCount > 0) {
           e.preventDefault();
           router.back();
