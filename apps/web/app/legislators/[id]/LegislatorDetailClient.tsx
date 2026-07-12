@@ -55,6 +55,24 @@ const KNOWN_BILLS: { id: string; title: string; status: string }[] = [
   { id: 'bill-016', title: '재난안전관리 기본법 개정안', status: '가결' },
 ];
 
+// ── 예시 데이터 고지 배너 ──
+// 투명성 플랫폼이 생성 데이터를 조용히 보여주면 안 된다: 세부 내역이 통계 기반
+// 예시일 때는 섹션 상단에 반드시 이 배너를 붙인다.
+function SimNotice({ what }: { what: string }) {
+  return (
+    <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 mb-3">
+      <svg className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+        <path d="M12 9v4M12 17h.01" />
+      </svg>
+      <p className="text-[11px] text-amber-700 leading-snug">
+        <strong>예시 데이터</strong> — {what}의 건별 세부 내역은 아직 공개 API로 제공되지 않아,
+        공개된 통계치에 맞춰 생성한 예시입니다. 합계·비율은 실제 통계 기준입니다.
+      </p>
+    </div>
+  );
+}
+
 // ── 시뮬레이션 데이터 생성 유틸 ──
 
 /** Seeded PRNG for deterministic per-legislator data */
@@ -820,6 +838,7 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
         {openSections['attendance'] && (
           <div className="mt-4 pt-4 border-t border-gray-100">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">최근 회의 출석 내역</h3>
+            <SimNotice what="회의별 출석" />
             <ExpandableList
               items={attendanceSessions}
               initialCount={10}
@@ -957,6 +976,7 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
         {openSections['speech'] && speechItems.length > 0 && (
           <div className="mt-4 pt-4 border-t border-gray-100">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">발언 내역</h3>
+            <SimNotice what="발언" />
             <ExpandableList
               items={speechItems}
               initialCount={10}
@@ -1004,6 +1024,7 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
         {openSections['vote'] && voteItems.length > 0 && (
           <div className="mt-4 pt-4 border-t border-gray-100">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">최근 투표 기록</h3>
+            <SimNotice what="건별 투표" />
             <ExpandableList
               items={voteItems}
               initialCount={10}

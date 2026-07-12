@@ -69,7 +69,7 @@ const MORE_SECTIONS: { title: string; links: { href: string; label: string; badg
       { href: '/popular', label: '화제의 감사' },
       { href: '/news/live', label: '실시간 뉴스 분석' },
       { href: '/search', label: '통합 검색' },
-      { href: '/simulator', label: '예산 시뮬레이터', badge: '준비 중' },
+      { href: '/simulator', label: '내 세금 시뮬레이터' },
     ],
   },
   {
