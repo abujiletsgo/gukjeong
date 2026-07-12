@@ -1,6 +1,7 @@
 'use client';
 // 감사 플래그 상세 — 클라이언트 컴포넌트
 import { useState } from 'react';
+import Link from 'next/link';
 import type { AuditFlag, AuditContract, AuditTimelineItem, AuditLink, SimilarCase, ContractBid, EvidenceContract, BidderRecord } from '@/lib/types';
 import { getSeverityColor, getSeverityLabel, formatKRW, formatNumber, formatKeyLabel } from '@/lib/utils';
 import PatternBadge from '@/components/audit/PatternBadge';
@@ -450,15 +451,35 @@ function GlanceHero({ flag }: { flag: AuditFlag }) {
           </div>
         </div>
 
-        {/* 핵심 숫자 타일 */}
+        {/* 핵심 숫자 타일 — 업체는 업체 프로필로 연결 */}
         {keyFacts.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
-            {keyFacts.map(([k, v]) => (
-              <div key={k} className="rounded-xl px-3 py-2.5" style={{ backgroundColor: 'var(--apple-gray-6, #F2F2F7)' }}>
-                <div className="text-[11px] text-gray-400 mb-0.5">{formatKeyLabel(k)}</div>
-                <div className="text-sm font-bold text-gray-900 break-keep">{String(v)}</div>
-              </div>
-            ))}
+            {keyFacts.map(([k, v]) => {
+              const isVendor = k.includes('업체') && typeof v === 'string' && v.length >= 2 && !/^\d+/.test(v);
+              const inner = (
+                <>
+                  <div className="text-[11px] text-gray-400 mb-0.5">
+                    {formatKeyLabel(k)}
+                    {isVendor && <span className="ml-1 text-blue-400">프로필 →</span>}
+                  </div>
+                  <div className={`text-sm font-bold break-keep ${isVendor ? 'text-blue-700' : 'text-gray-900'}`}>{String(v)}</div>
+                </>
+              );
+              return isVendor ? (
+                <Link
+                  key={k}
+                  href={`/vendors?q=${encodeURIComponent(String(v))}`}
+                  className="rounded-xl px-3 py-2.5 hover:ring-2 hover:ring-blue-200 transition-shadow"
+                  style={{ backgroundColor: 'var(--apple-gray-6, #F2F2F7)' }}
+                >
+                  {inner}
+                </Link>
+              ) : (
+                <div key={k} className="rounded-xl px-3 py-2.5" style={{ backgroundColor: 'var(--apple-gray-6, #F2F2F7)' }}>
+                  {inner}
+                </div>
+              );
+            })}
           </div>
         )}
 

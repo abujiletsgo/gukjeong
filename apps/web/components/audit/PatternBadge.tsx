@@ -197,6 +197,11 @@ const PATTERN_CONFIG: Record<string, { label: string; bg: string; color: string 
   inflated_pricing:     { label: '고가 계약',       bg: 'rgba(255,59,48,0.10)',   color: 'var(--apple-red)' },
   revolving_door:       { label: '전관예우',        bg: 'rgba(255,59,48,0.10)',   color: 'var(--apple-red)' },
   paper_company:        { label: '페이퍼 컴퍼니',   bg: 'rgba(255,149,0,0.10)',   color: 'var(--apple-orange)' },
+  rapid_sole_source_burst:  { label: '단기 수의계약 연속', bg: 'rgba(255,149,0,0.10)', color: 'var(--apple-orange)' },
+  geographic_concentration: { label: '원거리 집중 수주',   bg: 'rgba(88,86,214,0.10)', color: 'var(--apple-indigo, #5856D6)' },
+  threshold_avoidance:      { label: '한도 회피',          bg: 'rgba(255,204,0,0.12)', color: '#B8860B' },
+  short_bid_window:         { label: '초단기 공고',        bg: 'rgba(255,59,48,0.10)', color: 'var(--apple-red)' },
+  ceo_rotation:             { label: '대표 교체 반복',     bg: 'rgba(88,86,214,0.12)', color: 'var(--apple-indigo, #5856D6)' },
 };
 
 export default function PatternBadge({ pattern, score, size = 'sm' }: PatternBadgeProps) {

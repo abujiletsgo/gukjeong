@@ -150,7 +150,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div>
                   <h4 className="font-semibold text-gray-500 mb-3" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.8px' }}>분석</h4>
                   <ul className="space-y-2">
-                    {[['AI 감사관', '/audit'], ['화제의 감사', '/popular'], ['뉴스 프레임', '/news'], ['실시간 뉴스 분석', '/news/live'], ['국제 비교', '/compare'], ['예산 시뮬레이터', '/simulator']].map(([label, href]) => (
+                    {[['AI 감사관', '/audit'], ['화제의 감사', '/popular'], ['업체 프로필', '/vendors'], ['뉴스 프레임', '/news'], ['실시간 뉴스 분석', '/news/live'], ['국제 비교', '/compare'], ['예산 시뮬레이터', '/simulator']].map(([label, href]) => (
                       <li key={href}><Link href={href} className="text-gray-500 hover:text-blue-500 transition-colors" style={{ fontSize: 14 }}>{label}</Link></li>
                     ))}
                   </ul>

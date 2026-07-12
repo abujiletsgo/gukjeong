@@ -73,6 +73,17 @@ try {
   console.log('presidents: done');
 } catch (e) { console.warn('presidents skip:', e.message); }
 
+// 4.5 업체 (vendors-index.json 상위 5,000곳 — 플래그 수 순)
+try {
+  const data = readJSON(pub('vendors-index.json'));
+  let n = 0;
+  for (const [key, name, flags] of (data.vendors ?? []).slice(0, 5000)) {
+    core.push(['vendor', name, `감사 플래그 ${flags}건`, `/vendors/${key}`]);
+    n++;
+  }
+  console.log(`vendors: ${n}`);
+} catch (e) { console.warn('vendors skip:', e.message); }
+
 // 5. 지역 (lib/data.ts의 LOCAL_GOVERNMENTS_DATA에서 id/name만 추출)
 try {
   const src = fs.readFileSync(path.join(root, 'apps/web/lib/data.ts'), 'utf8');

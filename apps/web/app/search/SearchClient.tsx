@@ -9,16 +9,18 @@ const TYPE_LABEL: Record<string, string> = {
   page: '메뉴',
   leg: '국회의원',
   inst: '감사 대상 기관',
+  vendor: '업체',
   bill: '법안',
   pres: '대통령',
   local: '지역',
 };
-const TYPE_ORDER = ['page', 'leg', 'pres', 'local', 'inst', 'bill'];
+const TYPE_ORDER = ['page', 'leg', 'pres', 'local', 'inst', 'vendor', 'bill'];
 
 // 정적 섹션(라우트) 인덱스 — 데이터 파일 없이도 항상 검색됨
 const PAGES: Item[] = [
   ['page', 'AI 감사', '조달 계약 의심 패턴 분석', '/audit'],
   ['page', '화제의 감사', '뉴스 이슈와 감사 결과 교차 분석', '/popular'],
+  ['page', '업체 프로필', '업체별 감사 플래그·계약 추적', '/vendors'],
   ['page', '국회의원 활동', '295명 의정활동', '/legislators'],
   ['page', '의원 랭킹', '활동 점수 순위', '/legislators/ranking'],
   ['page', '법안 추적', '22대 국회 법안 16,914건', '/bills'],

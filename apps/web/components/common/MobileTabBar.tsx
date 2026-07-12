@@ -58,6 +58,7 @@ const MORE_SECTIONS: { title: string; links: { href: string; label: string; badg
       { href: '/presidents', label: '대통령 비교' },
       { href: '/bills', label: '법안 추적' },
       { href: '/legislators/ranking', label: '의원 랭킹' },
+      { href: '/vendors', label: '업체 프로필' },
       { href: '/local', label: '지역 재정' },
       { href: '/compare', label: '국제 비교' },
     ],
