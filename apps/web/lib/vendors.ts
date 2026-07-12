@@ -36,6 +36,8 @@ export interface VendorProfileFull {
 
 function baseUrl(): string {
   if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  // VERCEL_URL(배포별 URL)은 SSO 보호에 걸려 서버 사이드 fetch가 302를 받는다.
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return 'http://localhost:3000';
 }
