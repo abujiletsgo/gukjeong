@@ -138,14 +138,17 @@ function MemberCard({ legislator }: { legislator: Legislator }) {
   const electedLabel = getElectedLabel(legislator.elected_count);
 
   return (
-    <div className="card hover:shadow-md transition-shadow h-full flex flex-col">
+    <Link
+      href={`/legislators/${legislator.id}`}
+      className="card hover:shadow-md hover:border-gray-300 transition-shadow h-full flex flex-col group"
+    >
       <div className="mb-3">
         <div className="flex items-center gap-2 mb-1">
           <span
             className="w-2.5 h-2.5 rounded-full shrink-0"
             style={{ backgroundColor: partyColor }}
           />
-          <h3 className="font-bold text-base text-gray-900">
+          <h3 className="font-bold text-base text-gray-900 group-hover:text-gray-700 transition-colors">
             {legislator.name}
           </h3>
           {legislator.name_en && (
@@ -179,7 +182,7 @@ function MemberCard({ legislator }: { legislator: Legislator }) {
           </span>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 

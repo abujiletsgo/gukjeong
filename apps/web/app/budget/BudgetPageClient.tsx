@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import type { FiscalYearly, FiscalBySector, SubSectorData } from '@/lib/types';
 import { getSubSectorData, getSectorIdByName } from '@/lib/data';
+import { useUrlState } from '@/lib/hooks/useUrlState';
 import KPI from '@/components/common/KPI';
 import StackedArea from '@/components/charts/StackedArea';
 import DebtChart from '@/components/charts/DebtChart';
@@ -97,7 +98,8 @@ export default function BudgetPageClient({
   latest2024,
 }: BudgetPageClientProps) {
   const router = useRouter();
-  const [selectedYear, setSelectedYear] = useState(2026);
+  const [yearStr, setYearStr] = useUrlState('year', '2026');
+  const selectedYear = Number(yearStr);
   const [selectedSector, setSelectedSector] = useState('보건·복지·고용');
   const [selectedSubSector, setSelectedSubSector] = useState<string | null>(null);
   const availableYears = [2024, 2025, 2026];
@@ -110,16 +112,21 @@ export default function BudgetPageClient({
 
   const subSectorRef = useRef<HTMLDivElement>(null);
 
-  // TreeMap 클릭 핸들러 — 분야 드릴다운 표시 + 해당 분야 선택
+  // TreeMap 클릭 핸들러 — 분야 상세 페이지로 이동 (테이블 행과 동일한 드릴다운)
   const handleTreeMapClick = useCallback((sectorName: string) => {
-    setSelectedSector(sectorName);
-    setSelectedSubSector(null);
-    setShowSubSector(true);
-    // Smooth scroll to sub-sector section after a short delay for render
-    setTimeout(() => {
-      subSectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }, []);
+    const sectorId = getSectorIdByName(sectorName);
+    if (sectorId) {
+      router.push(`/budget/${sectorId}`);
+    } else {
+      // 매핑되는 상세 페이지가 없으면 인라인 드릴다운으로 폴백
+      setSelectedSector(sectorName);
+      setSelectedSubSector(null);
+      setShowSubSector(true);
+      setTimeout(() => {
+        subSectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [router]);
 
   const currentSectors = sectorDataByYear[selectedYear] || sectorDataByYear[2026];
 
@@ -248,7 +255,7 @@ export default function BudgetPageClient({
           {availableYears.map(year => (
             <button
               key={year}
-              onClick={() => setSelectedYear(year)}
+              onClick={() => setYearStr(String(year))}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 selectedYear === year
                   ? 'bg-accent text-white'

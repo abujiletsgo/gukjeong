@@ -307,19 +307,27 @@ export function getDepartmentScores(): DepartmentScore[] {
   })).sort((a, b) => b.suspicion_score - a.suspicion_score);
 }
 
-// Try to load live audit data from JSON; fall back to seed data
+// Try to load live audit data from JSON; fall back to seed data.
+// The source file is ~246MB — reading + parsing it costs ~1.4s and a ~1.2GB
+// RSS spike, so we memoize the parsed result for the lifetime of the server
+// process. (`undefined` = not loaded yet, `null` = loaded but unavailable.)
+let _auditFlagsCache: AuditFlag[] | null | undefined;
+
 function loadLiveAuditFlags(): AuditFlag[] | null {
+  if (_auditFlagsCache !== undefined) return _auditFlagsCache;
   try {
     const { readFileSync } = require('fs');
     const { join } = require('path');
     const raw = readFileSync(join(process.cwd(), 'public', 'data', 'audit-results.json'), 'utf-8');
     const data = JSON.parse(raw);
     if (data?.findings?.length > 0) {
-      return data.findings as AuditFlag[];
+      _auditFlagsCache = data.findings as AuditFlag[];
+      return _auditFlagsCache;
     }
   } catch {
     // File not found or parse error — fall back to seed data
   }
+  _auditFlagsCache = null;
   return null;
 }
 

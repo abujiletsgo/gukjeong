@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
+import { useUrlState } from '@/lib/hooks/useUrlState';
 import type { Bill } from '@/lib/types';
 
 /* ------------------------------------------------------------------ */
@@ -300,16 +301,16 @@ function BillCard({ bill }: { bill: Bill }) {
 /* ------------------------------------------------------------------ */
 
 export default function BillsPageClient({ bills, totalCount }: { bills: Bill[]; totalCount?: number }) {
-  const [categoryFilter, setCategoryFilter] = useState<string>('전체');
-  const [statusFilter, setStatusFilter] = useState<string>('전체');
-  const [sortKey, setSortKey] = useState<SortKey>('latest');
+  const [categoryFilter, setCategoryFilter] = useUrlState('cat', '전체');
+  const [statusFilter, setStatusFilter] = useUrlState('status', '전체');
+  const [sortKey, setSortKey] = useUrlState('sort', 'latest');
 
   /* Filtered + sorted */
   const filtered = useMemo(() => {
     let list = bills;
     if (categoryFilter !== '전체') list = list.filter(b => b.ai_category === categoryFilter);
     if (statusFilter !== '전체') list = list.filter(b => b.status === statusFilter);
-    return sortBills(list, sortKey);
+    return sortBills(list, sortKey as SortKey);
   }, [bills, categoryFilter, statusFilter, sortKey]);
 
   return (

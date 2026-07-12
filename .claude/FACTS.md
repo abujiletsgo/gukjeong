@@ -1,5 +1,5 @@
 # Project Facts
-<!-- MANAGED: gukjeong | updated: 2026-04-27 | layer: episodic -->
+<!-- MANAGED: gukjeong | updated: 2026-07-12 | layer: episodic -->
 <!-- Injected at session start as authoritative ground truth. -->
 <!-- Edit freely — hooks auto-maintain this file. -->
 
@@ -29,6 +29,11 @@
 - Key file: `scripts/generate-news-topics.py` [2026-04-23]
 - Key file: `scripts/accumulate.py` [2026-04-26]
 - Key file: `scripts/generate-legislator-scores.py` [2026-04-27]
+- Key file: `scripts/seed-db.py` [2026-05-05]
+- Key file: `.claude/CLAUDE_DESIGN_BRIEF.md` [2026-05-11]
+- Key file: `scripts/generate-popular-report.py` [2026-05-17]
+- Key file: `.claude/PROJECT_CONTEXT.md` [2026-07-12]
+- Key file: `scripts/build-search-index.mjs` [2026-07-12]
 
 ## → PATTERNS (confirmed working sequences)
 

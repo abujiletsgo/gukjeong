@@ -228,6 +228,8 @@ export interface AuditFlag {
   // 조사 판정
   verdict?: 'suspicious' | 'investigate' | 'legitimate';
   verdict_reason?: string;
+  confidence?: number;            // 판정 신뢰도 (0~1)
+  confidence_label?: string;      // 판정 신뢰도 라벨 (예: 매우 높음)
   key_evidence?: string;          // 핵심 증거 요약
   evidence_contracts?: EvidenceContract[];
   vendor_profile?: VendorProfile;

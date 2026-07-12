@@ -2,96 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-29 (15:10 UTC) · @Tom Kwon
-**Commit:** fix: Move all hooks before early returns — React error #310 (aad372a) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx | 79 ++++++++++++++++------------------
-  1 file changed, 36 insertions(+), 43 deletions(-)
-
-## 2026-03-29 (15:59 UTC) · @Tom Kwon
-**Commit:** feat: AI 감사 — 8 pattern types, 252 findings from real 나라장터 data (8ba3b6e) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx     |    27 +-
-  apps/web/components/audit/PatternBadge.tsx |    18 +-
-  apps/web/public/data/audit-results.json    | 11888 +++++++++++++++++++--------
-  scripts/generate-audit.py                  |   692 ++
-  4 files changed, 8960 insertions(+), 3665 deletions(-)
-
-## 2026-03-31 (07:28 UTC) · @Tom Kwon
-**Commit:** feat: RichText — numbered lists, bold, bullets for all narrative fields (3e4e41a) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx        |    9 +-
-  apps/web/app/audit/[id]/AuditDetailClient.tsx |   17 +-
-  apps/web/components/common/RichText.tsx       |  122 +++
-  apps/web/public/data/audit-results.json       | 1132 ++++++++++++-------------
-  scripts/generate-audit.py                     |   20 +-
-  5 files changed, 718 insertions(+), 582 deletions(-)
-
-## 2026-04-01 (docs refresh) · @Tom Kwon
-**Commit:** feat: add knowledge base system, sanctions data, and audit UI improvements (0e2fe7a) by Tom Kwon
-**Changed:**
-  scripts/generate-audit.py                       | 1742 +-
-  scripts/knowledge.py                            |  518 +
-  scripts/procurement-context.md                  |   89 +
-  scripts/update-knowledge.py                     |  244 +
-  data/knowledge/*.json                           |    5 new files
-  ... and 34 more files (39 total, +4M/-119K lines — includes large data files)
-
-## 2026-04-01 (02:34 UTC) · @Tom Kwon
-**Commit:** docs: refresh project documentation to reflect current state (4f928e4) by Tom Kwon
-**Changed:**
-  .claude/FACTS.md           |  8 ++++++++
-  .claude/MEMORY.md          | 10 ++++++++++
-  .claude/PROJECT_CONTEXT.md | 12 ++++++------
-  CLAUDE.md                  | 12 +++++++-----
-  README.md                  |  2 +-
-  5 files changed, 32 insertions(+), 12 deletions(-)
-
-## 2026-04-01 (10:19 UTC) · @Tom Kwon
-**Commit:** fix: sync frontend pattern labels with 19 backend patterns, refresh data (bc3c6d8) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/page.tsx             |    4 +-
-  apps/web/data/g2b-contract-changes.json |    8 +
-  apps/web/data/g2b-contract-process.json |    2 +-
-  apps/web/data/g2b-sanctions.json        |    2 +-
-  apps/web/data/news-rss.json             | 1738 +++++++++++++++----------------
-  apps/web/lib/constants.ts               |   42 +-
-  apps/web/public/data/audit-results.json | 1620 ++++++++++++++--------------
-  scripts/generate-audit.py               |   29 +-
-  8 files changed, 1721 insertions(+), 1724 deletions(-)
-
-## 2026-04-01 (11:21 UTC) · @Tom Kwon
-**Commit:** feat: 4 new audit patterns — yearend_budget_dump, amount_spike, contract_inflation, systemic_risk (ac57ab9) by Tom Kwon
-**Changed:**
-  apps/web/data/g2b-contract-changes.json | 89495 +++++++++++++++++++++++++++++-
-  apps/web/public/data/audit-results.json | 71925 ++++++++++++++----------
-  scripts/fetch-data.py                   |    18 +-
-  scripts/generate-audit.py               |   106 +-
-  4 files changed, 132808 insertions(+), 28736 deletions(-)
-
-## 2026-04-01 (11:35 UTC) · @Tom Kwon
-**Commit:** chore: move spec docs to docs/, remove stray scripts/.claude/ (4cbfffd) by Tom Kwon
-**Changed:**
-  spec-CLAUDE.md => docs/spec-CLAUDE.md               | 0
-  spec-ORCHESTRATION.md => docs/spec-ORCHESTRATION.md | 0
-  spec-architecture.md => docs/spec-architecture.md   | 0
-  spec-facts.md => docs/spec-facts.md                 | 0
-  4 files changed, 0 insertions(+), 0 deletions(-)
-
-## 2026-04-09 (14:46 UTC) · @Tom Kwon
-**Commit:** feat: integrate g2b-bid-rankings data, expand audit to 1430 findings (7ff820d) by Tom Kwon
-**Changed:**
-  apps/web/data/g2b-bid-rankings.json     | 1223307 ++++++++++++++++++++++++++++
-  apps/web/public/data/audit-results.json |  144205 ++--
-  scripts/generate-audit.py               |      43 +-
-  3 files changed, 1320576 insertions(+), 46979 deletions(-)
-
-## 2026-04-13 (04:38 UTC) · @Tom Kwon
-**Commit:** fix: wire --font-pretendard CSS variable so Pretendard actually loads (f369e38) by Tom Kwon
-**Changed:**
-  apps/web/styles/globals.css | 1 +
-  1 file changed, 1 insertion(+)
-
 ## 2026-04-14 (14:40 UTC) · @Tom Kwon
 **Commit:** chore: gitignore large data files (>50MB) that stay local-only (564e48d) by Tom Kwon
 **Changed:**
@@ -249,3 +159,85 @@
 **Changed:**
   turbo.json | 2 +-
   1 file changed, 1 insertion(+), 1 deletion(-)
+
+## 2026-04-29 (12:37 UTC) · @Tom Kwon
+**Commit:** fix: Pattern 6 reason-code filtering now works (96.7% vs 0.02% coverage) (03b747a) by Tom Kwon
+**Changed:**
+  apps/web/public/data/audit-results.json | 2368222 +++++++++++++---------------
+  scripts/fetch-data.py                   |     148 +
+  scripts/generate-audit.py               |     138 +-
+  3 files changed, 1094761 insertions(+), 1273747 deletions(-)
+
+## 2026-04-29 (13:04 UTC) · @Tom Kwon
+**Commit:** feat: news page live mode — Claude AI enrichment + layout matches mockup (f7a97c7) by Tom Kwon
+**Changed:**
+  apps/web/app/api/news/topics/route.ts | 136 +++++++++++++++++++++++++++++++++-
+  apps/web/app/news/NewsPageClient.tsx  |  48 ++++++------
+  apps/web/styles/globals.css           |   1 +
+  scripts/generate-news-topics.py       |  18 +++--
+  4 files changed, 166 insertions(+), 37 deletions(-)
+
+## 2026-04-29 (13:38 UTC) · @Tom Kwon
+**Commit:** feat: news AI analysis + accumulation system (5b13588) by Tom Kwon
+**Changed:**
+  apps/web/data/news-archive.json       |  935 ++++++++++++++++++++++++++
+  apps/web/public/data/news-topics.json | 1192 +++++++++++++++++----------------
+  scripts/generate-news-topics.py       |  139 +++-
+  3 files changed, 1668 insertions(+), 598 deletions(-)
+
+## 2026-05-01 (13:41 UTC) · @Tom Kwon
+**Commit:** fix: revert /api/news/topics to force-static — dynamic breaks on Vercel (no fs access) (d9ec507) by Tom Kwon
+**Changed:**
+  apps/web/app/api/news/topics/route.ts | 136 +---------------------------------
+  1 file changed, 3 insertions(+), 133 deletions(-)
+
+## 2026-05-01 (14:10 UTC) · @Tom Kwon
+**Commit:** feat: extend ghost/new-company/vendor-concentration patterns to contract-details (e91a55c) by Tom Kwon
+**Changed:**
+  scripts/fetch-data.py     |  98 ++++++++++++++++++++++++++++++
+  scripts/generate-audit.py | 148 +++++++++++++++++++++++++++++++++++++++++++---
+  2 files changed, 239 insertions(+), 7 deletions(-)
+
+## 2026-05-01 (14:17 UTC) · @Tom Kwon
+**Commit:** feat: wire real bill data to legislator detail page with popup modal (e012390) by Tom Kwon
+**Changed:**
+  .../legislators/[id]/LegislatorDetailClient.tsx    | 179 ++++++++++++++++++---
+  apps/web/app/legislators/[id]/page.tsx             |   3 +-
+  apps/web/app/legislators/ranking/page.tsx          |   6 +-
+  apps/web/lib/types.ts                              |  20 +++
+  apps/web/public/data/legislator-scores.json        |   2 +-
+  scripts/generate-legislator-scores.py              |  36 +++++
+  6 files changed, 221 insertions(+), 25 deletions(-)
+
+## 2026-05-01 (15:02 UTC) · @Tom Kwon
+**Commit:** fix: merge recent_bills into seed-data legislators on detail page (07cbf45) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/[id]/page.tsx | 31 +++++++++++++++++++++++--------
+  1 file changed, 23 insertions(+), 8 deletions(-)
+
+## 2026-05-01 (15:59 UTC) · @Tom Kwon
+**Commit:** feat: wire real 16,914 bills to /bills page from 열린국회 API data (910b0a2) by Tom Kwon
+**Changed:**
+  apps/web/app/bills/BillsPageClient.tsx   | 25 +++++----
+  apps/web/app/bills/page.tsx              | 94 +++++++++++++++++++++++++++++---
+  apps/web/public/data/bills-enriched.json |  1 +
+  3 files changed, 101 insertions(+), 19 deletions(-)
+
+## 2026-05-11 (13:40 UTC) · @Tom Kwon
+**Commit:** fix: add raw legislators.json fallback so detail page never shows not-found (510897d) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/[id]/page.tsx | 37 ++++++++++++++++++++++++----------
+  1 file changed, 26 insertions(+), 11 deletions(-)
+
+## 2026-07-12 (12:20 UTC) · @Tom Kwon
+**Commit:** feat: 화제의 감사 (Popular) — popular news cross-referenced with real audit traces (35b186a) by Tom Kwon
+**Changed:**
+  apps/web/app/layout.tsx                    |    1 +
+  apps/web/app/popular/PopularPageClient.tsx |  307 +++++++++++++++++++++++++++++
+  apps/web/app/popular/page.tsx              |   22 +++
+  apps/web/data/news-rss.json                | 1350 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------------
+  apps/web/lib/local-data.ts                 |   15 +-
+  apps/web/lib/types.ts                      |   73 +++++++
+  apps/web/public/data/popular-report.json   |    1 +
+  scripts/generate-popular-report.py         |  464 ++++++++++++++++++++++++++++++++++++++++++++
+  8 files changed, 1557 insertions(+), 676 deletions(-)

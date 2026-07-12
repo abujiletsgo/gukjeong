@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { Metadata } from 'next';
 import { getLegislatorById, getLegislators } from '@/lib/data';
+import { getLegislatorByIdFromDB } from '@/lib/db/queries';
 import LegislatorDetailClient from './LegislatorDetailClient';
 import Link from 'next/link';
 import type { Legislator, ConsistencyItem, LegislatorBill } from '@/lib/types';
@@ -38,10 +39,19 @@ function scoreToLegislator(raw: Record<string, unknown>): Legislator {
   };
 }
 
+// legislator-scores.json (~8MB) is read + parsed on every detail-page view.
+// Memoize parsed JSON per path for the lifetime of the server process.
+const _jsonCache = new Map<string, unknown>();
+
 function readJSON(relPath: string): unknown {
+  if (_jsonCache.has(relPath)) return _jsonCache.get(relPath);
   const p = path.join(process.cwd(), relPath);
   if (!fs.existsSync(p)) return null;
-  try { return JSON.parse(fs.readFileSync(p, 'utf-8')); } catch { return null; }
+  try {
+    const parsed = JSON.parse(fs.readFileSync(p, 'utf-8'));
+    _jsonCache.set(relPath, parsed);
+    return parsed;
+  } catch { return null; }
 }
 
 function loadScoredData(): Array<Record<string, unknown>> {
@@ -78,8 +88,11 @@ function mergeRecentBills(legislator: Legislator, name: string, scored: Array<Re
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const scored = loadScoredData();
-  const legislator = getLegislatorById(id) ?? loadScoredLegislator(id, scored) ?? loadRawByMonaCode(id);
+  const dbLegislator = await getLegislatorByIdFromDB(id);
+  const legislator = dbLegislator ?? (() => {
+    const scored = loadScoredData();
+    return getLegislatorById(id) ?? loadScoredLegislator(id, scored) ?? loadRawByMonaCode(id);
+  })();
   return {
     title: legislator ? `${legislator.name} 의원 활동 현황` : '국회의원 활동 현황',
     description: legislator ? `${legislator.name} 의원의 출석률, 법안 발의, 말행일치도 현황` : '국회의원 활동 현황',
@@ -88,17 +101,27 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function LegislatorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const scored = loadScoredData();
-  // Try seed data (leg-001 IDs) → scored data (MONA_CD) → raw API data fallback
-  const base = getLegislatorById(id) ?? loadScoredLegislator(id, scored) ?? loadRawByMonaCode(id);
-  // Merge recent_bills from scored data (seed data doesn't have them)
-  const legislator = base ? mergeRecentBills(base, base.name, scored) : undefined;
+
+  // Try DB first
+  const dbLegislator = await getLegislatorByIdFromDB(id);
+
+  let legislator: Legislator | undefined;
+  if (dbLegislator) {
+    legislator = dbLegislator;
+  } else {
+    // Fallback: seed data (leg-001 IDs) → scored data (MONA_CD) → raw API data
+    const scored = loadScoredData();
+    const base = getLegislatorById(id) ?? loadScoredLegislator(id, scored) ?? loadRawByMonaCode(id);
+    // Merge recent_bills from scored data (seed data doesn't have them)
+    legislator = base ? mergeRecentBills(base, base.name, scored) : undefined;
+  }
+
   const allLegislators = getLegislators();
 
   if (!legislator) {
     return (
       <div className="container-page py-8">
-        <Link href="/legislators/ranking" className="text-accent hover:underline">&larr; 의원 랭킹</Link>
+        <Link href="/legislators" className="text-accent hover:underline">&larr; 의원 목록</Link>
         <p className="mt-8 text-gray-400">의원 정보를 찾을 수 없습니다. (ID: {id})</p>
       </div>
     );

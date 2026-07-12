@@ -3051,6 +3051,221 @@ print(f'  Enriched {len(findings)} findings with formatted narrative fields')
 
 
 # ════════════════════════════════════════════════════════════════════
+# Pattern 21: CEO ROTATION (CEO 순환 수주)
+# Same CEO appears as representative for 2+ distinct companies that
+# both won contracts at the same procuring agency.
+# Data: std_contracts (g2b-actual-contracts.json)
+# ════════════════════════════════════════════════════════════════════
+print('🔍 Pattern 21: CEO 순환 수주')
+
+# Build: ceo_name → agency_code → set of distinct bizno values
+_ceo_agency_biznos: dict = defaultdict(lambda: defaultdict(set))
+_ceo_agency_meta: dict = defaultdict(lambda: defaultdict(lambda: {
+    'inst_name': '', 'contracts': [], 'total_amount': 0.0,
+    'bizno_names': defaultdict(lambda: {'name': '', 'count': 0, 'amount': 0.0}),
+}))
+
+for _c in std_contracts:
+    _ceo = str(_c.get('rprsntCorpCeoNm', '')).strip()
+    if not _ceo or len(_ceo) <= 2:
+        continue
+    # Skip common single-surname-only names (1-char filter already handles most)
+    if _ceo in {'김', '이', '박', '최', '정', '강', '조', '윤'}:
+        continue
+    _bz = str(_c.get('rprsntCorpBizrno', '')).replace('-', '').strip()
+    if not _bz:
+        continue
+    _inst_cd = str(_c.get('cntrctInsttCd', '')).strip()
+    _inst_nm = str(_c.get('cntrctInsttNm', '')).strip()
+    if not _inst_cd or not _inst_nm:
+        continue
+    _amt = _f(_c.get('cntrctAmt'))
+    _corp_nm = str(_c.get('rprsntCorpNm', '')).strip()
+    _date = str(_c.get('cntrctCnclsDate', _c.get('opengDate', ''))).strip()
+    _title = str(get_contract_name(_c)).strip()
+    _cno = str(_c.get('cntrctNo', _c.get('untyCntrctNo', ''))).strip()
+    _method = str(_c.get('cntrctCnclsMthdNm', '')).strip()
+
+    _ceo_agency_biznos[_ceo][_inst_cd].add(_bz)
+    _meta = _ceo_agency_meta[_ceo][_inst_cd]
+    _meta['inst_name'] = _inst_nm
+    _meta['contracts'].append(_c)
+    _meta['total_amount'] += _amt
+    _bn = _meta['bizno_names'][_bz]
+    _bn['name'] = _corp_nm
+    _bn['count'] += 1
+    _bn['amount'] += _amt
+
+_ceo_rotation_count = 0
+for _ceo, _agency_map in _ceo_agency_biznos.items():
+    for _inst_cd, _biznos in _agency_map.items():
+        if len(_biznos) < 2:
+            continue
+        _meta = _ceo_agency_meta[_ceo][_inst_cd]
+        _inst_nm = _meta['inst_name']
+        if is_suppressed('ceo_rotation', _inst_nm):
+            continue
+        _n = len(_biznos)
+        if _n >= 3:
+            _score = 75
+            _severity = 'HIGH'
+        else:
+            _score = 55
+            _severity = 'MEDIUM'
+        _total_amt = _meta['total_amount']
+        _companies = [
+            {
+                'bizno': _bz,
+                'name': _meta['bizno_names'][_bz]['name'],
+                'contract_count': _meta['bizno_names'][_bz]['count'],
+            }
+            for _bz in sorted(_biznos)
+        ]
+        _top = sorted(_meta['contracts'], key=lambda x: -_f(x.get('cntrctAmt')))[:5]
+        _evidence = [make_contract(
+            _tc.get('cntrctNo', _tc.get('untyCntrctNo', '')),
+            get_contract_name(_tc),
+            _f(_tc.get('cntrctAmt')),
+            _tc.get('rprsntCorpNm', ''),
+            _tc.get('cntrctCnclsDate', _tc.get('opengDate', '')),
+            _tc.get('cntrctCnclsMthdNm', ''),
+        ) for _tc in _top]
+        findings.append({
+            'pattern_type': 'ceo_rotation',
+            'severity': _severity,
+            'suspicion_score': adjusted_score(_score, _inst_nm),
+            'target_institution': _inst_nm,
+            'summary': (
+                f'{_ceo} 대표자가 {_n}개 업체의 대표를 겸임하며 [{_inst_nm}]에 반복 수주'
+            ),
+            'detail': {
+                'ceo_name': _ceo,
+                'company_count': _n,
+                'companies': _companies,
+                'total_amount': _total_amt,
+            },
+            'evidence_contracts': _evidence,
+            'innocent_explanation': '동명이인이거나 계열사 통합 운영일 수 있음. 사업자번호 확인 필요.',
+            'plain_explanation': f'같은 대표자가 여러 회사를 운영하며 같은 기관에서 반복적으로 계약을 따냈습니다.',
+            'why_it_matters': '1인이 복수의 법인을 통해 경쟁 없이 수주를 독점할 수 있습니다.',
+            'citizen_impact': '납세자 돈이 사실상 동일인에게 집중됩니다.',
+            'what_should_happen': '조달청 대표자 중복 수주 여부를 확인하고 공정거래 위반 조사가 필요합니다.',
+            'related_links': [],
+        })
+        _ceo_rotation_count += 1
+
+print(f'  → {_ceo_rotation_count} 건 detected')
+
+
+# ════════════════════════════════════════════════════════════════════
+# Pattern 22: RAPID SOLE-SOURCE BURST (단기 수의계약 연속)
+# Same vendor receives 3+ sole-source contracts at the same agency
+# within a 90-day sliding window.
+# Data: contracts (g2b-contract-details.json)
+# ════════════════════════════════════════════════════════════════════
+print('🔍 Pattern 22: 단기 수의계약 연속')
+
+from datetime import timedelta as _timedelta
+
+# Group (agency_code, bizno) → list of (date_obj, contract)
+_ssb_groups: dict = defaultdict(list)
+
+for _c in contracts:
+    if str(_c.get('cntrctCnclsMthdNm', '')).strip() != '수의계약':
+        continue
+    _date_str = str(_c.get('cntrctDate', '')).strip()
+    if not _date_str or len(_date_str) < 10:
+        continue
+    try:
+        _date_obj = datetime.strptime(_date_str[:10], '%Y-%m-%d').date()
+    except ValueError:
+        continue
+    _corp_raw = str(_c.get('corpList', '')).strip()
+    if not _corp_raw or '^' not in _corp_raw:
+        continue
+    _bz = _extract_corplist_bizno(_corp_raw)
+    if not _bz:
+        continue
+    _parts = _corp_raw.split('^')
+    _vendor_nm = _parts[3].strip() if len(_parts) > 3 else ''
+    _inst_cd = str(_c.get('cntrctInsttCd', '')).strip()
+    _inst_nm = str(_c.get('cntrctInsttNm', '')).strip()
+    if not _inst_cd or not _inst_nm:
+        continue
+    _ssb_groups[(_inst_cd, _bz, _inst_nm, _vendor_nm)].append((_date_obj, _c))
+
+_rapid_sole_count = 0
+for (_inst_cd, _bz, _inst_nm, _vendor_nm), _entries in _ssb_groups.items():
+    if is_suppressed('rapid_sole_source_burst', _inst_nm):
+        continue
+    # Sort by date
+    _entries.sort(key=lambda x: x[0])
+    _dates = [e[0] for e in _entries]
+    _n_total = len(_dates)
+    # Sliding 90-day window: for each anchor date d[i], count d[j] <= d[i] + 90
+    _max_window = 0
+    _burst_start_idx = 0
+    for _idx in range(_n_total):
+        _cutoff = _dates[_idx] + _timedelta(days=90)
+        _count = sum(1 for _d in _dates[_idx:] if _d <= _cutoff)
+        if _count > _max_window:
+            _max_window = _count
+            _burst_start_idx = _idx
+    if _max_window < 3:
+        continue
+    # Determine severity
+    if _max_window >= 8:
+        _score = 88
+        _severity = 'HIGH'
+    elif _max_window >= 5:
+        _score = 75
+        _severity = 'HIGH'
+    else:
+        _score = 60
+        _severity = 'MEDIUM'
+    # Collect contracts in the burst window for evidence
+    _burst_anchor = _dates[_burst_start_idx]
+    _burst_cutoff = _burst_anchor + _timedelta(days=90)
+    _burst_entries = [(d, c) for d, c in _entries if _burst_anchor <= d <= _burst_cutoff]
+    _total_amt = sum(_f(_e[1].get('totCntrctAmt', _e[1].get('thtmCntrctAmt', 0))) for _e in _entries)
+    _evidence = [make_contract(
+        _ec.get('untyCntrctNo', _ec.get('dcsnCntrctNo', '')),
+        get_contract_name(_ec),
+        _f(_ec.get('totCntrctAmt', _ec.get('thtmCntrctAmt', 0))),
+        _vendor_nm,
+        str(_ed),
+        '수의계약',
+    ) for _ed, _ec in _burst_entries[:5]]
+    findings.append({
+        'pattern_type': 'rapid_sole_source_burst',
+        'severity': _severity,
+        'suspicion_score': adjusted_score(_score, _inst_nm),
+        'target_institution': _inst_nm,
+        'summary': (
+            f'{_vendor_nm}이(가) [{_inst_nm}]에서 90일 내 수의계약 {_max_window}건 연속 수주'
+        ),
+        'detail': {
+            'vendor_name': _vendor_nm,
+            'bizno': _bz,
+            'burst_count': _max_window,
+            'window_days': 90,
+            'total_sole_source_count': _n_total,
+            'total_amount': _total_amt,
+        },
+        'evidence_contracts': _evidence,
+        'innocent_explanation': '소액 반복 계약은 유지보수·운영 계약에서 정상적으로 발생할 수 있음.',
+        'plain_explanation': f'같은 업체가 90일 안에 수의계약을 {_max_window}번이나 받았습니다.',
+        'why_it_matters': '단기 수의계약 반복은 계약 쪼개기나 경쟁 회피의 신호일 수 있습니다.',
+        'citizen_impact': '경쟁입찰 없이 특정 업체에 예산이 집중될 수 있습니다.',
+        'what_should_happen': '계약 분할 여부 및 수의계약 사유의 적법성을 감사원이 조사해야 합니다.',
+        'related_links': [],
+    })
+    _rapid_sole_count += 1
+
+print(f'  → {_rapid_sole_count} 건 detected')
+
+
+# ════════════════════════════════════════════════════════════════════
 # Convert to AuditFlag format (same as demo data)
 # This allows the detail page /audit/[id] to work with live data
 # ════════════════════════════════════════════════════════════════════
@@ -3087,6 +3302,8 @@ PATTERN_LABELS = {
     'ai_anomaly': 'AI 이상탐지',
     'geographic_concentration': '지역 편중 낙찰',
     'short_bid_window': '단기 입찰기간',
+    'ceo_rotation': 'CEO 순환 수주',
+    'rapid_sole_source_burst': '단기 수의계약 연속',
 }
 
 import hashlib as _hashlib

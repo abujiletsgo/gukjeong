@@ -1,9 +1,10 @@
 # Project Facts
-<!-- MANAGED: web | updated: 2026-03-27 | layer: episodic -->
+<!-- MANAGED: web | updated: 2026-05-01 | layer: episodic -->
 <!-- Injected at session start as authoritative ground truth. -->
 <!-- Edit freely — hooks auto-maintain this file. -->
 
 ## ✓ CONFIRMED (execution-verified — trust fully)
+- Python executor is `uv run` (not python3/pip/poetry) [2026-05-01]
 
 ## ⚠ GOTCHAS (known failure modes — read before acting)
 

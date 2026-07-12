@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import BackLink from '@/components/common/BackLink';
 import type {
   Bill,
   BillVoteResult,
@@ -40,6 +41,11 @@ const PARTY_COLORS: Record<string, string> = {
 function getPartyColor(party?: string): string {
   if (!party) return '#6B7280';
   return PARTY_COLORS[party] || '#6B7280';
+}
+
+/** 뉴라인 없는 다문장 산문을 문장 단위로 분리 (다./요. 경계 기준) */
+function toSentences(text: string): string[] {
+  return text.split(/(?<=[다요]\.)\s+/).map(s => s.trim()).filter(Boolean);
 }
 
 const STANCE_STYLE: Record<string, { bg: string; text: string; border: string }> = {
@@ -427,12 +433,11 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
   return (
     <div className="container-page py-8 space-y-5">
       {/* Back link */}
-      <Link href="/bills" className="inline-flex items-center gap-1 text-sm text-accent hover:underline font-medium">
-        <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-        법안 목록
-      </Link>
+      <BackLink
+        fallback="/bills"
+        label="법안 목록"
+        className="inline-flex items-center gap-1 text-sm text-accent hover:underline font-medium"
+      />
 
       {/* ============================================================ */}
       {/*  1. HEADER                                                     */}
@@ -488,7 +493,11 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
           summary={bill.background ? bill.background.slice(0, 100) + '...' : undefined}
         >
           {bill.background && (
-            <p className="text-sm text-gray-700 leading-relaxed">{bill.background}</p>
+            <div className="space-y-1">
+              {toSentences(bill.background).map((s, i) => (
+                <p key={i} className="text-sm text-gray-700 leading-relaxed mb-1">{s}</p>
+              ))}
+            </div>
           )}
           {bill.problem_statement && (
             <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
@@ -500,7 +509,11 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
                 </svg>
                 해결하려는 문제
               </p>
-              <p className="text-sm text-rose-800 leading-relaxed">{bill.problem_statement}</p>
+              <div className="space-y-1">
+                {toSentences(bill.problem_statement).map((s, i) => (
+                  <p key={i} className="text-sm text-rose-800 leading-relaxed mb-1">{s}</p>
+                ))}
+              </div>
             </div>
           )}
         </Section>
@@ -525,7 +538,11 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
           onToggle={() => toggle('ai_summary')}
           summary={bill.ai_summary.slice(0, 120) + '...'}
         >
-          <p className="text-sm text-gray-700 leading-relaxed">{bill.ai_summary}</p>
+          <div className="space-y-1">
+            {toSentences(bill.ai_summary).map((s, i) => (
+              <p key={i} className="text-sm text-gray-700 leading-relaxed mb-1">{s}</p>
+            ))}
+          </div>
         </Section>
       )}
 
@@ -650,7 +667,11 @@ export default function BillDetailClient({ bill }: { bill: Bill }) {
           <ControversyGauge score={controversyScore} />
 
           {bill.controversy_detail?.why_controversial && (
-            <p className="text-sm text-gray-700 leading-relaxed mt-3">{bill.controversy_detail.why_controversial}</p>
+            <div className="space-y-1 mt-3">
+              {toSentences(bill.controversy_detail.why_controversial).map((s, i) => (
+                <p key={i} className="text-sm text-gray-700 leading-relaxed mb-1">{s}</p>
+              ))}
+            </div>
           )}
 
           {bill.controversy_detail?.key_disagreements && bill.controversy_detail.key_disagreements.length > 0 && (

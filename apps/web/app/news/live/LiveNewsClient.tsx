@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { useUrlState } from '@/lib/hooks/useUrlState';
 import type { RealNewsArticle, RSSFeedSource } from '@/lib/news/rss';
 
 // ---------------------------------------------------------------------------
@@ -76,8 +78,8 @@ interface LiveNewsClientProps {
 }
 
 export default function LiveNewsClient({ initialArticles, totalCount, feeds }: LiveNewsClientProps) {
-  const [outletFilter, setOutletFilter] = useState<string>('all');
-  const [spectrumFilter, setSpectrumFilter] = useState<SpectrumFilter>('all');
+  const [outletFilter, setOutletFilter] = useUrlState('outlet', 'all');
+  const [spectrumFilter, setSpectrumFilter] = useUrlState('spectrum', 'all');
   const [visibleCount, setVisibleCount] = useState(30);
 
   const filteredArticles = useMemo(() => {
@@ -141,6 +143,14 @@ export default function LiveNewsClient({ initialArticles, totalCount, feeds }: L
       </div>
 
       <div className="container-page py-6 sm:py-8">
+        {/* ━━━ 프레임 비교 ↔ 실시간 분석 전환 토글 ━━━ */}
+        <div className="inline-flex items-center rounded-full bg-gray-100 p-1 mb-8 text-sm font-medium">
+          <Link href="/news" className="px-4 py-1.5 rounded-full text-gray-500 hover:text-gray-800 transition-colors">
+            프레임 비교
+          </Link>
+          <span className="px-4 py-1.5 rounded-full bg-white text-gray-900 shadow-sm">실시간 분석</span>
+        </div>
+
         {/* ━━━ FILTERS ━━━ */}
         <div className="space-y-4 mb-8">
           {/* Spectrum filter */}
@@ -217,12 +227,6 @@ export default function LiveNewsClient({ initialArticles, totalCount, feeds }: L
               </button>
             )}
           </p>
-          <a
-            href="/news"
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            뉴스 프레임 비교 &rarr;
-          </a>
         </div>
 
         {/* ━━━ ARTICLE LIST ━━━ */}

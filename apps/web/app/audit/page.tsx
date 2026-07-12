@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { getDepartmentScores, getAuditFlags } from '@/lib/data';
+import { getAuditFlags } from '@/lib/data';
+import { getAuditFlagsFromDB } from '@/lib/db/queries';
 
-// Dynamic: audit-results.json is 104MB — too large for Vercel ISR fallback (19MB limit)
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 import AuditPageClient from './AuditPageClient';
 
 export const metadata: Metadata = {
@@ -15,10 +15,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AuditPage() {
-  // getAuditFlags() now loads real 나라장터 data from public/data/audit-results.json
-  // Falls back to seed data if the file doesn't exist
-  const auditFlags = getAuditFlags();
+export default async function AuditPage() {
+  // Try DB first; fall back to JSON if DB is empty or unavailable
+  const { flags: dbFlags } = await getAuditFlagsFromDB({ pageSize: 500 });
+  // Mirror the DB pageSize on the JSON fallback. Without this cap the page
+  // serializes all ~39.5k findings into the client payload (~216MB HTML),
+  // which makes the browser unable to render the page.
+  const auditFlags = dbFlags.length > 0 ? dbFlags : getAuditFlags().slice(0, 500);
 
   // Compute department scores from live audit flags
   const deptMap: Record<string, { max: number; count: number }> = {};

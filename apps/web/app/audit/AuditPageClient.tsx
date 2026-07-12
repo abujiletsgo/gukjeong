@@ -4,7 +4,7 @@
 // Demo mode: seed data passed as props
 //
 // v3: Production rebuild — full rich features in both modes
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 
 // Debug error boundary to show actual crash reason
 class AuditErrorBoundary extends React.Component<
@@ -59,7 +59,8 @@ import AuditHero from '@/components/audit/AuditHero';
 import RegionSearch from '@/components/audit/RegionSearch';
 import TopOffenderCard from '@/components/audit/TopOffenderCard';
 import { getSeverityColor, getSeverityLabel, formatKRW, formatNumber, formatKeyLabel } from '@/lib/utils';
-import RichText from '@/components/common/RichText';
+import Link from 'next/link';
+import { useUrlState } from '@/lib/hooks/useUrlState';
 
 // ── Real data types (from audit-results.json) ──────────────────────────
 interface RealEvidenceContract {
@@ -376,6 +377,27 @@ function ExternalLinkIcon({ size = 12 }: { size?: number }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+// InternalLink — next/link wrapper that degrades to a non-link when the
+// target id is missing (Link의 href는 undefined를 허용하지 않으므로)
+// ══════════════════════════════════════════════════════════════════════
+function InternalLink({
+  href,
+  className,
+  children,
+}: {
+  href?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  if (!href) return <div className={className}>{children}</div>;
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
 // ContractList — shared contract evidence table
 // ══════════════════════════════════════════════════════════════════════
 function ContractList({ contracts }: { contracts: RealEvidenceContract[] }) {
@@ -471,7 +493,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
   const uniqueContracts = finding.deduplicated_contracts;
 
   return (
-    <a
+    <InternalLink
       href={finding.id ? `/audit/${finding.id}` : undefined}
       className="block bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md group"
     >
@@ -530,7 +552,7 @@ function FindingCard({ finding }: { finding: EnrichedFinding }) {
           </div>
         </div>
       </div>
-    </a>
+    </InternalLink>
   );
 }
 
@@ -715,24 +737,31 @@ function AuditPageClientInner({
   // Real data state
   const [realData, setRealData] = useState<RealAuditData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
-  // Entry mode state
-  const [entryMode, setEntryMode] = useState<EntryMode>('region');
+  // Entry mode + filter state — URL에 반영하여 뒤로가기/새로고침/공유 시 뷰 유지
+  // (searchQuery는 /search 페이지가 /audit?q=기관명 으로 링크하므로 ?q= 에서 복원됨)
+  const [entryMode, setEntryMode] = useUrlState('mode', 'region');
   const [regionFiltered, setRegionFiltered] = useState<EnrichedFinding[]>([]);
+  const [activeCategory, setActiveCategory] = useUrlState('cat', 'all');
+  const [severityFilter, setSeverityFilter] = useUrlState('sev', 'all');
+  const [searchQuery, setSearchQuery] = useUrlState('q', '');
+  const [verdictFilter] = useUrlState('verdict', 'all');
+  const [tierFilter] = useUrlState('tier', 'all');
 
-  // Filter state
-  const [activeCategory, setActiveCategory] = useState<PatternCategory>('all');
-  const [severityFilter, setSeverityFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [verdictFilter, setVerdictFilter] = useState<'all' | 'suspicious' | 'investigate'>('all');
-  const [tierFilter, setTierFilter] = useState<'all' | '1' | '2'>('all');
-
-  // Fetch real data on mount (only in live mode)
+  // 렌더 상한 — 39,518건 전체를 DOM에 그리면 브라우저(특히 모바일)가 죽는다.
+  // 기관 30개씩 증분 표시 + 기관당 상위 5건, 나머지는 펼치기.
+  const [visibleInsts, setVisibleInsts] = useState(30);
+  const [expandedInsts, setExpandedInsts] = useState<Set<string>>(new Set());
   useEffect(() => {
-    if (isDemo) {
-      setLoading(false);
-      return;
-    }
+    setVisibleInsts(30);
+    setExpandedInsts(new Set());
+  }, [entryMode, activeCategory, severityFilter, verdictFilter, tierFilter, searchQuery]);
+
+  // Fetch real data (static JSON → API fallback). loadError를 별도로 두어
+  // "데이터 로드 실패"와 "필터 결과 0건"을 구분한다. 재시도 버튼이 이 함수를 다시 호출한다.
+  const loadRealData = useCallback(() => {
+    setLoadError(false);
     setLoading(true);
     fetch('/data/audit-results.json')
       .then(r => {
@@ -758,12 +787,27 @@ function AuditPageClientInner({
                 findings: [],
                 summary: { sole_source_ratio: 0, unique_institutions: 0, unique_vendors: 0 },
               });
+            } else {
+              // 정적 JSON도 API도 실패 → 진짜 로드 실패
+              setLoadError(true);
             }
             setLoading(false);
           })
-          .catch(() => setLoading(false));
+          .catch(() => {
+            setLoadError(true);
+            setLoading(false);
+          });
       });
-  }, [isDemo]);
+  }, []);
+
+  // Fetch real data on mount (only in live mode)
+  useEffect(() => {
+    if (isDemo) {
+      setLoading(false);
+      return;
+    }
+    loadRealData();
+  }, [isDemo, loadRealData]);
 
   // ── Enriched data computations ──
   const enrichedFindings = useMemo(() => {
@@ -823,11 +867,18 @@ function AuditPageClientInner({
     };
   }, [enrichedFindings, activeCategory]);
 
-  // Reset filters on mode change
+  // Reset filters when demo/live mode toggles — 단, 최초 마운트에서는
+  // URL(?q= 등)에서 복원한 값을 덮어쓰지 않도록 건너뛴다.
+  const didMountRef = useRef(false);
   useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
     setActiveCategory('all');
     setSeverityFilter('all');
     setSearchQuery('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDemo]);
 
   const resetFilters = useCallback(() => {
@@ -979,6 +1030,29 @@ function AuditPageClientInner({
     );
   }
 
+  // 데이터 로드 실패 — "필터 결과 0건"과 구분된 명확한 오류 카드
+  if (loadError && !realData) {
+    return (
+      <div className="container-page py-6 sm:py-8">
+        <div className="card text-center py-16 max-w-lg mx-auto">
+          <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-rose-50 flex items-center justify-center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              <path d="M12 9v4M12 17h.01" />
+            </svg>
+          </div>
+          <p className="text-base font-semibold text-gray-800 mb-1">데이터를 불러오지 못했습니다</p>
+          <p className="text-sm text-gray-500 mb-5">
+            네트워크 문제로 감사 데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+          </p>
+          <button onClick={loadRealData} className="btn-primary">
+            다시 시도
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // ── Live mode rendering ──
   return (
     <div className="container-page py-6 sm:py-8">
@@ -991,6 +1065,13 @@ function AuditPageClientInner({
         topPatternName={heroData.topPatternName}
         generatedAt={realData?.timestamp}
       />
+
+      {/* 실시간 원본 데이터 페이지로의 보조 링크 */}
+      <div className="flex justify-end mb-4">
+        <Link href="/audit/real" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+          실시간 원본 데이터 보기 →
+        </Link>
+      </div>
 
       {/* ═══ 2. ENTRY MODE TABS ═══ */}
       <div className="flex gap-1 mb-5 p-1 rounded-xl" style={{ background: 'var(--apple-gray-6)' }}>
@@ -1192,7 +1273,7 @@ function AuditPageClientInner({
 
         return (
           <div className="space-y-4">
-            {sortedInsts.map(([inst, instFindings]) => {
+            {sortedInsts.slice(0, visibleInsts).map(([inst, instFindings]) => {
               const maxScore = Math.max(...instFindings.map(f => f.adjusted_score));
               const maxRisk = instFindings.reduce((best, f) =>
                 f.adjusted_score > best.adjusted_score ? f : best, instFindings[0]);
@@ -1207,10 +1288,9 @@ function AuditPageClientInner({
               return (
                 <div key={inst} className="card overflow-hidden border-l-4" style={{ borderLeftColor: riskColor }}>
                   {/* Institution header — links to top finding */}
-                  <a
+                  <InternalLink
                     href={headerHref}
                     className={`flex items-start justify-between gap-4 mb-3 rounded-lg -mx-1 px-1 py-1 transition-colors ${headerHref ? 'hover:bg-gray-50 cursor-pointer group' : ''}`}
-                    onClick={headerHref ? undefined : (e) => e.preventDefault()}
                   >
                     <div className="flex-1 min-w-0">
                       <h3 className={`font-bold text-base text-gray-900 ${headerHref ? 'group-hover:text-rose-700 transition-colors' : ''}`}>{inst}</h3>
@@ -1239,12 +1319,13 @@ function AuditPageClientInner({
                         </svg>
                       )}
                     </div>
-                  </a>
+                  </InternalLink>
 
-                  {/* Each finding as a clickable card */}
+                  {/* Each finding as a clickable card (기본 상위 5건, 나머지는 펼치기) */}
                   <div className="space-y-2">
                     {instFindings
                       .sort((a, b) => b.adjusted_score - a.adjusted_score)
+                      .slice(0, expandedInsts.has(inst) ? instFindings.length : 5)
                       .map((finding, i) => {
                         // citizen_impact: show first sentence if score >= 60
                         const citizenImpact = (finding as RealFinding).citizen_impact ?? '';
@@ -1259,7 +1340,7 @@ function AuditPageClientInner({
                           : '';
 
                         return (
-                          <a
+                          <InternalLink
                             key={finding.id ?? `${finding.pattern_type}-${i}`}
                             href={finding.id ? `/audit/${finding.id}` : undefined}
                             className="block p-3 rounded-lg border border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-colors group"
@@ -1299,13 +1380,35 @@ function AuditPageClientInner({
                                 </svg>
                               </div>
                             </div>
-                          </a>
+                          </InternalLink>
                         );
                       })}
+                    {instFindings.length > 5 && (
+                      <button
+                        onClick={() => setExpandedInsts(prev => {
+                          const next = new Set(prev);
+                          if (next.has(inst)) next.delete(inst); else next.add(inst);
+                          return next;
+                        })}
+                        className="w-full py-2 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {expandedInsts.has(inst)
+                          ? '접기 ▲'
+                          : `이 기관의 나머지 ${instFindings.length - 5}건 보기 ▼`}
+                      </button>
+                    )}
                   </div>
                 </div>
               );
             })}
+            {sortedInsts.length > visibleInsts && (
+              <button
+                onClick={() => setVisibleInsts(v => v + 50)}
+                className="w-full py-3 rounded-xl border border-gray-200 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
+              >
+                기관 더 보기 ({Math.min(50, sortedInsts.length - visibleInsts)}개 추가 · 남은 기관 {(sortedInsts.length - visibleInsts).toLocaleString()}개)
+              </button>
+            )}
           </div>
         );
       })()}

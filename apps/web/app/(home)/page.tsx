@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getPresidents, getFiscalData, getDepartmentScores, getAuditFlags, getBills, getNewsEvents, getMediaOutlets, getLegislators } from '@/lib/data';
 
 // ISR: 홈페이지는 1시간마다 재생성
@@ -5,6 +6,8 @@ export const revalidate = 3600;
 import Sparkline from '@/components/charts/Sparkline';
 import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 import HomeRealDataOverlay from './HomeRealDataOverlay';
+import HomeSearchBox from './HomeSearchBox';
+import RegionQuickFinder from './RegionQuickFinder';
 
 export default function HomePage() {
   const presidents = getPresidents();
@@ -63,9 +66,12 @@ export default function HomePage() {
           >
             의견이 아닌 데이터. 같은 기준, 모든 정부.
           </p>
+          <HomeSearchBox />
+          <RegionQuickFinder />
           <div className="flex flex-wrap gap-3 mt-8">
-            <a href="/presidents" className="btn-primary">대통령 비교 보기</a>
-            <a href="/budget" className="btn-secondary">예산 흐름 보기</a>
+            <Link href="/presidents" className="btn-primary">대통령 비교 보기</Link>
+            <Link href="/budget" className="btn-secondary">예산 흐름 보기</Link>
+            <Link href="/popular" className="btn-secondary">화제의 감사 보기</Link>
           </div>
         </div>
       </section>
@@ -76,88 +82,34 @@ export default function HomePage() {
         seedLegislatorCount={legislators.length}
       />
 
-      {/* ━━━ NUMBERS BAR ━━━ */}
+      {/* ━━━ NUMBERS BAR (각 수치는 해당 섹션으로 연결) ━━━ */}
       <section style={{ backgroundColor: 'var(--apple-gray-6, #F2F2F7)' }}>
         <div className="container-page py-6 sm:py-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6 sm:gap-8">
-            <div>
-              <div
-                className="text-3xl sm:text-4xl font-black tabular-nums"
-                style={{ color: 'var(--color-label, #000)' }}
-              >
-                {latest?.total_spending || 728}
-                <span
-                  className="text-lg font-bold ml-0.5"
-                  style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}
-                >조</span>
-              </div>
-              <div className="text-xs mt-1" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>2026 정부 지출</div>
-            </div>
-            <div>
-              <div
-                className="text-3xl sm:text-4xl font-black tabular-nums"
-                style={{ color: 'var(--color-label, #000)' }}
-              >
-                {latest2024?.national_debt || 1175}
-                <span
-                  className="text-lg font-bold ml-0.5"
-                  style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}
-                >조</span>
-              </div>
-              <div className="text-xs mt-1" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>국가채무</div>
-            </div>
-            <div>
-              <div
-                className="text-3xl sm:text-4xl font-black tabular-nums"
-                style={{ color: 'var(--color-label, #000)' }}
-              >
-                {presidents.length}
-                <span
-                  className="text-lg font-bold ml-0.5"
-                  style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}
-                >명</span>
-              </div>
-              <div className="text-xs mt-1" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>역대 대통령</div>
-            </div>
-            <div>
-              <div
-                className="text-3xl sm:text-4xl font-black tabular-nums"
-                style={{ color: 'var(--color-label, #000)' }}
-              >
-                {legislators.length}
-                <span
-                  className="text-lg font-bold ml-0.5"
-                  style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}
-                >명</span>
-              </div>
-              <div className="text-xs mt-1" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>국회의원 추적</div>
-            </div>
-            <div className="hidden lg:block">
-              <div
-                className="text-3xl sm:text-4xl font-black tabular-nums"
-                style={{ color: 'var(--color-label, #000)' }}
-              >
-                {bills.length}
-                <span
-                  className="text-lg font-bold ml-0.5"
-                  style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}
-                >건</span>
-              </div>
-              <div className="text-xs mt-1" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>법안 분석</div>
-            </div>
-            <div className="hidden lg:block">
-              <div
-                className="text-3xl sm:text-4xl font-black tabular-nums"
-                style={{ color: 'var(--color-label, #000)' }}
-              >
-                {auditFlags.length}
-                <span
-                  className="text-lg font-bold ml-0.5"
-                  style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}
-                >건</span>
-              </div>
-              <div className="text-xs mt-1" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>AI 감지 패턴</div>
-            </div>
+            {([
+              [`${latest?.total_spending || 728}`, '조', '2026 정부 지출', '/budget', ''],
+              [`${latest2024?.national_debt || 1175}`, '조', '국가채무', '/budget', ''],
+              [`${presidents.length}`, '명', '역대 대통령', '/presidents', ''],
+              [`${legislators.length}`, '명', '국회의원 추적', '/legislators', ''],
+              [`${bills.length}`, '건', '법안 분석', '/bills', 'hidden lg:block'],
+              [`${auditFlags.length}`, '건', 'AI 감지 패턴', '/audit', 'hidden lg:block'],
+            ] as [string, string, string, string, string][]).map(([num, unit, label, href, cls]) => (
+              <Link key={label} href={href} className={`${cls} group`}>
+                <div
+                  className="text-3xl sm:text-4xl font-black tabular-nums group-hover:text-blue-600 transition-colors"
+                  style={{ color: 'var(--color-label, #000)' }}
+                >
+                  {num}
+                  <span
+                    className="text-lg font-bold ml-0.5"
+                    style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}
+                  >{unit}</span>
+                </div>
+                <div className="text-xs mt-1" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>
+                  {label} <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -167,7 +119,7 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
 
           {/* 대통령 비교 */}
-          <a href="/presidents" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+          <Link href="/presidents" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
               <span
                 className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -189,10 +141,10 @@ export default function HomePage() {
               <span className="text-xs ml-3" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>외 {presidents.length - 4}명</span>
             </div>
             <Sparkline data={spendingTrend} width={280} height={36} color="#007AFF" showArea />
-          </a>
+          </Link>
 
           {/* 예산 */}
-          <a href="/budget" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+          <Link href="/budget" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
               <span
                 className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -223,10 +175,10 @@ export default function HomePage() {
             <div className="mt-4">
               <Sparkline data={debtTrend} width={280} height={36} color="#34C759" showArea />
             </div>
-          </a>
+          </Link>
 
           {/* AI 감사 */}
-          <a href="/audit" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+          <Link href="/audit" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
               <span
                 className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -270,10 +222,10 @@ export default function HomePage() {
                 />
               ))}
             </div>
-          </a>
+          </Link>
 
           {/* 법안 */}
-          <a href="/bills" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+          <Link href="/bills" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
               <span
                 className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -306,10 +258,10 @@ export default function HomePage() {
               <div className="transition-all" style={{ backgroundColor: '#FF9500', width: `${(pendingBills / bills.length) * 100}%` }} />
               <div className="transition-all" style={{ backgroundColor: 'var(--apple-red, #FF3B30)', width: `${(bills.filter(b => b.status === '폐기').length / bills.length) * 100}%` }} />
             </div>
-          </a>
+          </Link>
 
           {/* 국회의원 */}
-          <a href="/legislators" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+          <Link href="/legislators" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
               <span
                 className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -337,10 +289,10 @@ export default function HomePage() {
                 <div className="text-[10px]" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>정당</div>
               </div>
             </div>
-          </a>
+          </Link>
 
           {/* 뉴스 프레임 */}
-          <a href="/news" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+          <Link href="/news" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
               <span
                 className="text-xs font-semibold px-2.5 py-1 rounded-full"
@@ -380,7 +332,53 @@ export default function HomePage() {
               <span>{newsEvents.length}개 이벤트</span>
               <span>{newsEvents.reduce((s, e) => s + (e.article_count || 0), 0).toLocaleString()}건 기사</span>
             </div>
-          </a>
+          </Link>
+
+          {/* 화제의 감사 */}
+          <Link href="/popular" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span
+                className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                style={{ color: '#FF2D55', backgroundColor: 'rgba(255,45,85,0.1)' }}
+              >화제</span>
+              <svg
+                className="w-4 h-4 transition-all group-hover:translate-x-1"
+                style={{ color: 'var(--apple-blue, #007AFF)', opacity: 0 }}
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              ><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-label, #000)' }}>화제의 감사</h3>
+            <p className="text-sm mb-5" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>
+              지금 뉴스를 달구는 이슈를 실제 감사 데이터와 교차 검증합니다.
+            </p>
+            <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>
+              <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: '#FF2D55' }} />
+              <span>이번 주 화제 뉴스 × 조달 계약 기록 대조</span>
+            </div>
+          </Link>
+
+          {/* 지역 재정 */}
+          <Link href="/local" className="card group relative p-6 block hover:-translate-y-1 transition-all duration-300">
+            <div className="flex items-center justify-between mb-5">
+              <span
+                className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                style={{ color: '#00C7BE', backgroundColor: 'rgba(0,199,190,0.1)' }}
+              >지역</span>
+              <svg
+                className="w-4 h-4 transition-all group-hover:translate-x-1"
+                style={{ color: 'var(--apple-blue, #007AFF)', opacity: 0 }}
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+              ><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-label, #000)' }}>내 지역 재정</h3>
+            <p className="text-sm mb-5" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>
+              우리 동네 재정자립도, 채무, 인구 변화를 17개 시도별로 봅니다.
+            </p>
+            <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>
+              <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: '#00C7BE' }} />
+              <span>17개 시도 · 재정자립도 · 소멸위험</span>
+            </div>
+          </Link>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
+import { useUrlState } from '@/lib/hooks/useUrlState';
 import type { InternationalComparison } from '@/lib/types';
 
 // Metric pill label mapping (shorter labels for pills)
@@ -43,7 +44,7 @@ interface ComparePageClientProps {
 }
 
 export default function ComparePageClient({ metrics }: ComparePageClientProps) {
-  const [selectedId, setSelectedId] = useState(metrics[0]?.metric_id || 'debt_to_gdp');
+  const [selectedId, setSelectedId] = useUrlState('metric', metrics[0]?.metric_id || 'debt_to_gdp');
 
   const selected = useMemo(
     () => metrics.find((m) => m.metric_id === selectedId) || metrics[0],

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: '요금제',
@@ -202,15 +203,28 @@ export default function PricingPage() {
             </ul>
 
             {/* CTA */}
-            <button
-              className={`w-full py-3 rounded-xl font-semibold text-sm transition-all ${
-                tier.highlighted
-                  ? 'bg-accent text-white hover:bg-orange-600 shadow-sm'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {tier.cta}
-            </button>
+            {tier.id === 'institution' ? (
+              <a
+                href="mailto:contact@gukjeong.kr"
+                className="w-full py-3 rounded-xl font-semibold text-sm transition-all bg-gray-100 text-gray-700 hover:bg-gray-200 text-center block"
+              >
+                문의하기
+              </a>
+            ) : tier.price === '0' ? (
+              <Link
+                href="/"
+                className="w-full py-3 rounded-xl font-semibold text-sm transition-all bg-gray-100 text-gray-700 hover:bg-gray-200 text-center block"
+              >
+                무료로 이용하기
+              </Link>
+            ) : (
+              <button
+                disabled
+                className="w-full py-3 rounded-xl font-semibold text-sm bg-accent/50 text-white cursor-not-allowed opacity-60"
+              >
+                준비 중
+              </button>
+            )}
           </div>
         ))}
       </div>

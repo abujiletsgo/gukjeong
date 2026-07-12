@@ -7,6 +7,7 @@ import PatternBadge from '@/components/audit/PatternBadge';
 import ScoreBar from '@/components/common/ScoreBar';
 import RichText from '@/components/common/RichText';
 import FindingShareBar from '@/components/audit/FindingShareBar';
+import BackLink from '@/components/common/BackLink';
 import { useAuditEnrich } from '@/hooks/useAuditEnrich';
 
 interface AuditDetailClientProps {
@@ -352,6 +353,134 @@ function CorruptionEvidenceSection({ flag }: { flag: AuditFlag }) {
   );
 }
 
+// ── 한눈에 보기 히어로 ──
+// 첫 화면에서 "누가 / 무슨 일이 / 얼마나 심각한지 / 핵심 숫자"가 한 번에 읽히도록 한다.
+
+function firstSentence(text: string): string {
+  if (!text) return '';
+  return text.split(/(?<=다\.)\s+/)[0] ?? text;
+}
+
+const VERDICT_CHIP: Record<string, { label: string; cls: string; dot: string }> = {
+  suspicious:  { label: '의심 확실',   cls: 'bg-red-100 text-red-700',     dot: '#FF3B30' },
+  investigate: { label: '조사 필요',   cls: 'bg-amber-100 text-amber-700', dot: '#FF9500' },
+  legitimate:  { label: '정상 가능성', cls: 'bg-green-100 text-green-700', dot: '#34C759' },
+};
+
+function ScoreDial({ score, color }: { score: number; color: string }) {
+  const r = 32;
+  const c = 2 * Math.PI * r;
+  return (
+    <div className="relative w-24 h-24" role="img" aria-label={`의심 점수 ${score}점 (100점 만점)`}>
+      <svg viewBox="0 0 80 80" className="w-24 h-24 -rotate-90">
+        <circle cx="40" cy="40" r={r} fill="none" stroke="#F2F2F7" strokeWidth="7" />
+        <circle
+          cx="40" cy="40" r={r} fill="none" stroke={color} strokeWidth="7" strokeLinecap="round"
+          strokeDasharray={c} strokeDashoffset={c * (1 - Math.min(score, 100) / 100)}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-2xl font-black tabular-nums" style={{ color }}>{score}</span>
+        <span className="text-[10px] text-gray-400">/100</span>
+      </div>
+    </div>
+  );
+}
+
+function GlanceHero({ flag }: { flag: AuditFlag }) {
+  const score = flag.suspicion_score;
+  const severityColor = getSeverityColor(score);
+  const detail = (flag.detail || {}) as Record<string, unknown>;
+  const verdict = flag.verdict ? VERDICT_CHIP[flag.verdict] : undefined;
+
+  // detail 객체에서 "한눈 숫자"가 될 짧은 값 위주로 최대 4개 추출
+  const keyFacts = Object.entries(detail)
+    .filter(([, v]) => (typeof v === 'string' && v.length > 0 && v.length <= 42) || typeof v === 'number')
+    .slice(0, 4);
+
+  const glance: { q: string; a: string; accent: string }[] = [
+    flag.plain_explanation && { q: '무슨 일이?', a: firstSentence(flag.plain_explanation), accent: '#007AFF' },
+    flag.why_it_matters && { q: '왜 문제인가?', a: firstSentence(flag.why_it_matters), accent: '#FF9500' },
+    (verdict || flag.confidence_label) && {
+      q: '지금 상태는?',
+      a: `AI 판정 ${verdict?.label ?? '분석 중'}${flag.confidence_label ? ` · 신뢰도 ${flag.confidence_label}` : ''}${flag.verdict_reason ? `. ${firstSentence(flag.verdict_reason)}` : ''}`,
+      accent: verdict?.dot ?? '#8E8E93',
+    },
+  ].filter(Boolean) as { q: string; a: string; accent: string }[];
+
+  return (
+    <div className="card mb-6 overflow-hidden p-0">
+      <div className="h-2" style={{ backgroundColor: severityColor }} />
+      <div className="p-5 sm:p-6">
+        {/* 배지 행 */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <PatternBadge pattern={flag.pattern_type} size="md" />
+          <span
+            className="text-xs font-semibold px-2 py-0.5 rounded-full"
+            style={{ backgroundColor: `${severityColor}18`, color: severityColor }}
+          >
+            심각도 {getSeverityLabel(score)}
+          </span>
+          {verdict && (
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${verdict.cls}`}>
+              {verdict.label}
+            </span>
+          )}
+          {flag.created_at && (
+            <span className="text-xs text-gray-400">탐지일 {flag.created_at.replace(/-/g, '.')}</span>
+          )}
+        </div>
+
+        {/* 제목 + 요약 + 점수 다이얼 */}
+        <div className="flex items-start justify-between gap-5">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">
+              {flag.target_institution || flag.target_id}
+            </h1>
+            <p className="text-sm text-gray-400 mt-0.5">{patternLabels[flag.pattern_type] || flag.pattern_type}</p>
+            {flag.summary && (
+              <p className="text-[15px] sm:text-base text-gray-700 mt-3 leading-relaxed">
+                {flag.summary}
+              </p>
+            )}
+          </div>
+          <div className="shrink-0 flex flex-col items-center">
+            <ScoreDial score={score} color={severityColor} />
+            <span className="text-[11px] text-gray-400 mt-1">의심 점수</span>
+          </div>
+        </div>
+
+        {/* 핵심 숫자 타일 */}
+        {keyFacts.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5">
+            {keyFacts.map(([k, v]) => (
+              <div key={k} className="rounded-xl px-3 py-2.5" style={{ backgroundColor: 'var(--apple-gray-6, #F2F2F7)' }}>
+                <div className="text-[11px] text-gray-400 mb-0.5">{formatKeyLabel(k)}</div>
+                <div className="text-sm font-bold text-gray-900 break-keep">{String(v)}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 3문 3답 글랜스 스트립 */}
+        {glance.length > 0 && (
+          <div className="grid sm:grid-cols-3 gap-3 mt-5">
+            {glance.map(({ q, a, accent }) => (
+              <div key={q} className="rounded-xl border border-gray-100 p-3.5">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: accent }} />
+                  <span className="text-xs font-bold text-gray-500">{q}</span>
+                </div>
+                <p className="text-[13px] text-gray-700 leading-snug">{a}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const [expandedContract, setExpandedContract] = useState<number | null>(null);
   const [expandedCase, setExpandedCase] = useState<number | null>(0); // first case expanded by default
@@ -400,10 +529,17 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
 
   return (
     <div className="container-page py-6 sm:py-8">
-      {/* ── 뒤로가기 ── */}
-      <a href="/audit" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 mb-4 transition-colors">
-        <span aria-hidden="true">&larr;</span> 감사 대시보드
-      </a>
+      {/* ── 뒤로가기 (원위치 복귀: /popular·/search 등 유입 출처로 복귀) ── */}
+      <div className="mb-4">
+        <BackLink
+          fallback="/audit"
+          label="감사 목록"
+          className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+        />
+      </div>
+
+      {/* ═══ 한눈에 보기 히어로 ═══ */}
+      <GlanceHero flag={flag} />
 
       {/* ── 조사 판정 배너 ── */}
       {flag.verdict && (() => {
@@ -479,43 +615,12 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
         </div>
       )}
 
-      {/* ═══ 1. Header ═══ */}
-      <div className="card mb-6 overflow-hidden">
-        <div className="h-2" style={{ backgroundColor: severityColor }} />
-        <div className="p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <PatternBadge pattern={patternType} size="md" />
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mt-3">
-                {patternLabels[patternType] || patternType}
-              </h1>
-              <p className="text-gray-500 mt-1">{targetId}</p>
-              <div className="flex items-center gap-3 mt-2 flex-wrap">
-                {createdAt && (
-                  <span className="text-xs text-gray-400">
-                    탐지일: {createdAt.replace(/-/g, '.')}
-                  </span>
-                )}
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: `${severityColor}15`, color: severityColor }}>
-                  {flag.severity === 'HIGH' ? '높음' : flag.severity === 'MEDIUM' ? '보통' : '낮음'}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {targetType === 'department' ? '정부 부처' : targetType}
-                </span>
-              </div>
-            </div>
-            <div className="text-right flex-shrink-0">
-              <div className="text-4xl font-bold" style={{ color: severityColor }}>
-                {score}
-              </div>
-              <div className="text-sm text-gray-500">{getSeverityLabel(score)}</div>
-            </div>
-          </div>
-          <div className="mt-4">
-            <ScoreBar score={score} label="의심 점수" />
-          </div>
-        </div>
-      </div>
+      {/* ── 공유 / 신고 바 (하단 고정) ── */}
+      <FindingShareBar
+        findingId={flag.id}
+        institution={flag.target_institution ?? targetId}
+        patternType={patternType}
+      />
 
       {/* ═══ 2. "쉽게 말하면" Section ═══ */}
       {(plainExplanation || whyItMatters || citizenImpact) && (

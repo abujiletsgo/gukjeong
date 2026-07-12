@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import '@/styles/globals.css';
 import { DataModeProvider } from '@/lib/context/DataModeContext';
 import DataModeToggle from '@/components/common/DataModeToggle';
 import DataModeBanner from '@/components/common/DataModeBanner';
+import SiteNav from '@/components/common/SiteNav';
+import MobileTabBar from '@/components/common/MobileTabBar';
+import { NavTracker } from '@/components/common/BackLink';
 
 export const metadata: Metadata = {
   title: {
@@ -52,56 +56,6 @@ const jsonLdApp = {
   creator: { '@type': 'Organization', name: '국정투명', url: 'https://gukjeong.kr' },
 };
 
-const NAV_LINKS = [
-  { href: '/presidents', label: '대통령' },
-  { href: '/budget', label: '예산' },
-  { href: '/bills', label: '법안' },
-  { href: '/legislators', label: '국회의원' },
-  { href: '/legislators/ranking', label: '의원 랭킹' },
-  { href: '/audit', label: 'AI 감사' },
-  { href: '/popular', label: '화제의 감사' },
-  { href: '/news', label: '뉴스' },
-];
-
-const MOBILE_NAV = [
-  { href: '/', label: '홈', icon: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor">
-      <path d="M3 12l9-8 9 8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M5 10v10h4v-6h6v6h4V10" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )},
-  { href: '/presidents', label: '대통령', icon: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor">
-      <path d="M12 2a5 5 0 110 10A5 5 0 0112 2z" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M4 22c0-4 3.6-7 8-7s8 3 8 7" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )},
-  { href: '/budget', label: '예산', icon: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor">
-      <rect x="3" y="3" width="18" height="18" rx="3" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M3 9h18M9 21V9" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )},
-  { href: '/legislators', label: '의원', icon: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )},
-  { href: '/audit', label: '감사', icon: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor">
-      <circle cx="11" cy="11" r="8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M21 21l-4.35-4.35" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )},
-  { href: '/news', label: '뉴스', icon: (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" strokeWidth="1.5" stroke="currentColor">
-      <path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )},
-];
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
@@ -118,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <DataModeProvider>
+          <NavTracker />
           {/* ── Apple Liquid Glass Header ── */}
           <header
             className="sticky top-0 z-50"
@@ -130,31 +85,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           >
             <div className="container-page flex items-center justify-between h-14">
               {/* Logo */}
-              <a
+              <Link
                 href="/"
                 className="text-lg font-bold tracking-tight text-gray-900 hover:opacity-70 transition-opacity"
                 style={{ letterSpacing: '-0.5px' }}
               >
                 국정투명
-              </a>
+              </Link>
 
               {/* Desktop Nav */}
-              <nav className="hidden md:flex items-center gap-1" aria-label="주요 메뉴">
-                {NAV_LINKS.map(({ href, label }) => (
-                  <a
-                    key={href}
-                    href={href}
-                    className="nav-link"
-                  >
-                    {label}
-                  </a>
-                ))}
-              </nav>
+              <SiteNav />
 
               {/* Right actions */}
               <div className="flex items-center gap-2">
                 <DataModeToggle />
-                <a
+                <Link
                   href="/search"
                   className="flex items-center justify-center w-8 h-8 rounded-full text-gray-500 hover:bg-black/5 transition-colors"
                   aria-label="검색"
@@ -163,7 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <circle cx="11" cy="11" r="8"/>
                     <path d="M21 21l-4.35-4.35"/>
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
           </header>
@@ -177,43 +122,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
 
           {/* ── Apple Bottom Tab Bar (mobile) ── */}
-          <nav
-            className="md:hidden fixed bottom-0 left-0 right-0 z-50"
-            aria-label="모바일 메뉴"
-            style={{
-              background: 'rgba(255, 255, 255, 0.85)',
-              backdropFilter: 'blur(20px) saturate(1.8)',
-              WebkitBackdropFilter: 'blur(20px) saturate(1.8)',
-              borderTop: '0.5px solid rgba(60, 60, 67, 0.12)',
-              paddingBottom: 'env(safe-area-inset-bottom)',
-            }}
-          >
-            <div className="flex justify-around py-2">
-              {MOBILE_NAV.map(({ href, label, icon }) => (
-                <a
-                  key={href}
-                  href={href}
-                  className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-xl transition-colors text-gray-400 hover:text-blue-500"
-                  style={{ minWidth: 44, minHeight: 44, justifyContent: 'center' }}
-                >
-                  {icon}
-                  <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.2px' }}>{label}</span>
-                </a>
-              ))}
-            </div>
-          </nav>
+          <MobileTabBar />
 
           {/* ── Footer ── */}
           <footer
-            className="hidden md:block py-12"
+            className="py-12 pb-28 md:pb-12"
             style={{
               background: '#F2F2F7',
               borderTop: '0.5px solid rgba(60, 60, 67, 0.12)',
             }}
           >
             <div className="container-page">
-              <div className="grid grid-cols-4 gap-8">
-                <div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="col-span-2 md:col-span-1">
                   <h3 className="font-bold text-gray-900 mb-3" style={{ fontSize: 15, letterSpacing: '-0.2px' }}>국정투명</h3>
                   <p className="text-gray-500" style={{ fontSize: 13 }}>수치로 보는 대한민국 정부</p>
                   <p className="text-gray-400 mt-2" style={{ fontSize: 12 }}>모든 데이터는 공공데이터포털 및 정부 공개 자료 기반</p>
@@ -221,24 +142,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div>
                   <h4 className="font-semibold text-gray-500 mb-3" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.8px' }}>데이터</h4>
                   <ul className="space-y-2">
-                    {[['대통령 비교', '/presidents'], ['예산 시각화', '/budget'], ['법안 추적', '/bills'], ['국회의원 활동', '/legislators']].map(([label, href]) => (
-                      <li key={href}><a href={href} className="text-gray-500 hover:text-blue-500 transition-colors" style={{ fontSize: 14 }}>{label}</a></li>
+                    {[['대통령 비교', '/presidents'], ['예산 시각화', '/budget'], ['법안 추적', '/bills'], ['국회의원 활동', '/legislators'], ['의원 랭킹', '/legislators/ranking'], ['지역 재정', '/local']].map(([label, href]) => (
+                      <li key={href}><Link href={href} className="text-gray-500 hover:text-blue-500 transition-colors" style={{ fontSize: 14 }}>{label}</Link></li>
                     ))}
                   </ul>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-500 mb-3" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.8px' }}>분석</h4>
                   <ul className="space-y-2">
-                    {[['AI 감사관', '/audit'], ['뉴스 프레임', '/news'], ['국제 비교', '/compare'], ['예산 시뮬레이터', '/simulator']].map(([label, href]) => (
-                      <li key={href}><a href={href} className="text-gray-500 hover:text-blue-500 transition-colors" style={{ fontSize: 14 }}>{label}</a></li>
+                    {[['AI 감사관', '/audit'], ['화제의 감사', '/popular'], ['뉴스 프레임', '/news'], ['실시간 뉴스 분석', '/news/live'], ['국제 비교', '/compare'], ['예산 시뮬레이터', '/simulator']].map(([label, href]) => (
+                      <li key={href}><Link href={href} className="text-gray-500 hover:text-blue-500 transition-colors" style={{ fontSize: 14 }}>{label}</Link></li>
                     ))}
                   </ul>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-500 mb-3" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.8px' }}>정보</h4>
                   <ul className="space-y-2">
-                    {[['소개', '/about'], ['요금제', '/pricing']].map(([label, href]) => (
-                      <li key={href}><a href={href} className="text-gray-500 hover:text-blue-500 transition-colors" style={{ fontSize: 14 }}>{label}</a></li>
+                    {[['통합 검색', '/search'], ['소개', '/about'], ['요금제', '/pricing']].map(([label, href]) => (
+                      <li key={href}><Link href={href} className="text-gray-500 hover:text-blue-500 transition-colors" style={{ fontSize: 14 }}>{label}</Link></li>
                     ))}
                   </ul>
                 </div>

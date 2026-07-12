@@ -1,9 +1,15 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import type { Legislator, LegislatorBill } from '@/lib/types';
 import Link from 'next/link';
+import BackLink from '@/components/common/BackLink';
 import WordsVsActions from '@/components/legislators/WordsVsActions';
+
+/** 뉴라인 없는 다문장 산문을 문장 단위로 분리 (다./요. 경계 기준) */
+function toSentences(text: string): string[] {
+  return text.split(/(?<=[다요]\.)\s+/).map(s => s.trim()).filter(Boolean);
+}
 
 // ── 정당 색상 (배지 전용) ──
 const PARTY_COLORS: Record<string, string> = {
@@ -399,6 +405,20 @@ function ExpandableList<T>({
 
 // ── Bill detail modal ──
 function BillDetailModal({ bill, onClose }: { bill: LegislatorBill; onClose: () => void }) {
+  // Esc 닫기 + 열려 있는 동안 배경 스크롤 잠금
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
   const statusCls = bill.passed
     ? 'bg-emerald-100 text-emerald-700'
     : bill.PROC_RESULT === '대안반영폐기' || bill.PROC_RESULT === '수정안반영폐기'
@@ -470,7 +490,11 @@ function BillDetailModal({ bill, onClose }: { bill: LegislatorBill; onClose: () 
           {bill.summary && (
             <div className="mb-3">
               <p className="text-xs font-semibold text-gray-500 mb-1">법안 내용</p>
-              <p className="text-sm text-gray-700 leading-relaxed">{bill.summary}</p>
+              <div className="space-y-1">
+                {toSentences(bill.summary).map((s, i) => (
+                  <p key={i} className="text-sm text-gray-700 leading-relaxed">{s}</p>
+                ))}
+              </div>
             </div>
           )}
 
@@ -478,7 +502,11 @@ function BillDetailModal({ bill, onClose }: { bill: LegislatorBill; onClose: () 
           {bill.who_affected && (
             <div className="mb-3">
               <p className="text-xs font-semibold text-gray-500 mb-1">영향 받는 대상</p>
-              <p className="text-sm text-gray-700">{bill.who_affected}</p>
+              <div className="space-y-1">
+                {toSentences(bill.who_affected).map((s, i) => (
+                  <p key={i} className="text-sm text-gray-700">{s}</p>
+                ))}
+              </div>
             </div>
           )}
 
@@ -708,12 +736,13 @@ export default function LegislatorDetailClient({ legislator, allLegislators }: L
 
       {/* ── 뒤로가기 + 헤더 ── */}
       <div>
-        <Link href="/legislators" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          국회의원 목록
-        </Link>
+        <div className="mb-4">
+          <BackLink
+            fallback="/legislators"
+            label="의원 목록"
+            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+          />
+        </div>
 
         <div className="card overflow-hidden">
           {/* 정당 색상 바 */}

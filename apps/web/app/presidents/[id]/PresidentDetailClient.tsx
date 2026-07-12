@@ -3,6 +3,8 @@
 import { useState, useMemo } from 'react';
 import type { President, FiscalYearly, CampaignPledge, NationalAgenda, ReportCardMetric, KeyEvent } from '@/lib/types';
 import type { BudgetComparison } from '@/lib/data';
+import { useUrlState } from '@/lib/hooks/useUrlState';
+import BackLink from '@/components/common/BackLink';
 import KPI from '@/components/common/KPI';
 import DebtChart from '@/components/charts/DebtChart';
 import StackedArea from '@/components/charts/StackedArea';
@@ -78,7 +80,8 @@ export default function PresidentDetailClient({
   keyEvents,
   budgetComparison,
 }: PresidentDetailClientProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [activeTabRaw, setActiveTab] = useUrlState('tab', 'overview');
+  const activeTab = activeTabRaw as TabId;
   const [pledgeFilter, setPledgeFilter] = useState<string>('all');
   const [pledgeCategoryFilter, setPledgeCategoryFilter] = useState<string>('all');
   const [pledgeSort, setPledgeSort] = useState<'pct' | 'status'>('pct');
@@ -169,9 +172,9 @@ export default function PresidentDetailClient({
   return (
     <div className="container-page py-6 sm:py-8">
       {/* 뒤로가기 */}
-      <a href="/presidents" className="text-sm text-gray-400 hover:text-gray-600 mb-4 inline-block transition-colors">
-        ← 대통령 목록
-      </a>
+      <div className="mb-4">
+        <BackLink fallback="/presidents" label="대통령 비교" className="text-sm text-gray-400 hover:text-gray-600 inline-flex items-center gap-1 transition-colors" />
+      </div>
 
       {/* ===== 히어로 헤더 ===== */}
       <div className="card mb-6 overflow-hidden">
@@ -571,20 +574,44 @@ export default function PresidentDetailClient({
               <span className="ai-badge">AI 분석</span>
               <h2 className="font-bold text-lg text-purple-900">종합 평가</h2>
             </div>
-            <p className="text-sm text-purple-800 leading-relaxed">
-              {president.name} 대통령의 임기({termStart.substring(0, 4)}~{isCurrentPresident ? '현재' : termEnd.substring(0, 4)})를 종합적으로 분석하면,{' '}
-              {reportCard.filter(m => m.trend === 'improved').length}개 지표에서 개선,{' '}
-              {reportCard.filter(m => m.trend === 'worsened').length}개 지표에서 악화,{' '}
-              {reportCard.filter(m => m.trend === 'stable').length}개 지표에서 정체를 보였습니다.
+            <p className="text-sm text-purple-800 mb-4">
+              {president.name} 대통령 임기({termStart.substring(0, 4)}~{isCurrentPresident ? '현재' : termEnd.substring(0, 4)}) 종합 지표
+            </p>
+            <dl className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg bg-white/60 px-3 py-2.5">
+                <dt className="text-xs text-purple-500">개선 지표</dt>
+                <dd className="text-lg font-bold text-emerald-600">{reportCard.filter(m => m.trend === 'improved').length}개</dd>
+              </div>
+              <div className="rounded-lg bg-white/60 px-3 py-2.5">
+                <dt className="text-xs text-purple-500">악화 지표</dt>
+                <dd className="text-lg font-bold text-rose-600">{reportCard.filter(m => m.trend === 'worsened').length}개</dd>
+              </div>
+              <div className="rounded-lg bg-white/60 px-3 py-2.5">
+                <dt className="text-xs text-purple-500">정체 지표</dt>
+                <dd className="text-lg font-bold text-gray-500">{reportCard.filter(m => m.trend === 'stable').length}개</dd>
+              </div>
               {pledges.length > 0 && (
-                <> 전체 {pledges.length}개 공약 중 평균 이행률은 {pledgeStats.avgPct}%이며, {
-                  pledgeStats.statusData.find(s => s.status === '이행완료')?.count || 0
-                }개가 완료되었습니다.</>
+                <>
+                  <div className="rounded-lg bg-white/60 px-3 py-2.5">
+                    <dt className="text-xs text-purple-500">공약 평균 이행률</dt>
+                    <dd className="text-lg font-bold text-purple-900">{pledgeStats.avgPct}%</dd>
+                  </div>
+                  <div className="rounded-lg bg-white/60 px-3 py-2.5">
+                    <dt className="text-xs text-purple-500">이행완료 공약</dt>
+                    <dd className="text-lg font-bold text-purple-900">
+                      {pledgeStats.statusData.find(s => s.status === '이행완료')?.count || 0}
+                      <span className="text-sm font-normal text-purple-400"> / {pledges.length}개</span>
+                    </dd>
+                  </div>
+                </>
               )}
               {agendas.length > 0 && (
-                <> {agendas.length}개 국정과제의 평균 이행률은 {agendaCompletionRate}%입니다.</>
+                <div className="rounded-lg bg-white/60 px-3 py-2.5">
+                  <dt className="text-xs text-purple-500">국정과제 평균 이행률</dt>
+                  <dd className="text-lg font-bold text-purple-900">{agendaCompletionRate}%</dd>
+                </div>
               )}
-            </p>
+            </dl>
             <p className="text-[10px] text-purple-400 mt-3">
               * 이 분석은 AI가 공개 데이터를 기반으로 생성한 것으로, 정치적 견해를 반영하지 않습니다.
             </p>

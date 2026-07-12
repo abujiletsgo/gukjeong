@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { Metadata } from 'next';
 import type { Bill } from '@/lib/types';
+import { getBillsFromDB } from '@/lib/db/queries';
 import BillsPageClient from './BillsPageClient';
 
 export const revalidate = 21600;
@@ -40,7 +41,20 @@ const AREA_TO_CATEGORY: Record<string, string> = {
   '문화/체육':  '미디어',
 };
 
+// bills.json (~20MB) + bills-enriched.json (~14MB) are read, parsed, sorted
+// and mapped on every request. Memoize the final result for the lifetime of
+// the server process so only the first request pays that cost.
+let _billsCache: { bills: Bill[]; total: number } | undefined;
+
 function loadBills(): { bills: Bill[]; total: number } {
+  if (_billsCache !== undefined) return _billsCache;
+  const result = loadBillsUncached();
+  // Only cache a successful, non-empty load so a transient miss can retry.
+  if (result.bills.length > 0) _billsCache = result;
+  return result;
+}
+
+function loadBillsUncached(): { bills: Bill[]; total: number } {
   const rawPath = path.join(process.cwd(), '..', '..', 'apps/web/data/bills.json');
   const dataPath = path.join(process.cwd(), 'data/bills.json');
   const enrichedPath = path.join(process.cwd(), 'public/data/bills-enriched.json');
@@ -95,7 +109,14 @@ function loadBills(): { bills: Bill[]; total: number } {
   return { bills, total: rawItems.length };
 }
 
-export default function BillsPage() {
+export default async function BillsPage() {
+  const { bills: dbBills, total: dbTotal } = await getBillsFromDB({ pageSize: 400 });
+
+  if (dbBills.length > 0) {
+    return <BillsPageClient bills={dbBills} totalCount={dbTotal} />;
+  }
+
+  // Fall back to JSON
   const { bills, total } = loadBills();
   return <BillsPageClient bills={bills} totalCount={total} />;
 }

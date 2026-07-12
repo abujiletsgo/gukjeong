@@ -3,8 +3,9 @@
 // Live mode: /data/legislators-real.json (295 real legislators from 열린국회정보)
 //            /data/voting-records.json (participation data per MONA_CD)
 // Demo mode: seed data passed as props (unchanged)
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { useUrlState } from '@/lib/hooks/useUrlState';
 import { useDataMode } from '@/lib/context/DataModeContext';
 import type { Legislator } from '@/lib/types';
 
@@ -711,6 +712,14 @@ function RealLegislatorCard({
               </div>
             )}
           </div>
+
+          {/* 상세 프로필 페이지 링크 (딥링크·공유·뒤로가기 지원) */}
+          <Link
+            href={`/legislators/${raw.MONA_CD}`}
+            className="mt-3 flex items-center justify-center gap-1 w-full py-2 rounded-lg bg-gray-900 text-white text-xs font-medium hover:bg-gray-700 transition-colors"
+          >
+            상세 프로필 →
+          </Link>
         </div>
       )}
     </div>
@@ -879,24 +888,28 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
   const [realData, setRealData] = useState<RealLegislatorData | null>(null);
   const [votingRecords, setVotingRecords] = useState<VotingRecordsData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Page-level tab state
   const [pageLevelTab, setPageLevelTab] = useState<'overview' | 'ranking'>('ranking');
   const [rankCategory, setRankCategory] = useState('composite');
 
-  // Filter state
-  const [partyFilter, setPartyFilter] = useState('전체');
-  const [committeeFilter, setCommitteeFilter] = useState('전체');
-  const [regionFilter, setRegionFilter] = useState('전체');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('bills_desc');
+  // Filter state (URL-persisted: 새로고침/뒤로가기/공유 링크 유지)
+  const [partyFilter, setPartyFilter] = useUrlState('party', '전체');
+  const [committeeFilter, setCommitteeFilter] = useUrlState('committee', '전체');
+  const [regionFilter, setRegionFilter] = useUrlState('region', '전체');
+  const [searchQuery, setSearchQuery] = useUrlState('q', '');
+  const [sortBy, setSortBy] = useUrlState('sort', 'bills_desc');
 
   // Fetch real data + voting records
-  useEffect(() => {
-    if (isDemo) return;
+  const fetchRealData = useCallback(() => {
     setLoading(true);
+    setError(null);
     Promise.all([
-      fetch('/data/legislators-real.json').then(r => r.json()),
+      fetch('/data/legislators-real.json').then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      }),
       fetch('/data/voting-records.json').then(r => r.json()).catch(() => null),
     ])
       .then(([legData, voteData]: [RealLegislatorData, VotingRecordsData | null]) => {
@@ -904,17 +917,31 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
         if (voteData) setVotingRecords(voteData);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, [isDemo]);
+      .catch((e) => {
+        setError(e instanceof Error ? e.message : '데이터를 불러오지 못했습니다.');
+        setLoading(false);
+      });
+  }, []);
 
-  // Reset filters on mode change
   useEffect(() => {
+    if (isDemo) return;
+    fetchRealData();
+  }, [isDemo, fetchRealData]);
+
+  // Reset filters on mode change — but skip the first mount so URL-restored
+  // filters (딥링크/공유 링크) are not clobbered on initial load.
+  const didMountRef = useRef(false);
+  useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
     setPartyFilter('전체');
     setCommitteeFilter('전체');
     setRegionFilter('전체');
     setSearchQuery('');
     setSortBy('bills_desc');
-  }, [isDemo]);
+  }, [isDemo, setPartyFilter, setCommitteeFilter, setRegionFilter, setSearchQuery, setSortBy]);
 
   const rawLegislators = realData?.legislators ?? [];
 
@@ -1230,6 +1257,29 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
       );
     }
 
+    if (error) {
+      return (
+        <div className="container-page py-6 sm:py-8">
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M15 9l-6 6M9 9l6 6" />
+              </svg>
+            </div>
+            <p className="text-red-600 font-medium mb-2">데이터를 불러오지 못했습니다</p>
+            <p className="text-sm text-gray-500 mb-4">{error}</p>
+            <button
+              onClick={fetchRealData}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="container-page py-6 sm:py-8">
         {/* Page header */}
@@ -1240,6 +1290,15 @@ export default function LegislatorsPageClient({ legislators }: LegislatorsPageCl
           <p className="text-sm sm:text-base text-gray-500 mt-1.5 leading-relaxed">
             22대 국회 {rawLegislators.length}명 의원의 법안 발의, 본회의 참여를 공개 데이터로 확인합니다.
           </p>
+          {/* 공식 등록 프로필(열린국회정보 원본) 보기 — 고아 페이지 연결 */}
+          <div className="mt-3">
+            <Link
+              href="/legislators/real"
+              className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              공식 등록 프로필 보기 →
+            </Link>
+          </div>
         </div>
 
         {/* ── Live mode tab bar ── */}

@@ -84,3 +84,4 @@ apps/web/data/dapa-bids.json
 apps/web/data/dapa-contracts.json
 apps/web/data/lh-bids.json
 apps/web/data/lh-contracts.json
+.qa/

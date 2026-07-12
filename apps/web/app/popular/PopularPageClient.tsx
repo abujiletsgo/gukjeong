@@ -2,7 +2,8 @@
 // 화제의 감사 — 화제 뉴스 → 실제 조달 데이터 흔적
 // 데이터: apps/web/public/data/popular-report.json (scripts/generate-popular-report.py)
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import type { PopularReport, PopularEntry } from '@/lib/types';
 
 const PATTERN_KR: Record<string, string> = {
@@ -46,10 +47,22 @@ function EntryCard({ entry, index }: { entry: PopularEntry; index: number }) {
   const [open, setOpen] = useState(index === 0);
   const t = entry.traces;
   const strength = STRENGTH_STYLE[entry.trace_strength] ?? STRENGTH_STYLE['약함'];
+  const anchorId = `theme-${entry.theme_id}`;
+
+  // 공유 링크(#theme-...)로 진입하면 해당 테마를 펼치고 스크롤한다
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.location.hash === `#${anchorId}`) {
+      setOpen(true);
+      document.getElementById(anchorId)?.scrollIntoView({ block: 'start' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section
-      className="rounded-2xl bg-white mb-5 overflow-hidden"
+      id={anchorId}
+      className="rounded-2xl bg-white mb-5 overflow-hidden scroll-mt-4"
       style={{ border: '0.5px solid rgba(60,60,67,0.14)' }}
     >
       {/* Header */}
@@ -156,7 +169,7 @@ function EntryCard({ entry, index }: { entry: PopularEntry; index: number }) {
             </h3>
             <div className="space-y-2.5">
               {t.top_findings.map(f => (
-                <a
+                <Link
                   key={f.id}
                   href={`/audit/${f.id}`}
                   className="block rounded-xl px-4 py-3 hover:bg-black/[0.02] transition-colors"
@@ -194,11 +207,11 @@ function EntryCard({ entry, index }: { entry: PopularEntry; index: number }) {
                     </div>
                   )}
                   {f.innocent_explanation && (
-                    <p className="text-[12px] text-gray-400 mt-1.5 leading-snug">
+                    <p className="text-[12px] text-gray-400 mt-1.5 leading-snug whitespace-pre-line">
                       ⚖️ 무죄 추정: {f.innocent_explanation}
                     </p>
                   )}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -264,11 +277,18 @@ export default function PopularPageClient({ report }: { report: PopularReport })
       </header>
 
       {empty ? (
-        <div className="rounded-2xl bg-white px-5 py-12 text-center text-gray-400 text-sm"
+        <div className="rounded-2xl bg-white px-5 py-12 text-center"
           style={{ border: '0.5px solid rgba(60,60,67,0.14)' }}>
-          리포트 데이터가 아직 생성되지 않았습니다.
-          <br />
-          <code className="text-[12px]">uv run scripts/generate-popular-report.py</code>
+          <p className="text-sm text-gray-500">아직 준비된 화제의 감사 리포트가 없습니다.</p>
+          <p className="text-[13px] text-gray-400 mt-1">
+            새 리포트를 준비하는 동안 AI 감사관에서 최신 발견을 확인해 보세요.
+          </p>
+          <Link
+            href="/audit"
+            className="inline-flex items-center gap-1 mt-4 text-sm font-semibold text-blue-600 hover:underline"
+          >
+            AI 감사관 보러 가기 →
+          </Link>
         </div>
       ) : (
         report.entries.map((e, i) => <EntryCard key={e.theme_id} entry={e} index={i} />)

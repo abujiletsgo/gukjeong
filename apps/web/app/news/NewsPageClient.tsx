@@ -4,7 +4,9 @@
 // Demo mode: seed data passed as props
 
 import { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { useDataMode } from '@/lib/context/DataModeContext';
+import { useUrlState } from '@/lib/hooks/useUrlState';
 import type { NewsEvent, MediaOutlet, NewsTopicsResponse } from '@/lib/types';
 import KPI from '@/components/common/KPI';
 import MediaSpectrum from '@/components/news/MediaSpectrum';
@@ -41,10 +43,20 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
   const [topicsData, setTopicsData] = useState<NewsTopicsResponse | null>(null);
   const [liveLoading, setLiveLoading] = useState(false);
 
-  // ── Demo filter state ──
-  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('전체');
-  const [sortBy, setSortBy] = useState<SortOption>('latest');
+  // ── Demo filter state (URL-persisted) ──
+  const [categoryFilter, setCategoryFilter] = useUrlState('cat', '전체');
+  const [sortBy, setSortBy] = useUrlState('sort', 'latest');
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
+
+  // 프레임 비교 ↔ 실시간 분석 전환 토글
+  const modeToggle = (
+    <div className="inline-flex items-center rounded-full bg-gray-100 p-1 mb-6 text-sm font-medium">
+      <span className="px-4 py-1.5 rounded-full bg-white text-gray-900 shadow-sm">프레임 비교</span>
+      <Link href="/news/live" className="px-4 py-1.5 rounded-full text-gray-500 hover:text-gray-800 transition-colors">
+        실시간 분석
+      </Link>
+    </div>
+  );
 
   // Fetch topics in live mode
   useEffect(() => {
@@ -124,9 +136,10 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
       <div className="container-page py-8">
         {/* ── Header ── */}
         <h1 className="section-title">뉴스 프레임 비교</h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 mb-4">
           같은 사건에 대한 서로 다른 미디어의 보도 프레임을 비교합니다.
         </p>
+        {modeToggle}
 
         {/* Real data banner */}
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-6 flex items-center gap-3">
@@ -262,9 +275,10 @@ export default function NewsPageClient({ events, outlets }: NewsPageClientProps)
     <div className="container-page py-8">
       {/* Page Header */}
       <h1 className="section-title">뉴스 프레임 비교</h1>
-      <p className="text-gray-600 mb-8">
+      <p className="text-gray-600 mb-4">
         같은 사건에 대한 서로 다른 미디어의 보도 프레임을 비교합니다.
       </p>
+      {modeToggle}
 
       {/* KPI Section */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

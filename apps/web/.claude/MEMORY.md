@@ -2,53 +2,6 @@
 <!-- Mid-term project memory: one entry per session. Auto-maintained. -->
 <!-- Layer 2 (episodic): what changed, was fixed, was decided across sessions. -->
 
-## 2026-03-28 (13:02 UTC) · @Tom Kwon
-**Commit:** feat: Rich legislator page with real bill data — photos, activity tracking, expandable details (5559938) by Tom Kwon
-**Changed:**
-  apps/web/app/legislators/LegislatorsPageClient.tsx | 378 +++++++++++++++++----
-  apps/web/tsconfig.tsbuildinfo                      |   2 +-
-  2 files changed, 307 insertions(+), 73 deletions(-)
-
-## 2026-03-28 (13:53 UTC) · @Tom Kwon
-**Commit:** feat: Voting participation data wired into legislator cards (9208242) by Tom Kwon
-**Changed:**
-  apps/web/app/legislators/LegislatorsPageClient.tsx | 211 +++++++++++++++++++--
-  apps/web/tsconfig.tsbuildinfo                      |   2 +-
-  2 files changed, 199 insertions(+), 14 deletions(-)
-
-## 2026-03-28 (15:29 UTC) · @Tom Kwon
-**Commit:** feat: Context-aware AI audit — stop flagging LPG as corruption (1ac2afd) by Tom Kwon
-**Changed:**
-  apps/web/app/audit/AuditPageClient.tsx | 394 +++++++++++------
-  apps/web/lib/audit/context.ts          | 779 +++++++++++++++++++++++++++++++++
-  apps/web/lib/audit/patterns.ts         |  42 +-
-  docs/audit-patterns.md                 |  97 +++-
-  4 files changed, 1143 insertions(+), 169 deletions(-)
-
-## 2026-03-28 (15:51 UTC) · @Tom Kwon
-**Commit:** feat: Full rebuild — all 5 pages with rich UI + real data (d1ad624) by Tom Kwon
-**Changed:**
-  .claude/FACTS.md                                   |      3 +-
-  .claude/MEMORY.md                                  |     16 +
-  apps/web/.claude/MEMORY.md                         |     16 +
-  apps/web/app/api/audit/analyze/route.ts            |     23 +-
-  apps/web/app/api/audit/contracts/route.ts          |     23 +-
-  apps/web/app/api/cron/scrape/route.ts              |     81 +-
-  apps/web/app/api/economy/route.ts                  |     85 +-
-  apps/web/app/api/legislators/real/bills/route.ts   |     26 +-
-  apps/web/app/api/legislators/real/route.ts         |     51 +-
-  apps/web/app/api/news/live/route.ts                |     23 +-
-  ... and 35 more files
-
-## 2026-03-28 (15:52 UTC) · @Tom Kwon
-**Commit:** fix: News page — add context, summaries, frame analysis to each story (367cf3d) by Tom Kwon
-**Changed:**
-  apps/web/.claude/MEMORY.md             |  15 ++
-  apps/web/app/audit/AuditPageClient.tsx | 408 ++++++++++++++++-----------------
-  apps/web/app/news/NewsPageClient.tsx   |  77 ++++++-
-  apps/web/tsconfig.tsbuildinfo          |   2 +-
-  4 files changed, 290 insertions(+), 212 deletions(-)
-
 ## 2026-03-28 (15:56 UTC) · @Tom Kwon
 **Commit:** fix: audit PatternCategory type error — replace high_value_sole_source with all (209ce51) by Tom Kwon
 **Changed:**
@@ -254,3 +207,43 @@
 **Changed:**
   turbo.json | 2 +-
   1 file changed, 1 insertion(+), 1 deletion(-)
+
+## 2026-04-29 (11:02 UTC) · @Tom Kwon
+**Commit:** fix: disable ISR on audit page — 104MB data exceeds Vercel fallback limit (f3c94b5) by Tom Kwon
+**Changed:**
+  apps/web/app/audit/page.tsx | 4 ++--
+  1 file changed, 2 insertions(+), 2 deletions(-)
+
+## 2026-05-01 (13:36 UTC) · @Tom Kwon
+**Commit:** feat: news AI analysis + accumulation system (5b13588) by Tom Kwon
+**Changed:**
+  apps/web/data/news-archive.json       |  935 ++++++++++++++++++++++++++
+  apps/web/public/data/news-topics.json | 1192 +++++++++++++++++----------------
+  scripts/generate-news-topics.py       |  139 +++-
+  3 files changed, 1668 insertions(+), 598 deletions(-)
+
+## 2026-05-01 (13:53 UTC) · @Tom Kwon
+**Commit:** feat: extend ghost/new-company/vendor-concentration patterns to contract-details (e91a55c) by Tom Kwon
+**Changed:**
+  scripts/fetch-data.py     |  98 ++++++++++++++++++++++++++++++
+  scripts/generate-audit.py | 148 +++++++++++++++++++++++++++++++++++++++++++---
+  2 files changed, 239 insertions(+), 7 deletions(-)
+
+## 2026-05-17 (08:42 UTC) · @Tom Kwon
+**Commit:** fix: add raw legislators.json fallback so detail page never shows not-found (510897d) by Tom Kwon
+**Changed:**
+  apps/web/app/legislators/[id]/page.tsx | 37 ++++++++++++++++++++++++----------
+  1 file changed, 26 insertions(+), 11 deletions(-)
+
+## 2026-05-18 (06:58 UTC) · @Tom Kwon
+**Commit:** feat: 화제의 감사 (Popular) — popular news cross-referenced with real audit traces (35b186a) by Tom Kwon
+**Changed:**
+  apps/web/app/layout.tsx                    |    1 +
+  apps/web/app/popular/PopularPageClient.tsx |  307 +++++++
+  apps/web/app/popular/page.tsx              |   22 +
+  apps/web/data/news-rss.json                | 1350 ++++++++++++++--------------
+  apps/web/lib/local-data.ts                 |   15 +-
+  apps/web/lib/types.ts                      |   73 ++
+  apps/web/public/data/popular-report.json   |    1 +
+  scripts/generate-popular-report.py         |  464 ++++++++++
+  8 files changed, 1557 insertions(+), 676 deletions(-)

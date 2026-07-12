@@ -186,10 +186,30 @@ export default async function LocalRegionPage({ params }: { params: Promise<{ re
             mt-3 px-4 py-3 rounded-lg text-sm
             ${isAboveAvg ? 'bg-emerald-50 text-emerald-800' : 'bg-orange-50 text-orange-800'}
           `}>
-            {isAboveAvg
-              ? `${gov.name_short}의 재정자립도(${gov.fiscal_independence}%)는 전국 평균(${nationalAvg}%)보다 ${(gov.fiscal_independence - nationalAvg).toFixed(1)}%p 높습니다. 상대적으로 자체 재정 운영 능력이 양호합니다.`
-              : `${gov.name_short}의 재정자립도(${gov.fiscal_independence}%)는 전국 평균(${nationalAvg}%)보다 ${(nationalAvg - gov.fiscal_independence).toFixed(1)}%p 낮습니다. 중앙정부 재정 이전에 대한 의존도가 높은 편입니다.`
-            }
+            <dl className="divide-y divide-current/10">
+              <div className="flex items-center justify-between py-1.5">
+                <dt className="text-current/70">{gov.name_short} 재정자립도</dt>
+                <dd className="font-bold">{gov.fiscal_independence}%</dd>
+              </div>
+              <div className="flex items-center justify-between py-1.5">
+                <dt className="text-current/70">전국 평균</dt>
+                <dd className="font-semibold">{nationalAvg}%</dd>
+              </div>
+              <div className="flex items-center justify-between py-1.5">
+                <dt className="text-current/70">평균 대비</dt>
+                <dd className="font-bold">
+                  {isAboveAvg
+                    ? `+${(gov.fiscal_independence - nationalAvg).toFixed(1)}%p 높음`
+                    : `${(nationalAvg - gov.fiscal_independence).toFixed(1)}%p 낮음`}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between py-1.5">
+                <dt className="text-current/70">평가</dt>
+                <dd className="font-semibold">
+                  {isAboveAvg ? '자체 재정 운영 능력 양호' : '중앙정부 재정 이전 의존도 높음'}
+                </dd>
+              </div>
+            </dl>
           </div>
         </div>
       </div>
@@ -202,19 +222,53 @@ export default async function LocalRegionPage({ params }: { params: Promise<{ re
               {gov.extinction_risk === '심각' || gov.extinction_risk === '위험' ? '!' : '!'}
             </div>
             <div>
-              <h2 className="font-semibold mb-1">
+              <h2 className="font-semibold mb-2">
                 인구 소멸위험 등급: <span className="font-bold">{gov.extinction_risk}</span>
               </h2>
-              <p className="text-sm leading-relaxed">
-                {gov.extinction_risk === '심각' &&
-                  `${gov.name_short}는 인구 소멸위험이 심각한 단계입니다. 출생률 저하와 청년 인구 유출이 지속되고 있으며, 고령화율이 매우 높습니다. 지역 소멸을 방지하기 위한 적극적인 정책 개입이 시급합니다.`}
-                {gov.extinction_risk === '위험' &&
-                  `${gov.name_short}는 인구 소멸위험이 높은 지역입니다. 특히 농어촌 지역의 고령화가 심각하며, 젊은 세대의 수도권 유출이 계속되고 있습니다. 지역 일자리 창출과 정주 여건 개선이 필요합니다.`}
-                {gov.extinction_risk === '주의' &&
-                  `${gov.name_short}는 인구 소멸에 대한 주의가 필요한 지역입니다. 일부 지역에서 인구 감소 추세가 나타나고 있으며, 선제적인 대응이 요구됩니다.`}
-                {gov.extinction_risk === '관심' &&
-                  `${gov.name_short}는 인구 변동에 대한 관심이 필요한 지역입니다. 현재는 안정적이나, 장기적인 인구 추세를 주시할 필요가 있습니다.`}
-              </p>
+              <dl className="text-sm space-y-1.5">
+                {(() => {
+                  const info: Record<string, { status: string; cause: string; action: string }> = {
+                    '심각': {
+                      status: '소멸위험 심각 단계',
+                      cause: '출생률 저하·청년 유출 지속, 고령화율 매우 높음',
+                      action: '지역 소멸 방지 위한 적극적 정책 개입 시급',
+                    },
+                    '위험': {
+                      status: '소멸위험 높은 지역',
+                      cause: '농어촌 고령화 심각, 청년층 수도권 유출 지속',
+                      action: '지역 일자리 창출·정주 여건 개선 필요',
+                    },
+                    '주의': {
+                      status: '소멸 주의 필요 지역',
+                      cause: '일부 지역 인구 감소 추세',
+                      action: '선제적 대응 요구',
+                    },
+                    '관심': {
+                      status: '인구 변동 관심 필요 지역',
+                      cause: '현재는 안정적',
+                      action: '장기 인구 추세 주시 필요',
+                    },
+                  };
+                  const row = info[gov.extinction_risk];
+                  if (!row) return null;
+                  return (
+                    <>
+                      <div className="flex gap-2">
+                        <dt className="w-16 shrink-0 text-current/60">현황</dt>
+                        <dd className="font-medium">{row.status}</dd>
+                      </div>
+                      <div className="flex gap-2">
+                        <dt className="w-16 shrink-0 text-current/60">주요 원인</dt>
+                        <dd className="font-medium">{row.cause}</dd>
+                      </div>
+                      <div className="flex gap-2">
+                        <dt className="w-16 shrink-0 text-current/60">필요 대응</dt>
+                        <dd className="font-medium">{row.action}</dd>
+                      </div>
+                    </>
+                  );
+                })()}
+              </dl>
             </div>
           </div>
         </div>

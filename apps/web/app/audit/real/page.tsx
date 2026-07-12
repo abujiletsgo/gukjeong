@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import type { AuditFinding, EvidenceContract } from '@/lib/audit/patterns';
 
 // -- 타입 정의 --
@@ -109,12 +110,12 @@ function ApiKeyMissing() {
           3. 서버 재시작 후 이 페이지를 새로고침하세요
         </p>
       </div>
-      <a
+      <Link
         href="/audit"
         className="inline-block mt-6 text-sm text-gray-500 hover:text-gray-700 underline"
       >
         데모 데이터 분석 보기
-      </a>
+      </Link>
     </div>
   );
 }
@@ -166,7 +167,7 @@ function FindingCard({ finding }: { finding: AuditFinding }) {
           </svg>
           <div>
             <p className="text-xs font-semibold text-green-800 mb-0.5">비리가 아닐 수도 있습니다</p>
-            <p className="text-xs text-green-700 leading-relaxed">{finding.innocent_explanation}</p>
+            <p className="text-xs text-green-700 leading-relaxed whitespace-pre-line">{finding.innocent_explanation}</p>
           </div>
         </div>
 
@@ -431,9 +432,9 @@ export default function RealAuditPage() {
         <div className="text-center py-12">
           <p className="text-red-600 font-medium mb-2">분석 중 오류가 발생했습니다</p>
           <p className="text-sm text-gray-500">{error}</p>
-          <a href="/audit" className="inline-block mt-4 text-sm text-gray-400 underline">
+          <Link href="/audit" className="inline-block mt-4 text-sm text-gray-400 underline">
             데모 데이터 분석 보기
-          </a>
+          </Link>
         </div>
       ) : data?.demo ? (
         <ApiKeyMissing />
@@ -512,9 +513,9 @@ export default function RealAuditPage() {
 
       {/* 데모 분석 링크 */}
       <div className="mt-6 text-center">
-        <a href="/audit" className="text-sm text-gray-400 hover:text-gray-600 underline transition-colors">
+        <Link href="/audit" className="text-sm text-gray-400 hover:text-gray-600 underline transition-colors">
           ← AI 감사관 (데모 데이터) 돌아가기
-        </a>
+        </Link>
       </div>
 
       {/* 데이터 출처 */}

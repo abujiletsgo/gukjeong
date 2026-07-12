@@ -39,14 +39,12 @@ export default function SectorPageClient({ sector }: SectorPageClientProps) {
 
   return (
     <div className="container-page py-6 sm:py-8">
-      {/* 뒤로 가기 */}
-      <Link
-        href="/budget"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-4"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        예산 시각화
-      </Link>
+      {/* 브레드크럼 */}
+      <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-5 flex-wrap">
+        <Link href="/budget" className="hover:text-gray-600 transition-colors">예산</Link>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+        <span className="text-gray-700 font-medium">{sector.name}</span>
+      </nav>
 
       {/* 헤더 */}
       <div className="mb-8">

@@ -18,9 +18,17 @@ export default function GlobalError({
         {error.digest && (
           <p className="text-xs text-gray-400 mb-4">오류 코드: {error.digest}</p>
         )}
-        <button onClick={reset} className="btn-primary">
-          다시 시도
-        </button>
+        <div className="flex flex-wrap justify-center gap-3">
+          <button onClick={reset} className="btn-primary">
+            다시 시도
+          </button>
+          <a
+            href="/"
+            className="px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 transition-colors inline-flex items-center"
+          >
+            홈으로
+          </a>
+        </div>
       </div>
     </div>
   );
