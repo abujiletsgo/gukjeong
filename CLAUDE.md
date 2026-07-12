@@ -17,10 +17,19 @@ npm run dev:web          # Next.js on :3000
 npm run dev:api          # FastAPI on :8000 (uvicorn --reload)
 npm run db:migrate       # Alembic upgrade head
 npm run db:seed          # Seed presidents, media, fiscal data
+npm run data:refresh     # 전체 파이프라인: fetch → generate-audit → 파생 산출물 → popular
+npm run data:derive      # 파생 산출물만: audit-index/shards + vendors + daily-ox + search-index
 uv run scripts/generate-audit.py   # Regenerate audit-results.json from G2B data
 uv run scripts/fetch-data.py       # Fetch fresh data from data.go.kr APIs
 uv run scripts/accumulate.py       # Accumulate historical G2B data (run daily, --months N)
+cd apps/web && npm run test:e2e    # e2e 스모크 매트릭스 (prod 서버가 :3000에 떠 있어야 함)
 ```
+
+**빌드 가드:** `next dev` 실행 중에는 `npm run build`가 차단된다(같은 .next 공유 → 서버 파괴).
+dev를 먼저 끄거나 `SKIP_BUILD_GUARD=1`.
+
+**데이터 재생성 후 필수:** `audit-results.json`(245MB, gitignore됨)을 다시 만들었으면
+`npm run data:derive`로 웹이 실제로 소비하는 4개 산출물을 재생성해야 한다.
 
 ## Architecture
 
@@ -36,7 +45,8 @@ uv run scripts/accumulate.py       # Accumulate historical G2B data (run daily, 
 
 ## Key Patterns
 
-- **Data flow:** Government APIs -> scripts/fetch-data.py -> apps/web/data/*.json -> scripts/generate-audit.py -> apps/web/public/data/audit-results.json
+- **Data flow:** Government APIs -> scripts/fetch-data.py -> apps/web/data/*.json -> scripts/generate-audit.py -> audit-results.json(로컬 전용, 245MB) -> `npm run data:derive` -> audit-index.json + audit-shards/ + vendors-index/shards + daily-ox.json + search-index
+- **감사 웹 아키텍처:** 목록 = audit-index.json(17MB, 사전 보정·정렬), 상세 = DB → fs 샤드(빌드) → 자기 CDN 샤드 fetch(런타임). 246MB 원본은 절대 클라이언트로 보내지 않는다
 - **Types in 3 places:** SQLAlchemy models -> Pydantic schemas -> `apps/web/lib/types.ts` (keep in sync)
 - **Korean UI:** All user-facing text is Korean. Use Pretendard font. Comments can be Korean or English.
 - **Static + API hybrid:** Homepage uses ISR (revalidate=3600). Audit page falls back gracefully when JSON missing.

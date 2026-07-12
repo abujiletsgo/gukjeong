@@ -13,7 +13,10 @@
     "dev:web": "cd apps/web && npm run dev",
     "dev:api": "cd apps/api && uvicorn app.main:app --reload --port 8000",
     "db:migrate": "cd apps/api && alembic upgrade head",
-    "db:seed": "cd apps/api && python -m app.db.seed"
+    "db:seed": "cd apps/api && python -m app.db.seed",
+    "data:audit": "uv run scripts/generate-audit.py && npm run data:derive",
+    "data:derive": "NODE_OPTIONS=--max-old-space-size=6144 npx tsx scripts/build-audit-static.ts && NODE_OPTIONS=--max-old-space-size=6144 node scripts/build-vendors.mjs && NODE_OPTIONS=--max-old-space-size=6144 node scripts/build-daily-ox.mjs && node --max-old-space-size=4096 scripts/build-search-index.mjs",
+    "data:refresh": "uv run scripts/fetch-data.py && npm run data:audit && uv run scripts/generate-popular-report.py"
   },
   "devDependencies": {
     "turbo": "^2.0.0"

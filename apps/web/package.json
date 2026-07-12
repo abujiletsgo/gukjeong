@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node ../../scripts/guard-build.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:e2e": "node e2e/smoke.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
@@ -36,6 +38,7 @@
     "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
+    "playwright": "^1.61.1",
     "@types/d3": "^7.4.0",
     "@types/node": "^20.11.0",
     "@types/react": "^18.3.0",
