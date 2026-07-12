@@ -125,7 +125,8 @@ export default function LiveNewsClient({ initialArticles, totalCount, feeds }: L
           <p className="text-gray-400 mt-2 text-sm">
             {feeds.length}개 주요 언론사 RSS 피드에서 실시간으로 가져온 <strong className="text-white">{totalCount}개</strong> 기사
           </p>
-          <p className="text-gray-500 text-xs mt-1">
+          {/* Date.now 기반 텍스트는 서버/클라이언트 렌더 시점이 달라 hydration 불일치(#425)를 내므로 suppress */}
+          <p className="text-gray-500 text-xs mt-1" suppressHydrationWarning>
             마지막 업데이트: {formatTimestamp(now)}
           </p>
         </div>
@@ -278,7 +279,7 @@ export default function LiveNewsClient({ initialArticles, totalCount, feeds }: L
                       )}
 
                       <div className="flex items-center gap-3 mt-2">
-                        <time className="text-xs text-gray-400" dateTime={article.pubDate}>
+                        <time className="text-xs text-gray-400" dateTime={article.pubDate} suppressHydrationWarning>
                           {timeAgo(article.pubDate)}
                         </time>
                         <a
@@ -299,7 +300,7 @@ export default function LiveNewsClient({ initialArticles, totalCount, feeds }: L
 
                     {/* Time (desktop) */}
                     <div className="hidden lg:block flex-shrink-0 text-right">
-                      <time className="text-xs text-gray-400 whitespace-nowrap" dateTime={article.pubDate}>
+                      <time className="text-xs text-gray-400 whitespace-nowrap" dateTime={article.pubDate} suppressHydrationWarning>
                         {new Date(article.pubDate).toLocaleTimeString('ko-KR', {
                           hour: '2-digit',
                           minute: '2-digit',

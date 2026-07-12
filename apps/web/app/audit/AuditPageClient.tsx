@@ -1106,6 +1106,8 @@ function AuditPageClientInner({
           <RegionSearch
             findings={enrichedFindings as unknown as import('@/lib/types').AuditFlag[]}
             onFilter={(filtered) => setRegionFiltered(filtered as unknown as EnrichedFinding[])}
+            value={searchQuery}
+            onChange={setSearchQuery}
           />
           {/* Heatmap for region mode */}
           <div className="card mt-4">
@@ -1233,7 +1235,10 @@ function AuditPageClientInner({
         // Determine source findings based on entry mode
         let sourceFindings: EnrichedFinding[];
         if (entryMode === 'region') {
-          sourceFindings = regionFiltered.length > 0 ? regionFiltered : enrichedFindings;
+          // 검색어가 있으면 0건이어도 그대로 (0건 → 빈 상태 표시). 없을 때만 전체로 폴백.
+          sourceFindings = searchQuery.trim()
+            ? regionFiltered
+            : (regionFiltered.length > 0 ? regionFiltered : enrichedFindings);
         } else if (entryMode === 'recent') {
           // Sort by id desc (id encodes timestamp ordering from generate-audit.py)
           sourceFindings = [...filteredFindings].sort((a, b) => {

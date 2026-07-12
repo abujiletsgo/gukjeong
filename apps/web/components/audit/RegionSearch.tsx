@@ -6,10 +6,15 @@ import type { AuditFlag } from '@/lib/types';
 interface RegionSearchProps {
   findings: AuditFlag[];
   onFilter: (filtered: AuditFlag[]) => void;
+  /** 부모(URL 상태)와 동기화할 때 전달 — /audit?q= 딥링크가 지역 검색에도 적용되게 한다 */
+  value?: string;
+  onChange?: (v: string) => void;
 }
 
-export default function RegionSearch({ findings, onFilter }: RegionSearchProps) {
-  const [query, setQuery] = useState('');
+export default function RegionSearch({ findings, onFilter, value, onChange }: RegionSearchProps) {
+  const [innerQuery, setInnerQuery] = useState('');
+  const query = value !== undefined ? value : innerQuery;
+  const setQuery = onChange ?? setInnerQuery;
 
   useEffect(() => {
     if (!query.trim()) {
