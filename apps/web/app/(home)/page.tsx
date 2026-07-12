@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getPresidents, getFiscalData, getDepartmentScores, getAuditFlags, getBills, getNewsEvents, getMediaOutlets, getLegislators } from '@/lib/data';
+import { getRealStats } from '@/lib/real-stats';
 
 // ISR: 홈페이지는 1시간마다 재생성
 export const revalidate = 3600;
@@ -23,11 +24,19 @@ export default function HomePage() {
   const latest2024 = fiscalData.find(f => f.year === 2024);
   const spendingTrend = fiscalData.map(f => f.total_spending || 0).filter(v => v > 0);
   const debtTrend = fiscalData.map(f => f.national_debt || 0).filter(v => v > 0);
-  const highFlags = auditFlags.filter(f => f.severity === 'HIGH').length;
-  const passedBills = bills.filter(b => b.status === '가결').length;
-  const pendingBills = bills.filter(b => b.status === '계류').length;
+  const seedPassed = bills.filter(b => b.status === '가결').length;
+  const seedPending = bills.filter(b => b.status === '계류').length;
   const recentPresidents = presidents.slice(-4);
   const avgAttendance = Math.round(legislators.reduce((s, l) => s + (l.attendance_rate || 0), 0) / legislators.length);
+
+  // 실데이터 통계 (파이프라인 산출물 기준) — 없으면 시드로 폴백
+  const real = getRealStats();
+  const auditCount = real?.audit_findings ?? auditFlags.length;
+  const highFlags = real?.audit_high ?? auditFlags.filter(f => f.severity === 'HIGH').length;
+  const billCount = real?.bills_total || bills.length;
+  const passedBills = real?.bills_passed || seedPassed;
+  const pendingBills = real?.bills_pending || seedPending;
+  const legislatorCount = real?.legislators_total || legislators.length;
 
   return (
     <div>
@@ -78,8 +87,8 @@ export default function HomePage() {
 
       {/* ━━━ REAL DATA OVERLAY (client component) ━━━ */}
       <HomeRealDataOverlay
-        seedAuditCount={auditFlags.length}
-        seedLegislatorCount={legislators.length}
+        seedAuditCount={auditCount}
+        seedLegislatorCount={legislatorCount}
       />
 
       {/* ━━━ NUMBERS BAR (각 수치는 해당 섹션으로 연결) ━━━ */}
@@ -90,9 +99,9 @@ export default function HomePage() {
               [`${latest?.total_spending || 728}`, '조', '2026 정부 지출', '/budget', ''],
               [`${latest2024?.national_debt || 1175}`, '조', '국가채무', '/budget', ''],
               [`${presidents.length}`, '명', '역대 대통령', '/presidents', ''],
-              [`${legislators.length}`, '명', '국회의원 추적', '/legislators', ''],
-              [`${bills.length}`, '건', '법안 분석', '/bills', 'hidden lg:block'],
-              [`${auditFlags.length}`, '건', 'AI 감지 패턴', '/audit', 'hidden lg:block'],
+              [`${legislatorCount}`, '명', '국회의원 추적', '/legislators', ''],
+              [`${billCount.toLocaleString()}`, '건', '법안 분석', '/bills', 'hidden lg:block'],
+              [`${auditCount.toLocaleString()}`, '건', 'AI 감지 패턴', '/audit', 'hidden lg:block'],
             ] as [string, string, string, string, string][]).map(([num, unit, label, href, cls]) => (
               <Link key={label} href={href} className={`${cls} group`}>
                 <div
@@ -194,16 +203,16 @@ export default function HomePage() {
             <p className="text-sm mb-5" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>정부 계약에서 의심 패턴을 AI가 자동 탐지합니다.</p>
             <div className="flex items-center gap-4 mb-4">
               <div>
-                <div className="text-2xl font-black" style={{ color: 'var(--color-label, #000)' }}>{auditFlags.length}</div>
+                <div className="text-2xl font-black" style={{ color: 'var(--color-label, #000)' }}>{auditCount.toLocaleString()}</div>
                 <div className="text-[10px]" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>탐지 건수</div>
               </div>
               <div>
-                <div className="text-2xl font-black" style={{ color: 'var(--apple-red, #FF3B30)' }}>{highFlags}</div>
+                <div className="text-2xl font-black" style={{ color: 'var(--apple-red, #FF3B30)' }}>{highFlags.toLocaleString()}</div>
                 <div className="text-[10px]" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>높은 심각도</div>
               </div>
               <div>
-                <div className="text-2xl font-black" style={{ color: 'var(--color-label, #000)' }}>{departmentScores.length}</div>
-                <div className="text-[10px]" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>부처 모니터링</div>
+                <div className="text-2xl font-black" style={{ color: 'var(--color-label, #000)' }}>{(real?.audit_institutions ?? departmentScores.length).toLocaleString()}</div>
+                <div className="text-[10px]" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>기관 모니터링</div>
               </div>
             </div>
             {/* Mini heatmap */}
@@ -249,14 +258,14 @@ export default function HomePage() {
                 <span className="text-xs" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>계류</span>
               </div>
               <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>{bills.length}</span>
+                <span className="text-2xl font-black" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>{billCount.toLocaleString()}</span>
                 <span className="text-xs" style={{ color: 'var(--color-label-secondary, rgba(60,60,67,0.6))' }}>전체</span>
               </div>
             </div>
             <div className="flex h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--apple-gray-6, #F2F2F7)' }}>
-              <div className="transition-all" style={{ backgroundColor: 'var(--apple-green, #34C759)', width: `${(passedBills / bills.length) * 100}%` }} />
-              <div className="transition-all" style={{ backgroundColor: '#FF9500', width: `${(pendingBills / bills.length) * 100}%` }} />
-              <div className="transition-all" style={{ backgroundColor: 'var(--apple-red, #FF3B30)', width: `${(bills.filter(b => b.status === '폐기').length / bills.length) * 100}%` }} />
+              <div className="transition-all" style={{ backgroundColor: 'var(--apple-green, #34C759)', width: `${(passedBills / billCount) * 100}%` }} />
+              <div className="transition-all" style={{ backgroundColor: '#FF9500', width: `${(pendingBills / billCount) * 100}%` }} />
+              <div className="transition-all" style={{ backgroundColor: 'var(--apple-red, #FF3B30)', width: `${Math.max(0, ((billCount - passedBills - pendingBills) / billCount) * 100)}%` }} />
             </div>
           </Link>
 

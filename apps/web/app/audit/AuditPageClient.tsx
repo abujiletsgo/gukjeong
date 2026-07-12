@@ -50,6 +50,7 @@ import {
   type EnrichedFinding,
   type RiskLevel,
 } from '@/lib/audit/context';
+import { liteRowToFinding } from '@/lib/audit/lite';
 import type { AuditFlag, DepartmentScore } from '@/lib/types';
 import KPI from '@/components/common/KPI';
 import DepartmentHeatmap from '@/components/audit/DepartmentHeatmap';
@@ -303,6 +304,9 @@ function getMethodBadge(method: string): { bg: string; label: string } {
 
 // ── Utility: extract key stat for collapsed view ─────────────────────
 function getKeyStat(finding: RealFinding | EnrichedFinding): string {
+  // 경량 인덱스 경로: 빌드 시 미리 계산된 값
+  const pre = (finding as { key_stat?: string }).key_stat;
+  if (pre !== undefined) return pre;
   const d = finding.detail;
   if (finding.pattern_type === 'vendor_concentration') {
     return (d['집중도'] as string) || `${d['업체_계약건수']}/${d['기관_전체건수']}건`;
@@ -736,6 +740,7 @@ function AuditPageClientInner({
 
   // Real data state
   const [realData, setRealData] = useState<RealAuditData | null>(null);
+  const [liteFindings, setLiteFindings] = useState<EnrichedFinding[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
 
@@ -763,16 +768,37 @@ function AuditPageClientInner({
   const loadRealData = useCallback(() => {
     setLoadError(false);
     setLoading(true);
-    fetch('/data/audit-results.json')
+    // 1순위: 경량 인덱스 (서버에서 점수 보정 완료, 246MB → ~17MB/압축 ~3MB)
+    fetch('/data/audit-index.json')
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status} — ${r.url}`);
         return r.json();
       })
-      .then((data: RealAuditData) => {
-        setRealData(data);
+      .then((idx: import('@/lib/audit/lite').AuditIndexData) => {
+        setLiteFindings(idx.findings.map(liteRowToFinding));
+        setRealData({
+          timestamp: idx.source_timestamp ?? idx.generated_at,
+          contracts_analyzed: idx.contracts_analyzed ?? 0,
+          findings_count: idx.findings_count,
+          findings: [],
+          summary: (idx.summary ?? { sole_source_ratio: 0, unique_institutions: 0, unique_vendors: 0 }) as RealAuditData['summary'],
+          pattern_counts: idx.pattern_counts ?? undefined,
+          investigation_priority: (idx.investigation_priority ?? undefined) as RealAuditData['investigation_priority'],
+        } as RealAuditData);
         setLoading(false);
       })
       .catch(() => {
+        // 인덱스가 없으면 구버전 전체 JSON (전환기 안전망)
+        fetch('/data/audit-results.json')
+          .then(r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status} — ${r.url}`);
+            return r.json();
+          })
+          .then((data: RealAuditData) => {
+            setRealData(data);
+            setLoading(false);
+          })
+          .catch(() => {
         // Fetch failed (deployed server may not serve static JSON)
         // Fall back to building data from the API route
         fetch('/api/audit/contracts')
@@ -797,6 +823,7 @@ function AuditPageClientInner({
             setLoadError(true);
             setLoading(false);
           });
+          });
       });
   }, []);
 
@@ -811,6 +838,8 @@ function AuditPageClientInner({
 
   // ── Enriched data computations ──
   const enrichedFindings = useMemo(() => {
+    // 경량 인덱스 경로: 서버에서 이미 보정·정렬 완료
+    if (liteFindings && liteFindings.length > 0) return liteFindings;
     const raw = realData?.findings ?? [];
     if (raw.length === 0) return [];
     try {
@@ -819,7 +848,7 @@ function AuditPageClientInner({
       console.error('[Audit] enrichAllFindings crashed:', e);
       return [];
     }
-  }, [realData]);
+  }, [liteFindings, realData]);
 
   // Count per category
   const categoryCounts = useMemo(() => {

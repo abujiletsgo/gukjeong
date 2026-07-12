@@ -85,3 +85,6 @@ apps/web/data/dapa-contracts.json
 apps/web/data/lh-bids.json
 apps/web/data/lh-contracts.json
 .qa/
+# 245MB — GitHub 100MB 한도 초과. build-audit-static.ts의 입력으로 로컬에만 둔다.
+# 웹은 audit-index.json + audit-shards/를 사용한다.
+apps/web/public/data/audit-results.json

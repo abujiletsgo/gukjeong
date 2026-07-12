@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAuditFlagById, getAuditFlags } from '@/lib/data';
-import { getAuditFlagsFromDB, getAuditFlagByIdFromDB } from '@/lib/db/queries';
+import { getAuditFlagById } from '@/lib/data';
+import { getAuditFindingFull, getTopFindingIdsFromIndex } from '@/lib/audit/full';
 import AuditDetailClient from './AuditDetailClient';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const flag = await getAuditFlagByIdFromDB(id) ?? getAuditFlagById(id);
+  const flag = await getAuditFindingFull(id) ?? getAuditFlagById(id);
   if (!flag) {
     return { title: '감사 플래그를 찾을 수 없습니다' };
   }
@@ -26,22 +26,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const { flags: dbFlags } = await getAuditFlagsFromDB({ pageSize: 200 });
-  const flags = dbFlags.length > 0
-    ? dbFlags
-    : getAuditFlags()
-        .sort((a, b) => (b.suspicion_score ?? 0) - (a.suspicion_score ?? 0))
-        .slice(0, 200);
-
-  return flags
-    .sort((a, b) => (b.suspicion_score ?? 0) - (a.suspicion_score ?? 0))
-    .slice(0, 200)
-    .map(f => ({ id: f.id }));
+  // 인덱스(adjusted_score 내림차순)에서 상위 200개 — 빌드 시 fs로 읽는다
+  return getTopFindingIdsFromIndex(200).map(id => ({ id }));
 }
 
 export default async function AuditDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const flag = await getAuditFlagByIdFromDB(id) ?? getAuditFlagById(id);
+  // DB → 정적 샤드(fs/CDN) → 시드 순 폴백
+  const flag = await getAuditFindingFull(id) ?? getAuditFlagById(id);
   if (!flag) {
     notFound();
   }
