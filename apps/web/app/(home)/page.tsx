@@ -9,6 +9,7 @@ import PresidentPortrait from '@/components/presidents/PresidentPortrait';
 import HomeRealDataOverlay from './HomeRealDataOverlay';
 import HomeSearchBox from './HomeSearchBox';
 import RegionQuickFinder from './RegionQuickFinder';
+import DailyOXCard from './DailyOXCard';
 
 export default function HomePage() {
   const presidents = getPresidents();
@@ -122,6 +123,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ━━━ 오늘의 판단 (데일리 O/X) ━━━ */}
+      <DailyOXCard />
 
       {/* ━━━ FEATURES GRID ━━━ */}
       <section className="container-page py-12 sm:py-16">
