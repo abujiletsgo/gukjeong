@@ -502,6 +502,26 @@ function GlanceHero({ flag }: { flag: AuditFlag }) {
   );
 }
 
+// 두 서술이 사실상 같은 내용인지(문자 바이그램 60%+ 중첩) — 생성 템플릿이
+// summary와 plain_explanation에 같은 사실을 반복 기재하는 경우 화면 중복을 막는다.
+function isNearDuplicate(a: string, b: string): boolean {
+  const norm = (s: string) => s.replace(/[^가-힣a-zA-Z0-9]/g, '');
+  const na = norm(a);
+  const nb = norm(b);
+  if (na.length < 20 || nb.length < 20) return false;
+  const [short, long] = na.length < nb.length ? [na, nb] : [nb, na];
+  const grams = (s: string) => {
+    const g = new Set<string>();
+    for (let i = 0; i < s.length - 1; i++) g.add(s.slice(i, i + 2));
+    return g;
+  };
+  const gs = grams(short);
+  const gl = grams(long);
+  let hit = 0;
+  gs.forEach(g => { if (gl.has(g)) hit++; });
+  return hit / gs.size > 0.6;
+}
+
 export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const [expandedContract, setExpandedContract] = useState<number | null>(null);
   const [expandedCase, setExpandedCase] = useState<number | null>(0); // first case expanded by default
@@ -651,8 +671,8 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
             <p className="text-gray-300 text-xs mt-0.5">복잡한 감사 데이터를 알기 쉽게 설명합니다</p>
           </div>
           <div className="p-5 sm:p-6 space-y-5">
-            {/* 쉬운 설명 */}
-            {plainExplanation && (
+            {/* 쉬운 설명 — 상단 요약과 사실상 같은 문장이면 생략 (반복 제거) */}
+            {plainExplanation && !isNearDuplicate(plainExplanation, flag.summary || '') && (
               <RichText text={plainExplanation} className="text-base sm:text-lg text-gray-800 font-medium" />
             )}
 
@@ -683,21 +703,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                 양쪽 관점을 모두 고려하여 판단해 주세요.
               </p>
             )}
-
-            {/* 내 세금은? */}
-            {citizenImpact && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-lg">
-                    <span aria-hidden="true">&#x20A9;</span>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-amber-800 mb-1">내 세금은?</h3>
-                    <RichText text={citizenImpact} className="text-sm text-amber-700" />
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* citizen_impact는 상단 "내 세금에 무슨 일이?" 카드에서 이미 보여줌 — 중복 제거 */}
           </div>
         </div>
       )}

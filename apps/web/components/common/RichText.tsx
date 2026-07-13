@@ -15,11 +15,31 @@ interface RichTextProps {
   className?: string;
 }
 
+/**
+ * "1) A 2) B 3) C"처럼 한 줄에 욱여넣어진 번호 목록을 항목별 줄로 분해한다.
+ * 생성 파이프라인이 개행 없이 저장한 데이터가 많아 표시 계층에서 복원한다.
+ * 오탐 방지: "1) "로 시작하는 구간이 있고 그 뒤에 "N) " 마커가 하나 더 있을 때만 분해.
+ */
+function explodeInlineEnumeration(line: string): string[] {
+  const m = line.match(/(^|\s)1\)\s/);
+  if (!m || m.index === undefined) return [line];
+  const start = m.index + (m[1] ? m[1].length : 0);
+  const rest = line.slice(start);
+  if (!/\s\d{1,2}\)\s/.test(rest)) return [line];
+  const head = line.slice(0, start).trim();
+  const items = rest.split(/\s(?=\d{1,2}\)\s)/).map(s => s.trim()).filter(Boolean);
+  return head ? [head, ...items] : items;
+}
+
 export default function RichText({ text, className = '' }: RichTextProps) {
   if (!text) return null;
 
-  // Split into lines
-  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  // Split into lines (+ 한 줄짜리 인라인 번호 목록 분해)
+  const lines = text
+    .split('\n')
+    .flatMap(explodeInlineEnumeration)
+    .map(l => l.trim())
+    .filter(Boolean);
 
   // Group consecutive numbered/bullet lines into lists
   const elements: JSX.Element[] = [];

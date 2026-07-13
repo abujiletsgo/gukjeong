@@ -6316,6 +6316,16 @@ def _cross_still_valid(f: dict) -> bool:
 _final = [f for f in _gated if _cross_still_valid(f)]
 _dropped = _pre_gate_count - len(_final)
 findings = _final
+
+# 서술 필드 최종 정규화 — 기존 정규화(3050행 부근)는 이후에 생성되는 패턴
+# (cross_pattern, ceo_rotation, burst 등)을 거치지 못한다. 인라인 "1) … 2) …"
+# 나열을 개행으로 분해해 웹이 목록으로 렌더링할 수 있게 한다. (볼드 처리는
+# 중복 실행 시 파괴적이므로 여기서는 개행만.)
+for f in findings:
+    for _field in ('what_should_happen', 'why_it_matters', 'citizen_impact', 'plain_explanation'):
+        _t = f.get(_field, '')
+        if _t and '\n' not in _t and re.search(r'\s\d{1,2}\)\s', _t):
+            f[_field] = re.sub(r'\s+(\d{1,2})\)\s', r'\n\1) ', _t).strip()
 print(f'  게이트 통과: {len(findings)}건 / 제외 {_dropped}건 (원래 {_pre_gate_count}건)')
 _gate_verdicts = defaultdict(int)
 for f in findings:
