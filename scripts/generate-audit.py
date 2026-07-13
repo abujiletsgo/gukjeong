@@ -88,6 +88,9 @@ INST_CONTEXT = {
                      'repeated_sole_source', 'yearend_new_vendor'},
         'allow': {'bid_rate_anomaly', 'price_clustering', 'contract_inflation',
                   'bid_rigging', 'related_companies', 'cross_pattern'},
+        # 조달청은 타 기관을 대신해 계약을 '집행'하는 중앙조달 대행기관.
+        # 가격 조작 계열(allow)이 아닌 모든 패턴은 구조적으로 무의미 → 전면 억제.
+        'strict_allow': True,
         'score_divisor': 2.5,  # halve suspicion scores for remaining patterns
     },
     # Defense: legitimate sole-source due to national security + limited domestic makers
@@ -140,7 +143,11 @@ def is_suppressed(pattern: str, inst: str) -> bool:
     ctx_key = get_inst_type(inst)
     if ctx_key is None:
         return False
-    return pattern in INST_CONTEXT[ctx_key].get('suppress', set())
+    ctx = INST_CONTEXT[ctx_key]
+    # strict_allow: 명시적 allow 목록에 없는 패턴은 전부 억제 (중앙조달 대행기관용)
+    if ctx.get('strict_allow'):
+        return pattern not in ctx.get('allow', set())
+    return pattern in ctx.get('suppress', set())
 
 
 def adjusted_score(score: float, inst: str) -> float:
@@ -2791,7 +2798,17 @@ def assign_verdict(finding: dict) -> tuple[str, str, str]:
     # ── same_winner_repeat ──
     if pattern == 'same_winner_repeat':
         n = detail.get('낙찰_횟수', len(contracts))
-        return ('suspicious', f'{vendor_str} {n}회 연속 낙찰 — 들러리 입찰 또는 기관-업체 유착 의심.', key_evidence)
+        # 반복 낙찰 자체는 전문 분야에서 정상일 수 있다. 낙찰률 이상(96%+)
+        # 또는 상시 2개사 이하 경쟁이라는 보강 증거가 있어야 '의심'.
+        _avg_rate = None
+        _rm = re.search(r'([\d.]+)', str(detail.get('평균낙찰률', '')))
+        if _rm:
+            _avg_rate = float(_rm.group(1))
+        elif max_rate:
+            _avg_rate = max_rate
+        if (_avg_rate is not None and _avg_rate >= 96) or (min_p and min_p <= 2):
+            return ('suspicious', f'{vendor_str} {n}회 연속 낙찰 (평균 낙찰률 {_avg_rate or "?"}%) — 들러리 입찰 또는 예정가 유출 의심.', key_evidence)
+        return ('investigate', f'{vendor_str} {n}회 반복 낙찰 — 전문 분야 반복 수주일 수 있으나 경쟁 구조 확인 필요.', key_evidence)
 
     # ── low_bid_competition ──
     if pattern == 'low_bid_competition':
@@ -3188,9 +3205,10 @@ for _c in contracts:
         continue
     _parts = _corp_raw.split('^')
     _vendor_nm = _parts[3].strip() if len(_parts) > 3 else ''
+    # 수요기관 기준 귀속 — 조달청이 대행 집행한 계약을 조달청 탓으로 돌리지 않는다
+    _inst_nm = requesting_institution(_c)
     _inst_cd = str(_c.get('cntrctInsttCd', '')).strip()
-    _inst_nm = str(_c.get('cntrctInsttNm', '')).strip()
-    if not _inst_cd or not _inst_nm:
+    if not _inst_nm:
         continue
     _ssb_groups[(_inst_cd, _bz, _inst_nm, _vendor_nm)].append((_date_obj, _c))
 
@@ -3211,22 +3229,29 @@ for (_inst_cd, _bz, _inst_nm, _vendor_nm), _entries in _ssb_groups.items():
         if _count > _max_window:
             _max_window = _count
             _burst_start_idx = _idx
-    if _max_window < 3:
+    # 소액수의계약(2천만원 이하)은 국가계약법 시행령 §26에 따라 합법 —
+    # 반복 자체는 위법 신호가 아니다. 해악 기준: 4건 이상 + 윈도 총액 1억 이상,
+    # 또는 개별 건이 한도 직하(1,500만~2,000만)에 몰린 쪼개기 의심 형태.
+    if _max_window < 4:
         continue
-    # Determine severity
-    if _max_window >= 8:
-        _score = 88
-        _severity = 'HIGH'
-    elif _max_window >= 5:
-        _score = 75
-        _severity = 'HIGH'
-    else:
-        _score = 60
-        _severity = 'MEDIUM'
-    # Collect contracts in the burst window for evidence
     _burst_anchor = _dates[_burst_start_idx]
     _burst_cutoff = _burst_anchor + _timedelta(days=90)
     _burst_entries = [(d, c) for d, c in _entries if _burst_anchor <= d <= _burst_cutoff]
+    _win_amts = [_f(_e[1].get('totCntrctAmt', _e[1].get('thtmCntrctAmt', 0))) for _e in _burst_entries]
+    _win_total = sum(_win_amts)
+    _near_limit = sum(1 for _a in _win_amts if 15_000_000 <= _a < 20_000_000)
+    if _win_total < 100_000_000 and _near_limit < 3:
+        continue
+    # Determine severity
+    if _max_window >= 8 and _win_total >= 300_000_000:
+        _score = 88
+        _severity = 'HIGH'
+    elif _max_window >= 5 or _near_limit >= 3:
+        _score = 72
+        _severity = 'HIGH'
+    else:
+        _score = 58
+        _severity = 'MEDIUM'
     _total_amt = sum(_f(_e[1].get('totCntrctAmt', _e[1].get('thtmCntrctAmt', 0))) for _e in _entries)
     _evidence = [make_contract(
         _ec.get('untyCntrctNo', _ec.get('dcsnCntrctNo', '')),
@@ -3400,7 +3425,10 @@ print(f'  Vendor profiles enriched: {_vendor_profile_count} findings')
 print('\n🔬 Context classification — assuming innocence first...')
 
 # Phase 0: Remove private companies (not tax money)
-PRIVATE_KW = ['주식회사', '(주)', '(유)', '(합)', '㈜']
+PRIVATE_KW = ['주식회사', '(주)', '(유)', '(합)', '㈜',
+              '（주）', '(주）', '（주)', '（유）', '유한회사', '유한책임회사',
+              '사단법인', '협동조합', '영농조합', '농업회사법인', '새마을금고',
+              '신용협동조합', '수협 ', '축협 ', '농협 ']
 private_removed = 0
 for f in findings:
     inst = f.get('target_institution', '')
@@ -6119,6 +6147,180 @@ for f in findings:
     f['key_evidence'] = key_evidence
     verdict_counts[verdict] += 1
 print(f'  의심 확실: {verdict_counts["suspicious"]} | 조사 필요: {verdict_counts["investigate"]} | 정상 가능성: {verdict_counts["legitimate"]}')
+
+# ════════════════════════════════════════════════════════════════════
+# FINAL PUBLICATION GATE (해악 기준 최종 관문)
+# 원칙: 무죄 추정. 구조적으로 설명 가능하거나 금액이 미미한 패턴은
+# '의심 건'으로 공표하지 않는다. 목표는 감사관/기자가 실제로 조사할
+# 가치가 있는 건만 남기는 것.
+# ════════════════════════════════════════════════════════════════════
+print('\n🚪 Final publication gate (해악 기준 필터)...')
+
+_pre_gate_count = len(findings)
+
+def _finding_amount(f: dict) -> float:
+    amt = sum(_f(ec.get('amount', 0)) for ec in f.get('evidence_contracts', []))
+    if amt <= 0:
+        d = f.get('detail', {})
+        for k in ('total_amount', '관련금액', '총액', '계약총액'):
+            amt = max(amt, _f(d.get(k, 0)))
+    return amt
+
+# ── 지역 시장 규모 컨텍스트: 기관별 거래 업체 풀 크기 ──
+# 소규모 지자체는 참여 가능한 업체 수 자체가 적다. 업체 풀이 작은 기관의
+# 반복 수주/수의계약 계열 패턴은 시장 구조의 결과일 가능성이 높다.
+_inst_vendor_pool: dict = defaultdict(set)
+for _c in contracts:
+    _r_inst = requesting_institution(_c)
+    _corp_raw = str(_c.get('corpList', '')).strip()
+    if _r_inst and _corp_raw and '^' in _corp_raw:
+        _bzno = _extract_corplist_bizno(_corp_raw)
+        if _bzno:
+            _inst_vendor_pool[_r_inst].add(_bzno)
+
+_MARKET_STRUCTURE_PATTERNS = {
+    'rapid_sole_source_burst', 'same_winner_repeat', 'repeated_sole_source',
+    'low_bid_competition', 'vendor_concentration', 'geographic_concentration',
+    'yearend_new_vendor', 'zero_competition', 'rebid_same_winner',
+}
+_pool_capped = 0
+for f in findings:
+    if f['pattern_type'] not in _MARKET_STRUCTURE_PATTERNS:
+        continue
+    _inst = f.get('target_institution', '')
+    _pool = len(_inst_vendor_pool.get(_inst, ()))
+    # 업체 풀 40개 미만 = 소규모 시장. 총액 3억 미만이면 구조적 결과로 간주.
+    if 0 < _pool < 40 and _finding_amount(f) < 300_000_000:
+        if f['suspicion_score'] > 40:
+            f['suspicion_score'] = 40
+            f['severity'] = 'LOW'
+            _pool_capped += 1
+        if not f.get('context_category'):
+            f['context_category'] = 'limited_vendor_pool'
+            f['context_reason'] = (
+                f'이 기관과 거래한 업체가 데이터 전체에서 {_pool}곳뿐인 소규모 시장입니다. '
+                '반복 수주·수의계약은 경쟁 업체 부재라는 구조적 원인일 가능성이 높습니다.'
+            )
+            f['innocent_explanation'] = f['context_reason'] + '\n\n' + f.get('innocent_explanation', '')
+print(f'  소규모 시장 컨텍스트 하향: {_pool_capped}건')
+
+# ── 해악 기준 게이트 (패턴별 강도 기준) ──
+# 정밀 패턴: 오탐 여지가 작은 조작·은폐 성격의 증거 기반 패턴
+_PRECISION_PATTERNS = {
+    'sanctioned_vendor', 'ghost_company', 'price_clustering',
+    'contract_inflation', 'bid_rate_anomaly', 'threshold_avoidance',
+    'ceo_rotation', 'new_company_big_win', 'price_divergence',
+}
+
+def _detail_amount(d: dict) -> float:
+    amt = 0.0
+    for k in ('total_amount', '관련금액', '총액', '합계금액', '관련계약총액'):
+        amt = max(amt, _f(d.get(k, 0)))
+    _s = re.sub(r'[^0-9]', '', str(d.get('총_계약금액', '')))
+    if _s:
+        amt = max(amt, float(_s))
+    return amt
+
+# 의약품·의료재료류: 건강보험 실거래가 상한제/고시가격 구조상 상한가(≈예정가)
+# 근접 낙찰이 정상. 낙찰률 100%가 예정가 유출의 증거가 되지 못한다.
+_STRUCTURAL_PRICE_RE = re.compile(
+    r'의약품|약품|수액|주사제|백신|조영제|혈액|마약류|시약|'
+    r'진료재료|수술재료|위생재료|치료재료|의료소모품|중앙구매|고시이상|고시미만'
+)
+
+def _passes_gate(f: dict) -> bool:
+    p = f['pattern_type']
+    if p in ('cross_pattern', 'systemic_risk'):
+        return True  # 구성 발견 재검증 단계에서 별도 판정
+    _inst = f.get('target_institution', '')
+    # 민간 구매자 안전망: 컨텍스트 엔진 이후에 추가되는 패턴들은
+    # 민간기업 제거 단계를 거치지 않으므로 여기서 최종 차단한다.
+    _gov_kw = ('공사', '공단', '진흥원', '진흥회', '재단', '센터', '연구원',
+               '연구소', '관리원', '교육', '의료', '대학')
+    if (any(kw in _inst for kw in PRIVATE_KW) or _inst.rstrip().endswith('(주)')) \
+            and not any(kw in _inst for kw in _gov_kw):
+        return False
+    if p == 'bid_rate_anomaly':
+        # 의료기관의 낙찰률은 고시가·업체 견적 기반 예정가 관행상 증거력이 없다.
+        if get_inst_type(_inst) == 'medical_research':
+            return False
+        _ev_text = ' '.join(str(ec.get('name', '')) for ec in f.get('evidence_contracts', []))
+        if _STRUCTURAL_PRICE_RE.search(_ev_text):
+            return False
+    # 컨텍스트 억제 대상(조달청 strict allow 포함)을 놓친 탐지기의 안전망
+    if is_suppressed(p, f.get('target_institution', '')):
+        return False
+    s = f.get('suspicion_score', 0)
+    v = f.get('verdict', 'investigate')
+    d = f.get('detail', {})
+    amt = max(_finding_amount(f), _detail_amount(d))
+    if v == 'legitimate':
+        return False
+
+    # 동일 주소 업체군: 농촌 가족기업 동거는 흔하다. 규모가 커야 공표 가치.
+    if p == 'related_companies':
+        n_comp = _i(d.get('업체_수', 2))
+        return s >= 65 and ((n_comp >= 3 and amt >= 300_000_000) or amt >= 1_000_000_000)
+
+    # 들러리 입찰: 재공고 동일업체(정황 보도 포함)는 통과,
+    # 고정 참여수 통계형은 반복 횟수와 금액이 충분해야.
+    if p == 'bid_rigging':
+        if d.get('언론보도') or d.get('1차_공고'):
+            return True
+        return s >= 65 and _i(d.get('낙찰횟수', 0)) >= 6 and amt >= 100_000_000
+
+    # 업체 네트워크: 동일 대표(강한 근거)면 1억+, 아니면 3개사+ 10억+.
+    if p == 'network_collusion':
+        if str(d.get('동일대표', '')) == '예':
+            return amt >= 100_000_000
+        return _i(d.get('해당기관_업체수', 0)) >= 3 and amt >= 1_000_000_000
+
+    # 반복 낙찰: verdict가 suspicious(낙찰률 이상 등 보강 증거)면 일반 경로,
+    # investigate면 대규모(8회+, 10억+)만.
+    if p == 'same_winner_repeat' and v == 'investigate':
+        return s >= 75 and _i(d.get('낙찰_횟수', 0)) >= 8 and amt >= 1_000_000_000
+
+    if p in _PRECISION_PATTERNS:
+        return s >= 60 and amt >= 30_000_000
+    if v == 'suspicious':
+        return (s >= 70 and amt >= 100_000_000) or s >= 85
+    # investigate: 고액 + 고점수만
+    return s >= 75 and amt >= 500_000_000
+
+_gated = [f for f in findings if _passes_gate(f)]
+
+# ── cross_pattern / systemic_risk 재검증 ──
+# 구성 발견이 게이트를 통과하지 못했다면 복합 의심도 성립하지 않는다.
+_surviving_inst_vendor_patterns: dict = defaultdict(set)
+_surviving_inst_patterns: dict = defaultdict(set)
+for f in _gated:
+    if f['pattern_type'] in ('cross_pattern', 'systemic_risk'):
+        continue
+    _inst = f.get('target_institution', '')
+    _surviving_inst_patterns[_inst].add(f['pattern_type'])
+    for ec in f.get('evidence_contracts', []):
+        _v = str(ec.get('vendor', '')).strip()
+        if _v:
+            _surviving_inst_vendor_patterns[(_inst, _v)].add(f['pattern_type'])
+
+def _cross_still_valid(f: dict) -> bool:
+    p = f['pattern_type']
+    _inst = f.get('target_institution', '')
+    if p == 'cross_pattern':
+        _v = str(f.get('detail', {}).get('업체', '')).strip()
+        return len(_surviving_inst_vendor_patterns.get((_inst, _v), ())) >= 2
+    if p == 'systemic_risk':
+        return len(_surviving_inst_patterns.get(_inst, ())) >= 3
+    return True
+
+_final = [f for f in _gated if _cross_still_valid(f)]
+_dropped = _pre_gate_count - len(_final)
+findings = _final
+print(f'  게이트 통과: {len(findings)}건 / 제외 {_dropped}건 (원래 {_pre_gate_count}건)')
+_gate_verdicts = defaultdict(int)
+for f in findings:
+    _gate_verdicts[f.get('verdict', '?')] += 1
+print(f'  통과 구성: {dict(_gate_verdicts)}')
 
 # ── Assign priority tier to every finding ──
 HIGH_VALUE_PATTERNS = {

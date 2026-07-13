@@ -1,10 +1,1090 @@
 {
-  "updated_at": "2026-04-29T13:13:52Z",
+  "updated_at": "2026-07-13T02:07:33Z",
   "topics": [
+    {
+      "id": "topic-03cf9bc11c77",
+      "title": "이석연 \"검사 보완수사권 폐지, 헌법에 위배…박탈하려면 개헌해야\"",
+      "event_date": "2026-07-13",
+      "category": "정치",
+      "article_count": 8,
+      "outlet_count": 4,
+      "has_multiple_perspectives": true,
+      "ai_summary": "이석연 국민통합위원장이 여당이 추진하는 검사 보완수사권 전면 폐지에 대해 \"헌법 위배\"라며 공개 반대했다. 국민의힘은 장윤기 사건 은폐 논란을 들어 '괴물 경찰' 우려를 제기했고, 민주당은 두 사안은 별개라고 반박했다.",
+      "key_facts": [
+        "이석연 국민통합위원장이 보완수사권 완전 폐지는 헌법 위배이며 개헌 사안이라고 공개 발언",
+        "국민의힘은 13일 의원총회를 열어 형사소송법 개정 대응 방안을 논의",
+        "민주당 행안위 의원들은 장윤기 사건과 보완수사권 폐지는 별개라고 반박"
+      ],
+      "fact_check": "이석연 국민통합위원장이 여당이 추진하는 검사 보완수사권 전면 폐지에 대해 \"헌법 위배\"라며 공개 반대했다. 국민의힘은 장윤기 사건 은폐 논란을 들어 '괴물 경찰' 우려를 제기했고, 민주당은 두 사안은 별개라고 반박했다.",
+      "citizen_takeaway": "수사권 구조 개편은 범죄 수사의 공백·견제 장치와 직결된다. 위헌 논란과 경찰 비대화 우려가 검증 포인트다.",
+      "progressive_frame": {
+        "emphasis": "국민의힘 대응 절차를 사실 위주로 전달",
+        "headline": "국민의힘, 오늘 의원총회서 '보완수사권 폐지' 대응방안 논의",
+        "tone": "중립"
+      },
+      "moderate_frame": {
+        "emphasis": "현 정부 인사도 반대하는 여권 내부 균열에 주목",
+        "headline": "이석연 \"보완수사권 폐지는 위헌\"…여권서도 \"보완해야\"",
+        "tone": "우려"
+      },
+      "conservative_frame": {
+        "emphasis": "경찰 권한 비대화와 사건 은폐 위험 부각",
+        "headline": "장동혁 \"'경찰 괴물' 탄생할 것…장윤기 사건만 봐도 알아\"",
+        "tone": "비판적"
+      },
+      "articles": [
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "이석연 \"보완수사권 폐지는 위헌\"…여권서도 \"보완해야\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653787&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 23:21:00 +0900",
+          "description": "경찰의 비위 의혹이 눈덩이처럼 불어나면서 검찰의 보완수사권 전면 폐지에 대한 반대 목소리가 이어지고 있습니다. 이석연 국민통합위원장은 &#34;보완수사권 완전 폐지는 헌법에 위배된다&#34;면서 공개적으로 입장을 밝혔습니다.",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "이석연 \"검사 보완수사권 폐지, 헌법에 위배…박탈하려면 개헌해야\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653642&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 17:37:00 +0900",
+          "description": "&#9650; 이석연 국민통합위원장이석연 국민통합위원장이 민주당 등 여권에서 추진하는 검사의 보완수사권 완전 폐지가 헌법에 위배된다고 밝혔습니다…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "국힘, 보완수사권 폐지 맹공…\"박종철 '탁치니 억' 진실됐을 것\"",
+          "link": "https://www.segye.com/newsView/20260713508453",
+          "pubDate": "Mon,13 Jul 2026 10:50:41 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713508566.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  국민의힘은 13일 여당이 장윤기 살인사건 논란 속에서도 검찰 보완수사권 폐지를 골자로 한 형사소송법 개정안 처리에 속도를 내자 \"절대 불가\"를 외치며 전면적인 대",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "與 “장윤기 사건과 보완수사권 별개”…국힘 ‘괴물 경찰론’ 반박",
+          "link": "https://www.donga.com/news/Politics/article/all/20260713/134286043/2",
+          "pubDate": "Mon, 13 Jul 2026 10:29:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134286044.2.jpg' align='left' vspace='10' hspace='10'>국회 행정안전위원회 소속인 민주당 의원들은 13일 최근 장윤기 사건 등을 계기로 촉발된 보완수사권의 존치 필요성에 대해 “보완수사권은 보완수사권 문제대로 논",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "국민의힘, 오늘 의총서 '보완수사권 폐지 추진' 대응 방안 논의",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008654410&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Mon, 13 Jul 2026 10:05:00 +0900",
+          "description": "&#9650; 의원총회 발언하는 정점식 원내대표국민의힘은 오늘 오후 의원총회를 열고, 검사의 보완수사권 폐지와 관련된 형사소송법 문제 등을 논의…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "장동혁 “‘경찰 괴물’ 탄생할 것…장윤기 사건만 봐도 알아”",
+          "link": "https://www.donga.com/news/Politics/article/all/20260713/134285873/1",
+          "pubDate": "Mon, 13 Jul 2026 10:00:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134285890.1.jpg' align='left' vspace='10' hspace='10'>장동혁 국민의힘 대표가 장윤기 사건을 둘러싼 사건 은폐 논란을 거론하며 검찰의 보완수사권이 폐지되면 막강한 수사 권한을 가진 ‘경찰 괴물’이 탄생할 것이라고",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "\"보완수사권 폐지는 위헌\"…여권서도 \"보완해야\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653961&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Mon, 13 Jul 2026 06:22:00 +0900",
+          "description": "검사의 보완수사권 완전 폐지를 둘러싸고 반대 목소리가 터져 나오고 있습니다. 현 정부 인사인 이석연 국민통합위원장은 헌법에 위배된다며 공개적으로 반대 입장을 밝혔습니다.",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "국민의힘, 오늘 의원총회서 ‘보완수사권 폐지’ 대응방안 논의",
+          "link": "https://www.khan.co.kr/article/202607130745001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "정점식 국민의힘 원내대표가 지난 10일 국회에서 열린 원내대책회의에서 발언하고 있다. 연합뉴스국민의힘이 13일 의원총회를 열고 여당이 추진하는 검찰의 보완수사권 폐지에 대한 대응 방안 등을 논의한다.국민의힘은 이날 오후 2시 국회 본관에서 의원총회를 개최한다.이날 의총에서 여당의 검찰 보완수사권 폐지를 골자로 한 형사소송법 개정 추진에 대한 대응책이 논의될",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-7d1dd352b0a2",
+      "title": "홈플러스, 13일부터 대형마트 임시 휴업…임대매장은 영업 지속",
+      "event_date": "2026-07-13",
+      "category": "경제",
+      "article_count": 7,
+      "outlet_count": 4,
+      "has_multiple_perspectives": true,
+      "ai_summary": "홈플러스가 운영자금 고갈로 13일부터 전국 67개 대형마트 임시 휴업에 들어갔다. 임대매장은 영업을 지속하지만 사실상 파산 수순이라는 관측이 나온다.",
+      "key_facts": [
+        "홈플러스가 13일부터 전국 67개 전 지점 임시 휴업 돌입",
+        "사유는 운영자금 고갈과 시설 유지·관리 어려움",
+        "마트 내 임대매장은 영업 지속"
+      ],
+      "fact_check": "홈플러스가 운영자금 고갈로 13일부터 전국 67개 대형마트 임시 휴업에 들어갔다. 임대매장은 영업을 지속하지만 사실상 파산 수순이라는 관측이 나온다.",
+      "citizen_takeaway": "대규모 고용·납품업체 연쇄 피해로 번질 수 있는 사안. 인근 점포 휴업 여부와 상품권·포인트 처리를 확인해야 한다.",
+      "progressive_frame": {
+        "emphasis": "사실상 파산 수순이라는 구조적 위기와 고용 충격 부각",
+        "headline": "홈플러스 오늘부터 67개 전지점 휴업···사실상 파산 수순",
+        "tone": "우려"
+      },
+      "moderate_frame": {
+        "emphasis": "휴업 사실과 소비자 영향 중심 전달",
+        "headline": "홈플러스, 13일부터 대형마트 임시 휴업…임대매장은 영업 지속",
+        "tone": "중립"
+      },
+      "conservative_frame": {
+        "emphasis": "회사 발표 내용의 사실 전달 중심",
+        "headline": "홈플러스, 운영자금 고갈에 13일부터 대형마트 전 점포 임시 휴업",
+        "tone": "중립"
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "홈플러스, 13일부터 대형마트 임시 휴업…임대매장은 영업 지속",
+          "link": "https://www.segye.com/newsView/20260713507860",
+          "pubDate": "Mon,13 Jul 2026 10:37:00 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713508116.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  홈플러스가 운영자금 고갈과 시설 유지·관리 어려움으로 13일부터 대형마트 임시휴업에 들어가기로 결정했다고 밝혔다. 몰 부문(임대매장)은 입점주들이 원하는 경우 영",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "홈플러스, 오늘부터 대형마트 임시 휴업…\"운영비 감당 못해\"",
+          "link": "https://www.segye.com/newsView/20260713507369",
+          "pubDate": "Mon,13 Jul 2026 10:32:47 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713507911.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  홈플러스가 13일부터 마트 영업을 임시 중단한다.\n \n 홈플러스는 이날 보도자료를 통해 이날부터 대형마트 임시휴업에 들어가기로 결정했다고 밝혔다.\n \n마트 외 몰",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "홈플러스, 결국 오늘부터 전국 매장 임시휴업…“운영자금 고갈”",
+          "link": "https://www.segye.com/newsView/20260713507519",
+          "pubDate": "Mon,13 Jul 2026 10:30:00 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713507630.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  홈플러스가 운영자금 고갈로 13일부터 본사와 대형마트 매장 운영을 임시 중단한다. 쇼핑몰은 입점업체가 희망할 경우 영업을 이어간다.\n \n홈플러스는 이날 “운영자금",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "홈플러스, 운영자금 고갈에 13일부터 대형마트 전 점포 임시 휴업",
+          "link": "https://www.donga.com/news/Economy/article/all/20260713/134286108/1",
+          "pubDate": "Mon, 13 Jul 2026 10:29:13 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134286095.1.jpg' align='left' vspace='10' hspace='10'>홈플러스가 운영자금 고갈과 시설 유지 및 관리 어려움 등으로 13일부터 대형마트 임시휴업에 들어간다. 몰 부문은 입점주들이 원하는 경우 영업을 계속한다는 방",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "홈플러스, 운영자금 고갈에 13일부터 대형마트 임시휴업",
+          "link": "https://www.donga.com/news/Economy/article/all/20260713/134285998/2",
+          "pubDate": "Mon, 13 Jul 2026 10:25:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134285999.2.jpg' align='left' vspace='10' hspace='10'>홈플러스가 운영자금 고갈과 시설 유지·관리의 어려움으로 13일부터 본사와 대형마트 매장을 임시 휴업한다. 일부 입점업체의 판매대금 정산도 지연된 가운데 홈플",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "[속보] 홈플러스, 오늘부터 대형마트 임시휴업…“운영자금 고갈”",
+          "link": "https://www.hani.co.kr/arti/economy/economy_general/1267947.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "[속보]홈플러스 오늘부터 67개 전지점 휴업···사실상 파산 수순",
+          "link": "https://www.khan.co.kr/article/202607131031001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "홈플 측 “운영자금 모두 고갈돼 매장 유지 불가”11일 오후 홈플러스 서울 강서점 전경. 정대연 기자홈플러스가 결국 13일 모든 대형마트 매장에 대한 임시휴업에 들어갔다. 사실상 파산 수순에 들어간 것으로 보인다.홈플러스는 이날 “운영자금 고갈과 시설 유지·관리 어려움으로 13일부터 대형마트 임시휴업에 들어가기로 결정했다”고 밝혔다. 임대매장의 경우 입점업",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-d876c928a134",
+      "title": "PGA 정상 복귀까지 걸린 33개월…김주형, 뜨거운 눈물과 함께 알린 부활",
+      "event_date": "2026-07-13",
+      "category": "기타",
+      "article_count": 4,
+      "outlet_count": 3,
+      "has_multiple_perspectives": true,
+      "ai_summary": "김주형이 제네시스 스코틀랜드 오픈에서 33개월 만에 PGA 투어 우승을 차지했다. 같은 주말 유해란도 에비앙 챔피언십 연장 끝 우승으로 메이저 2연속 제패에 성공했다.",
+      "key_facts": [
+        "김주형, 2023년 가을 이후 33개월 만의 PGA 투어 우승",
+        "유해란, 에비앙 챔피언십 연장전 우승으로 2주 만에 메이저 2연속 제패",
+        "스코틀랜드 오픈 총상금은 900만 달러"
+      ],
+      "fact_check": "김주형이 제네시스 스코틀랜드 오픈에서 33개월 만에 PGA 투어 우승을 차지했다. 같은 주말 유해란도 에비앙 챔피언십 연장 끝 우승으로 메이저 2연속 제패에 성공했다.",
+      "citizen_takeaway": "한국 남녀 골프가 같은 주말 나란히 우승한 성과. 슬럼프 극복 서사로 주목받고 있다.",
+      "progressive_frame": {
+        "emphasis": "우승 기록과 경기 내용 중심 보도",
+        "headline": "김주형, 33개월 만에 PGA 투어 스코틀랜드 오픈 우승",
+        "tone": "긍정적"
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": "슬럼프 극복의 인간 서사 부각",
+        "headline": "PGA 정상 복귀까지 걸린 33개월…김주형, 뜨거운 눈물과 함께 알린 부활",
+        "tone": "긍정적"
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "PGA 정상 복귀까지 걸린 33개월…김주형, 뜨거운 눈물과 함께 알린 부활",
+          "link": "https://www.donga.com/news/Sports/article/all/20260713/134286278/1",
+          "pubDate": "Mon, 13 Jul 2026 10:48:11 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134286279.1.jpg' align='left' vspace='10' hspace='10'>김주형이 오랜 기간 이어졌던 슬럼프를 털어내고 다시 미국프로골프(PGA) 투어 정상에 섰다. 무려 33개월 만에 우승 트로피를 품에 안으며 화려한 부활을 알",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "김주형, 33개월 만에 PGA 투어 스코틀랜드 오픈 우승",
+          "link": "https://www.hani.co.kr/arti/sports/golf/1267937.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "유해란, 연장전 끝 에비앙 챔피언십 정상…2주 만에 메이저 2회 연속 제패",
+          "link": "https://www.hani.co.kr/arti/sports/golf/1267933.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "김주형, 33개월 만에 PGA 투어 정상…스코틀랜드 오픈 우승으로 슬럼프 탈출",
+          "link": "https://www.khan.co.kr/article/202607131000001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "2026 제네시스 스코티시 오픈 우승자 김주형. 현대자동차·기아차 제공한국 남자골프의 김주형(24)이 길었던 우승 가뭄을 끝내고 미국프로골프(PGA) 투어 제네시스 스코틀랜드 오픈(총상금 900만 달러) 정상에 올랐다. 2023년 가을 이후 이어졌던 침묵을 깨며 PGA 투어 통산 4승째를 수확했고, 메이저 대회 브리티시 오픈을 앞두고 상승세를 입증했다.김주",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-4550b4af4edd",
+      "title": "야권 갈등으로 번지는 정이한 ‘자작극’ 공방…박형준 측 “본질은 개혁신당의 공천 실패”",
+      "event_date": "2026-07-13",
+      "category": "정치",
+      "article_count": 3,
+      "outlet_count": 3,
+      "has_multiple_perspectives": true,
+      "ai_summary": "정이한 전 개혁신당 부산시장 후보의 '음료 피습 자작극' 파장이 야권 내 공방으로 번졌다. 이준석 대표는 국민의힘 배후설을 제기했고, 박형준 측은 개혁신당의 공천 실패가 본질이라고 맞받았다.",
+      "key_facts": [
+        "정이한 전 후보의 음료 피습이 자작극으로 드러나 파문",
+        "이준석 개혁신당 대표, 국민의힘 관여 의혹 제기",
+        "박형준 측 \"본질은 개혁신당의 공천 실패\" 반박, 국민의힘은 \"물타기\" 규정"
+      ],
+      "fact_check": "정이한 전 개혁신당 부산시장 후보의 '음료 피습 자작극' 파장이 야권 내 공방으로 번졌다. 이준석 대표는 국민의힘 배후설을 제기했고, 박형준 측은 개혁신당의 공천 실패가 본질이라고 맞받았다.",
+      "citizen_takeaway": "선거 국면의 자작극 사건이 정당 간 책임 공방으로 번진 상황. 경찰 수사 결과가 사실관계의 기준점이다.",
+      "progressive_frame": {
+        "emphasis": "양측 공방을 나란히 배치해 프레임 대립 자체를 조명",
+        "headline": "정이한 '피습 자작극' 사태에…개혁신당 \"국힘 배후설\", 국힘 \"물타기\"",
+        "tone": "중립"
+      },
+      "moderate_frame": {
+        "emphasis": "이준석 대표의 배후설 발언을 쟁점으로 부각",
+        "headline": "이준석, '정이한 자작극'에 국민의힘 배후설 제기",
+        "tone": "비판적"
+      },
+      "conservative_frame": {
+        "emphasis": "개혁신당 공천 검증 실패 책임론 부각",
+        "headline": "야권 갈등으로 번지는 정이한 '자작극' 공방…박형준 측 \"본질은 공천 실패\"",
+        "tone": "비판적"
+      },
+      "articles": [
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "이준석, '정이한 자작극'에 국민의힘 배후설 제기…\"이상한 제안했으면 끝장\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653608&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 22:30:00 +0900",
+          "description": "&#9650; 개혁신당 이준석 대표이준석 개혁신당 대표가 정이한 전 개혁신당 부산시장 후보의 테러 자작극과 관련해 국민의힘 관여 의혹을 제기했습…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "야권 갈등으로 번지는 정이한 ‘자작극’ 공방…박형준 측 “본질은 개혁신당의 공천 실패”",
+          "link": "https://www.donga.com/news/Politics/article/all/20260713/134286190/1",
+          "pubDate": "Mon, 13 Jul 2026 10:35:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/08/134262035.2.jpg' align='left' vspace='10' hspace='10'>개혁신당 부산시장 후보로 출마했던 정이한 전 후보의 ‘음료 피습 자작극’ 사건을 둘러싸고 개혁신당과 국민의힘이 주말 간 ‘국민의힘 공작설’을 놓고 정면 충돌",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "정이한 ‘피습 자작극’ 사태에…개혁신당 “국힘 배후설”, 국힘 “물타기”",
+          "link": "https://www.hani.co.kr/arti/politics/politics_general/1267955.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-1b0ff57e313b",
+      "title": "[속보]장윤기 “강간 등 살인 혐의 인정”···여고생 성범죄 목적 살해",
+      "event_date": "2026-07-13",
+      "category": "사회",
+      "article_count": 3,
+      "outlet_count": 2,
+      "has_multiple_perspectives": true,
+      "ai_summary": "여고생 살해 혐의로 구속 기소된 장윤기가 2차 공판에서 '강간 등 살인' 공소사실을 인정했다. 법정형 하한이 무기징역인 혐의로, 유가족은 성역 없는 재수사를 촉구했다.",
+      "key_facts": [
+        "장윤기, 13일 2차 공판에서 강간 등 살인 혐의 인정",
+        "강간 등 살인죄의 법정형은 무기징역 또는 사형",
+        "유가족은 초동 대응 논란 관련 \"성역 없이 사건 재수사\" 요구"
+      ],
+      "fact_check": "여고생 살해 혐의로 구속 기소된 장윤기가 2차 공판에서 '강간 등 살인' 공소사실을 인정했다. 법정형 하한이 무기징역인 혐의로, 유가족은 성역 없는 재수사를 촉구했다.",
+      "citizen_takeaway": "혐의 인정으로 재판 쟁점은 양형으로 이동. 경찰 초동 대응·은폐 논란의 규명은 별도 수사 과제다.",
+      "progressive_frame": {
+        "emphasis": "유가족의 재수사 요구를 함께 조명",
+        "headline": "장윤기 \"강간 등 살인 혐의 인정\"···여고생 성범죄 목적 살해",
+        "tone": "비판적"
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": "무기징역 이상 중형 가능성 부각",
+        "headline": "장윤기 '성폭행 목적 살인' 시인…형량 최저 무기징역",
+        "tone": "중립"
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "[속보]장윤기 ‘성폭행 목적 살인’ 시인…형량 최저 무기징역",
+          "link": "https://www.donga.com/news/Society/article/all/20260713/134286063/1",
+          "pubDate": "Mon, 13 Jul 2026 10:25:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134285951.1.jpg' align='left' vspace='10' hspace='10'>법원이 여고생을 살해한 혐의로 구속 기소된 장윤기(23)의 범행 동기가 강간에 있었던 것을 인정했다. 13일 광주지법 형사13부(이정호 부장판사)는 성폭력범",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "[속보]장윤기, 법정서 성범죄 목적 살인 인정…“공소사실 맞다”",
+          "link": "https://www.donga.com/news/Society/article/all/20260713/134285949/1",
+          "pubDate": "Mon, 13 Jul 2026 10:10:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134285951.1.jpg' align='left' vspace='10' hspace='10'>장윤기, 법정서 성범죄 목적 살인 인정…“공소사실 맞다”",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "[속보]장윤기 “강간 등 살인 혐의 인정”···여고생 성범죄 목적 살해",
+          "link": "https://www.khan.co.kr/article/202607131018001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "2차 공판서 검찰 공소사실 인정 유가족 “성역없이 사건 재수사”살인·살인미수 혐의를 받는 장윤기가 5월14일 오전 광주 서부경찰서에서 검찰로 송치되고 있다. 연합뉴스전남광주에서 귀가하던 여고생을 살해한 장윤기(23)가 ‘강간 등 살인’ 혐의를 인정했다.장씨는 13일 오전 10시 광주지법 201호 법정에서 열린 2차 공판에 출석해 고 이채원양(17)에 대한 ",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-4cceba0198b0",
+      "title": "조선업 첫 노사정 협의체 발족…“원하청 격차·인력 공백 등 논의”",
+      "event_date": "2026-07-13",
+      "category": "경제",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": true,
+      "ai_summary": "조선업 사상 첫 노사정 대화협의체가 양대 노총 참여 속에 출범했다. 원·하청 임금 격차와 인력 공백 등 업계 구조 문제를 논의한다.",
+      "key_facts": [
+        "조선업 최초의 노사정 대화협의체 발족",
+        "한국노총·민주노총 양대 노총 모두 참여",
+        "원·하청 격차, 인력 공백 등이 핵심 의제"
+      ],
+      "fact_check": "조선업 사상 첫 노사정 대화협의체가 양대 노총 참여 속에 출범했다. 원·하청 임금 격차와 인력 공백 등 업계 구조 문제를 논의한다.",
+      "citizen_takeaway": "수주 호황에도 하청 인력난이 심한 조선업의 구조 개선 시도. 실제 합의 이행 여부가 관건이다.",
+      "progressive_frame": {
+        "emphasis": "원·하청 격차 해소 의제에 방점",
+        "headline": "조선업 첫 노사정 협의체 발족…\"원하청 격차·인력 공백 등 논의\"",
+        "tone": "긍정적"
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": "양대 노총이 참여한 첫 협의체라는 형식적 의미 부각",
+        "headline": "사상 첫 조선업 노사정 대화협의체 출범…양대노총 참여",
+        "tone": "중립"
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "사상 첫 조선업 노사정 대화협의체 출범…양대노총 참여",
+          "link": "https://www.donga.com/news/Society/article/all/20260713/134286185/1",
+          "pubDate": "Mon, 13 Jul 2026 10:35:18 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134286186.1.jpg' align='left' vspace='10' hspace='10'>조선업 첫 노사정 대화협의체가 출범한다. 협의체에는 양대노총이 모두 참여해 머리를 맞댄다.고용노동부와 산업통상부는 13일 전문가와 노사정이 참여하는 ‘조선업",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "조선업 첫 노사정 협의체 발족…“원하청 격차·인력 공백 등 논의”",
+          "link": "https://www.hani.co.kr/arti/society/labor/1267949.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-928713fadef8",
+      "title": "호르무즈 해협 재봉쇄…정부 “원유값 단기 영향 제한적”",
+      "event_date": "2026-07-13",
+      "category": "외교",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": true,
+      "ai_summary": "이란의 호르무즈 해협 봉쇄 주장으로 중동 긴장이 다시 고조됐다. 미군은 해협이 모든 선박에 개방돼 있다며 반박했고, 한국 정부는 원유값 단기 영향이 제한적이라고 밝혔다.",
+      "key_facts": [
+        "이란 혁명수비대가 호르무즈 해협 봉쇄 주장",
+        "미군 중부사령부는 \"해협은 열려 있고 이란에 통제권 없다\"고 반박",
+        "한국 정부는 원유 수급·가격의 단기 영향이 제한적이라고 평가"
+      ],
+      "fact_check": "이란의 호르무즈 해협 봉쇄 주장으로 중동 긴장이 다시 고조됐다. 미군은 해협이 모든 선박에 개방돼 있다며 반박했고, 한국 정부는 원유값 단기 영향이 제한적이라고 밝혔다.",
+      "citizen_takeaway": "호르무즈는 한국 원유 수입의 핵심 길목. 봉쇄가 장기화되면 유가·물가에 직접 영향이 온다.",
+      "progressive_frame": {
+        "emphasis": "미군의 반박과 사실관계 검증에 초점",
+        "headline": "미군 \"호르무즈 해협 열려있다···이란 통제권 없어\"",
+        "tone": "중립"
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": "정부의 유가 영향 평가와 대응 중심",
+        "headline": "호르무즈 해협 재봉쇄…정부 \"원유값 단기 영향 제한적\"",
+        "tone": "우려"
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "호르무즈 해협 재봉쇄…정부 “원유값 단기 영향 제한적”",
+          "link": "https://www.donga.com/news/Economy/article/all/20260713/134286159/1",
+          "pubDate": "Mon, 13 Jul 2026 10:31:27 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134286160.1.jpg' align='left' vspace='10' hspace='10'>이란의 호르무즈 해협 재봉쇄 등 중동 정세 긴장이 다시 고조되자, 정부가 업계와 만나 원유 수급 상황을 살폈다. 정부는 7~8월 원유 도입물량이 전년 대비 ",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "미군 “호르무즈 해협 열려있다···이란 통제권 없어”",
+          "link": "https://www.khan.co.kr/article/202607122152001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "미군 중부사령부(CENTCOM)가 12일(현지시간) 엑스에 공개한 자료. 이란 혁명수비대(IRGC)가 호르무즈 해협을 폐쇄했다고 한 주장을 반박하고 있다. CENTCOM 엑스 갈무리미군이 12일(현지시간) 호르무즈 해협이 모든 선박에 개방돼 있다고 밝히며 해협이 통제됐다는 이란 혁명수비대(IRGC)의 주장을 반박했다.미국 중부사령부(CENTCOM)는 이날 ",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-e9bfad74192c",
+      "title": "‘세계 1위’ 신네르, 츠베레프 꺾고 윔블던 2연패…메이저 5승 달성",
+      "event_date": "2026-07-13",
+      "category": "기타",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": true,
+      "ai_summary": "세계랭킹 1위 얀니크 신네르가 알렉산더 츠베레프를 꺾고 윔블던 2연패를 달성했다. 메이저 통산 5승째다.",
+      "key_facts": [
+        "신네르, 윔블던 결승에서 세계 2위 츠베레프 격파",
+        "윔블던 2연패이자 메이저 통산 5승 달성",
+        "세계 1·2위 맞대결로 성사된 결승전"
+      ],
+      "fact_check": "세계랭킹 1위 얀니크 신네르가 알렉산더 츠베레프를 꺾고 윔블던 2연패를 달성했다. 메이저 통산 5승째다.",
+      "citizen_takeaway": "남자 테니스 세계 1위의 그랜드슬램 지배가 이어지고 있다.",
+      "progressive_frame": {
+        "emphasis": "경기 결과 사실 전달",
+        "headline": "'세계 1위' 신네르 윔블던 2연패 성공…결승서 2위 츠베레프 꺾어",
+        "tone": "긍정적"
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": "메이저 5승 기록 부각",
+        "headline": "'세계 1위' 신네르, 츠베레프 꺾고 윔블던 2연패…메이저 5승 달성",
+        "tone": "긍정적"
+      },
+      "articles": [
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "‘세계 1위’ 신네르, 츠베레프 꺾고 윔블던 2연패…메이저 5승 달성",
+          "link": "https://www.donga.com/news/Sports/article/all/20260713/134285899/1",
+          "pubDate": "Mon, 13 Jul 2026 10:04:28 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/13/134285900.1.jpg' align='left' vspace='10' hspace='10'>남자 테니스 세계랭킹 1위 얀니크 신네르(이탈리아)가 알렉산더 츠베레프(3위·독일)를 꺾고 2026 윔블던 테니스대회(총상금 6420만 파운드) 2연패를 달",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "‘세계 1위’ 신네르 윔블던 2연패 성공…결승서 2위 츠베레프 꺾어",
+          "link": "https://www.hani.co.kr/arti/sports/sports_general/1267931.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-5c50d2f4eaa5",
+      "title": "청도군 전 군수 김하수, ‘승진 청탁·금품 의혹’ 수사 중 숨진 채 발견",
+      "event_date": "2026-07-13",
+      "category": "사회",
+      "article_count": 2,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": "승진 청탁·금품 수수 의혹으로 수사받던 김하수 전 청도군수가 13일 청도 야산에서 숨진 채 발견됐다. 경찰은 범죄 혐의점이 없다고 밝혔다.",
+      "key_facts": [
+        "김하수 전 청도군수가 13일 오전 청도읍 야산에서 숨진 채 발견",
+        "승진 청탁·금품 수수 의혹으로 경찰 수사를 받던 중이었음",
+        "경찰은 사망에 범죄 혐의점이 없다고 밝힘"
+      ],
+      "fact_check": "승진 청탁·금품 수수 의혹으로 수사받던 김하수 전 청도군수가 13일 청도 야산에서 숨진 채 발견됐다. 경찰은 범죄 혐의점이 없다고 밝혔다.",
+      "citizen_takeaway": "지방 인사 비리 수사가 당사자 사망으로 공소권 없음 종결될 가능성이 크다. 구조적 인사 비리 규명은 별도 과제로 남는다.",
+      "progressive_frame": {
+        "emphasis": "수사 중 사망이라는 사실관계와 의혹 내용 전달",
+        "headline": "청도군 전 군수 김하수, '승진 청탁·금품 의혹' 수사 중 숨진 채 발견",
+        "tone": "중립"
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "청도군 전 군수 김하수, ‘승진 청탁·금품 의혹’ 수사 중 숨진 채 발견",
+          "link": "https://www.hani.co.kr/arti/area/yeongnam/1267946.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "김하수 전 청도군수 숨진 채 발견···경찰 “범죄 혐의점 없어”",
+          "link": "https://www.khan.co.kr/article/202607130911001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "경찰 로고. 경향신문 자료사진지난 6·3 지방선거에서 낙선한 김하수 전 경북 청도군수가 숨진 채 발견됐다.13일 청도경찰서에 따르면 이날 오전 김 전 군수 가족의 신고를 받고 수색에 나선 소방당국이 청도읍의 한 야산에서 김 전 군수가 숨져 있는 것을 발견했다. 발견 장소는 김 전 군수 선친의 묘소 인근인 것으로 파악됐다.경찰은 가족이 김 전 군수의 유서를 ",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-55d5b13bff3d",
+      "title": "정청래, 김민석에 직격탄 \"탈당해 남의 당 후보 돕는 게 최악의 자기 정치\"",
+      "event_date": "2026-07-13",
+      "category": "정치",
+      "article_count": 4,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": "민주당 당권 주자들이 첫 합동 행사에서 맞붙었다. 김민석 전 총리는 \"대통령과의 교감\"을 내세웠고, 정청래 전 대표는 김 전 총리의 과거 탈당 이력을 \"최악의 자기 정치\"라고 직격했다.",
+      "key_facts": [
+        "민주당 당권 주자들이 처음으로 한자리에 모여 경쟁 구도 공식화",
+        "김민석 전 총리 \"대통령과의 교감을 바탕으로 국정 뒷받침\" 주장",
+        "정청래 전 대표, 김민석의 과거 탈당 이력을 \"최악의 자기 정치\"로 공격"
+      ],
+      "fact_check": "민주당 당권 주자들이 첫 합동 행사에서 맞붙었다. 김민석 전 총리는 \"대통령과의 교감\"을 내세웠고, 정청래 전 대표는 김 전 총리의 과거 탈당 이력을 \"최악의 자기 정치\"라고 직격했다.",
+      "citizen_takeaway": "집권당 대표 경선은 국정 운영 방향과 직결된다. '대통령과의 관계'가 최대 쟁점으로 부상했다.",
+      "progressive_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "moderate_frame": {
+        "emphasis": "주자 간 공방 구도를 대비시켜 전달",
+        "headline": "\"대통령과의 교감 바탕\" vs \"최악의 자기 정치\"",
+        "tone": "중립"
+      },
+      "conservative_frame": {
+        "emphasis": "여당 내부 갈등 노출에 주목",
+        "headline": "정청래, 김민석에 포문…\"탈당해 他후보 돕는게 최악 자기정치\"",
+        "tone": "비판적"
+      },
+      "articles": [
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "\"대통령과의 교감 바탕\" vs \"최악의 자기 정치\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653804&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 23:50:00 +0900",
+          "description": "민주당 당권 주자들이 처음으로 한자리에 모였습니다. 김민석 전 총리는 &#34;대통령과 교감을 바탕으로 국정을 뒷받침하겠다&#34;면서 지지를 호소했습니다.",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "정청래, 김민석에 직격탄 \"탈당해 남의 당 후보 돕는 게 최악의 자기 정치\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653640&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 15:20:00 +0900",
+          "description": "&#9650; 정청래-김민석더불어민주당 정청래 전 대표가 당권 경쟁자인 김민석 전 국무총리를 겨냥해 &#34;최악의 자기 정치는 선거 때 탈당해…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "donga",
+          "outlet_name": "동아일보",
+          "title": "정청래, 김민석에 포문…“탈당해 他후보 돕는게 최악 자기정치”",
+          "link": "https://www.donga.com/news/Politics/article/all/20260713/134285732/1",
+          "pubDate": "Mon, 13 Jul 2026 09:43:00 +0900",
+          "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/07/10/134271472.1.jpg' align='left' vspace='10' hspace='10'>정청래 전 더불어민주당 대표가 13일 “선거 때 탈당해서 남의 당 후보를 돕는 것, 그것이 최악의 정치”라고 말했다. 2002년 대선을 앞두고 ‘노무현·정몽",
+          "spectrum_score": 4,
+          "category": "conservative"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "\"대통령과의 교감 바탕\" vs \"최악의 자기 정치\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653966&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Mon, 13 Jul 2026 06:29:00 +0900",
+          "description": "민주당 당권주자들이 처음으로 한자리에 모였습니다. 김민석 전 총리는 &#34;대통령과 교감을 바탕으로 국정을 뒷받침하겠다&#34;고 지지를 호소했습니다.",
+          "spectrum_score": 2.8,
+          "category": "center"
+        }
+      ]
+    },
+    {
+      "id": "topic-ed70076b67c3",
+      "title": "한강 “글로 세상과 ‘연결’되는 기적, 그 감각을 담고 싶다···쓰고 싶은 소설 3개\"",
+      "event_date": "2026-07-13",
+      "category": "기타",
+      "article_count": 4,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": "한강 작가가 아비뇽 페스티벌 대담에서 \"글로 세상과 연결되는 기적\"을 말하며 구상 중인 소설 3편을 언급했다. 한국어가 공식 초청 언어로 선정된 올해 축제는 한국 공연 열기로 뜨거웠다.",
+      "key_facts": [
+        "한강, 노벨문학상 수상 후 아비뇽 페스티벌에서 90분 공개 대담",
+        "\"개인적 글쓰기와 정치적 글쓰기는 따로 없다\"며 소설 3편 구상 언급",
+        "제80회 아비뇽 페스티벌은 한국어를 공식 초청 언어로 선정"
+      ],
+      "fact_check": "한강 작가가 아비뇽 페스티벌 대담에서 \"글로 세상과 연결되는 기적\"을 말하며 구상 중인 소설 3편을 언급했다. 한국어가 공식 초청 언어로 선정된 올해 축제는 한국 공연 열기로 뜨거웠다.",
+      "citizen_takeaway": "한국 문학·공연이 세계 최대 공연축제의 중심에 섰다. 문화 수출의 저변이 문학으로 확장되는 흐름이다.",
+      "progressive_frame": {
+        "emphasis": "작가의 문학관과 한국 문화의 세계적 위상 조명",
+        "headline": "한강, 아비뇽서 \"개인적·정치적 글쓰기 따로 없다…쓰고 싶은 소설은 3개\"",
+        "tone": "긍정적"
+      },
+      "moderate_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "한강, 아비뇽서 “개인적·정치적 글쓰기 따로 없다…쓰고 싶은 소설은 3개”",
+          "link": "https://www.hani.co.kr/arti/culture/book/1267951.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "한강 “글로 세상과 ‘연결’되는 기적, 그 감각을 담고 싶다···쓰고 싶은 소설 3개\"",
+          "link": "https://www.khan.co.kr/article/202607122223005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "한강 작가, 프랑스 ‘아비뇽 페스티벌’에서 90분 대담“문학은 결국 우리를 삶 쪽으로 나아가게 하죠” 12일(현지시간) 프랑스 아비뇽에서 한강 작가가 프랑스 작가 로르 애들러와 대담을 나누고 있다. 한강은 “보고, 듣고, 냄새 맡고, 따뜻함과 아픔까지 모든 감각을 문장 안에 넣으려 한다”고 말했다.‘어떻게 눈 위에 흔적을 남길까’ 주제로 망각에 맞서는 문학",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "한강 “문학은 우리를 삶으로 한 발 나아가게 한다”···아비뇽서 전한 ‘연결의 기적’",
+          "link": "https://www.khan.co.kr/article/202607122139001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "아비뇽 페스티벌 대담 참석한 한강노벨문학상 수상 이후 오랜만에 공식 석상 참여“봉주르” 인사, 회랑 꽉 채운 관객들은 ‘초집중’ 기억과 망각, 흔적을 남기는 문학의 의미 말해절망적인 문학도 “혼자가 아니구나” 느끼게 해 “세상과 연결돼 있다는 것이 기적”12일(현지시간) 프랑스 아비뇽에서 한강 작가가 ‘어떻게 눈 위에 흔적을 남길 수 있을까(How can ",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "제주 4·3, 판소리, 한강 소설 낭독…세계 최대 공연축제 주인공은 ‘한국’",
+          "link": "https://www.khan.co.kr/article/202607122119005/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "한글로 물든 ‘아비뇽 페스티벌’한국어가 공식 초청 언어로 선정된 제80회 아비뇽 페스티벌 현장은 ‘K공연 열기’로 뜨거웠다. 11일(현지시간) 아비뇽 마하바라타 페스티벌 바 극장에서 &lt;긴: 연희해체프로젝트1&gt; 공연이 끝난 후 관객들이 박수를 치고 있다.공식 초청 언어로 한국어 선정  아시아·단일 국가 언어 중 최초 한식 부스·K팝 버스킹도 진행프",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-a70d3c3c895f",
+      "title": "현대차 노사 임금협상 난항···15일까지 부분파업 돌입",
+      "event_date": "2026-07-13",
+      "category": "경제",
+      "article_count": 3,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": "현대차 노조가 임금협상 난항으로 2년 연속 파업에 돌입했다. 13일부터 15일까지 주·야간조가 2시간씩 부분 파업을 벌인다.",
+      "key_facts": [
+        "현대차 노조, 13일부터 올해 첫 부분 파업 돌입 (2년 연속)",
+        "주간조·야간조 각 2시간씩 15일까지 부분 파업",
+        "임금협상에서 노사 간 제시안 격차가 쟁점"
+      ],
+      "fact_check": "현대차 노조가 임금협상 난항으로 2년 연속 파업에 돌입했다. 13일부터 15일까지 주·야간조가 2시간씩 부분 파업을 벌인다.",
+      "citizen_takeaway": "국내 최대 완성차 노조의 파업은 부품 협력사 가동에도 연쇄 영향을 준다. 협상 재개 여부를 지켜볼 대목이다.",
+      "progressive_frame": {
+        "emphasis": "파업 일정과 노조 측 입장 전달",
+        "headline": "현대차 노사 임금협상 난항···15일까지 부분파업 돌입",
+        "tone": "중립"
+      },
+      "moderate_frame": {
+        "emphasis": "2년 연속 파업이라는 반복성 부각",
+        "headline": "현대차 노조, 임금협상 난항… 2년 연속 파업",
+        "tone": "우려"
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "현대차 노조, 임금협상 난항… 2년 연속 파업",
+          "link": "https://www.segye.com/newsView/20260713508400",
+          "pubDate": "Mon,13 Jul 2026 10:50:06 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713508514.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  현대자동차 노조가 2년 연속 파업에 나섰다. 올해 임금협상에서 회사 측이 3차례 제시안을 내놨지만 조합원 기대에 못 미친다는 이유에서다. \n \n13일 현대차 노조",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "현대차 노사 임금협상 난항···15일까지 부분파업 돌입",
+          "link": "https://www.khan.co.kr/article/202607130947001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "현대자동차 노조 파업 자료사진. 연합뉴스현대자동차노조(금속노조 현대차지부)가 사측과의 임금협상 난항 끝에 부분 파업에 돌입한다.금속노조 현대차지부는 13일부터 이틀간 사업부·선거구별 보고대회를 진행하고 주간조와 야간조가 2시간씩 부분 파업을 진행한다고 밝혔다. 오는 15일에는 금속노조 총파업 결의대회에 맞춰 2시간 부분 파업을 벌일 예정이다.노사는 지난 8",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "현대차 노조, 임금협상 난항에 부분 파업 돌입",
+          "link": "https://www.khan.co.kr/article/202607130924001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "용인 기흥구 현대차 수원하이테크센터. 연합뉴스국내 최대 자동차 업계 노동조합인 현대자동차 노조(금속노조 현대차지부)가 임금협상 난항으로 13일 파업에 돌입한다. 올해 들어 첫 파업이며, 지난해에 이어 2년째다.현재차 노조 소속 오전조 생산직(기술직) 직원들은 이날 평소보다 2시간 이른 오후 1시 30분에 근무를 마칠 예정이다. 오후조 역시 평소보다 2시간 ",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-10dddc10cf8e",
+      "title": "코스피 장중 4%대 급락…유가증권시장 매도 사이드카 발동",
+      "event_date": "2026-07-13",
+      "category": "경제",
+      "article_count": 3,
+      "outlet_count": 2,
+      "has_multiple_perspectives": false,
+      "ai_summary": "코스피가 13일 장중 4%대 급락하며 유가증권시장에 매도 사이드카가 발동됐다. SK하이닉스가 8% 급락해 200만원 선이 무너진 영향이 컸다.",
+      "key_facts": [
+        "13일 오전 코스피200 선물 급락으로 매도 사이드카 발동",
+        "SK하이닉스 8% 급락, 주가 200만원 선 붕괴",
+        "SK하이닉스는 최근 ADR로 나스닥 상장"
+      ],
+      "fact_check": "코스피가 13일 장중 4%대 급락하며 유가증권시장에 매도 사이드카가 발동됐다. SK하이닉스가 8% 급락해 200만원 선이 무너진 영향이 컸다.",
+      "citizen_takeaway": "반도체 대형주 급락발 시장 충격. 연금·펀드 등 간접투자자도 변동성 확대에 노출돼 있다.",
+      "progressive_frame": {
+        "emphasis": "SK하이닉스 급락 원인과 개인투자자 영향 부각",
+        "headline": "코스피, 매도사이드카 발동…SK하닉 8% 급락에 200만원 붕괴",
+        "tone": "우려"
+      },
+      "moderate_frame": {
+        "emphasis": "사이드카 발동 사실과 시장 지표 중심",
+        "headline": "코스피 장중 4%대 급락…유가증권시장 매도 사이드카 발동",
+        "tone": "중립"
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "코스피 장중 4%대 급락…유가증권시장 매도 사이드카 발동",
+          "link": "https://www.segye.com/newsView/20260713508178",
+          "pubDate": "Mon,13 Jul 2026 10:46:43 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713508424.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  코스피가 13일 장중 급락하면서 프로그램매도호가 일시효력정지(사이드카)가 발동했다.\n \n 한국거래소에 따르면 이날 오전 10시 34분 14초께 코스피200 선물지",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "[속보] 코스피 급락에 매도 사이드카 발동",
+          "link": "https://www.segye.com/newsView/20260713508002",
+          "pubDate": "Mon,13 Jul 2026 10:36:17 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713508028.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  [속보] 코스피 급락에 매도 사이드카 발동",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "[속보]코스피, 매도사이드카 발동…SK하닉 8% 급락에 200만원 붕괴",
+          "link": "https://www.khan.co.kr/article/202607131046001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "SK하이닉스가 미국주식예탁증서(ADR) 상장을 통해 나스닥에 입성한 가운데 13일 서울 중구 하나은행 본점 딜링룸에 코스피와 SK하이닉스 주가가 표시되고 있다. 연합뉴스코스피 지수가 13일 3% 급락하며 유가증권(코스피) 시장에 매도사이드카(프로그램매매 매도호가 일시효력 정지)가 발동됐다.한국거래소는 이날 오전 10시 34분 14초를 기해 유가증권시장에 매",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-1e31be990a2a",
+      "title": "신세계백화점, 상반기 5800억원 역대 최대 매출…‘큰손’ 유커 빈자리, 미국인이 채웠다 [수민이가 궁금해요]",
+      "event_date": "2026-07-13",
+      "category": "경제",
+      "article_count": 3,
+      "outlet_count": 3,
+      "has_multiple_perspectives": false,
+      "ai_summary": "7월 1~10일 수출이 298억달러로 역대 최대를 기록했고 반도체 수출도 최고치를 경신했다. 신세계백화점은 외국인 매출 5800억원으로 상반기 역대 최대 실적을 올렸다.",
+      "key_facts": [
+        "7월 1~10일 수출 298억달러, 전년 대비 53.9% 증가로 역대 최대",
+        "반도체 수출 112억달러로 또다시 최고 기록",
+        "신세계백화점 상반기 외국인 매출 5800억원 — 유커 대신 미국인 관광객 증가"
+      ],
+      "fact_check": "7월 1~10일 수출이 298억달러로 역대 최대를 기록했고 반도체 수출도 최고치를 경신했다. 신세계백화점은 외국인 매출 5800억원으로 상반기 역대 최대 실적을 올렸다.",
+      "citizen_takeaway": "반도체 호황이 수출과 내수 소비 지표를 동시에 끌어올리는 국면. 다만 특정 업종 쏠림은 유의할 부분이다.",
+      "progressive_frame": {
+        "emphasis": "수출 통계 경신을 속보 중심으로 전달",
+        "headline": "7월1∼10일 수출 53.9%↑…298억달러 '역대 최대'",
+        "tone": "긍정적"
+      },
+      "moderate_frame": {
+        "emphasis": "외국인 소비 회복과 유통업 실적에 주목",
+        "headline": "신세계백화점, 상반기 5800억원 역대 최대 매출…'큰손' 유커 빈자리, 미국인이 채웠다",
+        "tone": "긍정적"
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "segye",
+          "outlet_name": "세계일보",
+          "title": "신세계백화점, 상반기 5800억원 역대 최대 매출…‘큰손’ 유커 빈자리, 미국인이 채웠다 [수민이가 궁금해요]",
+          "link": "https://www.segye.com/newsView/20260713507902",
+          "pubDate": "Mon,13 Jul 2026 10:40:37 +0900",
+          "description": "<img src=\"//img.segye.com/content/image/2026/07/13/20260713507900.jpg\" align=\"left\" vspace=\"10\" hspace=\"10\">  신세계백화점은 올해 상반기 외국인 매출이 역대 최대인 5800억원을 기록했다. 전년 같은 기간 대비 120% 증가한 규모다. 지난해 연간 외국인 매출(약 6500",
+          "spectrum_score": 3.2,
+          "category": "center"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "[속보] 7월1∼10일 수출 53.9%↑…298억달러 ‘역대 최대’",
+          "link": "https://www.hani.co.kr/arti/economy/economy_general/1267932.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "‘112억달러’ 반도체 수출 또 최고 기록…전체 수출도 53.9% 증가",
+          "link": "https://www.khan.co.kr/article/202607131027001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "지난 1월27일 경기도 평택항에 수출용 컨테이너와 자동차가 놓여있다. 정효진 기자반도체 호황에 힘입어 이달 초 수출이 또 한 번 역대 최대 기록을 경신했다.관세청이 13일 발표한 ‘7월 1~10일 수출입현황’을 보면 이달 초까지 수출액(통관기준 잠정치)은 1년 전보다 53.9% 늘어난 298억달러로 집계됐다. 이는 직전 최대치였던 지난 6월 같은 기간(28",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
+    {
+      "id": "topic-e59affdced0d",
+      "title": "[자막뉴스] \"새벽 호위함에서 마지막으로 목격\" 동해 경비 임무 해군 일병 1명 실종…\"북측에도 통보\"",
+      "event_date": "2026-07-12",
+      "category": "사회",
+      "article_count": 7,
+      "outlet_count": 3,
+      "has_multiple_perspectives": false,
+      "ai_summary": "동해 NLL 인근에서 경비 임무 중이던 해군 일병이 실종됐다가 시신으로 수습됐다. 통일부는 북측에 수색 협조를 요청했었고, 군은 경찰과 합동으로 사고 경위를 조사한다.",
+      "key_facts": [
+        "해군 호위함 승조원 일병 1명이 동해 NLL 인근에서 실종",
+        "통일부, 북측에 인도주의적 수색·송환 협조 요청",
+        "실종 장병 시신 수습, 군·경찰 합동 조사 착수"
+      ],
+      "fact_check": "동해 NLL 인근에서 경비 임무 중이던 해군 일병이 실종됐다가 시신으로 수습됐다. 통일부는 북측에 수색 협조를 요청했었고, 군은 경찰과 합동으로 사고 경위를 조사한다.",
+      "citizen_takeaway": "함정 근무 중 장병 사망 사건. 근무 여건과 안전 관리 실태에 대한 투명한 조사 결과 공개가 필요하다.",
+      "progressive_frame": {
+        "emphasis": "시신 수습과 합동 조사 등 사후 규명에 초점",
+        "headline": "실종 해군 주검 동해서 발견·수습…군 \"사고 경위 경찰과 합동조사\"",
+        "tone": "우려"
+      },
+      "moderate_frame": {
+        "emphasis": "실종 경위와 대북 협조 요청 등 사실 전개 중심",
+        "headline": "동해 NLL 인근 해군 일병 실종…통일부, 북측에 수색·송환 협조 요청",
+        "tone": "중립"
+      },
+      "conservative_frame": {
+        "emphasis": null,
+        "headline": null,
+        "tone": null
+      },
+      "articles": [
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "해군 일병 동해상 실종…통일부, 북측에 수색 협조 요청",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653806&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 22:18:00 +0900",
+          "description": "강원도 고성군 거진읍 동쪽, 50km 해상에서 경비 임무 중이던 해군 호위함의 승조원 A 일병이 오늘 오전, 실종됐습니다.해군과 해경은 함정 1…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "동해 NLL 인근 해군 일병 실종…통일부, 북측에 수색·송환 협조 요청",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653762&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 18:04:00 +0900",
+          "description": "&#9650; 지난해 11월 동해상에서 열린 &#39;해군 함대급 해상 기동훈련&#39;에서 함정들이 전술기동을 하고 있다. (위 사진은 기사 …",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "통일부 \"해군장병 실종 수색, 송환 관련 대북 협조 요청\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653760&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 17:53:00 +0900",
+          "description": "동해상에서 경비 임무를 수행 중이던 해군함정의 병사 1명이 실종된 것과 관련해 통일부가 북측에 인도주의적 견지에서 수색 및 송환 협조를 요청했습…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "동해상 경비임무 해군 호위함 승조원 1명 실종…수색 중",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653523&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 15:21:00 +0900",
+          "description": "&#9650; 해군 승조원 실종 수색 동해 북방한계선, NLL 인근 해상에서 경비 임무 중이던 해군 함정 승조원 1명이 오늘 실종돼 당국이 수색…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "sbs",
+          "outlet_name": "SBS",
+          "title": "[자막뉴스] \"새벽 호위함에서 마지막으로 목격\" 동해 경비 임무 해군 일병 1명 실종…\"북측에도 통보\"",
+          "link": "https://news.sbs.co.kr/news/endPage.do?news_id=N1008653573&plink=RSSLINK&cooper=RSSREADER",
+          "pubDate": "Sun, 12 Jul 2026 14:35:00 +0900",
+          "description": "동해 북방한계선 인근 해상에서 경비 임무 중이던 해군 함정 승조원 1명이 실종돼 군 당국이 수색에 나섰습니다.해군은 &#34;오늘 오전 동해 고…",
+          "spectrum_score": 2.8,
+          "category": "center"
+        },
+        {
+          "outlet_id": "hankyoreh",
+          "outlet_name": "한겨레",
+          "title": "실종 해군 주검 동해서 발견·수습…군 “사고 경위 경찰과 합동조사”",
+          "link": "https://www.hani.co.kr/arti/politics/defense/1267934.html",
+          "pubDate": "",
+          "description": "<table border='0px' cellpadding='0px' cellspacing='0px' width='107px'><tr><td bgcolor='#DDDDDD' style='padding: 1px;'><table border='0px' cellpadding='0px' cellspacing='0px' width='105px' height='84px",
+          "spectrum_score": 1.2,
+          "category": "progressive"
+        },
+        {
+          "outlet_id": "khan",
+          "outlet_name": "경향신문",
+          "title": "해군 “동해 경비임무 중 실종 병사 1명 시신 수습”",
+          "link": "https://www.khan.co.kr/article/202607130706001/?utm_source=khan_rss&amp;utm_medium=rss&amp;utm_campaign=total_news",
+          "pubDate": "",
+          "description": "지난해 11월 동해상에서 열린 해군 함대급 해상 기동훈련에서 함정들이 전술기동을 하고 있다. 사진은 기사와 무관. 연합뉴스해군이 동해 북방한계선(NLL) 인근 해상에서 경비 임무 중에 실종됐던 해군 함정 승조원 1명의 시신을 수습했다고 밝혔다.해군은 13일 오전 5시58분쯤 수색 작전 중이던 고속정이 고성군 거진읍 동방 52&#13214; 해상에서 전날 실",
+          "spectrum_score": 1.5,
+          "category": "progressive"
+        }
+      ]
+    },
     {
       "id": "topic-6c9c9fba1c37",
       "title": "美 대사관 서한 뒤 방시혁 영장 ‘반려’…수사 당국 '외교적 부담' 느꼈나",
-      "event_date": "Fri,24 Apr",
+      "event_date": "2026-04-24",
       "category": "사회",
       "article_count": 8,
       "outlet_count": 4,
@@ -50,7 +1130,7 @@
           "link": "https://www.donga.com/news/Society/article/all/20260424/133808900/1",
           "pubDate": "Fri, 24 Apr 2026 19:29:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133809533.1.jpg' align='left' vspace='10' hspace='10'>하이브 상장 계획을 속여 1900억 원대 부당이득을 챙긴 혐의를 받는 방시혁 하이브 의장(54)에 대한 구속영장이 반려됐다.24일 서울남부지검 금융·증권범죄",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -60,7 +1140,7 @@
           "link": "https://www.donga.com/news/Society/article/all/20260424/133808578/2",
           "pubDate": "Fri, 24 Apr 2026 17:53:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133808584.3.jpg' align='left' vspace='10' hspace='10'>검찰이 하이브 상장 계획을 속여 1900억 원대 부당 이득을 챙긴 혐의로 신청된 방시혁 하이브 의장에 대한 구속영장을 반려했다.24일 서울남부지검 금융·증권",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -70,7 +1150,7 @@
           "link": "https://www.donga.com/news/Society/article/all/20260424/133808504/1",
           "pubDate": "Fri, 24 Apr 2026 17:45:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/21/133785921.1.jpg' align='left' vspace='10' hspace='10'>[속보]검찰, 방시혁 구속영장 반려…경찰에 보완수사 요구",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -118,7 +1198,7 @@
     {
       "id": "topic-da5b11b7ada0",
       "title": "'축구장 4600개 소실' 산청·하동 산불 원인 제공 70대 기소",
-      "event_date": "Fri,24 Apr",
+      "event_date": "2026-04-24",
       "category": "사회",
       "article_count": 3,
       "outlet_count": 3,
@@ -164,7 +1244,7 @@
           "link": "https://www.donga.com/news/Society/article/all/20260424/133807934/1",
           "pubDate": "Fri, 24 Apr 2026 17:03:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133807935.1.jpg' align='left' vspace='10' hspace='10'>지난해 3월 경남 산청에서 발생한 대형 산불을 낸 혐의로 붙잡힌 70대가 불구속 기소됐다.창원지검 진주지청(형사1부 김성훈 부장검사)은 지난해 3월21일 경",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -182,7 +1262,7 @@
     {
       "id": "topic-546c9e23510b",
       "title": "5대 금융, 1분기 순익 6.2조 ‘역대 최대’…이자 마진에 증시 훈풍까지",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "경제",
       "article_count": 3,
       "outlet_count": 2,
@@ -218,7 +1298,7 @@
           "link": "https://www.donga.com/news/Economy/article/all/20260424/133808631/1",
           "pubDate": "Fri, 24 Apr 2026 18:08:11 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133808632.1.jpg' align='left' vspace='10' hspace='10'>5대 금융지주가 올 1분기 6조원이 넘는 당기순이익으로 역대 최대 실적을 기록했다. 은행 이자이익이 굳건하게 떠받친 가운데 증시 호황으로 증권사 실적이 날아",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -246,7 +1326,7 @@
     {
       "id": "topic-47c7a033e0f6",
       "title": "대전아쿠아리움 아기 백사자 ‘보문이’ 7개월 만에 폐사···“번식 구조 문제”",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "사회",
       "article_count": 2,
       "outlet_count": 2,
@@ -282,7 +1362,7 @@
           "link": "https://www.donga.com/news/Society/article/all/20260424/133809625/2",
           "pubDate": "Fri, 24 Apr 2026 20:30:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133809658.1.jpg' align='left' vspace='10' hspace='10'>대전 아쿠아리움에서 사육되던 아기 백사자 ‘보문이’가 생후 7개월 만에 폐사한 사실이 뒤늦게 알려졌다. 24일 금강유역환경청과 시민단체 등에 따르면 보문이는",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -300,7 +1380,7 @@
     {
       "id": "topic-fdf05dd7f552",
       "title": "정청래, ‘단식농성 중 이송’ 안호영 비공개 병문안…입원 이틀만",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "정치",
       "article_count": 2,
       "outlet_count": 2,
@@ -336,7 +1416,7 @@
           "link": "https://www.donga.com/news/Politics/article/all/20260424/133808595/1",
           "pubDate": "Fri, 24 Apr 2026 17:54:40 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133808596.1.jpg' align='left' vspace='10' hspace='10'>정청래 더불어민주당 대표가 단식농성 중 병원으로 이송된 안호영 의원을 비공개 병문안했다.민주당 관계자 등에 따르면 정 대표는 24일 성동구에서 공개 일정을 ",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -354,7 +1434,7 @@
     {
       "id": "topic-fd9f3fc6647c",
       "title": "[속보]다음주 윤석열·김건희 나란히 항소심 선고…법원 생중계 허용",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "정치",
       "article_count": 2,
       "outlet_count": 2,
@@ -390,7 +1470,7 @@
           "link": "https://www.donga.com/news/Society/article/all/20260424/133808591/1",
           "pubDate": "Fri, 24 Apr 2026 17:54:14 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133808592.1.jpg' align='left' vspace='10' hspace='10'>법원이 오는 28일로 예정된 김건희 여사의 도이치모터스 주가조작, 통일교 금품수수 등 혐의 항소심 선고를 실시간으로 중계하기로 했다. 24일 법조계에 따르면",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -408,7 +1488,7 @@
     {
       "id": "topic-c87dfccfa3dc",
       "title": "“이란, 호르무즈 해협 통행료 일부국가는 면제…러시아 등 우호국”",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "외교",
       "article_count": 2,
       "outlet_count": 2,
@@ -444,7 +1524,7 @@
           "link": "https://www.donga.com/news/Inter/article/all/20260424/133808245/2",
           "pubDate": "Fri, 24 Apr 2026 17:16:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133808248.3.jpg' align='left' vspace='10' hspace='10'>이란이 러시아 등 일부 우방국에는 호르무즈 해협 통과 시 통행료를 징수하지 않을 방침이라고 주러시아 이란대사가 23일(현지 시간) 밝혔다.카젬 잘랄리 주러시",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -462,7 +1542,7 @@
     {
       "id": "topic-12343770d521",
       "title": "‘군수 정비 허브’로 떠오른 한국…‘전략적 유연성’ 강화 내세우는 미국 구상의 속내는",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "외교",
       "article_count": 2,
       "outlet_count": 2,
@@ -498,7 +1578,7 @@
           "link": "https://www.donga.com/news/Economy/article/all/20260424/133807049/1",
           "pubDate": "Fri, 24 Apr 2026 17:00:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133807025.2.png' align='left' vspace='10' hspace='10'>글로벌 태양광 기업 진코솔라(JinkoSolar)는 ‘2026 국제그린에너지엑스포’에 참가해 고효율 태양광 기술과 차세대 에너지 솔루션을 선보였다고 24일 ",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -516,7 +1596,7 @@
     {
       "id": "topic-56618116bb04",
       "title": "지예은, 바타와 열애 소식 깜짝 공개…유재석 웃음·양세찬 충격",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "사회",
       "article_count": 2,
       "outlet_count": 2,
@@ -552,7 +1632,7 @@
           "link": "https://www.donga.com/news/Entertainment/article/all/20260424/133807698/1",
           "pubDate": "Fri, 24 Apr 2026 16:57:27 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133807699.1.jpg' align='left' vspace='10' hspace='10'>배우 지예은이 댄서 바타와 열애 사실을 공개한다.26일 오후 방송되는 SBS ‘런닝맨’에서는 800회를 맞아 멤버들의 운명을 뒤흔들 예측 불가한 승부가 펼쳐",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         },
         {
@@ -570,7 +1650,7 @@
     {
       "id": "topic-3030d687d00d",
       "title": "[여담야담] 국힘 '정동영 해임 건의안' 제출…위성락 \"쿠팡 문제, 외교협의 영향 주는 건 사실\"",
-      "event_date": "Fri,24 Apr",
+      "event_date": "2026-04-24",
       "category": "정치",
       "article_count": 4,
       "outlet_count": 2,
@@ -644,7 +1724,7 @@
     {
       "id": "topic-96294efd5b8b",
       "title": "빈손 방미에 거짓말 논란까지···장동혁, 최악 지지율에도 “내부 갈등 때문” 사퇴 거부",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "정치",
       "article_count": 4,
       "outlet_count": 2,
@@ -718,7 +1798,7 @@
     {
       "id": "topic-7772a31a2126",
       "title": "[사설] 하루 만에 말 뒤집은 CU, 책임 있는 자세로 교섭 임해야",
-      "event_date": "Fri,24 Apr",
+      "event_date": "2026-04-24",
       "category": "경제",
       "article_count": 2,
       "outlet_count": 2,
@@ -772,7 +1852,7 @@
     {
       "id": "topic-411357e5f518",
       "title": "‘현직교사와 문항거래’ 의혹 현우진, 첫 재판서 혐의 부인… “정상적 거래”",
-      "event_date": "Fri,24 Apr",
+      "event_date": "2026-04-24",
       "category": "사회",
       "article_count": 2,
       "outlet_count": 2,
@@ -826,7 +1906,7 @@
     {
       "id": "topic-ae525e9cbe8a",
       "title": "‘北 무인기’ 尹 징역 30년 구형에 범여권 “사필귀정”···국힘은 ‘침묵’",
-      "event_date": "Fri,24 Apr",
+      "event_date": "2026-04-24",
       "category": "정치",
       "article_count": 2,
       "outlet_count": 2,
@@ -872,7 +1952,7 @@
           "link": "https://www.donga.com/news/Society/article/all/20260424/133806601/1",
           "pubDate": "Fri, 24 Apr 2026 20:10:00 +0900",
           "description": "<img src='https://dimg.donga.com/wps/NEWS/IMAGE/2026/04/24/133809598.1.jpg' align='left' vspace='10' hspace='10'>윤석열 전 대통령이 비상계엄 선포 명분을 만들기 위해 북한에 여러 차례 무인기를 날려 보냈다는 일반이적 혐의에 대해 내란 특검(특별검사 조은석)이 징역 30",
-          "spectrum_score": 4.0,
+          "spectrum_score": 4,
           "category": "conservative"
         }
       ]
@@ -880,7 +1960,7 @@
     {
       "id": "topic-a747a18c5a74",
       "title": "장동혁 \"지방선거 마무리하고 당당히 평가받겠다\"…사퇴론 일축",
-      "event_date": "Fri, 24 Ap",
+      "event_date": "2026-04-24",
       "category": "정치",
       "article_count": 2,
       "outlet_count": 1,

@@ -61,7 +61,9 @@ const enriched = enrichAllFindings(findings);
 console.log(`enriched: ${enriched.length}`);
 
 // ── 1. 경량 인덱스 ──
-const rows = enriched.map((f) => {
+// enrichAllFindings가 합성하는 고액수의 항목(id 없음)은 원본 발견의 증거를
+// 계약 단위로 재계상한 중복이며 상세 샤드도 없다 — 인덱스에서 제외.
+const rows = enriched.filter((f) => f.id).map((f) => {
   const contracts = f.deduplicated_contracts ?? [];
   const total = contracts.reduce((s, c) => s + (c.amount || 0), 0);
   return [

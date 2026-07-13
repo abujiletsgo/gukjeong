@@ -86,6 +86,18 @@ function mergeRecentBills(legislator: Legislator, name: string, scored: Array<Re
   return { ...legislator, recent_bills: match.recent_bills as LegislatorBill[] };
 }
 
+// Vercel 서버리스 번들에서 public/data/*가 제외되므로(outputFileTracingExcludes)
+// 런타임 fs 폴백이 프로덕션에서 실패한다. 빌드 시점에 전 의원 페이지를 정적 생성해
+// fs가 살아있는 빌드 환경에서 데이터를 굽는다. 미등록 id는 런타임에서 안내 페이지.
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
+  const ids = new Set<string>();
+  for (const l of getLegislators()) ids.add(l.id);
+  for (const s of loadScoredData()) {
+    if (s.MONA_CD) ids.add(String(s.MONA_CD));
+  }
+  return Array.from(ids).map(id => ({ id }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const dbLegislator = await getLegislatorByIdFromDB(id);
