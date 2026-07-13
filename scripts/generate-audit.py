@@ -3419,227 +3419,6 @@ for f in findings:
 print(f'  Vendor profiles enriched: {_vendor_profile_count} findings')
 
 
-# ════════════════════════════════════════════════════════════════════
-# CONTEXT ENGINE: Classify findings, assume innocence, downgrade/remove
-# ════════════════════════════════════════════════════════════════════
-print('\n🔬 Context classification — assuming innocence first...')
-
-# Phase 0: Remove private companies (not tax money)
-PRIVATE_KW = ['주식회사', '(주)', '(유)', '(합)', '㈜',
-              '（주）', '(주）', '（주)', '（유）', '유한회사', '유한책임회사',
-              '사단법인', '협동조합', '영농조합', '농업회사법인', '새마을금고',
-              '신용협동조합', '수협 ', '축협 ', '농협 ']
-private_removed = 0
-for f in findings:
-    inst = f.get('target_institution', '')
-    # Skip if institution name contains company indicators (private buyer on 나라장터)
-    # But keep government-affiliated companies (공사, 공단, 진흥원 etc.)
-    gov_kw = ['공사', '공단', '진흥원', '진흥회', '재단', '센터', '연구원', '연구소', '관리원', '교육', '의료', '대학']
-    is_private = any(kw in inst for kw in PRIVATE_KW) and not any(kw in inst for kw in gov_kw)
-    if is_private:
-        f['_remove'] = True
-        private_removed += 1
-print(f'  민간기업 제거 (세금 아님): {private_removed}건')
-
-# ── Knowledge-base-driven context classification ──
-# Instead of hardcoded CONTEXT_CATEGORIES, GOV_ORG_NAMES, GOV_AFFILIATED_KEYWORDS,
-# we now use the structured knowledge base (data/knowledge/*.json)
-# loaded via scripts/knowledge.py
-
-# Legacy compatibility: build CONTEXT_CATEGORIES from knowledge base
-# so that the rest of the code doesn't need massive changes
-CONTEXT_CATEGORIES = {}
-for cat_key, cat in kb._industry_categories.items():
-    assessment = cat.get('assessment', '')
-    if assessment.startswith('NORMAL'):
-        verdict = 'NORMAL'
-    elif cat.get('score_cap'):
-        verdict = 'LOW_RISK'
-    else:
-        verdict = 'LOW_RISK'
-    entry = {
-        'keywords': cat.get('keywords', []),
-        'verdict': verdict,
-        'reason': cat.get('reason', ''),
-    }
-    if cat.get('score_cap'):
-        entry['score_cap'] = cat['score_cap']
-    CONTEXT_CATEGORIES[cat_key] = entry
-
-# These are now sourced from knowledge base instead of hardcoded sets
-GOV_AFFILIATED_KEYWORDS = kb._gov_affiliated_keywords
-GOV_ORG_NAMES = kb._gov_org_names
-
-# Small municipality keywords (면/읍/동 — structural sole-source normal)
-SMALL_MUNICIPALITY_KEYWORDS = ['면', '읍', '동', '리']
-
-before_count = len(findings)
-removed = 0
-downgraded = 0
-
-for f in findings:
-    texts = f.get('summary', '') + ' '
-    for c in f.get('evidence_contracts', []):
-        texts += c.get('name', '') + ' ' + c.get('method', '') + ' '
-    texts += f.get('target_institution', '')
-
-    # ── Phase 1: Keyword-based context categories ──
-    matched = False
-    for cat_key, cat in CONTEXT_CATEGORIES.items():
-        if any(kw in texts for kw in cat['keywords']):
-            f['context_category'] = cat_key
-            f['context_reason'] = cat['reason']
-            if cat['verdict'] == 'NORMAL':
-                f['_remove'] = True
-                removed += 1
-            elif cat['verdict'] == 'LOW_RISK' and 'score_cap' in cat:
-                old = f['suspicion_score']
-                f['suspicion_score'] = min(f['suspicion_score'], cat['score_cap'])
-                f['innocent_explanation'] = cat['reason'] + '\n\n' + f.get('innocent_explanation', '')
-                if f['suspicion_score'] < old:
-                    downgraded += 1
-                    f['severity'] = 'LOW' if f['suspicion_score'] < 30 else 'MEDIUM'
-            matched = True
-            break
-
-    if matched:
-        continue
-
-    # ── Phase 2: Government-affiliated vendor check (Knowledge Base) ──
-    for c in f.get('evidence_contracts', []):
-        vendor = c.get('vendor', '')
-        inst = f.get('target_institution', '')
-
-        # Use KB relationship graph for precise parent-child detection
-        rel = kb.find_relationship(vendor, inst)
-        if rel and rel.get('normal_procurement'):
-            ctx_text = kb.get_relationship_context(vendor, inst) or ''
-            f['context_category'] = 'gov_affiliated'
-            f['context_reason'] = ctx_text or (
-                f'{vendor}은(는) {inst}의 산하/관련 기관입니다. '
-                f'설립 목적에 부합하는 정상적 조달입니다.'
-            )
-            old = f['suspicion_score']
-            f['suspicion_score'] = min(f['suspicion_score'], rel.get('score_cap', 30))
-            f['innocent_explanation'] = f['context_reason'] + '\n\n' + f.get('innocent_explanation', '')
-            if f['suspicion_score'] < old:
-                downgraded += 1
-                f['severity'] = 'LOW'
-            break
-
-        # Fallback: check if vendor is any known gov org (keyword-based)
-        is_gov = kb.is_gov_org(vendor)
-        if is_gov:
-            f['context_category'] = 'gov_affiliated'
-            f['context_reason'] = (
-                f'{vendor}은(는) 정부 산하기관/출연연구기관입니다. '
-                f'모 부처({inst})로부터 위탁 사업을 수주하는 것은 '
-                f'해당 기관의 설립 목적에 부합하는 정상적 조달입니다. '
-                '다만, 위탁 사업비의 적정성과 성과 관리는 별도로 평가되어야 합니다.'
-            )
-            old = f['suspicion_score']
-            f['suspicion_score'] = min(f['suspicion_score'], 30)
-            f['innocent_explanation'] = f['context_reason'] + '\n\n' + f.get('innocent_explanation', '')
-            if f['suspicion_score'] < old:
-                downgraded += 1
-                f['severity'] = 'LOW'
-            break
-
-    # ── Phase 3: Small municipality sole-source structural check ──
-    if f['pattern_type'] == 'repeated_sole_source':
-        inst = f.get('target_institution', '')
-        # 군/면/읍 level = small municipality, sole-source is structural
-        inst_parts = inst.split()
-        is_small = any(inst.endswith(kw) for kw in SMALL_MUNICIPALITY_KEYWORDS) or \
-                   any(p.endswith('군') for p in inst_parts)
-        if is_small:
-            f['context_category'] = 'small_municipality'
-            f['context_reason'] = (
-                '소규모 지자체(군/면/읍)의 높은 수의계약 비율은 구조적 특성입니다. '
-                '소규모 공사(2억 미만)는 시행령 §26①6에 따라 수의계약이 허용되며, '
-                '농촌 지역은 참여 가능한 건설업체 수가 물리적으로 제한됩니다.'
-            )
-            old = f['suspicion_score']
-            f['suspicion_score'] = min(f['suspicion_score'], 35)
-            f['innocent_explanation'] = f['context_reason'] + '\n\n' + f.get('innocent_explanation', '')
-            if f['suspicion_score'] < old:
-                downgraded += 1
-                f['severity'] = 'MEDIUM' if f['suspicion_score'] >= 30 else 'LOW'
-
-    # ── Phase 4: Contract splitting — only flag if SAME vendor ──
-    if f['pattern_type'] == 'contract_splitting':
-        vendors_in_split = set()
-        for c in f.get('evidence_contracts', []):
-            v = c.get('vendor', '')
-            if v:
-                vendors_in_split.add(v)
-        if len(vendors_in_split) > 1:
-            # Different vendors = NOT splitting. Remove entirely.
-            f['_remove'] = True
-            removed += 1
-
-# Remove NORMAL findings
-findings = [f for f in findings if not f.get('_remove')]
-for f in findings:
-    f.pop('_remove', None)
-
-# ── Replace generic 필요조치 with investigation conclusions ──
-INVESTIGATION_CONCLUSIONS = {
-    'construction_materials': (
-        '조사 결과: 관급자재(레미콘, 골재 등)는 KS 규격·운송 제약으로 지역별 과점이 구조적입니다. '
-        '한국레미콘공업협회 공시가격과 비교하여 적정 가격 범위 내인지 확인이 필요합니다. '
-        '공정거래위원회는 2023-2026년 사이 은평-파주(131억 과징금), 광양(22억), 천안-아산(7억) 등 '
-        '레미콘 지역 카르텔을 반복 적발하고 있어, 가격 담합 가능성은 항상 존재합니다.'
-    ),
-    'maintenance_lock': (
-        '조사 결과: 원개발사/제조사 유지보수는 국가계약법 시행령 §26①3에 근거한 합법적 수의계약입니다. '
-        '소프트웨어진흥법 §46에 따라 적정 유지보수 비용(초기 개발비의 10-15%/년)이 보장됩니다. '
-        '다만, 유지보수비가 원개발비의 20%를 초과하거나 매년 증가하는 경우 과다 청구 가능성이 있습니다.'
-    ),
-    'gov_affiliated': (
-        '조사 결과: 해당 수주업체는 정부출연연구기관 또는 산하기관으로, '
-        '모 부처로부터 위탁 연구/사업을 수행하는 것이 설립 목적입니다. '
-        '「정부출연연구기관 등의 설립·운영 및 육성에 관한 법률」에 따른 정상적 조달이며, '
-        '단독 응찰·반복 수주는 구조적 특성입니다.'
-    ),
-    'defense_security': (
-        '조사 결과: 방위사업법 §35에 따른 지정업체 제도, 보안 인가 요건 등으로 '
-        '참여 자격이 법적으로 제한됩니다. 소방장비는 KFI 인증, 수사장비는 보안 등급이 필요합니다. '
-        '다만, 비기밀 물품을 보안 명목으로 수의계약하는 사례가 감사원에 의해 반복 지적되고 있습니다.'
-    ),
-    'education': (
-        '조사 결과: 교과서 유통은 한국교과서협회 관리 하에 출판사별 지역 공급소(1인 사업자)가 '
-        '독점 운영하는 구조입니다. 급식은 학교급식법에 따라 지역 소규모 업체 직납이 원칙이며, '
-        '공공급식통합플랫폼(eat.co.kr)을 통해 가격 투명성이 확보되고 있습니다.'
-    ),
-    'medical_pharma': (
-        '조사 결과: 특허의약품은 약사법 §31에 따라 특허 만료 전까지 오리지널 제약사만 공급 가능합니다. '
-        '의료기기 유지보수는 OEM(Siemens, GE 등)의 전용 서비스 SW·부품이 필요합니다. '
-        '건강보험 실거래가 상환제로 약가 상한이 규제됩니다. '
-        '다만, 제네릭 존재 시 오리지널 고집이나 유지보수비 과다 청구(장비가의 20%+ /년)는 주의 필요.'
-    ),
-    'small_municipality': (
-        '조사 결과: 소규모 지자체(군/면/읍)는 시행령 §26①6에 따라 소액 수의계약이 허용되며, '
-        '농촌 지역은 참여 가능 건설업체가 물리적으로 제한됩니다. '
-        '수의계약 비율이 높은 것 자체는 구조적 특성이나, '
-        '동일 업체 반복 수주가 과도한 경우 담당자-업체 유착 가능성을 배제할 수 없습니다.'
-    ),
-    'diverse_vendors': (
-        '조사 결과: 한도 근처 계약이 서로 다른 업체에 발주되었으므로, '
-        '의도적 계약 분할(쪼개기)이 아닌 해당 기관의 일반적 소액 발주 구조로 판단됩니다. '
-        '동일 업체에 한도 직하 반복 발주되는 경우에만 분할 의심이 유효합니다.'
-    ),
-}
-
-for f in findings:
-    cat = f.get('context_category', '')
-    if cat in INVESTIGATION_CONCLUSIONS:
-        f['what_should_happen'] = INVESTIGATION_CONCLUSIONS[cat]
-
-print(f'  제거 (정상 제도): {removed}건')
-print(f'  점수 하향: {downgraded}건')
-print(f'  조사 결론 첨부: {sum(1 for f in findings if f.get("context_category","") in INVESTIGATION_CONCLUSIONS)}건')
-print(f'  최종: {len(findings)}건 (원래 {before_count}건)')
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -5949,6 +5728,235 @@ for f in findings:
 
 if score_reduced:
     print(f'  Score-reduced {score_reduced} structurally-ambiguous findings (bookstores/farms)')
+
+
+# ════════════════════════════════════════════════════════════════════
+# CONTEXT ENGINE (이동됨): 반드시 모든 패턴 탐지기 이후에 실행되어야 한다.
+# 과거에는 파일 중간(패턴 16~22 이전)에 있어 후속 생성 발견이 민간기업
+# 필터·무죄추정 분류를 통째로 건너뛰는 순서 버그가 반복됐다.
+# CONTEXT ENGINE: Classify findings, assume innocence, downgrade/remove
+# ════════════════════════════════════════════════════════════════════
+print('\n🔬 Context classification — assuming innocence first...')
+
+# Phase 0: Remove private companies (not tax money)
+PRIVATE_KW = ['주식회사', '(주)', '(유)', '(합)', '㈜',
+              '（주）', '(주）', '（주)', '（유）', '유한회사', '유한책임회사',
+              '사단법인', '협동조합', '영농조합', '농업회사법인', '새마을금고',
+              '신용협동조합', '수협 ', '축협 ', '농협 ']
+private_removed = 0
+for f in findings:
+    inst = f.get('target_institution', '')
+    # Skip if institution name contains company indicators (private buyer on 나라장터)
+    # But keep government-affiliated companies (공사, 공단, 진흥원 etc.)
+    gov_kw = ['공사', '공단', '진흥원', '진흥회', '재단', '센터', '연구원', '연구소', '관리원', '교육', '의료', '대학']
+    is_private = any(kw in inst for kw in PRIVATE_KW) and not any(kw in inst for kw in gov_kw)
+    if is_private:
+        f['_remove'] = True
+        private_removed += 1
+print(f'  민간기업 제거 (세금 아님): {private_removed}건')
+
+# ── Knowledge-base-driven context classification ──
+# Instead of hardcoded CONTEXT_CATEGORIES, GOV_ORG_NAMES, GOV_AFFILIATED_KEYWORDS,
+# we now use the structured knowledge base (data/knowledge/*.json)
+# loaded via scripts/knowledge.py
+
+# Legacy compatibility: build CONTEXT_CATEGORIES from knowledge base
+# so that the rest of the code doesn't need massive changes
+CONTEXT_CATEGORIES = {}
+for cat_key, cat in kb._industry_categories.items():
+    assessment = cat.get('assessment', '')
+    if assessment.startswith('NORMAL'):
+        verdict = 'NORMAL'
+    elif cat.get('score_cap'):
+        verdict = 'LOW_RISK'
+    else:
+        verdict = 'LOW_RISK'
+    entry = {
+        'keywords': cat.get('keywords', []),
+        'verdict': verdict,
+        'reason': cat.get('reason', ''),
+    }
+    if cat.get('score_cap'):
+        entry['score_cap'] = cat['score_cap']
+    CONTEXT_CATEGORIES[cat_key] = entry
+
+# These are now sourced from knowledge base instead of hardcoded sets
+GOV_AFFILIATED_KEYWORDS = kb._gov_affiliated_keywords
+GOV_ORG_NAMES = kb._gov_org_names
+
+# Small municipality keywords (면/읍/동 — structural sole-source normal)
+SMALL_MUNICIPALITY_KEYWORDS = ['면', '읍', '동', '리']
+
+before_count = len(findings)
+removed = 0
+downgraded = 0
+
+for f in findings:
+    # 이미 분류된 발견(큐레이션 media_reported 등)은 재분류하지 않는다
+    if f.get('context_category'):
+        continue
+    texts = f.get('summary', '') + ' '
+    for c in f.get('evidence_contracts', []):
+        texts += c.get('name', '') + ' ' + c.get('method', '') + ' '
+    texts += f.get('target_institution', '')
+
+    # ── Phase 1: Keyword-based context categories ──
+    matched = False
+    for cat_key, cat in CONTEXT_CATEGORIES.items():
+        if any(kw in texts for kw in cat['keywords']):
+            f['context_category'] = cat_key
+            f['context_reason'] = cat['reason']
+            if cat['verdict'] == 'NORMAL':
+                f['_remove'] = True
+                removed += 1
+            elif cat['verdict'] == 'LOW_RISK' and 'score_cap' in cat:
+                old = f['suspicion_score']
+                f['suspicion_score'] = min(f['suspicion_score'], cat['score_cap'])
+                f['innocent_explanation'] = cat['reason'] + '\n\n' + f.get('innocent_explanation', '')
+                if f['suspicion_score'] < old:
+                    downgraded += 1
+                    f['severity'] = 'LOW' if f['suspicion_score'] < 30 else 'MEDIUM'
+            matched = True
+            break
+
+    if matched:
+        continue
+
+    # ── Phase 2: Government-affiliated vendor check (Knowledge Base) ──
+    for c in f.get('evidence_contracts', []):
+        vendor = c.get('vendor', '')
+        inst = f.get('target_institution', '')
+
+        # Use KB relationship graph for precise parent-child detection
+        rel = kb.find_relationship(vendor, inst)
+        if rel and rel.get('normal_procurement'):
+            ctx_text = kb.get_relationship_context(vendor, inst) or ''
+            f['context_category'] = 'gov_affiliated'
+            f['context_reason'] = ctx_text or (
+                f'{vendor}은(는) {inst}의 산하/관련 기관입니다. '
+                f'설립 목적에 부합하는 정상적 조달입니다.'
+            )
+            old = f['suspicion_score']
+            f['suspicion_score'] = min(f['suspicion_score'], rel.get('score_cap', 30))
+            f['innocent_explanation'] = f['context_reason'] + '\n\n' + f.get('innocent_explanation', '')
+            if f['suspicion_score'] < old:
+                downgraded += 1
+                f['severity'] = 'LOW'
+            break
+
+        # Fallback: check if vendor is any known gov org (keyword-based)
+        is_gov = kb.is_gov_org(vendor)
+        if is_gov:
+            f['context_category'] = 'gov_affiliated'
+            f['context_reason'] = (
+                f'{vendor}은(는) 정부 산하기관/출연연구기관입니다. '
+                f'모 부처({inst})로부터 위탁 사업을 수주하는 것은 '
+                f'해당 기관의 설립 목적에 부합하는 정상적 조달입니다. '
+                '다만, 위탁 사업비의 적정성과 성과 관리는 별도로 평가되어야 합니다.'
+            )
+            old = f['suspicion_score']
+            f['suspicion_score'] = min(f['suspicion_score'], 30)
+            f['innocent_explanation'] = f['context_reason'] + '\n\n' + f.get('innocent_explanation', '')
+            if f['suspicion_score'] < old:
+                downgraded += 1
+                f['severity'] = 'LOW'
+            break
+
+    # ── Phase 3: Small municipality sole-source structural check ──
+    if f['pattern_type'] == 'repeated_sole_source':
+        inst = f.get('target_institution', '')
+        # 군/면/읍 level = small municipality, sole-source is structural
+        inst_parts = inst.split()
+        is_small = any(inst.endswith(kw) for kw in SMALL_MUNICIPALITY_KEYWORDS) or \
+                   any(p.endswith('군') for p in inst_parts)
+        if is_small:
+            f['context_category'] = 'small_municipality'
+            f['context_reason'] = (
+                '소규모 지자체(군/면/읍)의 높은 수의계약 비율은 구조적 특성입니다. '
+                '소규모 공사(2억 미만)는 시행령 §26①6에 따라 수의계약이 허용되며, '
+                '농촌 지역은 참여 가능한 건설업체 수가 물리적으로 제한됩니다.'
+            )
+            old = f['suspicion_score']
+            f['suspicion_score'] = min(f['suspicion_score'], 35)
+            f['innocent_explanation'] = f['context_reason'] + '\n\n' + f.get('innocent_explanation', '')
+            if f['suspicion_score'] < old:
+                downgraded += 1
+                f['severity'] = 'MEDIUM' if f['suspicion_score'] >= 30 else 'LOW'
+
+    # ── Phase 4: Contract splitting — only flag if SAME vendor ──
+    if f['pattern_type'] == 'contract_splitting':
+        vendors_in_split = set()
+        for c in f.get('evidence_contracts', []):
+            v = c.get('vendor', '')
+            if v:
+                vendors_in_split.add(v)
+        if len(vendors_in_split) > 1:
+            # Different vendors = NOT splitting. Remove entirely.
+            f['_remove'] = True
+            removed += 1
+
+# Remove NORMAL findings
+findings = [f for f in findings if not f.get('_remove')]
+for f in findings:
+    f.pop('_remove', None)
+
+# ── Replace generic 필요조치 with investigation conclusions ──
+INVESTIGATION_CONCLUSIONS = {
+    'construction_materials': (
+        '조사 결과: 관급자재(레미콘, 골재 등)는 KS 규격·운송 제약으로 지역별 과점이 구조적입니다. '
+        '한국레미콘공업협회 공시가격과 비교하여 적정 가격 범위 내인지 확인이 필요합니다. '
+        '공정거래위원회는 2023-2026년 사이 은평-파주(131억 과징금), 광양(22억), 천안-아산(7억) 등 '
+        '레미콘 지역 카르텔을 반복 적발하고 있어, 가격 담합 가능성은 항상 존재합니다.'
+    ),
+    'maintenance_lock': (
+        '조사 결과: 원개발사/제조사 유지보수는 국가계약법 시행령 §26①3에 근거한 합법적 수의계약입니다. '
+        '소프트웨어진흥법 §46에 따라 적정 유지보수 비용(초기 개발비의 10-15%/년)이 보장됩니다. '
+        '다만, 유지보수비가 원개발비의 20%를 초과하거나 매년 증가하는 경우 과다 청구 가능성이 있습니다.'
+    ),
+    'gov_affiliated': (
+        '조사 결과: 해당 수주업체는 정부출연연구기관 또는 산하기관으로, '
+        '모 부처로부터 위탁 연구/사업을 수행하는 것이 설립 목적입니다. '
+        '「정부출연연구기관 등의 설립·운영 및 육성에 관한 법률」에 따른 정상적 조달이며, '
+        '단독 응찰·반복 수주는 구조적 특성입니다.'
+    ),
+    'defense_security': (
+        '조사 결과: 방위사업법 §35에 따른 지정업체 제도, 보안 인가 요건 등으로 '
+        '참여 자격이 법적으로 제한됩니다. 소방장비는 KFI 인증, 수사장비는 보안 등급이 필요합니다. '
+        '다만, 비기밀 물품을 보안 명목으로 수의계약하는 사례가 감사원에 의해 반복 지적되고 있습니다.'
+    ),
+    'education': (
+        '조사 결과: 교과서 유통은 한국교과서협회 관리 하에 출판사별 지역 공급소(1인 사업자)가 '
+        '독점 운영하는 구조입니다. 급식은 학교급식법에 따라 지역 소규모 업체 직납이 원칙이며, '
+        '공공급식통합플랫폼(eat.co.kr)을 통해 가격 투명성이 확보되고 있습니다.'
+    ),
+    'medical_pharma': (
+        '조사 결과: 특허의약품은 약사법 §31에 따라 특허 만료 전까지 오리지널 제약사만 공급 가능합니다. '
+        '의료기기 유지보수는 OEM(Siemens, GE 등)의 전용 서비스 SW·부품이 필요합니다. '
+        '건강보험 실거래가 상환제로 약가 상한이 규제됩니다. '
+        '다만, 제네릭 존재 시 오리지널 고집이나 유지보수비 과다 청구(장비가의 20%+ /년)는 주의 필요.'
+    ),
+    'small_municipality': (
+        '조사 결과: 소규모 지자체(군/면/읍)는 시행령 §26①6에 따라 소액 수의계약이 허용되며, '
+        '농촌 지역은 참여 가능 건설업체가 물리적으로 제한됩니다. '
+        '수의계약 비율이 높은 것 자체는 구조적 특성이나, '
+        '동일 업체 반복 수주가 과도한 경우 담당자-업체 유착 가능성을 배제할 수 없습니다.'
+    ),
+    'diverse_vendors': (
+        '조사 결과: 한도 근처 계약이 서로 다른 업체에 발주되었으므로, '
+        '의도적 계약 분할(쪼개기)이 아닌 해당 기관의 일반적 소액 발주 구조로 판단됩니다. '
+        '동일 업체에 한도 직하 반복 발주되는 경우에만 분할 의심이 유효합니다.'
+    ),
+}
+
+for f in findings:
+    cat = f.get('context_category', '')
+    if cat in INVESTIGATION_CONCLUSIONS:
+        f['what_should_happen'] = INVESTIGATION_CONCLUSIONS[cat]
+
+print(f'  제거 (정상 제도): {removed}건')
+print(f'  점수 하향: {downgraded}건')
+print(f'  조사 결론 첨부: {sum(1 for f in findings if f.get("context_category","") in INVESTIGATION_CONCLUSIONS)}건')
+print(f'  최종: {len(findings)}건 (원래 {before_count}건)')
 
 
 # ════════════════════════════════════════════════════════════════════

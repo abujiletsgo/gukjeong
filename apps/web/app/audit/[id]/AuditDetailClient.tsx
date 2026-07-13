@@ -522,6 +522,18 @@ function isNearDuplicate(a: string, b: string): boolean {
   return hit / gs.size > 0.6;
 }
 
+// 탐지 근거 값 표시 — 배열/객체를 JSON 원문 대신 읽을 수 있는 텍스트로
+function formatDetailValue(value: unknown, key: string): string {
+  if (typeof value === 'number') return formatNumber(value, key);
+  if (Array.isArray(value)) return value.map(v => String(v)).join(', ');
+  if (value && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : String(v)}`)
+      .join(' · ');
+  }
+  return String(value);
+}
+
 export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
   const [expandedContract, setExpandedContract] = useState<number | null>(null);
   const [expandedCase, setExpandedCase] = useState<number | null>(0); // first case expanded by default
@@ -876,9 +888,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
                 <div key={key} className="flex justify-between text-sm py-2 border-b border-gray-50">
                   <span className="text-gray-500">{formatKeyLabel(key)}</span>
                   <span className="font-medium text-gray-800">
-                    {typeof value === 'number' ? formatNumber(value, key) :
-                     typeof value === 'object' ? JSON.stringify(value) :
-                     String(value)}
+                    {formatDetailValue(value, key)}
                   </span>
                 </div>
               ))}
@@ -1102,9 +1112,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
             <div key={key} className="flex gap-2 py-1">
               <span className="text-gray-500 w-32 shrink-0">{formatKeyLabel(key)}:</span>
               <span className="text-gray-800">
-                {typeof value === 'number' ? formatNumber(value, key) :
-                 typeof value === 'object' ? JSON.stringify(value) :
-                 String(value)}
+                {formatDetailValue(value, key)}
               </span>
             </div>
           ))}
@@ -1121,9 +1129,7 @@ export default function AuditDetailClient({ flag }: AuditDetailClientProps) {
               <div key={key} className="flex gap-2 py-1">
                 <span className="text-rose-500 w-32 shrink-0">{formatKeyLabel(key)}:</span>
                 <span className="text-rose-800">
-                  {typeof value === 'number' ? formatNumber(value, key) :
-                   typeof value === 'object' ? JSON.stringify(value) :
-                   String(value)}
+                  {formatDetailValue(value, key)}
                 </span>
               </div>
             ))}
